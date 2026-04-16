@@ -3,23 +3,26 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Default super-admin — change password immediately after first login
+        User::firstOrCreate(
+            ['email' => 'admin@posmeister.local'],
+            [
+                'name'      => 'System Administrator',
+                'phone'     => null,
+                'role'      => 'admin',
+                'branch_id' => null,
+                'is_active' => true,
+                'password'  => Hash::make('Admin@1234'),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $this->command->info('Default admin → admin@posmeister.local / Admin@1234');
     }
 }

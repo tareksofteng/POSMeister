@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone', 20)->nullable();
+            $table->string('role')->default('cashier'); // admin | manager | cashier
+            $table->unsignedBigInteger('branch_id')->nullable();  // FK added later when branches table exists
+            $table->boolean('is_active')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
