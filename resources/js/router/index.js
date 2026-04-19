@@ -32,7 +32,7 @@ const routes = [
                 path: 'branches',
                 name: 'branches',
                 component: () => import('@/views/branches/BranchListView.vue'),
-                meta: { title: 'Branches' },
+                meta: { title: 'Filialen', permission: 'branches' },
             },
 
             // ── User management ────────────────────────────────────────────
@@ -40,14 +40,21 @@ const routes = [
                 path: 'users',
                 name: 'users',
                 component: () => import('@/views/users/UserListView.vue'),
-                meta: { title: 'Users' },
+                meta: { title: 'Benutzer', permission: 'users' },
+            },
+
+            // ── Role permissions ───────────────────────────────────────────
+            {
+                path: 'settings/roles',
+                name: 'role-permissions',
+                component: () => import('@/views/settings/RolePermissionsView.vue'),
+                meta: { title: 'Zugriffsrechte', adminOnly: true },
             },
 
             // ── Future routes (added per module) ──────────────────────────
-            // { path: 'pos',         name: 'pos',       component: () => import('@/views/pos/PosView.vue') },
-            // { path: 'products',    name: 'products',  component: () => import('@/views/products/ProductListView.vue') },
-            // { path: 'customers',   name: 'customers', component: () => import('@/views/customers/CustomerListView.vue') },
-            // { path: 'sales',       name: 'sales',     component: () => import('@/views/sales/SaleListView.vue') },
+            // { path: 'pos',       name: 'pos',       component: ... },
+            // { path: 'products',  name: 'products',  component: ... },
+            // { path: 'sales',     name: 'sales',     component: ... },
         ],
     },
 
@@ -66,14 +73,25 @@ const router = createRouter({
 
 // ── Global navigation guard ───────────────────────────────────────────────
 router.beforeEach((to) => {
-    // Auth store cannot be used before pinia is initialised — access lazily
     const auth = useAuthStore();
 
+    // Not logged in — redirect to login
     if (to.meta.requiresAuth && !auth.isAuthenticated) {
         return { name: 'login', query: { redirect: to.fullPath } };
     }
 
+    // Already logged in — redirect away from login
     if (to.meta.requiresGuest && auth.isAuthenticated) {
+        return { name: 'dashboard' };
+    }
+
+    // Admin-only routes
+    if (to.meta.adminOnly && !auth.isAdmin) {
+        return { name: 'dashboard' };
+    }
+
+    // Permission-gated routes
+    if (to.meta.permission && !auth.hasPermission(to.meta.permission)) {
         return { name: 'dashboard' };
     }
 });

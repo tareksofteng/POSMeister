@@ -5,17 +5,24 @@ import { authService } from '@/services/authService';
 export const useAuthStore = defineStore('auth', () => {
 
     // ── State ──────────────────────────────────────────────────────────────
-    const token    = ref(localStorage.getItem('pos_token') || null);
-    const user     = ref(JSON.parse(localStorage.getItem('pos_user') || 'null'));
-    const loading  = ref(false);
-    const error    = ref(null);
+    const token       = ref(localStorage.getItem('pos_token') || null);
+    const user        = ref(JSON.parse(localStorage.getItem('pos_user') || 'null'));
+    const permissions = ref(JSON.parse(localStorage.getItem('pos_permissions') || '[]'));
+    const loading     = ref(false);
+    const error       = ref(null);
 
     // ── Getters ────────────────────────────────────────────────────────────
     const isAuthenticated = computed(() => !!token.value);
-    const userName        = computed(() => user.value?.name  || '');
-    const userRole        = computed(() => user.value?.role  || null);
+    const userName        = computed(() => user.value?.name      || '');
+    const userRole        = computed(() => user.value?.role      || null);
     const branchId        = computed(() => user.value?.branch_id || null);
     const isAdmin         = computed(() => user.value?.role === 'admin');
+
+    /** Check if the current user has access to a module key */
+    function hasPermission(key) {
+        if (isAdmin.value) return true;
+        return permissions.value.includes(key);
+    }
 
     // ── Actions ────────────────────────────────────────────────────────────
 
@@ -25,8 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         try {
             const { data } = await authService.login(credentials);
-
-            _persist(data.token, data.user);
+            _persist(data.token, data.user, data.permissions ?? []);
             return true;
 
         } catch (err) {
@@ -55,6 +61,11 @@ export const useAuthStore = defineStore('auth', () => {
             const { data } = await authService.me();
             user.value = data.user;
             localStorage.setItem('pos_user', JSON.stringify(data.user));
+
+            if (data.permissions) {
+                permissions.value = data.permissions;
+                localStorage.setItem('pos_permissions', JSON.stringify(data.permissions));
+            }
         } catch {
             _clear();
         }
@@ -62,18 +73,22 @@ export const useAuthStore = defineStore('auth', () => {
 
     // ── Private helpers ────────────────────────────────────────────────────
 
-    function _persist(newToken, newUser) {
-        token.value = newToken;
-        user.value  = newUser;
-        localStorage.setItem('pos_token', newToken);
-        localStorage.setItem('pos_user',  JSON.stringify(newUser));
+    function _persist(newToken, newUser, newPermissions) {
+        token.value       = newToken;
+        user.value        = newUser;
+        permissions.value = newPermissions;
+        localStorage.setItem('pos_token',       newToken);
+        localStorage.setItem('pos_user',        JSON.stringify(newUser));
+        localStorage.setItem('pos_permissions', JSON.stringify(newPermissions));
     }
 
     function _clear() {
-        token.value = null;
-        user.value  = null;
+        token.value       = null;
+        user.value        = null;
+        permissions.value = [];
         localStorage.removeItem('pos_token');
         localStorage.removeItem('pos_user');
+        localStorage.removeItem('pos_permissions');
     }
 
     function _extractError(err) {
@@ -83,11 +98,9 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     return {
-        // state
-        token, user, loading, error,
-        // getters
+        token, user, permissions, loading, error,
         isAuthenticated, userName, userRole, branchId, isAdmin,
-        // actions
+        hasPermission,
         login, logout, fetchMe,
     };
 });

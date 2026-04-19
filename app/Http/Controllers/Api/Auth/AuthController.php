@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Modules\RolePermission\Services\RolePermissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,8 +12,10 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function __construct(private RolePermissionService $permissions) {}
+
     /**
-     * Authenticate a user and return a Sanctum token.
+     * Authenticate and return a Sanctum token + user + permissions.
      */
     public function login(Request $request): JsonResponse
     {
@@ -35,33 +38,37 @@ class AuthController extends Controller
             ]);
         }
 
-        // Revoke all previous tokens to keep sessions clean (one device policy)
+        // One active session per user
         $user->tokens()->delete();
 
         $token = $user->createToken(
-            name:   'pos-session',
+            name:      'pos-session',
             abilities: ['*'],
             expiresAt: now()->addDays(30)
         )->plainTextToken;
 
         return response()->json([
-            'token' => $token,
-            'user'  => $this->formatUser($user),
+            'token'       => $token,
+            'user'        => $this->formatUser($user),
+            'permissions' => $this->permissions->getForRole($user->role),
         ]);
     }
 
     /**
-     * Return the currently authenticated user.
+     * Return current user + fresh permissions (for page refresh / re-sync).
      */
     public function me(Request $request): JsonResponse
     {
+        $user = $request->user();
+
         return response()->json([
-            'user' => $this->formatUser($request->user()),
+            'user'        => $this->formatUser($user),
+            'permissions' => $this->permissions->getForRole($user->role),
         ]);
     }
 
     /**
-     * Revoke the current token (logout).
+     * Revoke the current token.
      */
     public function logout(Request $request): JsonResponse
     {
@@ -70,7 +77,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully.']);
     }
 
-    // ── Private ──────────────────────────────────────────────────────────────
+    // ── Private ───────────────────────────────────────────────────────────────
 
     private function formatUser(User $user): array
     {

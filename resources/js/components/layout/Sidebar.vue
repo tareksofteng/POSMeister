@@ -24,77 +24,28 @@
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
 
-            <!-- Primary -->
+            <!-- Dashboard — always visible -->
             <NavItem :collapsed="collapsed" :to="{ name: 'dashboard' }" label="Dashboard">
                 <template #icon><Squares2X2Icon class="nav-icon" /></template>
             </NavItem>
 
-            <NavItem :collapsed="collapsed" :to="{ name: 'pos' }" label="Point of Sale" disabled>
-                <template #icon><ShoppingCartIcon class="nav-icon" /></template>
-            </NavItem>
+            <!-- Dynamic permission-based groups -->
+            <template v-for="group in visibleGroups" :key="group.section">
+                <SidebarSectionLabel v-if="!collapsed && group.items.length" :label="group.section" />
 
-            <!-- Section: Commerce -->
-            <SidebarSectionLabel v-if="!collapsed" label="Commerce" />
-
-            <NavItem :collapsed="collapsed" :to="{ name: 'sales' }" label="Sales" disabled>
-                <template #icon><DocumentTextIcon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'purchases' }" label="Purchases" disabled>
-                <template #icon><TruckIcon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'quotations' }" label="Quotations" disabled>
-                <template #icon><ClipboardDocumentListIcon class="nav-icon" /></template>
-            </NavItem>
-
-            <!-- Section: Catalogue -->
-            <SidebarSectionLabel v-if="!collapsed" label="Catalogue" />
-
-            <NavItem :collapsed="collapsed" :to="{ name: 'products' }" label="Products" disabled>
-                <template #icon><TagIcon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'inventory' }" label="Inventory" disabled>
-                <template #icon><ArchiveBoxIcon class="nav-icon" /></template>
-            </NavItem>
-
-            <!-- Section: Stakeholders -->
-            <SidebarSectionLabel v-if="!collapsed" label="Stakeholders" />
-
-            <NavItem :collapsed="collapsed" :to="{ name: 'customers' }" label="Customers" disabled>
-                <template #icon><UsersIcon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'suppliers' }" label="Suppliers" disabled>
-                <template #icon><BuildingStorefrontIcon class="nav-icon" /></template>
-            </NavItem>
-
-            <!-- Section: Finance & HR -->
-            <SidebarSectionLabel v-if="!collapsed" label="Finance & HR" />
-
-            <NavItem :collapsed="collapsed" :to="{ name: 'finance' }" label="Finance" disabled>
-                <template #icon><BanknotesIcon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'employees' }" label="Employees" disabled>
-                <template #icon><UserGroupIcon class="nav-icon" /></template>
-            </NavItem>
-
-            <!-- Section: Reports -->
-            <SidebarSectionLabel v-if="!collapsed" label="Reports" />
-
-            <NavItem :collapsed="collapsed" :to="{ name: 'reports' }" label="Reports" disabled>
-                <template #icon><ChartBarIcon class="nav-icon" /></template>
-            </NavItem>
-
-            <!-- Section: System (active routes) -->
-            <SidebarSectionLabel v-if="!collapsed" label="System" />
-
-            <NavItem :collapsed="collapsed" :to="{ name: 'branches' }" label="Branches">
-                <template #icon><BuildingOffice2Icon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'users' }" label="Users">
-                <template #icon><UserCircleIcon class="nav-icon" /></template>
-            </NavItem>
-            <NavItem :collapsed="collapsed" :to="{ name: 'settings' }" label="Settings" disabled>
-                <template #icon><CogIcon class="nav-icon" /></template>
-            </NavItem>
+                <template v-for="item in group.items" :key="item.key">
+                    <NavItem
+                        :collapsed="collapsed"
+                        :to="item.to"
+                        :label="item.label"
+                        :disabled="!item.implemented"
+                    >
+                        <template #icon>
+                            <component :is="item.icon" class="nav-icon" />
+                        </template>
+                    </NavItem>
+                </template>
+            </template>
 
         </nav>
 
@@ -144,6 +95,7 @@ import {
     ArrowRightStartOnRectangleIcon,
     BuildingOffice2Icon,
     UserCircleIcon,
+    ShieldCheckIcon,
 } from '@heroicons/vue/24/outline';
 
 import NavItem             from './NavItem.vue';
@@ -159,6 +111,75 @@ const router = useRouter();
 const userInitial = computed(() =>
     auth.userName ? auth.userName.charAt(0).toUpperCase() : '?'
 );
+
+// ── Nav structure ──────────────────────────────────────────────────────────
+// Each item: { key (permission key), label, to (route), icon, implemented }
+// Items without a key are always shown (e.g. Dashboard).
+// Admin sees all; others see only items where auth.hasPermission(key) === true.
+// Non-implemented items show "Soon" badge.
+
+const NAV_GROUPS = [
+    {
+        section: 'Commerce',
+        items: [
+            { key: 'pos',        label: 'Point of Sale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: false },
+            { key: 'sales',      label: 'Verkauf',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: false },
+            { key: 'purchases',  label: 'Einkauf',       to: { name: 'purchases' },   icon: TruckIcon,                 implemented: false },
+            { key: 'quotations', label: 'Angebote',      to: { name: 'quotations' },  icon: ClipboardDocumentListIcon, implemented: false },
+        ],
+    },
+    {
+        section: 'Catalogue',
+        items: [
+            { key: 'products',  label: 'Produkte', to: { name: 'products' },  icon: TagIcon,        implemented: false },
+            { key: 'inventory', label: 'Inventar', to: { name: 'inventory' }, icon: ArchiveBoxIcon, implemented: false },
+        ],
+    },
+    {
+        section: 'Stakeholders',
+        items: [
+            { key: 'customers', label: 'Kunden',     to: { name: 'customers' }, icon: UsersIcon,              implemented: false },
+            { key: 'suppliers', label: 'Lieferanten', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: false },
+        ],
+    },
+    {
+        section: 'Finance & HR',
+        items: [
+            { key: 'finance',   label: 'Finanzen',    to: { name: 'finance' },   icon: BanknotesIcon, implemented: false },
+            { key: 'employees', label: 'Mitarbeiter', to: { name: 'employees' }, icon: UserGroupIcon, implemented: false },
+        ],
+    },
+    {
+        section: 'Reports',
+        items: [
+            { key: 'reports', label: 'Berichte', to: { name: 'reports' }, icon: ChartBarIcon, implemented: false },
+        ],
+    },
+    {
+        section: 'System',
+        items: [
+            { key: 'branches',          label: 'Filialen',      to: { name: 'branches' },         icon: BuildingOffice2Icon, implemented: true },
+            { key: 'users',             label: 'Benutzer',      to: { name: 'users' },             icon: UserCircleIcon,     implemented: true },
+            { key: 'role-permissions',  label: 'Zugriffsrechte', to: { name: 'role-permissions' }, icon: ShieldCheckIcon,    implemented: true, adminOnly: true },
+            { key: null,                label: 'Einstellungen', to: { name: 'settings' },          icon: CogIcon,            implemented: false },
+        ],
+    },
+];
+
+/** Filter each group's items by permission */
+const visibleGroups = computed(() => {
+    return NAV_GROUPS.map(group => ({
+        ...group,
+        items: group.items.filter(item => {
+            // Items without a permission key are always shown
+            if (!item.key) return true;
+            // Admin-only items: only visible to admins
+            if (item.adminOnly) return auth.isAdmin;
+            // Others: check role permission
+            return auth.hasPermission(item.key);
+        }),
+    })).filter(group => group.items.length > 0);
+});
 
 async function handleLogout() {
     await auth.logout();
