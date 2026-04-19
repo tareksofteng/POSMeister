@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Modules\Branch\Models\Branch;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -37,7 +39,14 @@ class User extends Authenticatable
         ];
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    // ── Role helpers ──────────────────────────────────────────────────────
 
     public function isAdmin(): bool
     {
@@ -46,6 +55,11 @@ class User extends Authenticatable
 
     public function isManager(): bool
     {
-        return in_array($this->role, ['admin', 'manager']);
+        return in_array($this->role, ['admin', 'manager'], true);
+    }
+
+    public function isCashier(): bool
+    {
+        return $this->role === 'cashier';
     }
 }

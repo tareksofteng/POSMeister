@@ -26,6 +26,23 @@ const routes = [
                 component: () => import('@/views/dashboard/DashboardView.vue'),
                 meta: { title: 'Dashboard' },
             },
+
+            // ── Branch management ──────────────────────────────────────────
+            {
+                path: 'branches',
+                name: 'branches',
+                component: () => import('@/views/branches/BranchListView.vue'),
+                meta: { title: 'Branches' },
+            },
+
+            // ── User management ────────────────────────────────────────────
+            {
+                path: 'users',
+                name: 'users',
+                component: () => import('@/views/users/UserListView.vue'),
+                meta: { title: 'Users' },
+            },
+
             // ── Future routes (added per module) ──────────────────────────
             // { path: 'pos',         name: 'pos',       component: () => import('@/views/pos/PosView.vue') },
             // { path: 'products',    name: 'products',  component: () => import('@/views/products/ProductListView.vue') },

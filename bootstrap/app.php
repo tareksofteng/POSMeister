@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\BranchScopeMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,12 +16,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Enable Sanctum SPA cookie-based auth for the api group
+        // Sanctum SPA stateful auth for the api group
         $middleware->statefulApi();
 
-        // Ensure API routes return JSON errors instead of HTML
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // ── Named middleware aliases ──────────────────────────────────────
+        $middleware->alias([
+            'role'   => RoleMiddleware::class,
+            'branch' => BranchScopeMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -28,7 +35,6 @@ return Application::configure(basePath: dirname(__DIR__))
             return $request->is('api/*') || $request->expectsJson();
         });
 
-        // Return clean 404 JSON for API
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json(['message' => 'Resource not found.'], 404);
