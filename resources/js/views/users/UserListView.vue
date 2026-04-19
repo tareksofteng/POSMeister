@@ -4,15 +4,15 @@
         <!-- Page header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Users</h1>
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('users.title') }}</h1>
                 <p class="mt-1 text-sm text-gray-500">
-                    Manage system access and roles.
-                    <span v-if="meta" class="text-gray-400">({{ meta.total }} total)</span>
+                    {{ t('users.subtitle') }}
+                    <span v-if="meta" class="text-gray-400">({{ meta.total }} {{ t('common.total') }})</span>
                 </p>
             </div>
             <button @click="openCreate" class="btn-primary">
                 <PlusIcon class="w-4 h-4" />
-                New User
+                {{ t('users.new') }}
             </button>
         </div>
 
@@ -23,7 +23,7 @@
                 <input
                     v-model="searchQuery"
                     type="search"
-                    placeholder="Search name or email…"
+                    :placeholder="t('users.searchPlaceholder')"
                     class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
             </div>
@@ -32,17 +32,17 @@
                 v-model="roleFilter"
                 class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             >
-                <option value="">All roles</option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="cashier">Cashier</option>
+                <option value="">{{ t('users.allRoles') }}</option>
+                <option value="admin">{{ t('users.roles.admin') }}</option>
+                <option value="manager">{{ t('users.roles.manager') }}</option>
+                <option value="cashier">{{ t('users.roles.cashier') }}</option>
             </select>
 
             <select
                 v-model="branchFilter"
                 class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             >
-                <option value="">All branches</option>
+                <option value="">{{ t('users.allBranches') }}</option>
                 <option
                     v-for="opt in branchStore.branchOptions"
                     :key="opt.value"
@@ -56,9 +56,9 @@
                 v-model="statusFilter"
                 class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             >
-                <option value="">All statuses</option>
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
+                <option value="">{{ t('common.allStatuses') }}</option>
+                <option value="1">{{ t('common.active') }}</option>
+                <option value="0">{{ t('common.inactive') }}</option>
             </select>
         </div>
 
@@ -74,8 +74,8 @@
             :loading="loading"
             :meta="meta"
             sort-key="name"
-            empty-title="No users found"
-            empty-message="Create your first user to get started."
+            :empty-title="t('users.emptyTitle')"
+            :empty-message="t('users.emptyMessage')"
             @page-change="fetchPage"
         >
             <template #row-actions="{ row }">
@@ -116,9 +116,9 @@
     <!-- Toggle status confirm -->
     <ConfirmDialog
         v-model="toggleOpen"
-        :title="toggleTarget?.is_active ? 'Deactivate User' : 'Activate User'"
+        :title="toggleTarget?.is_active ? t('users.deactivateTitle') : t('users.activateTitle')"
         :message="toggleMessage"
-        :confirm-label="toggleTarget?.is_active ? 'Deactivate' : 'Activate'"
+        :confirm-label="toggleTarget?.is_active ? t('users.deactivateButton') : t('users.activateButton')"
         :danger="toggleTarget?.is_active"
         :loading="toggleLoading"
         @confirm="executeToggle"
@@ -127,9 +127,9 @@
     <!-- Delete confirm -->
     <ConfirmDialog
         v-model="deleteOpen"
-        title="Delete User"
-        :message="`Are you sure you want to delete &quot;${deleteTarget?.name}&quot;? This action cannot be undone.`"
-        confirm-label="Delete"
+        :title="t('users.deleteTitle')"
+        :message="t('users.deleteMessage', { name: deleteTarget?.name ?? '' })"
+        :confirm-label="t('common.delete')"
         :danger="true"
         :loading="deleteLoading"
         @confirm="executeDelete"
@@ -138,6 +138,7 @@
 
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { userService } from '@/services/userService';
 import { useBranchStore } from '@/stores/branch';
 import { useDebounce } from '@vueuse/core';
@@ -155,17 +156,18 @@ import {
     CheckCircleIcon,
 } from '@heroicons/vue/24/outline';
 
+const { t } = useI18n();
 const branchStore = useBranchStore();
 
-const columns = [
-    { key: 'name',        label: 'Name',    bold: true },
-    { key: 'email',       label: 'Email' },
-    { key: 'phone',       label: 'Phone' },
-    { key: 'role',        label: 'Role',    type: 'role',   width: '110px' },
-    { key: 'branch_name', label: 'Branch' },
-    { key: 'is_active',   label: 'Status',  type: 'badge',  width: '110px' },
-    { key: '_actions',    label: '',        type: 'actions', width: '100px' },
-];
+const columns = computed(() => [
+    { key: 'name',        label: t('common.name'),      bold: true },
+    { key: 'email',       label: t('common.email') },
+    { key: 'phone',       label: t('common.phone') },
+    { key: 'role',        label: t('users.role'),        type: 'role',   width: '110px' },
+    { key: 'branch_name', label: t('users.branch') },
+    { key: 'is_active',   label: t('common.status'),     type: 'badge',  width: '110px' },
+    { key: '_actions',    label: '',                      type: 'actions', width: '100px' },
+]);
 
 // ── List state ────────────────────────────────────────────────────────────
 const rows    = ref([]);
@@ -236,9 +238,10 @@ const toggleLoading = ref(false);
 
 const toggleMessage = computed(() => {
     if (!toggleTarget.value) return '';
+    const name = toggleTarget.value.name;
     return toggleTarget.value.is_active
-        ? `Deactivate "${toggleTarget.value.name}"? They will lose access immediately.`
-        : `Activate "${toggleTarget.value.name}"? They will regain access.`;
+        ? t('users.deactivateMessage', { name })
+        : t('users.activateMessage', { name });
 });
 
 function confirmToggle(row) {
@@ -254,7 +257,7 @@ async function executeToggle() {
         toggleOpen.value = false;
         fetchUsers();
     } catch (err) {
-        alert(err.response?.data?.message ?? 'Failed to update user status.');
+        alert(err.response?.data?.message ?? t('users.statusFailed'));
     } finally {
         toggleLoading.value = false;
     }
@@ -278,7 +281,7 @@ async function executeDelete() {
         deleteOpen.value = false;
         fetchUsers();
     } catch (err) {
-        alert(err.response?.data?.message ?? 'Failed to delete user.');
+        alert(err.response?.data?.message ?? t('users.deleteFailed'));
     } finally {
         deleteLoading.value = false;
     }

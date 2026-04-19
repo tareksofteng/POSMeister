@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { i18n } from '@/plugins/i18n';
 
 const routes = [
     // ── Auth ─────────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@ const routes = [
                 path: 'dashboard',
                 name: 'dashboard',
                 component: () => import('@/views/dashboard/DashboardView.vue'),
-                meta: { title: 'Dashboard' },
+                meta: { titleKey: 'menu.dashboard' },
             },
 
             // ── Branch management ──────────────────────────────────────────
@@ -32,7 +33,7 @@ const routes = [
                 path: 'branches',
                 name: 'branches',
                 component: () => import('@/views/branches/BranchListView.vue'),
-                meta: { title: 'Filialen', permission: 'branches' },
+                meta: { titleKey: 'menu.branches', permission: 'branches' },
             },
 
             // ── User management ────────────────────────────────────────────
@@ -40,7 +41,7 @@ const routes = [
                 path: 'users',
                 name: 'users',
                 component: () => import('@/views/users/UserListView.vue'),
-                meta: { title: 'Benutzer', permission: 'users' },
+                meta: { titleKey: 'menu.users', permission: 'users' },
             },
 
             // ── Role permissions ───────────────────────────────────────────
@@ -48,7 +49,7 @@ const routes = [
                 path: 'settings/roles',
                 name: 'role-permissions',
                 component: () => import('@/views/settings/RolePermissionsView.vue'),
-                meta: { title: 'Zugriffsrechte', adminOnly: true },
+                meta: { titleKey: 'menu.rolePermissions', adminOnly: true },
             },
 
             // ── Future routes (added per module) ──────────────────────────
@@ -96,10 +97,11 @@ router.beforeEach((to) => {
     }
 });
 
-// ── Page title ────────────────────────────────────────────────────────────
+// ── Page title (translated) ───────────────────────────────────────────────
 router.afterEach((to) => {
-    const title = to.meta?.title ? `${to.meta.title} — POSmeister` : 'POSmeister';
-    document.title = title;
+    const key   = to.meta?.titleKey;
+    const label = key ? i18n.global.t(key) : null;
+    document.title = label ? `${label} — POSmeister` : 'POSmeister';
 });
 
 export default router;

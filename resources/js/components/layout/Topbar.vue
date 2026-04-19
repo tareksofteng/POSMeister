@@ -5,7 +5,7 @@
         <button
             @click="$emit('toggle-sidebar')"
             class="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Toggle sidebar"
+            :aria-label="t('menu.dashboard')"
         >
             <Bars3Icon class="w-5 h-5" />
         </button>
@@ -22,7 +22,10 @@
         </nav>
 
         <!-- Right actions -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
+
+            <!-- Language switcher -->
+            <LanguageSwitcher />
 
             <!-- Notifications (placeholder) -->
             <button
@@ -30,8 +33,6 @@
                 aria-label="Notifications"
             >
                 <BellIcon class="w-5 h-5" />
-                <!-- Badge — shown when there are notifications -->
-                <!-- <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500"></span> -->
             </button>
 
             <!-- User menu -->
@@ -72,7 +73,7 @@
                                 class="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                             >
                                 <ArrowRightStartOnRectangleIcon class="w-4 h-4" />
-                                Sign out
+                                {{ t('auth.signOut') }}
                             </button>
                         </div>
                     </div>
@@ -86,6 +87,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { onClickOutside } from '@vueuse/core';
 import { useAuthStore } from '@/stores/auth';
 
@@ -96,11 +98,15 @@ import {
     ArrowRightStartOnRectangleIcon,
 } from '@heroicons/vue/24/outline';
 
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
+
 defineEmits(['toggle-sidebar']);
 
-const auth        = useAuthStore();
-const router      = useRouter();
-const route       = useRoute();
+const { t }   = useI18n();
+const auth    = useAuthStore();
+const router  = useRouter();
+const route   = useRoute();
+
 const userMenuOpen = ref(false);
 const userMenuRef  = ref(null);
 
@@ -108,9 +114,12 @@ const userInitial = computed(() =>
     auth.userName ? auth.userName.charAt(0).toUpperCase() : '?'
 );
 
-const routeTitle = computed(() => route.meta?.title || '');
+// Translate the route title key on every navigation + locale change
+const routeTitle = computed(() => {
+    const key = route.meta?.titleKey;
+    return key ? t(key) : '';
+});
 
-// Close dropdown when clicking outside
 onClickOutside(userMenuRef, () => { userMenuOpen.value = false; });
 
 async function handleLogout() {

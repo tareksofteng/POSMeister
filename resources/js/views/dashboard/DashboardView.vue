@@ -8,16 +8,14 @@
                 <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
                     {{ greeting }}, <span class="text-indigo-600">{{ auth.userName }}</span>.
                 </h1>
-                <p class="mt-0.5 text-sm text-gray-500">Hier ist die aktuelle Systemübersicht.</p>
+                <p class="mt-0.5 text-sm text-gray-500">{{ t('dashboard.subtitle') }}</p>
             </div>
 
             <div class="flex items-center gap-3">
-                <span :class="roleBadge.class">
-                    {{ roleBadge.label }}
-                </span>
+                <span :class="roleBadgeClass">{{ roleBadgeLabel }}</span>
                 <div class="flex items-center gap-1.5 text-xs text-gray-400 bg-white border border-gray-200 rounded-lg px-3 py-2">
                     <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    System aktiv
+                    {{ t('dashboard.systemActive') }}
                 </div>
             </div>
         </div>
@@ -25,36 +23,36 @@
         <!-- ── KPI Row ─────────────────────────────────────────────────── -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <StatCard
-                label="Filialen gesamt"
+                :label="t('dashboard.kpi.totalBranches')"
                 :value="kpi.branches.total"
-                :sub="kpi.branches.active + ' aktiv · ' + kpi.branches.inactive + ' inaktiv'"
+                :sub="t('dashboard.activeSub', { active: kpi.branches.active, inactive: kpi.branches.inactive })"
                 :icon="BuildingOffice2Icon"
                 icon-bg="bg-indigo-50"
                 icon-color="text-indigo-600"
                 :loading="kpi.loading"
             />
             <StatCard
-                label="Benutzer gesamt"
+                :label="t('dashboard.kpi.totalUsers')"
                 :value="kpi.users.total"
-                :sub="kpi.users.active + ' aktiv · ' + kpi.users.inactive + ' inaktiv'"
+                :sub="t('dashboard.activeSub', { active: kpi.users.active, inactive: kpi.users.inactive })"
                 :icon="UsersIcon"
                 icon-bg="bg-violet-50"
                 icon-color="text-violet-600"
                 :loading="kpi.loading"
             />
             <StatCard
-                label="Umsatz heute"
+                :label="t('dashboard.kpi.revenueToday')"
                 value="€ 0,00"
-                sub="Verkaufsmodul noch nicht aktiv"
+                :sub="t('dashboard.kpi.revenueEmpty')"
                 :icon="BanknotesIcon"
                 icon-bg="bg-emerald-50"
                 icon-color="text-emerald-600"
                 :loading="false"
             />
             <StatCard
-                label="Niedriger Lagerstand"
+                :label="t('dashboard.kpi.lowStock')"
                 value="—"
-                sub="Inventarmodul noch nicht aktiv"
+                :sub="t('dashboard.kpi.stockEmpty')"
                 :icon="ExclamationTriangleIcon"
                 icon-bg="bg-amber-50"
                 icon-color="text-amber-600"
@@ -69,14 +67,14 @@
             <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-semibold text-gray-900">Filialen-Übersicht</h2>
-                        <p class="text-xs text-gray-400 mt-0.5">Alle registrierten Standorte</p>
+                        <h2 class="text-sm font-semibold text-gray-900">{{ t('dashboard.branchOverview.title') }}</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ t('dashboard.branchOverview.subtitle') }}</p>
                     </div>
                     <RouterLink
                         :to="{ name: 'branches' }"
                         class="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"
                     >
-                        Alle anzeigen
+                        {{ t('dashboard.branchOverview.showAll') }}
                         <ChevronRightIcon class="w-3.5 h-3.5" />
                     </RouterLink>
                 </div>
@@ -100,11 +98,9 @@
                         :key="branch.id"
                         class="flex items-center gap-4 px-6 py-3.5 hover:bg-gray-50 transition-colors"
                     >
-                        <!-- Icon -->
                         <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
                             <BuildingOffice2Icon class="w-4 h-4 text-indigo-500" />
                         </div>
-                        <!-- Info -->
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ branch.name }}</p>
                             <p class="text-xs text-gray-400 truncate">
@@ -112,20 +108,16 @@
                                 <span v-if="branch.phone" class="ml-2">{{ branch.phone }}</span>
                             </p>
                         </div>
-                        <!-- User count -->
                         <div class="flex items-center gap-1.5 text-xs text-gray-400 flex-shrink-0">
                             <UsersIcon class="w-3.5 h-3.5" />
                             <span>{{ branch.user_count ?? 0 }}</span>
                         </div>
-                        <!-- Status badge -->
                         <span :class="[
                             'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0',
-                            branch.is_active
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : 'bg-gray-100 text-gray-500',
+                            branch.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500',
                         ]">
                             <span :class="['w-1.5 h-1.5 rounded-full', branch.is_active ? 'bg-emerald-500' : 'bg-gray-400']"></span>
-                            {{ branch.is_active ? 'Aktiv' : 'Inaktiv' }}
+                            {{ branch.is_active ? t('common.active') : t('common.inactive') }}
                         </span>
                     </div>
                 </div>
@@ -133,12 +125,9 @@
                 <!-- Empty -->
                 <div v-else class="flex flex-col items-center justify-center py-14 text-center">
                     <BuildingOffice2Icon class="w-10 h-10 text-gray-200 mb-3" />
-                    <p class="text-sm font-medium text-gray-400">Keine Filialen vorhanden</p>
-                    <RouterLink
-                        :to="{ name: 'branches' }"
-                        class="mt-3 text-xs font-semibold text-indigo-600 hover:underline"
-                    >
-                        Erste Filiale anlegen →
+                    <p class="text-sm font-medium text-gray-400">{{ t('dashboard.branchOverview.noBranches') }}</p>
+                    <RouterLink :to="{ name: 'branches' }" class="mt-3 text-xs font-semibold text-indigo-600 hover:underline">
+                        {{ t('dashboard.branchOverview.createFirst') }}
                     </RouterLink>
                 </div>
             </div>
@@ -149,8 +138,8 @@
                 <!-- Quick Navigation -->
                 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-100">
-                        <h2 class="text-sm font-semibold text-gray-900">Schnellzugriff</h2>
-                        <p class="text-xs text-gray-400 mt-0.5">Aktive Module</p>
+                        <h2 class="text-sm font-semibold text-gray-900">{{ t('dashboard.quickAccess.title') }}</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ t('dashboard.quickAccess.subtitle') }}</p>
                     </div>
                     <div class="p-3 space-y-1.5">
                         <RouterLink
@@ -173,7 +162,7 @@
 
                 <!-- System Info -->
                 <div class="bg-white rounded-xl border border-gray-200 p-5">
-                    <h2 class="text-sm font-semibold text-gray-900 mb-4">Systeminformation</h2>
+                    <h2 class="text-sm font-semibold text-gray-900 mb-4">{{ t('dashboard.systemInfo.title') }}</h2>
                     <dl class="space-y-3">
                         <div v-for="item in systemInfo" :key="item.label" class="flex items-center justify-between">
                             <dt class="text-xs text-gray-400">{{ item.label }}</dt>
@@ -188,15 +177,24 @@
         <!-- ── Module Status ───────────────────────────────────────────── -->
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
-                <h2 class="text-sm font-semibold text-gray-900">Modul-Status</h2>
-                <p class="text-xs text-gray-400 mt-0.5">Implementierungsfortschritt</p>
+                <h2 class="text-sm font-semibold text-gray-900">{{ t('dashboard.moduleStatus.title') }}</h2>
+                <p class="text-xs text-gray-400 mt-0.5">{{ t('dashboard.moduleStatus.subtitle') }}</p>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y divide-gray-100">
-                <ModuleStatusCell
-                    v-for="mod in modules"
-                    :key="mod.label"
-                    v-bind="mod"
-                />
+                <div
+                    v-for="mod in moduleStatusList"
+                    :key="mod.key"
+                    class="flex flex-col items-center gap-2 px-4 py-5 text-center"
+                >
+                    <div :class="['w-2.5 h-2.5 rounded-full', mod.active ? 'bg-emerald-500' : 'bg-gray-200']"></div>
+                    <p class="text-xs font-semibold text-gray-700">{{ t(`dashboard.moduleStatus.modules.${mod.key}`) }}</p>
+                    <span :class="[
+                        'inline-block text-xs px-2 py-0.5 rounded-full font-medium',
+                        mod.active ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-400',
+                    ]">
+                        {{ mod.active ? t('dashboard.moduleStatus.active') : t(`dashboard.moduleStatus.phases.${mod.phase}`) }}
+                    </span>
+                </div>
             </div>
         </div>
 
@@ -205,67 +203,45 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
+import { useLocale } from '@/composables/useLocale';
 import { branchService } from '@/services/branchService';
 import { userService } from '@/services/userService';
 import { RouterLink } from 'vue-router';
 
 import {
-    BuildingOffice2Icon,
-    UsersIcon,
-    BanknotesIcon,
-    ExclamationTriangleIcon,
-    UserCircleIcon,
-    ChevronRightIcon,
+    BuildingOffice2Icon, UsersIcon, BanknotesIcon, ExclamationTriangleIcon,
+    UserCircleIcon, ChevronRightIcon,
 } from '@heroicons/vue/24/outline';
 
 import StatCard from './StatCard.vue';
 
-// ── Sub-components defined inline ──────────────────────────────────────────
+const { t }          = useI18n();
+const { intlLocale } = useLocale();
+const auth           = useAuthStore();
 
-const ModuleStatusCell = {
-    props: {
-        label:   { type: String, required: true },
-        active:  { type: Boolean, default: false },
-        phase:   { type: String, default: '' },
-    },
-    template: `
-        <div class="flex flex-col items-center gap-2 px-4 py-5 text-center">
-            <div :class="[
-                'w-2.5 h-2.5 rounded-full',
-                active ? 'bg-emerald-500' : 'bg-gray-200'
-            ]"></div>
-            <p class="text-xs font-semibold text-gray-700">{{ label }}</p>
-            <span :class="[
-                'inline-block text-xs px-2 py-0.5 rounded-full font-medium',
-                active ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-400'
-            ]">{{ active ? 'Aktiv' : phase }}</span>
-        </div>
-    `,
-};
-
-// ── Auth ───────────────────────────────────────────────────────────────────
-const auth = useAuthStore();
-
-// ── Date / Greeting ────────────────────────────────────────────────────────
+// ── Greeting + date ────────────────────────────────────────────────────────
 const now  = new Date();
 const hour = now.getHours();
+const greetingKey = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
 
-const greeting = hour < 12 ? 'Guten Morgen' : hour < 17 ? 'Guten Tag' : 'Guten Abend';
-
-const dateString = new Intl.DateTimeFormat('de-DE', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-}).format(now);
+const greeting  = computed(() => t(`dashboard.greeting.${greetingKey}`));
+const dateString = computed(() =>
+    new Intl.DateTimeFormat(intlLocale.value, {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    }).format(now)
+);
 
 // ── Role badge ─────────────────────────────────────────────────────────────
-const roleBadge = computed(() => {
-    const map = {
-        admin:   { label: 'Administrator', class: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm' },
-        manager: { label: 'Manager',       class: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700' },
-        cashier: { label: 'Kassierer',     class: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600' },
-    };
-    return map[auth.userRole] ?? map.cashier;
-});
+const ROLE_CLASSES = {
+    admin:   'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm',
+    manager: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700',
+    cashier: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600',
+};
+
+const roleBadgeClass = computed(() => ROLE_CLASSES[auth.userRole] ?? ROLE_CLASSES.cashier);
+const roleBadgeLabel = computed(() => t(`dashboard.roleBadges.${auth.userRole ?? 'cashier'}`));
 
 // ── KPI Data ───────────────────────────────────────────────────────────────
 const kpi = reactive({
@@ -273,7 +249,6 @@ const kpi = reactive({
     branches: { total: 0, active: 0, inactive: 0 },
     users:    { total: 0, active: 0, inactive: 0 },
 });
-
 const recentBranches = ref([]);
 
 onMounted(async () => {
@@ -284,7 +259,6 @@ onMounted(async () => {
             userService.index({ per_page: 1 }),
             userService.index({ is_active: 1, per_page: 1 }),
         ]);
-
         kpi.branches.total    = brAll.data.meta.total;
         kpi.branches.active   = brActive.data.meta.total;
         kpi.branches.inactive = kpi.branches.total - kpi.branches.active;
@@ -293,48 +267,46 @@ onMounted(async () => {
         kpi.users.total    = usAll.data.meta.total;
         kpi.users.active   = usActive.data.meta.total;
         kpi.users.inactive = kpi.users.total - kpi.users.active;
-    } catch {
-        // Non-critical — dashboard shows empty state
-    } finally {
+    } catch { /* non-critical */ } finally {
         kpi.loading = false;
     }
 });
 
-// ── Quick Links ────────────────────────────────────────────────────────────
-const quickLinks = [
+// ── Quick links ────────────────────────────────────────────────────────────
+const quickLinks = computed(() => [
     {
-        label: 'Filialen verwalten',
-        description: 'Standorte anlegen & bearbeiten',
+        label: t('dashboard.quickAccess.manageBranches'),
+        description: t('dashboard.quickAccess.manageBranchesDesc'),
         to: { name: 'branches' },
         icon: BuildingOffice2Icon,
         iconBg: 'bg-indigo-50',
         iconColor: 'text-indigo-600',
     },
     {
-        label: 'Benutzer verwalten',
-        description: 'Zugänge & Rollen konfigurieren',
+        label: t('dashboard.quickAccess.manageUsers'),
+        description: t('dashboard.quickAccess.manageUsersDesc'),
         to: { name: 'users' },
         icon: UserCircleIcon,
         iconBg: 'bg-violet-50',
         iconColor: 'text-violet-600',
     },
-];
+]);
 
 // ── System Info ────────────────────────────────────────────────────────────
-const systemInfo = [
-    { label: 'Version',    value: 'v0.2.0 — Phase 1' },
-    { label: 'Framework',  value: 'Laravel 13 + Vue 3' },
-    { label: 'Auth',       value: 'Sanctum (Token)' },
-    { label: 'Umgebung',   value: 'Development' },
-];
+const systemInfo = computed(() => [
+    { label: t('dashboard.systemInfo.version'),     value: 'v0.3.0 — Phase 1' },
+    { label: t('dashboard.systemInfo.framework'),   value: 'Laravel 13 + Vue 3' },
+    { label: t('dashboard.systemInfo.auth'),        value: 'Sanctum (Token)' },
+    { label: t('dashboard.systemInfo.environment'), value: 'Development' },
+]);
 
-// ── Module Status ──────────────────────────────────────────────────────────
-const modules = [
-    { label: 'Auth & Login',  active: true,  phase: '' },
-    { label: 'Filialen',      active: true,  phase: '' },
-    { label: 'Benutzer',      active: true,  phase: '' },
-    { label: 'Produkte',      active: false, phase: 'Phase 2' },
-    { label: 'Verkauf / POS', active: false, phase: 'Phase 3' },
-    { label: 'Berichte',      active: false, phase: 'Phase 4' },
+// ── Module status ──────────────────────────────────────────────────────────
+const moduleStatusList = [
+    { key: 'auth',     active: true,  phase: '' },
+    { key: 'branches', active: true,  phase: '' },
+    { key: 'users',    active: true,  phase: '' },
+    { key: 'products', active: false, phase: 'phase2' },
+    { key: 'pos',      active: false, phase: 'phase3' },
+    { key: 'reports',  active: false, phase: 'phase4' },
 ];
 </script>

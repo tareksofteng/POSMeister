@@ -16,7 +16,7 @@
                 </div>
                 <div v-if="!collapsed" class="min-w-0">
                     <span class="block text-white font-bold text-sm tracking-tight truncate">POSmeister</span>
-                    <span class="block text-slate-500 text-xs tracking-wide">Management</span>
+                    <span class="block text-slate-500 text-xs tracking-wide">{{ t('app.management') }}</span>
                 </div>
             </div>
         </div>
@@ -25,19 +25,19 @@
         <nav class="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
 
             <!-- Dashboard — always visible -->
-            <NavItem :collapsed="collapsed" :to="{ name: 'dashboard' }" label="Dashboard">
+            <NavItem :collapsed="collapsed" :to="{ name: 'dashboard' }" :label="t('menu.dashboard')">
                 <template #icon><Squares2X2Icon class="nav-icon" /></template>
             </NavItem>
 
             <!-- Dynamic permission-based groups -->
-            <template v-for="group in visibleGroups" :key="group.section">
-                <SidebarSectionLabel v-if="!collapsed && group.items.length" :label="group.section" />
+            <template v-for="group in visibleGroups" :key="group.sectionKey">
+                <SidebarSectionLabel v-if="!collapsed && group.items.length" :label="t(group.sectionKey)" />
 
-                <template v-for="item in group.items" :key="item.key">
+                <template v-for="item in group.items" :key="item.permKey">
                     <NavItem
                         :collapsed="collapsed"
                         :to="item.to"
-                        :label="item.label"
+                        :label="t(item.labelKey)"
                         :disabled="!item.implemented"
                     >
                         <template #icon>
@@ -63,7 +63,7 @@
                     v-if="!collapsed"
                     @click="handleLogout"
                     class="flex-shrink-0 p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
-                    title="Abmelden"
+                    :title="t('auth.signOut')"
                 >
                     <ArrowRightStartOnRectangleIcon class="w-4 h-4" />
                 </button>
@@ -75,27 +75,16 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 import {
-    Squares2X2Icon,
-    ShoppingCartIcon,
-    DocumentTextIcon,
-    TruckIcon,
-    ClipboardDocumentListIcon,
-    TagIcon,
-    ArchiveBoxIcon,
-    UsersIcon,
-    BuildingStorefrontIcon,
-    BanknotesIcon,
-    UserGroupIcon,
-    ChartBarIcon,
-    CogIcon,
-    ArrowRightStartOnRectangleIcon,
-    BuildingOffice2Icon,
-    UserCircleIcon,
-    ShieldCheckIcon,
+    Squares2X2Icon, ShoppingCartIcon, DocumentTextIcon, TruckIcon,
+    ClipboardDocumentListIcon, TagIcon, ArchiveBoxIcon, UsersIcon,
+    BuildingStorefrontIcon, BanknotesIcon, UserGroupIcon, ChartBarIcon,
+    CogIcon, ArrowRightStartOnRectangleIcon, BuildingOffice2Icon,
+    UserCircleIcon, ShieldCheckIcon,
 } from '@heroicons/vue/24/outline';
 
 import NavItem             from './NavItem.vue';
@@ -105,6 +94,7 @@ defineProps({
     collapsed: { type: Boolean, default: false },
 });
 
+const { t }  = useI18n();
 const auth   = useAuthStore();
 const router = useRouter();
 
@@ -112,74 +102,70 @@ const userInitial = computed(() =>
     auth.userName ? auth.userName.charAt(0).toUpperCase() : '?'
 );
 
-// ── Nav structure ──────────────────────────────────────────────────────────
-// Each item: { key (permission key), label, to (route), icon, implemented }
-// Items without a key are always shown (e.g. Dashboard).
-// Admin sees all; others see only items where auth.hasPermission(key) === true.
-// Non-implemented items show "Soon" badge.
+// ── Nav config ─────────────────────────────────────────────────────────────
+// sectionKey → i18n key for section label
+// labelKey   → i18n key for item label
+// permKey    → permission module key (null = always visible)
+// adminOnly  → only show to admins
 
 const NAV_GROUPS = [
     {
-        section: 'Commerce',
+        sectionKey: 'menu.sections.commerce',
         items: [
-            { key: 'pos',        label: 'Point of Sale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: false },
-            { key: 'sales',      label: 'Verkauf',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: false },
-            { key: 'purchases',  label: 'Einkauf',       to: { name: 'purchases' },   icon: TruckIcon,                 implemented: false },
-            { key: 'quotations', label: 'Angebote',      to: { name: 'quotations' },  icon: ClipboardDocumentListIcon, implemented: false },
+            { permKey: 'pos',        labelKey: 'menu.pointOfSale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: false },
+            { permKey: 'sales',      labelKey: 'menu.sales',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: false },
+            { permKey: 'purchases',  labelKey: 'menu.purchases',   to: { name: 'purchases' },   icon: TruckIcon,                 implemented: false },
+            { permKey: 'quotations', labelKey: 'menu.quotations',  to: { name: 'quotations' },  icon: ClipboardDocumentListIcon, implemented: false },
         ],
     },
     {
-        section: 'Catalogue',
+        sectionKey: 'menu.sections.catalogue',
         items: [
-            { key: 'products',  label: 'Produkte', to: { name: 'products' },  icon: TagIcon,        implemented: false },
-            { key: 'inventory', label: 'Inventar', to: { name: 'inventory' }, icon: ArchiveBoxIcon, implemented: false },
+            { permKey: 'products',  labelKey: 'menu.products',  to: { name: 'products' },  icon: TagIcon,        implemented: false },
+            { permKey: 'inventory', labelKey: 'menu.inventory', to: { name: 'inventory' }, icon: ArchiveBoxIcon, implemented: false },
         ],
     },
     {
-        section: 'Stakeholders',
+        sectionKey: 'menu.sections.stakeholders',
         items: [
-            { key: 'customers', label: 'Kunden',     to: { name: 'customers' }, icon: UsersIcon,              implemented: false },
-            { key: 'suppliers', label: 'Lieferanten', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: false },
+            { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: false },
+            { permKey: 'suppliers', labelKey: 'menu.suppliers', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: false },
         ],
     },
     {
-        section: 'Finance & HR',
+        sectionKey: 'menu.sections.financeHr',
         items: [
-            { key: 'finance',   label: 'Finanzen',    to: { name: 'finance' },   icon: BanknotesIcon, implemented: false },
-            { key: 'employees', label: 'Mitarbeiter', to: { name: 'employees' }, icon: UserGroupIcon, implemented: false },
+            { permKey: 'finance',   labelKey: 'menu.finance',   to: { name: 'finance' },   icon: BanknotesIcon, implemented: false },
+            { permKey: 'employees', labelKey: 'menu.employees', to: { name: 'employees' }, icon: UserGroupIcon, implemented: false },
         ],
     },
     {
-        section: 'Reports',
+        sectionKey: 'menu.sections.reports',
         items: [
-            { key: 'reports', label: 'Berichte', to: { name: 'reports' }, icon: ChartBarIcon, implemented: false },
+            { permKey: 'reports', labelKey: 'menu.reports', to: { name: 'reports' }, icon: ChartBarIcon, implemented: false },
         ],
     },
     {
-        section: 'System',
+        sectionKey: 'menu.sections.system',
         items: [
-            { key: 'branches',          label: 'Filialen',      to: { name: 'branches' },         icon: BuildingOffice2Icon, implemented: true },
-            { key: 'users',             label: 'Benutzer',      to: { name: 'users' },             icon: UserCircleIcon,     implemented: true },
-            { key: 'role-permissions',  label: 'Zugriffsrechte', to: { name: 'role-permissions' }, icon: ShieldCheckIcon,    implemented: true, adminOnly: true },
-            { key: null,                label: 'Einstellungen', to: { name: 'settings' },          icon: CogIcon,            implemented: false },
+            { permKey: 'branches',         labelKey: 'menu.branches',         to: { name: 'branches' },         icon: BuildingOffice2Icon, implemented: true  },
+            { permKey: 'users',            labelKey: 'menu.users',            to: { name: 'users' },             icon: UserCircleIcon,     implemented: true  },
+            { permKey: 'role-permissions', labelKey: 'menu.rolePermissions',  to: { name: 'role-permissions' }, icon: ShieldCheckIcon,    implemented: true,  adminOnly: true },
+            { permKey: null,               labelKey: 'menu.settings',         to: { name: 'settings' },          icon: CogIcon,            implemented: false },
         ],
     },
 ];
 
-/** Filter each group's items by permission */
-const visibleGroups = computed(() => {
-    return NAV_GROUPS.map(group => ({
+const visibleGroups = computed(() =>
+    NAV_GROUPS.map(group => ({
         ...group,
         items: group.items.filter(item => {
-            // Items without a permission key are always shown
-            if (!item.key) return true;
-            // Admin-only items: only visible to admins
+            if (!item.permKey) return true;
             if (item.adminOnly) return auth.isAdmin;
-            // Others: check role permission
-            return auth.hasPermission(item.key);
+            return auth.hasPermission(item.permKey);
         }),
-    })).filter(group => group.items.length > 0);
-});
+    })).filter(group => group.items.length > 0)
+);
 
 async function handleLogout() {
     await auth.logout();

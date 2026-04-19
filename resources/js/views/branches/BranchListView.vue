@@ -4,17 +4,17 @@
         <!-- Page header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Branches</h1>
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('branches.title') }}</h1>
                 <p class="mt-1 text-sm text-gray-500">
-                    Manage your business locations.
+                    {{ t('branches.subtitle') }}
                     <span v-if="store.meta" class="text-gray-400">
-                        ({{ store.meta.total }} total)
+                        ({{ store.meta.total }} {{ t('common.total') }})
                     </span>
                 </p>
             </div>
             <button @click="openCreate" class="btn-primary">
                 <PlusIcon class="w-4 h-4" />
-                New Branch
+                {{ t('branches.new') }}
             </button>
         </div>
 
@@ -25,7 +25,7 @@
                 <input
                     v-model="searchQuery"
                     type="search"
-                    placeholder="Search name or code…"
+                    :placeholder="t('branches.searchPlaceholder')"
                     class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
             </div>
@@ -34,9 +34,9 @@
                 v-model="statusFilter"
                 class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             >
-                <option value="">All statuses</option>
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
+                <option value="">{{ t('common.allStatuses') }}</option>
+                <option value="1">{{ t('common.active') }}</option>
+                <option value="0">{{ t('common.inactive') }}</option>
             </select>
         </div>
 
@@ -52,8 +52,8 @@
             :loading="store.loading"
             :meta="store.meta"
             sort-key="name"
-            empty-title="No branches found"
-            empty-message="Create your first branch to get started."
+            :empty-title="t('branches.emptyTitle')"
+            :empty-message="t('branches.emptyMessage')"
             @page-change="store.fetch({ page: $event })"
         >
             <template #row-actions="{ row }">
@@ -86,9 +86,9 @@
     <!-- Delete confirm -->
     <ConfirmDialog
         v-model="deleteOpen"
-        title="Delete Branch"
-        :message="`Are you sure you want to delete &quot;${deleteTarget?.name}&quot;? This action cannot be undone.`"
-        confirm-label="Delete"
+        :title="t('branches.deleteTitle')"
+        :message="t('branches.deleteMessage', { name: deleteTarget?.name ?? '' })"
+        :confirm-label="t('common.delete')"
         :danger="true"
         :loading="deleteLoading"
         @confirm="executeDelete"
@@ -96,7 +96,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useBranchStore } from '@/stores/branch';
 import { branchService } from '@/services/branchService';
 import { useDebounce } from '@vueuse/core';
@@ -112,18 +113,19 @@ import {
     TrashIcon,
 } from '@heroicons/vue/24/outline';
 
+const { t } = useI18n();
 const store = useBranchStore();
 
 // ── Table columns ─────────────────────────────────────────────────────────
-const columns = [
-    { key: 'code',       label: 'Code',    bold: true, width: '110px' },
-    { key: 'name',       label: 'Branch Name' },
-    { key: 'phone',      label: 'Phone' },
-    { key: 'email',      label: 'Email' },
-    { key: 'user_count', label: 'Users',   width: '80px',  align: 'center' },
-    { key: 'is_active',  label: 'Status',  type: 'badge',  width: '110px' },
-    { key: '_actions',   label: '',        type: 'actions', width: '80px' },
-];
+const columns = computed(() => [
+    { key: 'code',       label: t('common.code'),        bold: true, width: '110px' },
+    { key: 'name',       label: t('branches.name') },
+    { key: 'phone',      label: t('common.phone') },
+    { key: 'email',      label: t('common.email') },
+    { key: 'user_count', label: t('branches.userCount'), width: '80px',  align: 'center' },
+    { key: 'is_active',  label: t('common.status'),      type: 'badge',  width: '110px' },
+    { key: '_actions',   label: '',                       type: 'actions', width: '80px' },
+]);
 
 // ── Filters ───────────────────────────────────────────────────────────────
 const searchQuery  = ref('');
@@ -175,7 +177,7 @@ async function executeDelete() {
         store.fetch();
         store.invalidateCache();
     } catch (err) {
-        alert(err.response?.data?.message ?? 'Failed to delete branch.');
+        alert(err.response?.data?.message ?? t('branches.deleteFailed'));
     } finally {
         deleteLoading.value = false;
     }

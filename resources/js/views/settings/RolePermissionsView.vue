@@ -4,10 +4,9 @@
         <!-- Page header -->
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Zugriffsrechte</h1>
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('permissions.title') }}</h1>
                 <p class="mt-1 text-sm text-gray-500">
-                    Konfigurieren Sie, welche Module für jede Benutzerrolle sichtbar sind.
-                    Administratoren haben immer vollständigen Zugriff.
+                    {{ t('permissions.subtitle') }}
                 </p>
             </div>
             <button
@@ -20,7 +19,7 @@
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
                 <CheckIcon v-else class="w-4 h-4" />
-                {{ saving ? 'Speichert…' : 'Änderungen speichern' }}
+                {{ saving ? t('permissions.saving') : t('permissions.saveButton') }}
             </button>
         </div>
 
@@ -28,7 +27,7 @@
         <Transition name="fade">
             <div v-if="saved" class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
                 <CheckCircleIcon class="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <p class="text-sm font-medium text-emerald-700">Zugriffsrechte wurden erfolgreich gespeichert.</p>
+                <p class="text-sm font-medium text-emerald-700">{{ t('permissions.saved') }}</p>
             </div>
         </Transition>
 
@@ -56,26 +55,26 @@
                 <!-- Table header -->
                 <div class="grid grid-cols-[1fr_100px_140px_140px] border-b border-gray-200 bg-gray-50">
                     <div class="px-6 py-3.5">
-                        <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">Modul</span>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">{{ t('permissions.moduleColumn') }}</span>
                     </div>
                     <!-- Admin column -->
                     <div class="flex flex-col items-center justify-center px-4 py-3.5 border-l border-gray-200">
                         <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center mb-1">
                             <ShieldCheckIcon class="w-4 h-4 text-white" />
                         </div>
-                        <span class="text-xs font-semibold text-gray-700">Admin</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ t('permissions.adminLabel') }}</span>
                     </div>
                     <!-- Manager column -->
                     <div class="flex flex-col items-center justify-center px-4 py-3.5 border-l border-gray-200">
                         <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center mb-1">
                             <UserGroupIcon class="w-4 h-4 text-violet-600" />
                         </div>
-                        <span class="text-xs font-semibold text-gray-700">Manager</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ t('permissions.managerLabel') }}</span>
                         <button
                             @click="toggleAll('manager')"
                             class="mt-1.5 text-xs text-indigo-500 hover:text-indigo-700 font-medium"
                         >
-                            {{ allSelected('manager') ? 'Alle abwählen' : 'Alle wählen' }}
+                            {{ allSelected('manager') ? t('permissions.deselectAll') : t('permissions.selectAll') }}
                         </button>
                     </div>
                     <!-- Cashier column -->
@@ -83,12 +82,12 @@
                         <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center mb-1">
                             <UserIcon class="w-4 h-4 text-amber-600" />
                         </div>
-                        <span class="text-xs font-semibold text-gray-700">Kassierer</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ t('permissions.cashierLabel') }}</span>
                         <button
                             @click="toggleAll('cashier')"
                             class="mt-1.5 text-xs text-indigo-500 hover:text-indigo-700 font-medium"
                         >
-                            {{ allSelected('cashier') ? 'Alle abwählen' : 'Alle wählen' }}
+                            {{ allSelected('cashier') ? t('permissions.deselectAll') : t('permissions.selectAll') }}
                         </button>
                     </div>
                 </div>
@@ -169,7 +168,7 @@
                 <!-- Footer summary -->
                 <div class="grid grid-cols-[1fr_100px_140px_140px] border-t border-gray-200 bg-gray-50">
                     <div class="px-6 py-3 flex items-center">
-                        <span class="text-xs text-gray-400">{{ totalModules }} Module gesamt</span>
+                        <span class="text-xs text-gray-400">{{ t('permissions.totalModules', { count: totalModules }) }}</span>
                     </div>
                     <div class="flex items-center justify-center border-l border-gray-200 py-3">
                         <span class="text-xs font-semibold text-indigo-600">{{ totalModules }}/{{ totalModules }}</span>
@@ -194,15 +193,15 @@
                 <div class="w-5 h-5 rounded bg-indigo-100 flex items-center justify-center">
                     <CheckIcon class="w-3 h-3 text-indigo-600" />
                 </div>
-                Admin — immer vollständiger Zugriff
+                {{ t('permissions.legend.admin') }}
             </div>
             <div class="flex items-center gap-2">
                 <div class="h-3 w-5 rounded-full bg-indigo-600"></div>
-                Manager — konfigurierbar
+                {{ t('permissions.legend.manager') }}
             </div>
             <div class="flex items-center gap-2">
                 <div class="h-3 w-5 rounded-full bg-amber-500"></div>
-                Kassierer — konfigurierbar
+                {{ t('permissions.legend.cashier') }}
             </div>
         </div>
 
@@ -211,6 +210,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { rolePermissionService } from '@/services/rolePermissionService';
 import {
     CheckIcon,
@@ -233,54 +233,58 @@ import {
     BuildingOffice2Icon,
 } from '@heroicons/vue/24/outline';
 
-// ── Module groups definition ───────────────────────────────────────────────
-const MODULE_GROUPS = [
-    {
-        section: 'Commerce',
-        items: [
-            { key: 'pos',        label: 'Point of Sale', description: 'Kassensystem', icon: ShoppingCartIcon,         iconBg: 'bg-indigo-50',  iconColor: 'text-indigo-600' },
-            { key: 'sales',      label: 'Verkauf',       description: 'Belege & Rechnungen', icon: DocumentTextIcon,  iconBg: 'bg-blue-50',    iconColor: 'text-blue-600' },
-            { key: 'purchases',  label: 'Einkauf',       description: 'Bestellwesen', icon: TruckIcon,                iconBg: 'bg-amber-50',   iconColor: 'text-amber-600' },
-            { key: 'quotations', label: 'Angebote',      description: 'Kundenangebote', icon: ClipboardDocumentListIcon, iconBg: 'bg-teal-50', iconColor: 'text-teal-600' },
-        ],
-    },
-    {
-        section: 'Catalogue',
-        items: [
-            { key: 'products',  label: 'Produkte',   description: 'Artikelverwaltung', icon: TagIcon,       iconBg: 'bg-violet-50',  iconColor: 'text-violet-600' },
-            { key: 'inventory', label: 'Inventar',   description: 'Lagerbestand',      icon: ArchiveBoxIcon, iconBg: 'bg-orange-50', iconColor: 'text-orange-600' },
-        ],
-    },
-    {
-        section: 'Stakeholders',
-        items: [
-            { key: 'customers', label: 'Kunden',     description: 'Kundenstamm',      icon: UsersIcon,              iconBg: 'bg-green-50',  iconColor: 'text-green-600' },
-            { key: 'suppliers', label: 'Lieferanten', description: 'Lieferantenpflege', icon: BuildingStorefrontIcon, iconBg: 'bg-slate-100', iconColor: 'text-slate-600' },
-        ],
-    },
-    {
-        section: 'Finance & HR',
-        items: [
-            { key: 'finance',   label: 'Finanzen',    description: 'Buchhaltung & Zahlungen', icon: BanknotesIcon, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
-            { key: 'employees', label: 'Mitarbeiter', description: 'Personalverwaltung',      icon: UserGroupIcon, iconBg: 'bg-pink-50',    iconColor: 'text-pink-600' },
-        ],
-    },
-    {
-        section: 'Reports',
-        items: [
-            { key: 'reports', label: 'Berichte', description: 'Auswertungen & Statistiken', icon: ChartBarIcon, iconBg: 'bg-cyan-50', iconColor: 'text-cyan-600' },
-        ],
-    },
-    {
-        section: 'System',
-        items: [
-            { key: 'branches', label: 'Filialen', description: 'Standortverwaltung', icon: BuildingOffice2Icon, iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
-            { key: 'users',    label: 'Benutzer', description: 'Zugangsverwaltung',  icon: UserCircleIcon,     iconBg: 'bg-violet-50', iconColor: 'text-violet-600' },
-        ],
-    },
-];
+const { t } = useI18n();
 
-const totalModules = MODULE_GROUPS.reduce((n, g) => n + g.items.length, 0);
+// ── Module groups definition ───────────────────────────────────────────────
+const MODULE_GROUPS = computed(() => [
+    {
+        section: t('permissions.sections.commerce'),
+        items: [
+            { key: 'pos',        label: t('permissions.modules.pos.label'),        description: t('permissions.modules.pos.description'),        icon: ShoppingCartIcon,         iconBg: 'bg-indigo-50',  iconColor: 'text-indigo-600' },
+            { key: 'sales',      label: t('permissions.modules.sales.label'),      description: t('permissions.modules.sales.description'),      icon: DocumentTextIcon,         iconBg: 'bg-blue-50',    iconColor: 'text-blue-600' },
+            { key: 'purchases',  label: t('permissions.modules.purchases.label'),  description: t('permissions.modules.purchases.description'),  icon: TruckIcon,                iconBg: 'bg-amber-50',   iconColor: 'text-amber-600' },
+            { key: 'quotations', label: t('permissions.modules.quotations.label'), description: t('permissions.modules.quotations.description'), icon: ClipboardDocumentListIcon, iconBg: 'bg-teal-50',   iconColor: 'text-teal-600' },
+        ],
+    },
+    {
+        section: t('permissions.sections.catalogue'),
+        items: [
+            { key: 'products',  label: t('permissions.modules.products.label'),  description: t('permissions.modules.products.description'),  icon: TagIcon,        iconBg: 'bg-violet-50',  iconColor: 'text-violet-600' },
+            { key: 'inventory', label: t('permissions.modules.inventory.label'), description: t('permissions.modules.inventory.description'), icon: ArchiveBoxIcon,  iconBg: 'bg-orange-50', iconColor: 'text-orange-600' },
+        ],
+    },
+    {
+        section: t('permissions.sections.stakeholders'),
+        items: [
+            { key: 'customers', label: t('permissions.modules.customers.label'), description: t('permissions.modules.customers.description'), icon: UsersIcon,              iconBg: 'bg-green-50',  iconColor: 'text-green-600' },
+            { key: 'suppliers', label: t('permissions.modules.suppliers.label'), description: t('permissions.modules.suppliers.description'), icon: BuildingStorefrontIcon,  iconBg: 'bg-slate-100', iconColor: 'text-slate-600' },
+        ],
+    },
+    {
+        section: t('permissions.sections.financeHr'),
+        items: [
+            { key: 'finance',   label: t('permissions.modules.finance.label'),   description: t('permissions.modules.finance.description'),   icon: BanknotesIcon,  iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+            { key: 'employees', label: t('permissions.modules.employees.label'), description: t('permissions.modules.employees.description'), icon: UserGroupIcon,   iconBg: 'bg-pink-50',    iconColor: 'text-pink-600' },
+        ],
+    },
+    {
+        section: t('permissions.sections.reports'),
+        items: [
+            { key: 'reports', label: t('permissions.modules.reports.label'), description: t('permissions.modules.reports.description'), icon: ChartBarIcon, iconBg: 'bg-cyan-50', iconColor: 'text-cyan-600' },
+        ],
+    },
+    {
+        section: t('permissions.sections.system'),
+        items: [
+            { key: 'branches', label: t('permissions.modules.branches.label'), description: t('permissions.modules.branches.description'), icon: BuildingOffice2Icon, iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
+            { key: 'users',    label: t('permissions.modules.users.label'),    description: t('permissions.modules.users.description'),    icon: UserCircleIcon,      iconBg: 'bg-violet-50', iconColor: 'text-violet-600' },
+        ],
+    },
+]);
+
+const totalModules = computed(() =>
+    MODULE_GROUPS.value.reduce((n, g) => n + g.items.length, 0)
+);
 
 // ── State ──────────────────────────────────────────────────────────────────
 const loading = ref(true);
@@ -299,7 +303,7 @@ onMounted(async () => {
         localPerms.manager = [...(data.data.manager ?? [])];
         localPerms.cashier = [...(data.data.cashier ?? [])];
     } catch {
-        error.value = 'Zugriffsrechte konnten nicht geladen werden.';
+        error.value = t('permissions.loadError');
     } finally {
         loading.value = false;
     }
@@ -321,14 +325,14 @@ function toggle(role, key) {
 }
 
 function allSelected(role) {
-    return localPerms[role].length === totalModules;
+    return localPerms[role].length === totalModules.value;
 }
 
 function toggleAll(role) {
     if (allSelected(role)) {
         localPerms[role] = [];
     } else {
-        const allKeys = MODULE_GROUPS.flatMap(g => g.items.map(m => m.key));
+        const allKeys = MODULE_GROUPS.value.flatMap(g => g.items.map(m => m.key));
         localPerms[role] = [...allKeys];
     }
     saved.value = false;
@@ -348,7 +352,7 @@ async function saveAll() {
         saved.value = true;
         setTimeout(() => (saved.value = false), 4000);
     } catch (err) {
-        error.value = err.response?.data?.message ?? 'Speichern fehlgeschlagen.';
+        error.value = err.response?.data?.message ?? t('permissions.saveError');
     } finally {
         saving.value = false;
     }

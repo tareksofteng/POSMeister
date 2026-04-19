@@ -1,7 +1,7 @@
 <template>
     <Modal
         :model-value="open"
-        :title="isEdit ? 'Edit Branch' : 'New Branch'"
+        :title="isEdit ? t('branches.editTitle') : t('branches.createTitle')"
         size="md"
         @update:model-value="$emit('update:open', $event)"
     >
@@ -9,23 +9,23 @@
 
             <!-- Code + Name -->
             <div class="grid grid-cols-2 gap-4">
-                <FormField label="Branch Code" :error="errors.code" required>
+                <FormField :label="t('branches.code')" :error="errors.code" required>
                     <input
                         v-model="form.code"
                         type="text"
-                        placeholder="BR01"
+                        :placeholder="t('branches.codePlaceholder')"
                         maxlength="20"
                         :class="inputClass(errors.code)"
                         :disabled="isEdit"
                     />
-                    <p v-if="isEdit" class="mt-1 text-xs text-gray-400">Code cannot be changed after creation.</p>
+                    <p v-if="isEdit" class="mt-1 text-xs text-gray-400">{{ t('branches.codeHint') }}</p>
                 </FormField>
 
-                <FormField label="Branch Name" :error="errors.name" required>
+                <FormField :label="t('branches.name')" :error="errors.name" required>
                     <input
                         v-model="form.name"
                         type="text"
-                        placeholder="Main Branch"
+                        :placeholder="t('branches.namePlaceholder')"
                         :class="inputClass(errors.name)"
                     />
                 </FormField>
@@ -33,31 +33,31 @@
 
             <!-- Phone + Email -->
             <div class="grid grid-cols-2 gap-4">
-                <FormField label="Phone" :error="errors.phone">
+                <FormField :label="t('common.phone')" :error="errors.phone">
                     <input
                         v-model="form.phone"
                         type="tel"
-                        placeholder="+49 30 12345678"
+                        :placeholder="t('branches.phonePlaceholder')"
                         :class="inputClass(errors.phone)"
                     />
                 </FormField>
 
-                <FormField label="Email" :error="errors.email">
+                <FormField :label="t('common.email')" :error="errors.email">
                     <input
                         v-model="form.email"
                         type="email"
-                        placeholder="branch@example.com"
+                        :placeholder="t('branches.emailPlaceholder')"
                         :class="inputClass(errors.email)"
                     />
                 </FormField>
             </div>
 
             <!-- Address -->
-            <FormField label="Address" :error="errors.address">
+            <FormField :label="t('branches.address')" :error="errors.address">
                 <textarea
                     v-model="form.address"
                     rows="2"
-                    placeholder="Street, City, Country"
+                    :placeholder="t('branches.addressPlaceholder')"
                     :class="inputClass(errors.address)"
                 />
             </FormField>
@@ -75,7 +75,7 @@
                     <span :class="['inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform', form.is_active ? 'translate-x-4' : 'translate-x-1']" />
                 </button>
                 <label class="text-sm font-medium text-gray-700">
-                    {{ form.is_active ? 'Active' : 'Inactive' }}
+                    {{ form.is_active ? t('common.active') : t('common.inactive') }}
                 </label>
             </div>
 
@@ -91,7 +91,7 @@
                 @click="$emit('update:open', false)"
                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
-                Cancel
+                {{ t('common.cancel') }}
             </button>
             <button
                 type="submit"
@@ -103,7 +103,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                {{ isEdit ? 'Save Changes' : 'Create Branch' }}
+                {{ isEdit ? t('branches.saveChanges') : t('branches.createBranch') }}
             </button>
         </template>
     </Modal>
@@ -111,9 +111,12 @@
 
 <script setup>
 import { ref, reactive, watch, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import Modal     from '@/components/ui/Modal.vue';
 import FormField from '@/components/ui/FormField.vue';
 import { branchService } from '@/services/branchService';
+
+const { t } = useI18n();
 
 const props = defineProps({
     open:   { type: Boolean, required: true },
@@ -179,7 +182,7 @@ async function handleSubmit() {
                 if (field in errors) errors[field] = msgs[0];
             });
         } else {
-            globalError.value = data?.message ?? 'An unexpected error occurred.';
+            globalError.value = data?.message ?? t('common.unexpectedError');
         }
     } finally {
         submitting.value = false;
@@ -188,8 +191,8 @@ async function handleSubmit() {
 
 function clientValidate() {
     let valid = true;
-    if (!form.code.trim()) { errors.code = 'Branch code is required.'; valid = false; }
-    if (!form.name.trim()) { errors.name = 'Branch name is required.'; valid = false; }
+    if (!form.code.trim()) { errors.code = t('branches.codeRequired'); valid = false; }
+    if (!form.name.trim()) { errors.name = t('branches.nameRequired'); valid = false; }
     return valid;
 }
 

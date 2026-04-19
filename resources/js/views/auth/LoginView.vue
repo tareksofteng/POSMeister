@@ -15,23 +15,25 @@
 
             <div>
                 <blockquote class="text-slate-300 text-2xl font-light leading-snug">
-                    "Precision at the point of sale.<br>
-                    Clarity across the business."
+                    {{ t('app.tagline') }}
                 </blockquote>
-                <p class="mt-6 text-slate-500 text-sm">
-                    Professional retail management — from product to payment.
-                </p>
+                <p class="mt-6 text-slate-500 text-sm">{{ t('app.subtitle') }}</p>
             </div>
 
             <div class="flex gap-6 text-xs text-slate-600">
-                <span>Multi-branch</span>
-                <span>Real-time stock</span>
-                <span>Full accounting</span>
+                <span>{{ t('app.features.multiBranch') }}</span>
+                <span>{{ t('app.features.realTimeStock') }}</span>
+                <span>{{ t('app.features.fullAccounting') }}</span>
             </div>
         </div>
 
         <!-- ── Right panel (form) ─────────────────────────────────────────── -->
         <div class="flex flex-1 flex-col justify-center items-center px-6 py-12 bg-white">
+
+            <!-- Language switcher (top-right on login page) -->
+            <div class="absolute top-4 right-4">
+                <LanguageSwitcher />
+            </div>
 
             <!-- Mobile logo -->
             <div class="mb-8 flex md:hidden items-center gap-3">
@@ -45,10 +47,9 @@
             </div>
 
             <div class="w-full max-w-sm">
-                <!-- Heading -->
                 <div class="mb-8">
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Sign in</h1>
-                    <p class="mt-1 text-sm text-gray-500">Enter your credentials to access your workspace.</p>
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('auth.signIn') }}</h1>
+                    <p class="mt-1 text-sm text-gray-500">{{ t('auth.signInSubtitle') }}</p>
                 </div>
 
                 <!-- Error alert -->
@@ -57,22 +58,18 @@
                     enter-from-class="opacity-0 -translate-y-1"
                     enter-to-class="opacity-100 translate-y-0"
                 >
-                    <div
-                        v-if="auth.error"
-                        class="mb-5 flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3"
-                    >
+                    <div v-if="auth.error" class="mb-5 flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3">
                         <ExclamationCircleIcon class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                         <p class="text-sm text-red-700">{{ auth.error }}</p>
                     </div>
                 </Transition>
 
-                <!-- Form -->
                 <form @submit.prevent="handleSubmit" class="space-y-5" novalidate>
 
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Email address
+                            {{ t('auth.emailLabel') }}
                         </label>
                         <input
                             id="email"
@@ -80,11 +77,10 @@
                             type="email"
                             autocomplete="email"
                             required
-                            placeholder="admin@posmeister.local"
+                            :placeholder="t('auth.emailPlaceholder')"
                             :class="[
                                 'block w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400',
-                                'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
-                                'transition-colors',
+                                'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors',
                                 fieldErrors.email ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-white',
                             ]"
                         />
@@ -94,7 +90,7 @@
                     <!-- Password -->
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Password
+                            {{ t('auth.passwordLabel') }}
                         </label>
                         <div class="relative">
                             <input
@@ -106,8 +102,7 @@
                                 placeholder="••••••••"
                                 :class="[
                                     'block w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 pr-10',
-                                    'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
-                                    'transition-colors',
+                                    'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors',
                                     fieldErrors.password ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-white',
                                 ]"
                             />
@@ -134,11 +129,10 @@
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
-                        {{ auth.loading ? 'Signing in…' : 'Sign in' }}
+                        {{ auth.loading ? t('auth.signingIn') : t('auth.signInButton') }}
                     </button>
 
                 </form>
-
             </div>
         </div>
 
@@ -148,24 +142,19 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import { ExclamationCircleIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline';
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
 
-const auth   = useAuthStore();
+const { t } = useI18n();
+const auth  = useAuthStore();
 const router = useRouter();
 const route  = useRoute();
 
 const showPassword = ref(false);
-
-const form = reactive({
-    email:    '',
-    password: '',
-});
-
-const fieldErrors = reactive({
-    email:    '',
-    password: '',
-});
+const form = reactive({ email: '', password: '' });
+const fieldErrors = reactive({ email: '', password: '' });
 
 function validate() {
     fieldErrors.email    = '';
@@ -173,29 +162,19 @@ function validate() {
     let valid = true;
 
     if (!form.email) {
-        fieldErrors.email = 'Email address is required.';
-        valid = false;
+        fieldErrors.email = t('auth.emailRequired'); valid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-        fieldErrors.email = 'Please enter a valid email address.';
-        valid = false;
+        fieldErrors.email = t('auth.emailInvalid'); valid = false;
     }
-
     if (!form.password) {
-        fieldErrors.password = 'Password is required.';
-        valid = false;
+        fieldErrors.password = t('auth.passwordRequired'); valid = false;
     }
-
     return valid;
 }
 
 async function handleSubmit() {
     if (!validate()) return;
-
     const success = await auth.login({ email: form.email, password: form.password });
-
-    if (success) {
-        const redirect = route.query.redirect || '/dashboard';
-        router.push(redirect);
-    }
+    if (success) router.push(route.query.redirect || '/dashboard');
 }
 </script>
