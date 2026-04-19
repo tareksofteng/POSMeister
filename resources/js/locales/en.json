@@ -3,7 +3,11 @@
     "name": "POSmeister",
     "tagline": "Precision at the point of sale.\nClarity across the business.",
     "subtitle": "Professional retail management — from product to payment.",
-    "features": { "multiBranch": "Multi-branch", "realTimeStock": "Real-time stock", "fullAccounting": "Full accounting" },
+    "features": {
+      "multiBranch": "Multi-branch",
+      "realTimeStock": "Real-time stock",
+      "fullAccounting": "Full accounting"
+    },
     "management": "Management"
   },
   "menu": {
@@ -22,6 +26,7 @@
     "branches": "Branches",
     "users": "Users",
     "rolePermissions": "Access Control",
+    "productSettings": "Product Settings",
     "settings": "Settings",
     "sections": {
       "commerce": "Commerce",
@@ -57,7 +62,18 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
-    "code": "Code"
+    "code": "Code",
+    "nameRequired": "Name is required.",
+    "description": "Description",
+    "deleteConfirmTitle": "Confirm Delete",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "deactivateTitle": "Deactivate",
+    "activateTitle": "Activate",
+    "deactivateMessage": "Deactivate \"{name}\"?",
+    "activateMessage": "Activate \"{name}\"?",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "createdAt": "Created"
   },
   "auth": {
     "signIn": "Sign in",
@@ -81,7 +97,11 @@
     },
     "subtitle": "Here is the current system overview.",
     "systemActive": "System active",
-    "roleBadges": { "admin": "Administrator", "manager": "Manager", "cashier": "Cashier" },
+    "roleBadges": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "cashier": "Cashier"
+    },
     "kpi": {
       "totalBranches": "Total Branches",
       "totalUsers": "Total Users",
@@ -125,7 +145,11 @@
         "pos": "Sales / POS",
         "reports": "Reports"
       },
-      "phases": { "phase2": "Phase 2", "phase3": "Phase 3", "phase4": "Phase 4" }
+      "phases": {
+        "phase2": "Phase 2",
+        "phase3": "Phase 3",
+        "phase4": "Phase 4"
+      }
     }
   },
   "branches": {
@@ -190,7 +214,11 @@
     "allStatuses": "All statuses",
     "emptyTitle": "No users found",
     "emptyMessage": "Create your first user to get started.",
-    "roles": { "admin": "Admin", "manager": "Manager", "cashier": "Cashier" },
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "cashier": "Cashier"
+    },
     "deactivateTitle": "Deactivate User",
     "activateTitle": "Activate User",
     "deactivateMessage": "Deactivate \"{name}\"? They will lose access immediately.",
@@ -231,19 +259,58 @@
       "system": "System"
     },
     "modules": {
-      "pos":        { "label": "Point of Sale",  "description": "Cash register system" },
-      "sales":      { "label": "Sales",          "description": "Invoices & receipts" },
-      "purchases":  { "label": "Purchases",      "description": "Order management" },
-      "quotations": { "label": "Quotations",     "description": "Customer quotes" },
-      "products":   { "label": "Products",       "description": "Item catalogue" },
-      "inventory":  { "label": "Inventory",      "description": "Stock management" },
-      "customers":  { "label": "Customers",      "description": "Customer records" },
-      "suppliers":  { "label": "Suppliers",      "description": "Supplier management" },
-      "finance":    { "label": "Finance",        "description": "Accounting & payments" },
-      "employees":  { "label": "Employees",      "description": "HR management" },
-      "reports":    { "label": "Reports",        "description": "Analytics & statistics" },
-      "branches":   { "label": "Branches",       "description": "Location management" },
-      "users":      { "label": "Users",          "description": "Access management" }
+      "pos": {
+        "label": "Point of Sale",
+        "description": "Cash register system"
+      },
+      "sales": {
+        "label": "Sales",
+        "description": "Invoices & receipts"
+      },
+      "purchases": {
+        "label": "Purchases",
+        "description": "Order management"
+      },
+      "quotations": {
+        "label": "Quotations",
+        "description": "Customer quotes"
+      },
+      "products": {
+        "label": "Products",
+        "description": "Item catalogue"
+      },
+      "inventory": {
+        "label": "Inventory",
+        "description": "Stock management"
+      },
+      "customers": {
+        "label": "Customers",
+        "description": "Customer records"
+      },
+      "suppliers": {
+        "label": "Suppliers",
+        "description": "Supplier management"
+      },
+      "finance": {
+        "label": "Finance",
+        "description": "Accounting & payments"
+      },
+      "employees": {
+        "label": "Employees",
+        "description": "HR management"
+      },
+      "reports": {
+        "label": "Reports",
+        "description": "Analytics & statistics"
+      },
+      "branches": {
+        "label": "Branches",
+        "description": "Location management"
+      },
+      "users": {
+        "label": "Users",
+        "description": "Access management"
+      }
     }
   },
   "language": {
@@ -252,5 +319,76 @@
     "de": "Deutsch",
     "bn": "বাংলা",
     "ar": "العربية"
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Manage your product catalogue.",
+    "new": "New Product",
+    "createTitle": "Create Product",
+    "editTitle": "Edit Product",
+    "createProduct": "Create Product",
+    "emptyTitle": "No products yet",
+    "emptyMessage": "Create your first product to get started.",
+    "searchPlaceholder": "Search by name, SKU or barcode…",
+    "allCategories": "All Categories",
+    "allBrands": "All Brands",
+    "sku": "SKU",
+    "skuHint": "Leave blank to auto-generate",
+    "skuPlaceholder": "P-000001",
+    "barcode": "Barcode",
+    "barcodePlaceholder": "EAN / UPC",
+    "namePlaceholder": "Product name",
+    "descriptionPlaceholder": "Optional description",
+    "category": "Category",
+    "noCategory": "No category",
+    "brand": "Brand",
+    "noBrand": "No brand",
+    "unit": "Unit",
+    "noUnit": "No unit",
+    "costPrice": "Cost Price",
+    "sellingPrice": "Selling Price",
+    "sellingPriceRequired": "Selling price is required.",
+    "wholesalePrice": "Wholesale Price",
+    "minSellingPrice": "Min. Selling Price",
+    "taxRate": "VAT Rate",
+    "reorderLevel": "Reorder Level",
+    "isService": "Service product (no stock)",
+    "profitMargin": "Profit margin",
+    "sectionBasic": "Basic Information",
+    "sectionPricing": "Pricing & Tax",
+    "sectionSettings": "Settings",
+    "tax": {
+      "exempt": "Tax exempt",
+      "reduced": "Reduced rate",
+      "standard": "Standard rate"
+    },
+    "settings": {
+      "title": "Product Settings",
+      "subtitle": "Manage categories, brands and units of measure."
+    },
+    "categories": {
+      "title": "Product Categories",
+      "tab": "Categories"
+    },
+    "brands": {
+      "title": "Brands",
+      "tab": "Brands"
+    },
+    "units": {
+      "title": "Units of Measure",
+      "tab": "Units",
+      "symbol": "Symbol"
+    },
+    "image": "Product Image",
+    "noImage": "No image",
+    "imageHint": "JPG, PNG or WebP · max. 2 MB",
+    "removeImage": "Remove image",
+    "sectionImage": "Product Image",
+    "viewDetail": "View details",
+    "backToList": "Back to Products",
+    "detailTitle": "Product Details",
+    "pricingOverview": "Pricing",
+    "stockInfo": "Stock & Settings",
+    "notAvailable": "n/a"
   }
 }

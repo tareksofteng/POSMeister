@@ -3,7 +3,11 @@
     "name": "POSmeister",
     "tagline": "Präzision am Point of Sale.\nKlarheit im gesamten Unternehmen.",
     "subtitle": "Professionelles Retail-Management — vom Produkt zur Zahlung.",
-    "features": { "multiBranch": "Mehrere Filialen", "realTimeStock": "Echtzeit-Lagerbestand", "fullAccounting": "Vollständige Buchhaltung" },
+    "features": {
+      "multiBranch": "Mehrere Filialen",
+      "realTimeStock": "Echtzeit-Lagerbestand",
+      "fullAccounting": "Vollständige Buchhaltung"
+    },
     "management": "Management"
   },
   "menu": {
@@ -22,6 +26,7 @@
     "branches": "Filialen",
     "users": "Benutzer",
     "rolePermissions": "Zugriffsrechte",
+    "productSettings": "Produkteinstellungen",
     "settings": "Einstellungen",
     "sections": {
       "commerce": "Commerce",
@@ -57,7 +62,18 @@
     "name": "Name",
     "email": "E-Mail",
     "phone": "Telefon",
-    "code": "Code"
+    "code": "Code",
+    "nameRequired": "Name ist erforderlich.",
+    "description": "Beschreibung",
+    "deleteConfirmTitle": "Löschen bestätigen",
+    "deleteConfirmMessage": "Möchten Sie \"{name}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deactivateTitle": "Deaktivieren",
+    "activateTitle": "Aktivieren",
+    "deactivateMessage": "\"{name}\" deaktivieren?",
+    "activateMessage": "\"{name}\" aktivieren?",
+    "deactivate": "Deaktivieren",
+    "activate": "Aktivieren",
+    "createdAt": "Erstellt am"
   },
   "auth": {
     "signIn": "Anmelden",
@@ -81,7 +97,11 @@
     },
     "subtitle": "Hier ist die aktuelle Systemübersicht.",
     "systemActive": "System aktiv",
-    "roleBadges": { "admin": "Administrator", "manager": "Manager", "cashier": "Kassierer" },
+    "roleBadges": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "cashier": "Kassierer"
+    },
     "kpi": {
       "totalBranches": "Filialen gesamt",
       "totalUsers": "Benutzer gesamt",
@@ -125,7 +145,11 @@
         "pos": "Verkauf / POS",
         "reports": "Berichte"
       },
-      "phases": { "phase2": "Phase 2", "phase3": "Phase 3", "phase4": "Phase 4" }
+      "phases": {
+        "phase2": "Phase 2",
+        "phase3": "Phase 3",
+        "phase4": "Phase 4"
+      }
     }
   },
   "branches": {
@@ -190,7 +214,11 @@
     "allStatuses": "Alle Status",
     "emptyTitle": "Keine Benutzer gefunden",
     "emptyMessage": "Legen Sie Ihren ersten Benutzer an.",
-    "roles": { "admin": "Administrator", "manager": "Manager", "cashier": "Kassierer" },
+    "roles": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "cashier": "Kassierer"
+    },
     "deactivateTitle": "Benutzer deaktivieren",
     "activateTitle": "Benutzer aktivieren",
     "deactivateMessage": "\"{name}\" deaktivieren? Der Zugang wird sofort gesperrt.",
@@ -231,19 +259,58 @@
       "system": "System"
     },
     "modules": {
-      "pos":        { "label": "Kassensystem",  "description": "POS-Terminal" },
-      "sales":      { "label": "Verkauf",       "description": "Belege & Rechnungen" },
-      "purchases":  { "label": "Einkauf",       "description": "Bestellwesen" },
-      "quotations": { "label": "Angebote",      "description": "Kundenangebote" },
-      "products":   { "label": "Produkte",      "description": "Artikelverwaltung" },
-      "inventory":  { "label": "Inventar",      "description": "Lagerbestand" },
-      "customers":  { "label": "Kunden",        "description": "Kundenstamm" },
-      "suppliers":  { "label": "Lieferanten",   "description": "Lieferantenpflege" },
-      "finance":    { "label": "Finanzen",      "description": "Buchhaltung & Zahlungen" },
-      "employees":  { "label": "Mitarbeiter",   "description": "Personalverwaltung" },
-      "reports":    { "label": "Berichte",      "description": "Auswertungen & Statistiken" },
-      "branches":   { "label": "Filialen",      "description": "Standortverwaltung" },
-      "users":      { "label": "Benutzer",      "description": "Zugangsverwaltung" }
+      "pos": {
+        "label": "Kassensystem",
+        "description": "POS-Terminal"
+      },
+      "sales": {
+        "label": "Verkauf",
+        "description": "Belege & Rechnungen"
+      },
+      "purchases": {
+        "label": "Einkauf",
+        "description": "Bestellwesen"
+      },
+      "quotations": {
+        "label": "Angebote",
+        "description": "Kundenangebote"
+      },
+      "products": {
+        "label": "Produkte",
+        "description": "Artikelverwaltung"
+      },
+      "inventory": {
+        "label": "Inventar",
+        "description": "Lagerbestand"
+      },
+      "customers": {
+        "label": "Kunden",
+        "description": "Kundenstamm"
+      },
+      "suppliers": {
+        "label": "Lieferanten",
+        "description": "Lieferantenpflege"
+      },
+      "finance": {
+        "label": "Finanzen",
+        "description": "Buchhaltung & Zahlungen"
+      },
+      "employees": {
+        "label": "Mitarbeiter",
+        "description": "Personalverwaltung"
+      },
+      "reports": {
+        "label": "Berichte",
+        "description": "Auswertungen & Statistiken"
+      },
+      "branches": {
+        "label": "Filialen",
+        "description": "Standortverwaltung"
+      },
+      "users": {
+        "label": "Benutzer",
+        "description": "Zugangsverwaltung"
+      }
     }
   },
   "language": {
@@ -252,5 +319,76 @@
     "de": "Deutsch",
     "bn": "বাংলা",
     "ar": "العربية"
+  },
+  "products": {
+    "title": "Produkte",
+    "subtitle": "Produktkatalog verwalten.",
+    "new": "Neues Produkt",
+    "createTitle": "Produkt erstellen",
+    "editTitle": "Produkt bearbeiten",
+    "createProduct": "Produkt erstellen",
+    "emptyTitle": "Noch keine Produkte",
+    "emptyMessage": "Erstellen Sie Ihr erstes Produkt, um zu beginnen.",
+    "searchPlaceholder": "Nach Bezeichnung, Artikelnummer oder Barcode suchen…",
+    "allCategories": "Alle Kategorien",
+    "allBrands": "Alle Marken",
+    "sku": "Artikelnummer",
+    "skuHint": "Leer lassen für automatische Vergabe",
+    "skuPlaceholder": "P-000001",
+    "barcode": "Barcode",
+    "barcodePlaceholder": "EAN / UPC",
+    "namePlaceholder": "Produktbezeichnung",
+    "descriptionPlaceholder": "Optionale Beschreibung",
+    "category": "Kategorie",
+    "noCategory": "Keine Kategorie",
+    "brand": "Marke",
+    "noBrand": "Keine Marke",
+    "unit": "Einheit",
+    "noUnit": "Keine Einheit",
+    "costPrice": "Einkaufspreis",
+    "sellingPrice": "Verkaufspreis",
+    "sellingPriceRequired": "Verkaufspreis ist erforderlich.",
+    "wholesalePrice": "Großhandelspreis",
+    "minSellingPrice": "Mindestverkaufspreis",
+    "taxRate": "MwSt.-Satz",
+    "reorderLevel": "Mindestbestand",
+    "isService": "Dienstleistung (kein Lager)",
+    "profitMargin": "Gewinnmarge",
+    "sectionBasic": "Grundinformationen",
+    "sectionPricing": "Preise & Steuern",
+    "sectionSettings": "Einstellungen",
+    "tax": {
+      "exempt": "Steuerfrei (0 %)",
+      "reduced": "Ermäßigt (7 %)",
+      "standard": "Regelsteuersatz (19 %)"
+    },
+    "settings": {
+      "title": "Produkteinstellungen",
+      "subtitle": "Kategorien, Marken und Maßeinheiten verwalten."
+    },
+    "categories": {
+      "title": "Produktkategorien",
+      "tab": "Kategorien"
+    },
+    "brands": {
+      "title": "Marken",
+      "tab": "Marken"
+    },
+    "units": {
+      "title": "Maßeinheiten",
+      "tab": "Einheiten",
+      "symbol": "Symbol"
+    },
+    "image": "Produktbild",
+    "noImage": "Kein Bild",
+    "imageHint": "JPG, PNG oder WebP · max. 2 MB",
+    "removeImage": "Bild entfernen",
+    "sectionImage": "Produktbild",
+    "viewDetail": "Details anzeigen",
+    "backToList": "Zurück zur Produktliste",
+    "detailTitle": "Produktdetails",
+    "pricingOverview": "Preisübersicht",
+    "stockInfo": "Lager & Einstellungen",
+    "notAvailable": "k. A."
   }
 }

@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Modules\Branch\Controllers\BranchController;
+use App\Modules\Product\Controllers\BrandController;
+use App\Modules\Product\Controllers\CategoryController;
+use App\Modules\Product\Controllers\ProductController;
+use App\Modules\Product\Controllers\UnitController;
 use App\Modules\RolePermission\Controllers\RolePermissionController;
 use App\Modules\UserManagement\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,8 +33,8 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     });
 
     // ── Admin-only ────────────────────────────────────────────────────────
-    Route::middleware('role:admin')->group(function () {
-
+    Route::middleware('role:admin')->group(function ()
+    {
         // Branches
         Route::get('branches/all',     [BranchController::class, 'all']);
         Route::apiResource('branches', BranchController::class);
@@ -44,8 +48,44 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::put('role-permissions/{role}',    [RolePermissionController::class, 'update']);
     });
 
-    // ── Future module routes ──────────────────────────────────────────────
-    // Route::apiResource('products',  ProductController::class);
-    // Route::apiResource('customers', CustomerController::class);
-    // Route::apiResource('sales',     SaleController::class);
+    // ── Product Module ────────────────────────────────────────────────────
+    // Units — read by all authenticated users (needed in POS terminal)
+    Route::get('units',     [UnitController::class, 'index']);
+    Route::get('units/all', [UnitController::class, 'all']);
+
+    // Categories & Brands — read by all, write by admin+manager
+    Route::get('categories',     [CategoryController::class, 'index']);
+    Route::get('categories/all', [CategoryController::class, 'all']);
+    Route::get('brands',         [BrandController::class, 'index']);
+    Route::get('brands/all',     [BrandController::class, 'all']);
+
+    // Products — read by all, write by admin+manager
+    Route::get('products/search', [ProductController::class, 'search']);
+    Route::get('products',        [ProductController::class, 'index']);
+    Route::get('products/{product}', [ProductController::class, 'show']);
+
+    Route::middleware('role:admin,manager')->group(function () {
+        // Categories
+        Route::post('categories',              [CategoryController::class, 'store']);
+        Route::put('categories/{category}',    [CategoryController::class, 'update']);
+        Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+
+        // Brands
+        Route::post('brands',          [BrandController::class, 'store']);
+        Route::put('brands/{brand}',   [BrandController::class, 'update']);
+        Route::delete('brands/{brand}',[BrandController::class, 'destroy']);
+
+        // Units
+        Route::post('units',         [UnitController::class, 'store']);
+        Route::put('units/{unit}',   [UnitController::class, 'update']);
+        Route::delete('units/{unit}',[UnitController::class, 'destroy']);
+
+        // Products
+        Route::post('products',                        [ProductController::class, 'store']);
+        Route::put('products/{product}',               [ProductController::class, 'update']);
+        Route::put('products/{product}/status',        [ProductController::class, 'toggleStatus']);
+        Route::delete('products/{product}',            [ProductController::class, 'destroy']);
+        Route::post('products/{product}/image',        [ProductController::class, 'uploadImage']);
+        Route::delete('products/{product}/image',      [ProductController::class, 'deleteImage']);
+    });
 });

@@ -3,7 +3,11 @@
     "name": "POSmeister",
     "tagline": "الدقة في نقطة البيع.\nالوضوح في جميع أنحاء العمل.",
     "subtitle": "إدارة التجزئة الاحترافية — من المنتج إلى الدفع.",
-    "features": { "multiBranch": "متعدد الفروع", "realTimeStock": "مخزون فوري", "fullAccounting": "محاسبة كاملة" },
+    "features": {
+      "multiBranch": "متعدد الفروع",
+      "realTimeStock": "مخزون فوري",
+      "fullAccounting": "محاسبة كاملة"
+    },
     "management": "الإدارة"
   },
   "menu": {
@@ -30,7 +34,8 @@
       "financeHr": "المالية والموارد البشرية",
       "reports": "التقارير",
       "system": "النظام"
-    }
+    },
+    "productSettings": "إعدادات المنتجات"
   },
   "common": {
     "save": "حفظ",
@@ -57,7 +62,17 @@
     "name": "الاسم",
     "email": "البريد الإلكتروني",
     "phone": "الهاتف",
-    "code": "الرمز"
+    "code": "الرمز",
+    "nameRequired": "الاسم مطلوب.",
+    "description": "الوصف",
+    "deleteConfirmTitle": "تأكيد الحذف",
+    "deleteConfirmMessage": "هل تريد حذف \"{name}\"؟",
+    "deactivateTitle": "تعطيل",
+    "activateTitle": "تفعيل",
+    "deactivateMessage": "تعطيل \"{name}\"؟",
+    "activateMessage": "تفعيل \"{name}\"؟",
+    "deactivate": "تعطيل",
+    "activate": "تفعيل"
   },
   "auth": {
     "signIn": "تسجيل الدخول",
@@ -81,7 +96,11 @@
     },
     "subtitle": "إليك نظرة عامة على النظام الحالي.",
     "systemActive": "النظام نشط",
-    "roleBadges": { "admin": "مدير النظام", "manager": "مدير", "cashier": "أمين الصندوق" },
+    "roleBadges": {
+      "admin": "مدير النظام",
+      "manager": "مدير",
+      "cashier": "أمين الصندوق"
+    },
     "kpi": {
       "totalBranches": "إجمالي الفروع",
       "totalUsers": "إجمالي المستخدمين",
@@ -125,7 +144,11 @@
         "pos": "المبيعات / POS",
         "reports": "التقارير"
       },
-      "phases": { "phase2": "المرحلة 2", "phase3": "المرحلة 3", "phase4": "المرحلة 4" }
+      "phases": {
+        "phase2": "المرحلة 2",
+        "phase3": "المرحلة 3",
+        "phase4": "المرحلة 4"
+      }
     }
   },
   "branches": {
@@ -190,7 +213,11 @@
     "allStatuses": "جميع الحالات",
     "emptyTitle": "لا يوجد مستخدمون",
     "emptyMessage": "أنشئ مستخدمك الأول للبدء.",
-    "roles": { "admin": "مدير النظام", "manager": "مدير", "cashier": "أمين الصندوق" },
+    "roles": {
+      "admin": "مدير النظام",
+      "manager": "مدير",
+      "cashier": "أمين الصندوق"
+    },
     "deactivateTitle": "تعطيل المستخدم",
     "activateTitle": "تفعيل المستخدم",
     "deactivateMessage": "تعطيل \"{name}\"؟ سيفقد الوصول فوراً.",
@@ -231,19 +258,58 @@
       "system": "النظام"
     },
     "modules": {
-      "pos":        { "label": "نقطة البيع",          "description": "نظام الكاشير" },
-      "sales":      { "label": "المبيعات",            "description": "الفواتير والإيصالات" },
-      "purchases":  { "label": "المشتريات",           "description": "إدارة الطلبات" },
-      "quotations": { "label": "عروض الأسعار",        "description": "عروض للعملاء" },
-      "products":   { "label": "المنتجات",            "description": "كتالوج المنتجات" },
-      "inventory":  { "label": "المخزون",             "description": "إدارة المخزون" },
-      "customers":  { "label": "العملاء",             "description": "بيانات العملاء" },
-      "suppliers":  { "label": "الموردون",            "description": "إدارة الموردين" },
-      "finance":    { "label": "المالية",             "description": "المحاسبة والمدفوعات" },
-      "employees":  { "label": "الموظفون",            "description": "إدارة الموارد البشرية" },
-      "reports":    { "label": "التقارير",            "description": "التحليلات والإحصاءات" },
-      "branches":   { "label": "الفروع",              "description": "إدارة المواقع" },
-      "users":      { "label": "المستخدمون",          "description": "إدارة الوصول" }
+      "pos": {
+        "label": "نقطة البيع",
+        "description": "نظام الكاشير"
+      },
+      "sales": {
+        "label": "المبيعات",
+        "description": "الفواتير والإيصالات"
+      },
+      "purchases": {
+        "label": "المشتريات",
+        "description": "إدارة الطلبات"
+      },
+      "quotations": {
+        "label": "عروض الأسعار",
+        "description": "عروض للعملاء"
+      },
+      "products": {
+        "label": "المنتجات",
+        "description": "كتالوج المنتجات"
+      },
+      "inventory": {
+        "label": "المخزون",
+        "description": "إدارة المخزون"
+      },
+      "customers": {
+        "label": "العملاء",
+        "description": "بيانات العملاء"
+      },
+      "suppliers": {
+        "label": "الموردون",
+        "description": "إدارة الموردين"
+      },
+      "finance": {
+        "label": "المالية",
+        "description": "المحاسبة والمدفوعات"
+      },
+      "employees": {
+        "label": "الموظفون",
+        "description": "إدارة الموارد البشرية"
+      },
+      "reports": {
+        "label": "التقارير",
+        "description": "التحليلات والإحصاءات"
+      },
+      "branches": {
+        "label": "الفروع",
+        "description": "إدارة المواقع"
+      },
+      "users": {
+        "label": "المستخدمون",
+        "description": "إدارة الوصول"
+      }
     }
   },
   "language": {
@@ -252,5 +318,76 @@
     "de": "Deutsch",
     "bn": "বাংলা",
     "ar": "العربية"
+  },
+  "products": {
+    "title": "المنتجات",
+    "subtitle": "إدارة كتالوج المنتجات.",
+    "new": "منتج جديد",
+    "createTitle": "إنشاء منتج",
+    "editTitle": "تعديل المنتج",
+    "createProduct": "إنشاء منتج",
+    "emptyTitle": "لا توجد منتجات بعد",
+    "emptyMessage": "أنشئ منتجك الأول للبدء.",
+    "searchPlaceholder": "البحث بالاسم أو الرمز أو الباركود…",
+    "allCategories": "جميع الفئات",
+    "allBrands": "جميع العلامات",
+    "sku": "رمز المنتج",
+    "skuHint": "اتركه فارغاً للتوليد التلقائي",
+    "skuPlaceholder": "P-000001",
+    "barcode": "الباركود",
+    "barcodePlaceholder": "EAN / UPC",
+    "namePlaceholder": "اسم المنتج",
+    "descriptionPlaceholder": "وصف اختياري",
+    "category": "الفئة",
+    "noCategory": "بدون فئة",
+    "brand": "العلامة التجارية",
+    "noBrand": "بدون علامة",
+    "unit": "الوحدة",
+    "noUnit": "بدون وحدة",
+    "costPrice": "سعر التكلفة",
+    "sellingPrice": "سعر البيع",
+    "sellingPriceRequired": "سعر البيع مطلوب.",
+    "wholesalePrice": "سعر الجملة",
+    "minSellingPrice": "أدنى سعر بيع",
+    "taxRate": "نسبة الضريبة",
+    "reorderLevel": "حد إعادة الطلب",
+    "isService": "خدمة (بدون مخزون)",
+    "profitMargin": "هامش الربح",
+    "sectionBasic": "المعلومات الأساسية",
+    "sectionPricing": "الأسعار والضرائب",
+    "sectionSettings": "الإعدادات",
+    "tax": {
+      "exempt": "معفى من الضريبة",
+      "reduced": "معدل مخفض",
+      "standard": "المعدل الأساسي"
+    },
+    "settings": {
+      "title": "إعدادات المنتجات",
+      "subtitle": "إدارة الفئات والعلامات ووحدات القياس."
+    },
+    "categories": {
+      "title": "فئات المنتجات",
+      "tab": "الفئات"
+    },
+    "brands": {
+      "title": "العلامات التجارية",
+      "tab": "العلامات"
+    },
+    "units": {
+      "title": "وحدات القياس",
+      "tab": "الوحدات",
+      "symbol": "الرمز"
+    },
+    "image": "صورة المنتج",
+    "noImage": "لا توجد صورة",
+    "imageHint": "JPG أو PNG أو WebP · الحد الأقصى 2 ميغابايت",
+    "removeImage": "إزالة الصورة",
+    "sectionImage": "صورة المنتج",
+    "viewDetail": "عرض التفاصيل",
+    "backToList": "العودة إلى قائمة المنتجات",
+    "detailTitle": "تفاصيل المنتج",
+    "pricingOverview": "نظرة عامة على الأسعار",
+    "stockInfo": "المخزون والإعدادات",
+    "notAvailable": "غ. م."
   }
 }

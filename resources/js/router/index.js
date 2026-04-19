@@ -52,10 +52,25 @@ const routes = [
                 meta: { titleKey: 'menu.rolePermissions', adminOnly: true },
             },
 
-            // ── Future routes (added per module) ──────────────────────────
-            // { path: 'pos',       name: 'pos',       component: ... },
-            // { path: 'products',  name: 'products',  component: ... },
-            // { path: 'sales',     name: 'sales',     component: ... },
+            // ── Product module ─────────────────────────────────────────────
+            {
+                path: 'products',
+                name: 'products',
+                component: () => import('@/views/products/ProductListView.vue'),
+                meta: { titleKey: 'menu.products', permission: 'products' },
+            },
+            {
+                path: 'products/settings',
+                name: 'product-settings',
+                component: () => import('@/views/products/ProductSettingsView.vue'),
+                meta: { titleKey: 'menu.productSettings', permission: 'products' },
+            },
+            {
+                path: 'products/:id',
+                name: 'product-detail',
+                component: () => import('@/views/products/ProductDetailView.vue'),
+                meta: { titleKey: 'menu.products', permission: 'products' },
+            },
         ],
     },
 

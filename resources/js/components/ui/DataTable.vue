@@ -111,6 +111,18 @@
                                     </span>
                                 </template>
 
+                                <!-- Currency -->
+                                <template v-else-if="col.type === 'currency'">
+                                    <span class="text-gray-700 font-mono text-sm">
+                                        {{ formatCurrency(row[col.key]) }}
+                                    </span>
+                                </template>
+
+                                <!-- Percent -->
+                                <template v-else-if="col.type === 'percent'">
+                                    <span class="text-gray-600 text-sm">{{ row[col.key] }}%</span>
+                                </template>
+
                                 <!-- Custom slot or plain text -->
                                 <template v-else>
                                     <slot :name="`cell(${col.key})`" :value="row[col.key]" :row="row">
@@ -232,6 +244,11 @@ const visiblePages = computed(() => {
 function skeletonWidth() {
     const widths = ['40%', '55%', '70%', '45%', '60%', '35%', '50%'];
     return widths[Math.floor(Math.random() * widths.length)];
+}
+
+function formatCurrency(value) {
+    if (value == null) return '—';
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
 }
 
 // ── Role badge ────────────────────────────────────────────────────────────

@@ -3,7 +3,11 @@
     "name": "POSmeister",
     "tagline": "বিক্রয় কেন্দ্রে নির্ভুলতা।\nব্যবসায় স্বচ্ছতা।",
     "subtitle": "পেশাদার খুচরা ব্যবস্থাপনা — পণ্য থেকে পেমেন্ট পর্যন্ত।",
-    "features": { "multiBranch": "বহু শাখা", "realTimeStock": "রিয়েলটাইম স্টক", "fullAccounting": "সম্পূর্ণ হিসাব" },
+    "features": {
+      "multiBranch": "বহু শাখা",
+      "realTimeStock": "রিয়েলটাইম স্টক",
+      "fullAccounting": "সম্পূর্ণ হিসাব"
+    },
     "management": "ব্যবস্থাপনা"
   },
   "menu": {
@@ -30,7 +34,8 @@
       "financeHr": "অর্থ ও মানবসম্পদ",
       "reports": "প্রতিবেদন",
       "system": "সিস্টেম"
-    }
+    },
+    "productSettings": "পণ্য সেটিংস"
   },
   "common": {
     "save": "সংরক্ষণ করুন",
@@ -57,7 +62,17 @@
     "name": "নাম",
     "email": "ইমেইল",
     "phone": "ফোন",
-    "code": "কোড"
+    "code": "কোড",
+    "nameRequired": "নাম আবশ্যক।",
+    "description": "বিবরণ",
+    "deleteConfirmTitle": "মুছে ফেলা নিশ্চিত করুন",
+    "deleteConfirmMessage": "আপনি কি \"{name}\" মুছে ফেলতে চান?",
+    "deactivateTitle": "নিষ্ক্রিয় করুন",
+    "activateTitle": "সক্রিয় করুন",
+    "deactivateMessage": "\"{name}\" নিষ্ক্রিয় করবেন?",
+    "activateMessage": "\"{name}\" সক্রিয় করবেন?",
+    "deactivate": "নিষ্ক্রিয় করুন",
+    "activate": "সক্রিয় করুন"
   },
   "auth": {
     "signIn": "লগইন করুন",
@@ -81,7 +96,11 @@
     },
     "subtitle": "এখানে বর্তমান সিস্টেম ওভারভিউ রয়েছে।",
     "systemActive": "সিস্টেম সক্রিয়",
-    "roleBadges": { "admin": "প্রশাসক", "manager": "ম্যানেজার", "cashier": "ক্যাশিয়ার" },
+    "roleBadges": {
+      "admin": "প্রশাসক",
+      "manager": "ম্যানেজার",
+      "cashier": "ক্যাশিয়ার"
+    },
     "kpi": {
       "totalBranches": "মোট শাখা",
       "totalUsers": "মোট ব্যবহারকারী",
@@ -125,7 +144,11 @@
         "pos": "বিক্রয় / POS",
         "reports": "প্রতিবেদন"
       },
-      "phases": { "phase2": "পর্যায় ২", "phase3": "পর্যায় ৩", "phase4": "পর্যায় ৪" }
+      "phases": {
+        "phase2": "পর্যায় ২",
+        "phase3": "পর্যায় ৩",
+        "phase4": "পর্যায় ৪"
+      }
     }
   },
   "branches": {
@@ -190,7 +213,11 @@
     "allStatuses": "সব অবস্থা",
     "emptyTitle": "কোনো ব্যবহারকারী পাওয়া যায়নি",
     "emptyMessage": "শুরু করতে আপনার প্রথম ব্যবহারকারী তৈরি করুন।",
-    "roles": { "admin": "প্রশাসক", "manager": "ম্যানেজার", "cashier": "ক্যাশিয়ার" },
+    "roles": {
+      "admin": "প্রশাসক",
+      "manager": "ম্যানেজার",
+      "cashier": "ক্যাশিয়ার"
+    },
     "deactivateTitle": "ব্যবহারকারী নিষ্ক্রিয় করুন",
     "activateTitle": "ব্যবহারকারী সক্রিয় করুন",
     "deactivateMessage": "\"{name}\" নিষ্ক্রিয় করবেন? তাৎক্ষণিকভাবে প্রবেশাধিকার বন্ধ হবে।",
@@ -231,19 +258,58 @@
       "system": "সিস্টেম"
     },
     "modules": {
-      "pos":        { "label": "বিক্রয় কেন্দ্র",    "description": "ক্যাশ রেজিস্টার" },
-      "sales":      { "label": "বিক্রয়",             "description": "চালান ও রসিদ" },
-      "purchases":  { "label": "ক্রয়",               "description": "অর্ডার ব্যবস্থাপনা" },
-      "quotations": { "label": "উদ্ধৃতি",             "description": "গ্রাহক উদ্ধৃতি" },
-      "products":   { "label": "পণ্য",               "description": "পণ্য ক্যাটালগ" },
-      "inventory":  { "label": "ইনভেন্টরি",          "description": "স্টক ব্যবস্থাপনা" },
-      "customers":  { "label": "গ্রাহক",             "description": "গ্রাহক তথ্য" },
-      "suppliers":  { "label": "সরবরাহকারী",          "description": "সরবরাহকারী ব্যবস্থাপনা" },
-      "finance":    { "label": "অর্থ",               "description": "হিসাব ও পেমেন্ট" },
-      "employees":  { "label": "কর্মচারী",           "description": "মানবসম্পদ ব্যবস্থাপনা" },
-      "reports":    { "label": "প্রতিবেদন",          "description": "বিশ্লেষণ ও পরিসংখ্যান" },
-      "branches":   { "label": "শাখা",               "description": "শাখা ব্যবস্থাপনা" },
-      "users":      { "label": "ব্যবহারকারী",        "description": "প্রবেশাধিকার ব্যবস্থাপনা" }
+      "pos": {
+        "label": "বিক্রয় কেন্দ্র",
+        "description": "ক্যাশ রেজিস্টার"
+      },
+      "sales": {
+        "label": "বিক্রয়",
+        "description": "চালান ও রসিদ"
+      },
+      "purchases": {
+        "label": "ক্রয়",
+        "description": "অর্ডার ব্যবস্থাপনা"
+      },
+      "quotations": {
+        "label": "উদ্ধৃতি",
+        "description": "গ্রাহক উদ্ধৃতি"
+      },
+      "products": {
+        "label": "পণ্য",
+        "description": "পণ্য ক্যাটালগ"
+      },
+      "inventory": {
+        "label": "ইনভেন্টরি",
+        "description": "স্টক ব্যবস্থাপনা"
+      },
+      "customers": {
+        "label": "গ্রাহক",
+        "description": "গ্রাহক তথ্য"
+      },
+      "suppliers": {
+        "label": "সরবরাহকারী",
+        "description": "সরবরাহকারী ব্যবস্থাপনা"
+      },
+      "finance": {
+        "label": "অর্থ",
+        "description": "হিসাব ও পেমেন্ট"
+      },
+      "employees": {
+        "label": "কর্মচারী",
+        "description": "মানবসম্পদ ব্যবস্থাপনা"
+      },
+      "reports": {
+        "label": "প্রতিবেদন",
+        "description": "বিশ্লেষণ ও পরিসংখ্যান"
+      },
+      "branches": {
+        "label": "শাখা",
+        "description": "শাখা ব্যবস্থাপনা"
+      },
+      "users": {
+        "label": "ব্যবহারকারী",
+        "description": "প্রবেশাধিকার ব্যবস্থাপনা"
+      }
     }
   },
   "language": {
@@ -252,5 +318,76 @@
     "de": "Deutsch",
     "bn": "বাংলা",
     "ar": "العربية"
+  },
+  "products": {
+    "title": "পণ্য",
+    "subtitle": "পণ্য তালিকা পরিচালনা করুন।",
+    "new": "নতুন পণ্য",
+    "createTitle": "পণ্য তৈরি করুন",
+    "editTitle": "পণ্য সম্পাদনা",
+    "createProduct": "পণ্য তৈরি করুন",
+    "emptyTitle": "কোনো পণ্য নেই",
+    "emptyMessage": "প্রথম পণ্য তৈরি করুন।",
+    "searchPlaceholder": "নাম, SKU বা বারকোড দিয়ে খুঁজুন…",
+    "allCategories": "সব ক্যাটাগরি",
+    "allBrands": "সব ব্র্যান্ড",
+    "sku": "আর্টিকেল নম্বর",
+    "skuHint": "খালি রাখলে স্বয়ংক্রিয়ভাবে তৈরি হবে",
+    "skuPlaceholder": "P-000001",
+    "barcode": "বারকোড",
+    "barcodePlaceholder": "EAN / UPC",
+    "namePlaceholder": "পণ্যের নাম",
+    "descriptionPlaceholder": "ঐচ্ছিক বিবরণ",
+    "category": "ক্যাটাগরি",
+    "noCategory": "কোনো ক্যাটাগরি নেই",
+    "brand": "ব্র্যান্ড",
+    "noBrand": "কোনো ব্র্যান্ড নেই",
+    "unit": "একক",
+    "noUnit": "কোনো একক নেই",
+    "costPrice": "ক্রয় মূল্য",
+    "sellingPrice": "বিক্রয় মূল্য",
+    "sellingPriceRequired": "বিক্রয় মূল্য আবশ্যক।",
+    "wholesalePrice": "পাইকারি মূল্য",
+    "minSellingPrice": "সর্বনিম্ন মূল্য",
+    "taxRate": "মূসক হার",
+    "reorderLevel": "পুনরায় অর্ডার স্তর",
+    "isService": "সেবা পণ্য (স্টক নেই)",
+    "profitMargin": "মুনাফার মার্জিন",
+    "sectionBasic": "মূল তথ্য",
+    "sectionPricing": "মূল্য ও ট্যাক্স",
+    "sectionSettings": "সেটিংস",
+    "tax": {
+      "exempt": "করমুক্ত",
+      "reduced": "হ্রাসকৃত হার",
+      "standard": "সাধারণ হার"
+    },
+    "settings": {
+      "title": "পণ্য সেটিংস",
+      "subtitle": "ক্যাটাগরি, ব্র্যান্ড ও একক পরিচালনা।"
+    },
+    "categories": {
+      "title": "পণ্য ক্যাটাগরি",
+      "tab": "ক্যাটাগরি"
+    },
+    "brands": {
+      "title": "ব্র্যান্ড",
+      "tab": "ব্র্যান্ড"
+    },
+    "units": {
+      "title": "পরিমাপ একক",
+      "tab": "একক",
+      "symbol": "প্রতীক"
+    },
+    "image": "পণ্যের ছবি",
+    "noImage": "কোনো ছবি নেই",
+    "imageHint": "JPG, PNG বা WebP · সর্বোচ্চ ২ MB",
+    "removeImage": "ছবি সরান",
+    "sectionImage": "পণ্যের ছবি",
+    "viewDetail": "বিবরণ দেখুন",
+    "backToList": "পণ্য তালিকায় ফিরুন",
+    "detailTitle": "পণ্যের বিবরণ",
+    "pricingOverview": "মূল্য তালিকা",
+    "stockInfo": "স্টক ও সেটিংস",
+    "notAvailable": "প্রযোজ্য নয়"
   }
 }

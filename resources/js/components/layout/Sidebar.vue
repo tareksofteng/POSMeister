@@ -121,8 +121,9 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.catalogue',
         items: [
-            { permKey: 'products',  labelKey: 'menu.products',  to: { name: 'products' },  icon: TagIcon,        implemented: false },
-            { permKey: 'inventory', labelKey: 'menu.inventory', to: { name: 'inventory' }, icon: ArchiveBoxIcon, implemented: false },
+            { permKey: 'products',  labelKey: 'menu.products',        to: { name: 'products' },         icon: TagIcon,        implemented: true  },
+            { permKey: 'products',  labelKey: 'menu.productSettings', to: { name: 'product-settings' }, icon: CogIcon,        implemented: true  },
+            { permKey: 'inventory', labelKey: 'menu.inventory',       to: { name: 'inventory' },        icon: ArchiveBoxIcon, implemented: false },
         ],
     },
     {

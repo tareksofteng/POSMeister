@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('Default admin → admin@posmeister.local / Admin@1234');
 
-        $this->call(RolePermissionSeeder::class);
+        $this->call([
+            RolePermissionSeeder::class,
+            UnitSeeder::class,
+        ]);
     }
 }
