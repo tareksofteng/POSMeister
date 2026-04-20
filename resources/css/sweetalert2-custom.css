@@ -1,0 +1,101 @@
+/* ── POSmeister custom SweetAlert2 theme ─────────────────────────────────
+   Matches the indigo/slate design system used throughout the app.
+   -------------------------------------------------------------------- */
+
+/* ── Popup container ─────────────────────────────────────────────────── */
+.swal-pos-popup {
+    border-radius: 1rem !important;        /* rounded-2xl */
+    padding: 2rem 2rem 1.75rem !important;
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.25) !important;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+    max-width: 26rem !important;
+}
+
+.swal-pos-title {
+    font-size: 1.125rem !important;        /* text-lg */
+    font-weight: 700 !important;           /* font-bold */
+    color: #111827 !important;             /* gray-900 */
+    padding: 0 0 0.25rem !important;
+}
+
+.swal-pos-text {
+    font-size: 0.875rem !important;        /* text-sm */
+    color: #6b7280 !important;             /* gray-500 */
+    margin-top: 0.375rem !important;
+}
+
+.swal-pos-actions {
+    gap: 0.75rem !important;
+    margin-top: 1.5rem !important;
+    padding: 0 !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.swal-pos-btn-confirm,
+.swal-pos-btn-danger,
+.swal-pos-btn-cancel {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.5rem 1.25rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.5rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s, box-shadow 0.15s !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06) !important;
+}
+
+.swal-pos-btn-confirm {
+    background-color: #4f46e5 !important;  /* indigo-600 */
+    color: #fff !important;
+}
+.swal-pos-btn-confirm:hover { background-color: #4338ca !important; }
+
+.swal-pos-btn-danger {
+    background-color: #dc2626 !important;  /* red-600 */
+    color: #fff !important;
+}
+.swal-pos-btn-danger:hover { background-color: #b91c1c !important; }
+
+.swal-pos-btn-cancel {
+    background-color: #fff !important;
+    color: #374151 !important;             /* gray-700 */
+    border: 1px solid #d1d5db !important;  /* gray-300 */
+    box-shadow: none !important;
+}
+.swal-pos-btn-cancel:hover { background-color: #f9fafb !important; }
+
+/* ── Icon overrides ──────────────────────────────────────────────────── */
+.swal-pos-icon-danger { border-color: #fca5a5 !important; color: #ef4444 !important; }
+.swal-pos-icon-question { border-color: #a5b4fc !important; color: #6366f1 !important; }
+
+/* ── Toast ───────────────────────────────────────────────────────────── */
+.swal-pos-toast {
+    border-radius: 0.75rem !important;     /* rounded-xl */
+    padding: 0.75rem 1rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,.15) !important;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+    min-width: 280px !important;
+}
+
+.swal-pos-progress {
+    background: rgba(255,255,255,0.5) !important;
+}
+
+/* Toast show/hide animation */
+.swal-pos-toast-show {
+    animation: toastSlideIn 0.25s ease-out forwards !important;
+}
+.swal-pos-toast-hide {
+    animation: toastSlideOut 0.2s ease-in forwards !important;
+}
+
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateX(1rem); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(1rem); }
+}

@@ -95,27 +95,6 @@
         @saved="onSaved"
     />
 
-    <!-- Toggle confirm -->
-    <ConfirmDialog
-        v-model="toggleOpen"
-        :title="toggleTarget?.is_active ? t('common.deactivateTitle') : t('common.activateTitle')"
-        :message="toggleTarget?.is_active ? t('common.deactivateMessage', { name: toggleTarget?.name ?? '' }) : t('common.activateMessage', { name: toggleTarget?.name ?? '' })"
-        :confirm-label="toggleTarget?.is_active ? t('common.deactivate') : t('common.activate')"
-        :danger="toggleTarget?.is_active"
-        :loading="toggleLoading"
-        @confirm="executeToggle"
-    />
-
-    <!-- Delete confirm -->
-    <ConfirmDialog
-        v-model="deleteOpen"
-        :title="t('common.deleteConfirmTitle')"
-        :message="t('common.deleteConfirmMessage', { name: deleteTarget?.name ?? '' })"
-        :confirm-label="t('common.delete')"
-        :danger="true"
-        :loading="deleteLoading"
-        @confirm="executeDelete"
-    />
 </template>
 
 <script setup>
@@ -126,15 +105,15 @@ import { productService }  from '@/services/productService';
 import { categoryService } from '@/services/categoryService';
 import { brandService }    from '@/services/brandService';
 import { unitService }     from '@/services/unitService';
-import DataTable     from '@/components/ui/DataTable.vue';
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
+import DataTable        from '@/components/ui/DataTable.vue';
 import ProductFormModal from './ProductFormModal.vue';
+import { useAlert } from '@/composables/useAlert';
 import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon } from '@heroicons/vue/24/outline';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-const { t } = useI18n();
+const { t }  = useI18n();
+const { toast, confirm } = useAlert();
 
 // ── Columns ───────────────────────────────────────────────────────────────
 const columns = computed(() => [
@@ -209,45 +188,47 @@ const editTarget = ref(null);
 
 function openCreate() { editTarget.value = null; formOpen.value = true; }
 function openEdit(row) { editTarget.value = { ...row }; formOpen.value = true; }
-function onSaved() { formOpen.value = false; fetchProducts(); }
+
+function onSaved(isEdit) {
+    formOpen.value = false;
+    fetchProducts();
+    toast('success', isEdit ? t('common.updatedSuccess') : t('common.createdSuccess'));
+}
 
 // ── Toggle status ─────────────────────────────────────────────────────────
-const toggleOpen    = ref(false);
-const toggleTarget  = ref(null);
-const toggleLoading = ref(false);
-
-function confirmToggle(row) { toggleTarget.value = row; toggleOpen.value = true; }
-
-async function executeToggle() {
-    toggleLoading.value = true;
+async function confirmToggle(row) {
+    const isActive = row.is_active;
+    const ok = await confirm({
+        title:       isActive ? t('common.deactivateTitle') : t('common.activateTitle'),
+        text:        isActive ? t('common.deactivateMessage', { name: row.name }) : t('common.activateMessage', { name: row.name }),
+        confirmText: isActive ? t('common.deactivate') : t('common.activate'),
+        danger:      isActive,
+    });
+    if (!ok) return;
     try {
-        await productService.toggleStatus(toggleTarget.value.id);
-        toggleOpen.value = false;
+        await productService.toggleStatus(row.id);
         fetchProducts();
+        toast('success', isActive ? t('common.deactivatedSuccess') : t('common.activatedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('common.unexpectedError'));
-    } finally {
-        toggleLoading.value = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────
-const deleteOpen    = ref(false);
-const deleteTarget  = ref(null);
-const deleteLoading = ref(false);
-
-function confirmDelete(row) { deleteTarget.value = row; deleteOpen.value = true; }
-
-async function executeDelete() {
-    deleteLoading.value = true;
+async function confirmDelete(row) {
+    const ok = await confirm({
+        title:       t('common.deleteConfirmTitle'),
+        text:        t('common.deleteConfirmMessage', { name: row.name }),
+        confirmText: t('common.delete'),
+        danger:      true,
+    });
+    if (!ok) return;
     try {
-        await productService.destroy(deleteTarget.value.id);
-        deleteOpen.value = false;
+        await productService.destroy(row.id);
         fetchProducts();
+        toast('success', t('common.deletedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('common.unexpectedError'));
-    } finally {
-        deleteLoading.value = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 </script>

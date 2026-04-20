@@ -124,27 +124,6 @@
         </template>
     </Modal>
 
-    <!-- Delete confirm -->
-    <ConfirmDialog
-        v-model="deleteDialog.open"
-        :title="t('common.deleteConfirmTitle')"
-        :message="t('common.deleteConfirmMessage', { name: deleteDialog.target?.name ?? '' })"
-        :confirm-label="t('common.delete')"
-        :danger="true"
-        :loading="deleteDialog.loading"
-        @confirm="executeDelete"
-    />
-
-    <!-- Toggle confirm -->
-    <ConfirmDialog
-        v-model="toggleDialog.open"
-        :title="toggleDialog.target?.is_active ? t('common.deactivateTitle') : t('common.activateTitle')"
-        :message="toggleDialog.target?.is_active ? t('common.deactivateMessage', { name: toggleDialog.target?.name ?? '' }) : t('common.activateMessage', { name: toggleDialog.target?.name ?? '' })"
-        :confirm-label="toggleDialog.target?.is_active ? t('common.deactivate') : t('common.activate')"
-        :danger="toggleDialog.target?.is_active"
-        :loading="toggleDialog.loading"
-        @confirm="executeToggle"
-    />
 </template>
 
 <script setup>
@@ -153,12 +132,13 @@ import { useI18n } from 'vue-i18n';
 import { categoryService } from '@/services/categoryService';
 import { brandService }    from '@/services/brandService';
 import { unitService }     from '@/services/unitService';
-import Modal         from '@/components/ui/Modal.vue';
-import FormField     from '@/components/ui/FormField.vue';
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
-import LookupTable   from './LookupTable.vue';
+import Modal       from '@/components/ui/Modal.vue';
+import FormField   from '@/components/ui/FormField.vue';
+import LookupTable from './LookupTable.vue';
+import { useAlert } from '@/composables/useAlert';
 
 const { t } = useI18n();
+const { toast, confirm } = useAlert();
 
 const activeTab = ref('categories');
 
@@ -249,6 +229,7 @@ async function handleSubmit() {
         }
         formModal.open = false;
         reloadCurrent();
+        toast('success', formModal.isEdit ? t('common.updatedSuccess') : t('common.createdSuccess'));
     } catch (err) {
         const { status, data } = err.response ?? {};
         if (status === 422 && data?.errors) {
@@ -270,39 +251,39 @@ function buildPayload() {
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────
-const deleteDialog = reactive({ open: false, loading: false, target: null, tab: '' });
-
-function confirmDelete(tab, row) { deleteDialog.tab = tab; deleteDialog.target = row; deleteDialog.open = true; }
-
-async function executeDelete() {
-    deleteDialog.loading = true;
+async function confirmDelete(tab, row) {
+    const ok = await confirm({
+        title:       t('common.deleteConfirmTitle'),
+        text:        t('common.deleteConfirmMessage', { name: row.name }),
+        confirmText: t('common.delete'),
+        danger:      true,
+    });
+    if (!ok) return;
     try {
-        await services[deleteDialog.tab].destroy(deleteDialog.target.id);
-        deleteDialog.open = false;
+        await services[tab].destroy(row.id);
         reloadCurrent();
+        toast('success', t('common.deletedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('common.unexpectedError'));
-    } finally {
-        deleteDialog.loading = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 
 // ── Toggle ────────────────────────────────────────────────────────────────
-const toggleDialog = reactive({ open: false, loading: false, target: null, tab: '' });
-
-function confirmToggle(tab, row) { toggleDialog.tab = tab; toggleDialog.target = row; toggleDialog.open = true; }
-
-async function executeToggle() {
-    toggleDialog.loading = true;
+async function confirmToggle(tab, row) {
+    const isActive = row.is_active;
+    const ok = await confirm({
+        title:       isActive ? t('common.deactivateTitle') : t('common.activateTitle'),
+        text:        isActive ? t('common.deactivateMessage', { name: row.name }) : t('common.activateMessage', { name: row.name }),
+        confirmText: isActive ? t('common.deactivate') : t('common.activate'),
+        danger:      isActive,
+    });
+    if (!ok) return;
     try {
-        const svc = services[toggleDialog.tab];
-        await svc.update(toggleDialog.target.id, { ...toggleDialog.target, is_active: !toggleDialog.target.is_active });
-        toggleDialog.open = false;
+        await services[tab].update(row.id, { ...row, is_active: !isActive });
         reloadCurrent();
+        toast('success', isActive ? t('common.deactivatedSuccess') : t('common.activatedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('common.unexpectedError'));
-    } finally {
-        toggleDialog.loading = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 

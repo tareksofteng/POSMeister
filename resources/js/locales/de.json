@@ -73,7 +73,12 @@
     "activateMessage": "\"{name}\" aktivieren?",
     "deactivate": "Deaktivieren",
     "activate": "Aktivieren",
-    "createdAt": "Erstellt am"
+    "createdAt": "Erstellt am",
+    "createdSuccess": "Erfolgreich erstellt.",
+    "updatedSuccess": "Erfolgreich aktualisiert.",
+    "deletedSuccess": "Erfolgreich gelöscht.",
+    "activatedSuccess": "Erfolgreich aktiviert.",
+    "deactivatedSuccess": "Erfolgreich deaktiviert."
   },
   "auth": {
     "signIn": "Anmelden",

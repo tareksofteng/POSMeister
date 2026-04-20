@@ -7,15 +7,6 @@
             <p class="mt-1 text-sm text-gray-500">{{ t('appSettings.subtitle') }}</p>
         </div>
 
-        <!-- Save feedback -->
-        <div v-if="saveSuccess" class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700 flex items-center gap-2">
-            <CheckCircleIcon class="w-4 h-4 flex-shrink-0" />
-            {{ t('appSettings.savedSuccess') }}
-        </div>
-        <div v-if="saveError" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {{ saveError }}
-        </div>
-
         <!-- Loading skeleton -->
         <div v-if="loading" class="space-y-4">
             <div v-for="i in 4" :key="i" class="animate-pulse h-14 bg-gray-100 rounded-xl" />
@@ -132,19 +123,19 @@ import { ref, reactive, onMounted, defineComponent, h } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { settingsService } from '@/services/settingsService';
 import { useSettingsStore } from '@/stores/settings';
+import { useAlert } from '@/composables/useAlert';
 import {
-    CheckCircleIcon, ArrowUpTrayIcon, TrashIcon,
+    ArrowUpTrayIcon, TrashIcon,
     ArrowPathIcon, CheckIcon, BuildingOffice2Icon,
 } from '@heroicons/vue/24/outline';
 
 const { t } = useI18n();
-const settingsStore = useSettingsStore();
+const settingsStore    = useSettingsStore();
+const { toast } = useAlert();
 
 // ── Form state ─────────────────────────────────────────────────────────────
-const loading     = ref(true);
-const saving      = ref(false);
-const saveSuccess = ref(false);
-const saveError   = ref('');
+const loading = ref(true);
+const saving  = ref(false);
 
 const form = reactive({
     company_name:    '',
@@ -203,35 +194,26 @@ onMounted(async () => {
 
 // ── Save ───────────────────────────────────────────────────────────────────
 async function save() {
-    saving.value      = true;
-    saveSuccess.value = false;
-    saveError.value   = '';
-
+    saving.value = true;
     try {
-        // 1. Save text settings
         const { data } = await settingsService.update({ ...form });
-        const updated  = data.data ?? data;
-        settingsStore.patch(updated);
+        settingsStore.patch(data.data ?? data);
 
-        // 2. Upload logo if a new file was picked
         if (selectedLogo.value) {
             const { data: ld } = await settingsService.uploadLogo(selectedLogo.value);
             settingsStore.patch(ld.data ?? ld);
             selectedLogo.value = null;
         }
 
-        // 3. Remove logo if user clicked Remove
         if (removingLogo.value) {
             await settingsService.deleteLogo();
             settingsStore.patch({ ...settingsStore.settings, logo: null, logo_url: null });
             removingLogo.value = false;
         }
 
-        saveSuccess.value = true;
-        setTimeout(() => { saveSuccess.value = false; }, 3000);
-
+        toast('success', t('appSettings.savedSuccess'));
     } catch (err) {
-        saveError.value = err.response?.data?.message ?? t('common.unexpectedError');
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     } finally {
         saving.value = false;
     }

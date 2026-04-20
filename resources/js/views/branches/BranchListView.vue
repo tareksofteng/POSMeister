@@ -83,16 +83,6 @@
         @saved="onSaved"
     />
 
-    <!-- Delete confirm -->
-    <ConfirmDialog
-        v-model="deleteOpen"
-        :title="t('branches.deleteTitle')"
-        :message="t('branches.deleteMessage', { name: deleteTarget?.name ?? '' })"
-        :confirm-label="t('common.delete')"
-        :danger="true"
-        :loading="deleteLoading"
-        @confirm="executeDelete"
-    />
 </template>
 
 <script setup>
@@ -102,9 +92,9 @@ import { useBranchStore } from '@/stores/branch';
 import { branchService } from '@/services/branchService';
 import { useDebounce } from '@vueuse/core';
 
-import DataTable    from '@/components/ui/DataTable.vue';
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
-import BranchFormModal from './BranchFormModal.vue';
+import DataTable        from '@/components/ui/DataTable.vue';
+import BranchFormModal  from './BranchFormModal.vue';
+import { useAlert }     from '@/composables/useAlert';
 
 import {
     PlusIcon,
@@ -115,6 +105,7 @@ import {
 
 const { t } = useI18n();
 const store = useBranchStore();
+const { toast, confirm } = useAlert();
 
 // ── Table columns ─────────────────────────────────────────────────────────
 const columns = computed(() => [
@@ -141,45 +132,32 @@ onMounted(() => store.fetch());
 const formOpen   = ref(false);
 const editTarget = ref(null);
 
-function openCreate() {
-    editTarget.value = null;
-    formOpen.value   = true;
-}
+function openCreate() { editTarget.value = null; formOpen.value = true; }
+function openEdit(row) { editTarget.value = { ...row }; formOpen.value = true; }
 
-function openEdit(row) {
-    editTarget.value = { ...row };
-    formOpen.value   = true;
-}
-
-function onSaved() {
+function onSaved(isEdit) {
     formOpen.value = false;
     store.fetch();
-    store.invalidateCache(); // Refresh dropdown cache
+    store.invalidateCache();
+    toast('success', isEdit ? t('common.updatedSuccess') : t('common.createdSuccess'));
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────
-const deleteOpen    = ref(false);
-const deleteTarget  = ref(null);
-const deleteLoading = ref(false);
-
-function confirmDelete(row) {
-    deleteTarget.value = row;
-    deleteOpen.value   = true;
-}
-
-async function executeDelete() {
-    if (!deleteTarget.value) return;
-    deleteLoading.value = true;
-
+async function confirmDelete(row) {
+    const ok = await confirm({
+        title:       t('common.deleteConfirmTitle'),
+        text:        t('common.deleteConfirmMessage', { name: row.name }),
+        confirmText: t('common.delete'),
+        danger:      true,
+    });
+    if (!ok) return;
     try {
-        await branchService.destroy(deleteTarget.value.id);
-        deleteOpen.value = false;
+        await branchService.destroy(row.id);
         store.fetch();
         store.invalidateCache();
+        toast('success', t('common.deletedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('branches.deleteFailed'));
-    } finally {
-        deleteLoading.value = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 </script>

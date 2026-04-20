@@ -113,27 +113,6 @@
         @saved="onSaved"
     />
 
-    <!-- Toggle status confirm -->
-    <ConfirmDialog
-        v-model="toggleOpen"
-        :title="toggleTarget?.is_active ? t('users.deactivateTitle') : t('users.activateTitle')"
-        :message="toggleMessage"
-        :confirm-label="toggleTarget?.is_active ? t('users.deactivateButton') : t('users.activateButton')"
-        :danger="toggleTarget?.is_active"
-        :loading="toggleLoading"
-        @confirm="executeToggle"
-    />
-
-    <!-- Delete confirm -->
-    <ConfirmDialog
-        v-model="deleteOpen"
-        :title="t('users.deleteTitle')"
-        :message="t('users.deleteMessage', { name: deleteTarget?.name ?? '' })"
-        :confirm-label="t('common.delete')"
-        :danger="true"
-        :loading="deleteLoading"
-        @confirm="executeDelete"
-    />
 </template>
 
 <script setup>
@@ -142,9 +121,9 @@ import { useI18n } from 'vue-i18n';
 import { userService } from '@/services/userService';
 import { useBranchStore } from '@/stores/branch';
 import { useDebounce } from '@vueuse/core';
+import { useAlert } from '@/composables/useAlert';
 
 import DataTable     from '@/components/ui/DataTable.vue';
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import UserFormModal from './UserFormModal.vue';
 
 import {
@@ -158,6 +137,7 @@ import {
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
+const { toast, confirm } = useAlert();
 
 const columns = computed(() => [
     { key: 'name',        label: t('common.name'),      bold: true },
@@ -216,74 +196,49 @@ onMounted(() => {
 const formOpen   = ref(false);
 const editTarget = ref(null);
 
-function openCreate() {
-    editTarget.value = null;
-    formOpen.value   = true;
-}
+function openCreate() { editTarget.value = null; formOpen.value = true; }
+function openEdit(row) { editTarget.value = { ...row }; formOpen.value = true; }
 
-function openEdit(row) {
-    editTarget.value = { ...row };
-    formOpen.value   = true;
-}
-
-function onSaved() {
+function onSaved(isEdit) {
     formOpen.value = false;
     fetchUsers();
+    toast('success', isEdit ? t('common.updatedSuccess') : t('common.createdSuccess'));
 }
 
 // ── Toggle status ─────────────────────────────────────────────────────────
-const toggleOpen    = ref(false);
-const toggleTarget  = ref(null);
-const toggleLoading = ref(false);
-
-const toggleMessage = computed(() => {
-    if (!toggleTarget.value) return '';
-    const name = toggleTarget.value.name;
-    return toggleTarget.value.is_active
-        ? t('users.deactivateMessage', { name })
-        : t('users.activateMessage', { name });
-});
-
-function confirmToggle(row) {
-    toggleTarget.value = row;
-    toggleOpen.value   = true;
-}
-
-async function executeToggle() {
-    if (!toggleTarget.value) return;
-    toggleLoading.value = true;
+async function confirmToggle(row) {
+    const isActive = row.is_active;
+    const ok = await confirm({
+        title:       isActive ? t('users.deactivateTitle') : t('users.activateTitle'),
+        text:        isActive ? t('users.deactivateMessage', { name: row.name }) : t('users.activateMessage', { name: row.name }),
+        confirmText: isActive ? t('users.deactivateButton') : t('users.activateButton'),
+        danger:      isActive,
+    });
+    if (!ok) return;
     try {
-        await userService.toggleStatus(toggleTarget.value.id);
-        toggleOpen.value = false;
+        await userService.toggleStatus(row.id);
         fetchUsers();
+        toast('success', isActive ? t('common.deactivatedSuccess') : t('common.activatedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('users.statusFailed'));
-    } finally {
-        toggleLoading.value = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────
-const deleteOpen    = ref(false);
-const deleteTarget  = ref(null);
-const deleteLoading = ref(false);
-
-function confirmDelete(row) {
-    deleteTarget.value = row;
-    deleteOpen.value   = true;
-}
-
-async function executeDelete() {
-    if (!deleteTarget.value) return;
-    deleteLoading.value = true;
+async function confirmDelete(row) {
+    const ok = await confirm({
+        title:       t('common.deleteConfirmTitle'),
+        text:        t('common.deleteConfirmMessage', { name: row.name }),
+        confirmText: t('common.delete'),
+        danger:      true,
+    });
+    if (!ok) return;
     try {
-        await userService.destroy(deleteTarget.value.id);
-        deleteOpen.value = false;
+        await userService.destroy(row.id);
         fetchUsers();
+        toast('success', t('common.deletedSuccess'));
     } catch (err) {
-        alert(err.response?.data?.message ?? t('users.deleteFailed'));
-    } finally {
-        deleteLoading.value = false;
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
 }
 </script>

@@ -154,6 +154,7 @@ import { ref, onMounted, defineComponent, h } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useSettingsStore } from '@/stores/settings';
+import { useAlert }         from '@/composables/useAlert';
 import { productService }  from '@/services/productService';
 import { categoryService } from '@/services/categoryService';
 import { brandService }    from '@/services/brandService';
@@ -162,10 +163,11 @@ import { ArrowLeftIcon, PencilSquareIcon, PhotoIcon } from '@heroicons/vue/24/ou
 import StatusBadge     from '@/components/ui/StatusBadge.vue';
 import ProductFormModal from './ProductFormModal.vue';
 
-const { t, locale } = useI18n();
-const route         = useRoute();
-const router        = useRouter();
-const settingsStore = useSettingsStore();
+const { t, locale }    = useI18n();
+const route            = useRoute();
+const router           = useRouter();
+const settingsStore    = useSettingsStore();
+const { toast }        = useAlert();
 
 // ── Data ──────────────────────────────────────────────────────────────────
 const product   = ref(null);
@@ -215,6 +217,7 @@ function openEdit() {
 function onSaved() {
     editOpen.value = false;
     loadProduct();
+    toast('success', t('common.updatedSuccess'));
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────

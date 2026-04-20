@@ -359,7 +359,7 @@ async function handleSubmit() {
             await productService.deleteImage(productId);
         }
 
-        emit('saved');
+        emit('saved', isEdit.value);
     } catch (err) {
         const { status, data } = err.response ?? {};
         if (status === 422 && data?.errors) {
