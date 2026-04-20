@@ -389,5 +389,31 @@
     "pricingOverview": "মূল্য তালিকা",
     "stockInfo": "স্টক ও সেটিংস",
     "notAvailable": "প্রযোজ্য নয়"
+  },
+  "appSettings": {
+    "title": "অ্যাপ্লিকেশন সেটিংস",
+    "subtitle": "কোম্পানির তথ্য, মুদ্রা এবং চালান ডিফল্ট কনফিগার করুন।",
+    "savedSuccess": "সেটিংস সফলভাবে সংরক্ষিত হয়েছে।",
+    "sectionCompany": "কোম্পানির তথ্য",
+    "sectionCurrency": "মুদ্রা ও কর",
+    "sectionInvoice": "চালান সেটিংস",
+    "logo": "কোম্পানির লোগো",
+    "logoHint": "PNG, JPG বা WebP · সর্বোচ্চ ২ MB",
+    "uploadLogo": "লোগো আপলোড",
+    "removeLogo": "সরান",
+    "companyName": "কোম্পানির নাম",
+    "address": "ঠিকানা",
+    "phone": "ফোন",
+    "email": "ইমেইল",
+    "currencyCode": "মুদ্রা কোড",
+    "currencySymbol": "প্রতীক",
+    "vatDefault": "ডিফল্ট ভ্যাট হার",
+    "vatFree": "করমুক্ত",
+    "vatReduced": "হ্রাসকৃত",
+    "vatStandard": "মানক হার",
+    "invoicePrefix": "চালান নম্বর উপসর্গ",
+    "invoiceFooter": "চালান পাদলেখ",
+    "invoiceFooterPlaceholder": "যেমন: ব্যাংক তথ্য, কর নম্বর",
+    "dateFormat": "তারিখ ফরম্যাট"
   }
 }

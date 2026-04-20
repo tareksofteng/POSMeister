@@ -389,5 +389,31 @@
     "pricingOverview": "نظرة عامة على الأسعار",
     "stockInfo": "المخزون والإعدادات",
     "notAvailable": "غ. م."
+  },
+  "appSettings": {
+    "title": "إعدادات التطبيق",
+    "subtitle": "تكوين ملف الشركة والعملة وإعدادات الفواتير الافتراضية.",
+    "savedSuccess": "تم حفظ الإعدادات بنجاح.",
+    "sectionCompany": "معلومات الشركة",
+    "sectionCurrency": "العملة والضريبة",
+    "sectionInvoice": "إعدادات الفاتورة",
+    "logo": "شعار الشركة",
+    "logoHint": "PNG أو JPG أو WebP · الحد الأقصى 2 MB",
+    "uploadLogo": "رفع الشعار",
+    "removeLogo": "إزالة",
+    "companyName": "اسم الشركة",
+    "address": "العنوان",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "currencyCode": "رمز العملة",
+    "currencySymbol": "الرمز",
+    "vatDefault": "نسبة ضريبة القيمة المضافة الافتراضية",
+    "vatFree": "معفى من الضريبة",
+    "vatReduced": "مخفضة",
+    "vatStandard": "المعدل القياسي",
+    "invoicePrefix": "بادئة رقم الفاتورة",
+    "invoiceFooter": "نص تذييل الفاتورة",
+    "invoiceFooterPlaceholder": "مثال: معلومات البنك، الرقم الضريبي",
+    "dateFormat": "تنسيق التاريخ"
   }
 }

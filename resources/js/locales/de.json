@@ -390,5 +390,31 @@
     "pricingOverview": "Preisübersicht",
     "stockInfo": "Lager & Einstellungen",
     "notAvailable": "k. A."
+  },
+  "appSettings": {
+    "title": "Anwendungseinstellungen",
+    "subtitle": "Firmenprofil, Währung und Rechnungsstandards konfigurieren.",
+    "savedSuccess": "Einstellungen erfolgreich gespeichert.",
+    "sectionCompany": "Unternehmensinformationen",
+    "sectionCurrency": "Währung & Steuer",
+    "sectionInvoice": "Rechnungseinstellungen",
+    "logo": "Firmenlogo",
+    "logoHint": "PNG, JPG oder WebP · max. 2 MB · erscheint auf Rechnungen",
+    "uploadLogo": "Logo hochladen",
+    "removeLogo": "Entfernen",
+    "companyName": "Firmenname",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "currencyCode": "Währungscode",
+    "currencySymbol": "Symbol",
+    "vatDefault": "Standard-MwSt.-Satz",
+    "vatFree": "Steuerfrei",
+    "vatReduced": "Ermäßigt",
+    "vatStandard": "Regelsteuersatz",
+    "invoicePrefix": "Rechnungsnummernpräfix",
+    "invoiceFooter": "Rechnungsfußtext",
+    "invoiceFooterPlaceholder": "z. B. Bank: IBAN DE89 3704 0044 0532 0130 00 · Steuer-Nr: 12/345/67890",
+    "dateFormat": "Datumsformat"
   }
 }

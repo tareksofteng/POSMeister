@@ -390,5 +390,31 @@
     "pricingOverview": "Pricing",
     "stockInfo": "Stock & Settings",
     "notAvailable": "n/a"
+  },
+  "appSettings": {
+    "title": "Application Settings",
+    "subtitle": "Configure your company profile, currency, and invoice defaults.",
+    "savedSuccess": "Settings saved successfully.",
+    "sectionCompany": "Company Information",
+    "sectionCurrency": "Currency & Tax",
+    "sectionInvoice": "Invoice Settings",
+    "logo": "Company Logo",
+    "logoHint": "PNG, JPG or WebP · max. 2 MB · shown on invoices and receipts",
+    "uploadLogo": "Upload logo",
+    "removeLogo": "Remove",
+    "companyName": "Company Name",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "currencyCode": "Currency Code",
+    "currencySymbol": "Symbol",
+    "vatDefault": "Default VAT Rate",
+    "vatFree": "Tax-free",
+    "vatReduced": "Reduced",
+    "vatStandard": "Standard rate",
+    "invoicePrefix": "Invoice Number Prefix",
+    "invoiceFooter": "Invoice Footer Text",
+    "invoiceFooterPlaceholder": "e.g. Bank: IBAN DE89 3704 0044 0532 0130 00 · Steuer-Nr: 12/345/67890",
+    "dateFormat": "Date Format"
   }
 }

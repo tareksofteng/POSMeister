@@ -20,9 +20,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Sidebar from './Sidebar.vue';
 import Topbar  from './Topbar.vue';
+import { useSettingsStore } from '@/stores/settings';
 
 const sidebarCollapsed = ref(false);
+
+// Load app settings once on shell mount — available to all child components via store
+onMounted(() => useSettingsStore().load());
 </script>

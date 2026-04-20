@@ -8,14 +8,23 @@
         <!-- Logo / Brand -->
         <div class="flex h-16 items-center px-4 border-b border-slate-800">
             <div class="flex items-center gap-3 min-w-0">
-                <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 shadow-lg">
-                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <!-- Company logo if set, else default icon -->
+                <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 shadow-lg overflow-hidden">
+                    <img
+                        v-if="settingsStore.settings?.logo_url"
+                        :src="settingsStore.settings.logo_url"
+                        alt="logo"
+                        class="w-full h-full object-contain p-0.5"
+                    />
+                    <svg v-else class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
                               d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                     </svg>
                 </div>
                 <div v-if="!collapsed" class="min-w-0">
-                    <span class="block text-white font-bold text-sm tracking-tight truncate">POSmeister</span>
+                    <span class="block text-white font-bold text-sm tracking-tight truncate">
+                        {{ settingsStore.settings?.company_name ?? 'POSmeister' }}
+                    </span>
                     <span class="block text-slate-500 text-xs tracking-wide">{{ t('app.management') }}</span>
                 </div>
             </div>
@@ -77,7 +86,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore }     from '@/stores/auth';
+import { useSettingsStore } from '@/stores/settings';
 
 import {
     Squares2X2Icon, ShoppingCartIcon, DocumentTextIcon, TruckIcon,
@@ -94,9 +104,10 @@ defineProps({
     collapsed: { type: Boolean, default: false },
 });
 
-const { t }  = useI18n();
-const auth   = useAuthStore();
-const router = useRouter();
+const { t }        = useI18n();
+const auth         = useAuthStore();
+const settingsStore = useSettingsStore();
+const router       = useRouter();
 
 const userInitial = computed(() =>
     auth.userName ? auth.userName.charAt(0).toUpperCase() : '?'
@@ -152,7 +163,7 @@ const NAV_GROUPS = [
             { permKey: 'branches',         labelKey: 'menu.branches',         to: { name: 'branches' },         icon: BuildingOffice2Icon, implemented: true  },
             { permKey: 'users',            labelKey: 'menu.users',            to: { name: 'users' },             icon: UserCircleIcon,     implemented: true  },
             { permKey: 'role-permissions', labelKey: 'menu.rolePermissions',  to: { name: 'role-permissions' }, icon: ShieldCheckIcon,    implemented: true,  adminOnly: true },
-            { permKey: null,               labelKey: 'menu.settings',         to: { name: 'settings' },          icon: CogIcon,            implemented: false },
+            { permKey: null,               labelKey: 'menu.settings',         to: { name: 'settings' },          icon: CogIcon,            implemented: true, adminOnly: true },
         ],
     },
 ];

@@ -87,7 +87,7 @@
                             <div class="col-span-2 flex items-center justify-between pt-3 border-t border-gray-100">
                                 <span class="text-sm text-gray-500">{{ t('products.taxRate') }}</span>
                                 <span class="text-sm font-semibold text-gray-800">
-                                    {{ product.tax_rate }}%
+                                    {{ parseInt(product.tax_rate) }}%
                                     <span class="ml-1.5 text-xs font-normal text-gray-400">{{ taxLabel(product.tax_rate) }}</span>
                                 </span>
                             </div>
@@ -95,8 +95,8 @@
                             <!-- Profit margin -->
                             <div class="col-span-2 flex items-center justify-between">
                                 <span class="text-sm text-gray-500">{{ t('products.profitMargin') }}</span>
-                                <span :class="['text-sm font-semibold', product.profit_margin >= 0 ? 'text-emerald-600' : 'text-red-600']">
-                                    {{ product.profit_margin?.toFixed(2) ?? t('products.notAvailable') }}%
+                                <span :class="['text-sm font-semibold', (product.profit_margin ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-600']">
+                                    {{ product.profit_margin != null ? parseFloat(product.profit_margin).toFixed(2) + '%' : t('products.notAvailable') }}
                                 </span>
                             </div>
                         </div>
@@ -153,6 +153,7 @@
 import { ref, onMounted, defineComponent, h } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { useSettingsStore } from '@/stores/settings';
 import { productService }  from '@/services/productService';
 import { categoryService } from '@/services/categoryService';
 import { brandService }    from '@/services/brandService';
@@ -162,8 +163,9 @@ import StatusBadge     from '@/components/ui/StatusBadge.vue';
 import ProductFormModal from './ProductFormModal.vue';
 
 const { t, locale } = useI18n();
-const route  = useRoute();
-const router = useRouter();
+const route         = useRoute();
+const router        = useRouter();
+const settingsStore = useSettingsStore();
 
 // ── Data ──────────────────────────────────────────────────────────────────
 const product   = ref(null);
@@ -175,7 +177,8 @@ async function loadProduct() {
     loadError.value = '';
     try {
         const { data } = await productService.show(route.params.id);
-        product.value = data;
+        // Laravel JsonResource wraps response: { data: { id, ... } }
+        product.value = data.data ?? data;
     } catch {
         loadError.value = t('common.unexpectedError');
     } finally {
@@ -216,7 +219,7 @@ function onSaved() {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 const taxLabels = { 0: 'Steuerfrei', 7: 'Ermäßigt', 19: 'Regelsteuersatz' };
-function taxLabel(rate) { return taxLabels[rate] ?? ''; }
+function taxLabel(rate) { return taxLabels[parseInt(rate)] ?? ''; }
 
 function formatDate(iso) {
     return new Intl.DateTimeFormat(locale.value === 'de' ? 'de-DE' : 'en-GB', {
@@ -227,7 +230,8 @@ function formatDate(iso) {
 
 function formatCurrency(value) {
     if (value == null) return '—';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+    const code = settingsStore.settings?.currency_code ?? 'EUR';
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────

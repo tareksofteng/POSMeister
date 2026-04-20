@@ -44,6 +44,14 @@ const routes = [
                 meta: { titleKey: 'menu.users', permission: 'users' },
             },
 
+            // ── Application settings ───────────────────────────────────────
+            {
+                path: 'settings',
+                name: 'settings',
+                component: () => import('@/views/settings/AppSettingsView.vue'),
+                meta: { titleKey: 'menu.settings', adminOnly: true },
+            },
+
             // ── Role permissions ───────────────────────────────────────────
             {
                 path: 'settings/roles',

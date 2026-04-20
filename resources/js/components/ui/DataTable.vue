@@ -196,6 +196,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useSettingsStore } from '@/stores/settings';
 import {
     ChevronUpDownIcon,
     ChevronUpIcon,
@@ -219,6 +220,8 @@ const props = defineProps({
 });
 
 defineEmits(['page-change', 'sort']);
+
+const settingsStore = useSettingsStore();
 
 // ── Pagination ────────────────────────────────────────────────────────────
 const visiblePages = computed(() => {
@@ -248,7 +251,8 @@ function skeletonWidth() {
 
 function formatCurrency(value) {
     if (value == null) return '—';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+    const code = settingsStore.settings?.currency_code ?? 'EUR';
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 
 // ── Role badge ────────────────────────────────────────────────────────────

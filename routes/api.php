@@ -7,6 +7,7 @@ use App\Modules\Product\Controllers\CategoryController;
 use App\Modules\Product\Controllers\ProductController;
 use App\Modules\Product\Controllers\UnitController;
 use App\Modules\RolePermission\Controllers\RolePermissionController;
+use App\Modules\Settings\Controllers\SettingsController;
 use App\Modules\UserManagement\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,15 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         // Role permissions management
         Route::get('role-permissions',           [RolePermissionController::class, 'index']);
         Route::put('role-permissions/{role}',    [RolePermissionController::class, 'update']);
+    });
+
+    // ── Settings ──────────────────────────────────────────────────────────
+    Route::get('settings', [SettingsController::class, 'show']);
+
+    Route::middleware('role:admin')->group(function () {
+        Route::put('settings',              [SettingsController::class, 'update']);
+        Route::post('settings/logo',        [SettingsController::class, 'uploadLogo']);
+        Route::delete('settings/logo',      [SettingsController::class, 'deleteLogo']);
     });
 
     // ── Product Module ────────────────────────────────────────────────────

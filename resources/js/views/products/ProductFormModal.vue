@@ -57,7 +57,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <FormField :label="t('products.costPrice')" :error="errors.cost_price" :required="!form.is_service">
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">{{ currencySymbol }}</span>
                             <input
                                 v-model="form.cost_price"
                                 type="number" min="0" step="0.01"
@@ -68,19 +68,19 @@
                     </FormField>
                     <FormField :label="t('products.sellingPrice')" :error="errors.selling_price" required>
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">{{ currencySymbol }}</span>
                             <input v-model="form.selling_price" type="number" min="0" step="0.01" :class="[inputClass(errors.selling_price), 'pl-7']" />
                         </div>
                     </FormField>
                     <FormField :label="t('products.wholesalePrice')" :error="errors.wholesale_price">
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">{{ currencySymbol }}</span>
                             <input v-model="form.wholesale_price" type="number" min="0" step="0.01" :class="[inputClass(errors.wholesale_price), 'pl-7']" />
                         </div>
                     </FormField>
                     <FormField :label="t('products.minSellingPrice')" :error="errors.min_selling_price">
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">{{ currencySymbol }}</span>
                             <input v-model="form.min_selling_price" type="number" min="0" step="0.01" :class="[inputClass(errors.min_selling_price), 'pl-7']" />
                         </div>
                     </FormField>
@@ -219,8 +219,12 @@ import Modal     from '@/components/ui/Modal.vue';
 import FormField from '@/components/ui/FormField.vue';
 import { PhotoIcon } from '@heroicons/vue/24/outline';
 import { productService } from '@/services/productService';
+import { useSettingsStore } from '@/stores/settings';
 
 const { t } = useI18n();
+const settingsStore  = useSettingsStore();
+const currencySymbol = computed(() => settingsStore.settings?.currency_symbol ?? '€');
+const defaultVat     = computed(() => settingsStore.settings?.vat_default ?? 19);
 
 const props = defineProps({
     open:            { type: Boolean, required: true },
@@ -252,7 +256,7 @@ const form = reactive({
     sku: '', name: '', description: '', barcode: '',
     category_id: '', brand_id: '', unit_id: '',
     cost_price: '', selling_price: '', wholesale_price: '', min_selling_price: '',
-    tax_rate: 19,
+    tax_rate: defaultVat.value,
     reorder_level: 0,
     is_service: false,
     is_active: true,
@@ -292,7 +296,7 @@ watch(() => props.product, (val) => {
         form.selling_price     = val.selling_price     ?? '';
         form.wholesale_price   = val.wholesale_price   ?? '';
         form.min_selling_price = val.min_selling_price ?? '';
-        form.tax_rate          = val.tax_rate          ?? 19;
+        form.tax_rate          = val.tax_rate          ?? defaultVat.value;
         form.reorder_level     = val.reorder_level     ?? 0;
         form.is_service        = val.is_service        ?? false;
         form.is_active         = val.is_active         ?? true;
@@ -302,7 +306,7 @@ watch(() => props.product, (val) => {
             sku: '', name: '', description: '', barcode: '',
             category_id: '', brand_id: '', unit_id: '',
             cost_price: '', selling_price: '', wholesale_price: '', min_selling_price: '',
-            tax_rate: 19, reorder_level: 0, is_service: false, is_active: true,
+            tax_rate: defaultVat.value, reorder_level: 0, is_service: false, is_active: true,
         });
         imagePreview.value = null;
     }
