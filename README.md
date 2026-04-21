@@ -1,6 +1,6 @@
 # POSmeister
 
-> A professional, multi-branch Point-of-Sale management system built with **Laravel 13** and **Vue 3**. Designed to European commercial standards. SaaS-ready architecture.
+> A professional, multi-branch Point-of-Sale management system built with **Laravel 13** and **Vue 3**. Designed to European commercial standards, with German retail workflows built in. SaaS-ready architecture.
 
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?logo=laravel&logoColor=white)
@@ -13,13 +13,9 @@
 
 ## Overview
 
-POSmeister is a ground-up rebuild of a legacy CodeIgniter 3 point-of-sale system. The goal is a modern, maintainable, and internationally deployable product suitable for small-to-medium retail businesses.
+POSmeister is a ground-up rebuild of a legacy CodeIgniter 3 point-of-sale system into a modern, production-quality web application. The project demonstrates a full product lifecycle from architecture design through to a functional, deployable system — covering authentication, multi-tenancy, a product catalogue, supplier management, and purchase order processing with automatic inventory updates.
 
-**Current phase:** Phase 1 — Core Infrastructure (complete)
-- Authentication & session management
-- Multi-branch administration
-- User management with role-based access control
-- Full internationalization (English, German, Bengali, Arabic)
+The system is built for German-speaking markets: VAT rates follow §12 UStG (0 %, 7 %, 19 %), purchase numbers follow the Einkaufsbeleg format (`EK-YYYY-NNNNN`), and the UI ships in both English and German.
 
 ---
 
@@ -30,40 +26,66 @@ POSmeister is a ground-up rebuild of a legacy CodeIgniter 3 point-of-sale system
 | Backend framework | Laravel | ^13.0 |
 | PHP | PHP | ^8.3 |
 | Authentication | Laravel Sanctum | ^4.3 |
-| Frontend framework | Vue 3 (Composition API) | ^3.5.32 |
-| Build tool | Vite | ^8.0.0 |
-| CSS framework | Tailwind CSS | ^4.0.0 |
-| State management | Pinia | ^3.0.4 |
-| Client-side routing | Vue Router | ^4.6.4 |
-| Internationalization | Vue I18n | ^9.14.5 |
-| Icons | Heroicons (Vue) | ^2.2.0 |
-| HTTP client | Axios | ^1.8.0 |
-| Utilities | VueUse | ^14.2.1 |
+| Frontend framework | Vue 3 (Composition API) | ^3.5 |
+| Build tool | Vite | ^8.0 |
+| CSS framework | Tailwind CSS | ^4.0 |
+| State management | Pinia | ^3.0 |
+| Client-side routing | Vue Router | ^4.6 |
+| Internationalization | Vue I18n | ^9.14 |
+| HTTP client | Axios | ^1.8 |
+| UI utilities | VueUse | ^14.2 |
+| Alert/confirm dialogs | SweetAlert2 | ^11 |
+| Icons | Heroicons | ^2.2 |
 | Database (default) | SQLite / MySQL | — |
 
 ---
 
-## Features
+## What Is Built
 
-### Phase 1 — Complete
+### Phase 1 — Authentication & Core Infrastructure
 
-- **Token-based authentication** via Laravel Sanctum. Login, logout, and `/me` endpoint with full user context.
-- **Branch management** — full CRUD with soft-delete, status toggle, and search/filter.
-- **User management** — full CRUD with role assignment, branch assignment, and activate/deactivate actions.
-- **Role-based access control (RBAC)** — admin-configurable permission matrix. Manager and Cashier roles can have per-module access granted or revoked at runtime without code changes.
-- **Multi-branch scoping** — non-admin users are automatically scoped to their branch. Audit fields (`created_by`, `updated_by`) are set automatically via model events.
-- **Internationalization** — UI fully translated in English, German, Bengali, and Arabic. RTL layout support for Arabic. Language persists across sessions via `localStorage`. Backend error messages also respect the client's `Accept-Language` header.
-- **Reactive page titles** — browser tab title updates on each navigation using translated route keys.
-- **Responsive layout** — works on desktop and mobile. Sidebar collapses on small screens.
+- Token-based authentication using Laravel Sanctum. Login, logout, and a `/me` endpoint that returns the full user context and permission set.
+- Session restore on page reload: if a valid token exists, the app rehydrates silently without a full login. Token expiry is handled globally — a 401 response anywhere triggers a clean logout.
+- All API routes protected behind middleware. No endpoint is reachable without a valid token except `/api/auth/login`.
 
-### Planned Phases
+### Phase 2 — Branch Management & User Administration
 
-| Phase | Scope | Status |
+- Full branch CRUD with soft-delete, status toggle, and search. Branches act as data tenants — non-admin users can only see and create data within their assigned branch.
+- User management with role assignment (`admin`, `manager`, `cashier`), branch assignment, and activate/deactivate workflow.
+- Configurable role-permission matrix: an admin can grant or revoke per-module access to Manager and Cashier roles at runtime through the Access Control screen, with no code changes required.
+- Audit trail on every mutable record: `created_by` and `updated_by` are set automatically via Eloquent model events, not by controller code.
+
+### Phase 3 — Product Catalogue & Application Settings
+
+- Product catalogue with full CRUD, image upload (public storage with signed URL), and detail view.
+- Product taxonomy: categories, brands, and units of measure each managed in their own admin screens with inline create/edit modals.
+- Flexible pricing: cost price, selling price, wholesale price, minimum selling price, and profit margin (calculated field).
+- German VAT integration: each product carries a VAT rate of 0 %, 7 % (reduced, e.g. food), or 19 % (standard). The default is drawn from application settings.
+- Application settings module: company name, logo, address, phone, email, currency code, currency symbol, default VAT rate, invoice prefix, date format, and invoice footer. Settings are applied system-wide — the sidebar logo, currency symbols in all tables, and default VAT in the product form all respond to settings changes without a page reload.
+
+### Phase 4 — Suppliers & Purchase Module
+
+- Supplier directory with full CRUD, activate/deactivate, and auto-generated supplier codes (`SUP-000001`).
+- Purchase order workflow: create draft → edit → receive. Only draft orders can be edited or deleted. Receiving a purchase is irreversible and updates stock atomically.
+- Line items with per-line VAT calculation. Purchase totals include: subtotal (Σ qty × cost), per-line VAT, order-level discount, and freight/shipping charge. The grand total formula is `subtotal + VAT − discount + freight`.
+- Automatic inventory management: receiving a purchase increments the `inventory` table for each product/branch pair using a database-level atomic increment (`UPDATE ... SET quantity = quantity + ?`), which is safe under concurrent requests.
+- Purchase numbering follows the German Einkaufsbeleg convention: `EK-2026-00001`. The sequence is per-year and uses `withTrashed()` to prevent gaps when orders are deleted.
+- The purchase form auto-fills unit cost and VAT rate when a product is selected, based on the product's stored values.
+
+---
+
+## Internationalization
+
+The system ships in four languages:
+
+| Code | Language | Direction |
 |---|---|---|
-| Phase 2 | Products & inventory management | Planned |
-| Phase 3 | POS terminal (sales, transactions) | Planned |
-| Phase 4 | Reports & analytics dashboard | Planned |
-| Phase 5 | Accounting & finance module | Planned |
+| `en` | English | LTR |
+| `de` | Deutsch | LTR |
+| `bn` | বাংলা | LTR |
+| `ar` | العربية | RTL |
+
+Language selection is instant, with no page reload. For Arabic, `document.dir = 'rtl'` is applied at the document level. The selected language persists across sessions. All backend validation errors and API messages also respect the client's `Accept-Language` header.
 
 ---
 
@@ -72,39 +94,25 @@ POSmeister is a ground-up rebuild of a legacy CodeIgniter 3 point-of-sale system
 - PHP 8.3+
 - Composer 2.x
 - Node.js 20+ and npm 10+
-- SQLite (default) or a running MySQL/PostgreSQL instance
+- SQLite (zero-config) or MySQL 8+
 
 ---
 
 ## Installation
 
-### 1. Clone the repository
-
 ```bash
-git clone <repository-url>
-cd posmeister_Laravel13_vue_3
-```
-
-### 2. Install PHP dependencies
-
-```bash
+# 1. Install PHP dependencies
 composer install
-```
 
-### 3. Install Node.js dependencies
-
-```bash
+# 2. Install Node.js dependencies
 npm install
-```
 
-### 4. Configure environment
-
-```bash
+# 3. Configure environment
 cp .env.example .env
 php artisan key:generate
 ```
 
-Edit `.env` to set your database connection. The default is SQLite:
+Edit `.env` for your database. SQLite works with no further configuration:
 
 ```env
 DB_CONNECTION=sqlite
@@ -121,34 +129,25 @@ DB_USERNAME=root
 DB_PASSWORD=secret
 ```
 
-### 5. Run migrations and seed initial data
-
 ```bash
+# 4. Run migrations and seed
 php artisan migrate --seed
+
+# 5. Create storage symlink for uploaded files
+php artisan storage:link
 ```
 
-This creates the database schema and seeds:
-- A default **admin** user
-- Default **role permission** matrix (Manager: 9 modules, Cashier: 3 modules)
-
-> **Default admin credentials** are set in `database/seeders/DatabaseSeeder.php`. Change them immediately in production.
+The seeder creates a default admin account. Credentials are defined in `database/seeders/DatabaseSeeder.php` — change them immediately before any production use.
 
 ---
 
-## Development
-
-Run the Laravel development server and Vite dev server concurrently:
+## Running Locally
 
 ```bash
 composer run dev
 ```
 
-This is equivalent to running both:
-
-```bash
-php artisan serve          # http://127.0.0.1:8000
-npm run dev                # Vite HMR server
-```
+This starts the Laravel development server (`php artisan serve`) and the Vite HMR server concurrently. The application is available at `http://127.0.0.1:8000`.
 
 ---
 
@@ -161,156 +160,145 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-The compiled frontend assets are output to `public/build/`.
+Vite outputs content-hashed assets to `public/build/`. Each route is automatically code-split into its own JavaScript chunk — users only download the code for pages they visit.
 
 ---
 
 ## Project Structure
 
 ```
-posmeister_Laravel13_vue_3/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   └── Api/Auth/AuthController.php
-│   │   └── Middleware/
-│   │       ├── BranchScopeMiddleware.php
-│   │       ├── RoleMiddleware.php
-│   │       └── SetLocaleMiddleware.php
-│   ├── Models/
-│   │   └── User.php
-│   ├── Modules/
-│   │   ├── Branch/
-│   │   │   ├── Controllers/BranchController.php
-│   │   │   ├── Models/Branch.php
-│   │   │   ├── Requests/
-│   │   │   ├── Resources/BranchResource.php
-│   │   │   └── Services/BranchService.php
-│   │   ├── UserManagement/
-│   │   │   ├── Controllers/UserController.php
-│   │   │   ├── Requests/
-│   │   │   ├── Resources/UserResource.php
-│   │   │   └── Services/UserService.php
-│   │   └── RolePermission/
-│   │       ├── Controllers/RolePermissionController.php
-│   │       ├── Models/RolePermission.php
-│   │       └── Services/RolePermissionService.php
-│   ├── Providers/AppServiceProvider.php
-│   └── Traits/
-│       ├── BranchScoped.php
-│       └── HasAuditFields.php
-├── bootstrap/app.php
-├── database/
-│   ├── migrations/
-│   └── seeders/
-├── resources/
-│   ├── css/app.css
-│   ├── js/
-│   │   ├── app.js
-│   │   ├── components/
-│   │   │   ├── layout/
-│   │   │   └── ui/
-│   │   ├── composables/
-│   │   ├── locales/          ← en.json, de.json, bn.json, ar.json
-│   │   ├── plugins/i18n.js
-│   │   ├── router/index.js
-│   │   ├── services/
-│   │   ├── stores/
-│   │   └── views/
-│   ├── lang/                 ← Backend translations (en, de, bn, ar)
-│   └── views/app.blade.php
-└── routes/
-    ├── api.php
-    └── web.php
+app/
+├── Http/Middleware/
+│   ├── BranchScopeMiddleware.php   ← multi-tenant data isolation
+│   ├── RoleMiddleware.php          ← role:admin, role:admin,manager
+│   └── SetLocaleMiddleware.php     ← Accept-Language → App::setLocale
+├── Modules/
+│   ├── Branch/                     ← branch CRUD, soft-delete
+│   ├── UserManagement/             ← user CRUD, roles, status
+│   ├── RolePermission/             ← per-role module access matrix
+│   ├── Settings/                   ← application-wide settings, logo
+│   ├── Product/                    ← products, categories, brands, units
+│   └── Purchase/                   ← suppliers, purchase orders, inventory
+└── Traits/
+    ├── HasAuditFields.php          ← auto created_by / updated_by
+    └── BranchScoped.php            ← automatic branch WHERE clause
+
+resources/js/
+├── components/
+│   ├── layout/                     ← AppShell, Sidebar, Topbar
+│   └── ui/                         ← DataTable, FormField, StatusBadge
+├── composables/
+│   ├── useAlert.js                 ← SweetAlert2 toast + confirm wrappers
+│   └── useLocale.js                ← locale switching
+├── locales/                        ← en.json, de.json, bn.json, ar.json
+├── services/                       ← Axios wrappers per resource
+├── stores/                         ← Pinia: auth, settings
+└── views/
+    ├── auth/
+    ├── branches/
+    ├── dashboard/
+    ├── products/
+    ├── purchases/
+    ├── settings/
+    ├── suppliers/
+    └── users/
 ```
 
 ---
 
 ## API Reference
 
-All API endpoints are prefixed with `/api`.
+All endpoints are prefixed `/api` and require `Authorization: Bearer <token>` unless marked public.
 
-### Public
+### Authentication
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/auth/login` | Authenticate and receive a Sanctum token |
-
-### Authenticated (`Authorization: Bearer <token>`)
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/auth/me` | Get the current user with permissions |
-| `POST` | `/api/auth/logout` | Revoke the current token |
-
-### Admin only
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/branches` | List branches (paginated, filterable) |
-| `POST` | `/api/branches` | Create a branch |
-| `GET` | `/api/branches/all` | All active branches (for dropdowns) |
-| `GET` | `/api/branches/{id}` | Get a single branch |
-| `PUT` | `/api/branches/{id}` | Update a branch |
-| `DELETE` | `/api/branches/{id}` | Soft-delete a branch |
-| `GET` | `/api/users` | List users (paginated, filterable) |
-| `POST` | `/api/users` | Create a user |
-| `GET` | `/api/users/{id}` | Get a single user |
-| `PUT` | `/api/users/{id}` | Update a user |
-| `DELETE` | `/api/users/{id}` | Delete a user |
-| `PUT` | `/api/users/{id}/status` | Toggle active/inactive status |
-| `GET` | `/api/role-permissions` | Get permission matrix for all roles |
-| `PUT` | `/api/role-permissions/{role}` | Update module access for a role |
-
-### Login response shape
-
-```json
-{
-  "token": "1|abc...",
-  "user": {
-    "id": 1,
-    "name": "Admin User",
-    "email": "admin@example.com",
-    "role": "admin",
-    "branch_id": null,
-    "is_active": true
-  },
-  "permissions": ["pos", "sales", "branches", "users", "..."]
-}
-```
-
----
-
-## Internationalization
-
-The system supports four languages out of the box:
-
-| Code | Language | Direction | Intl Locale |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `en` | English | LTR | en-US |
-| `de` | Deutsch | LTR | de-DE |
-| `bn` | বাংলা | LTR | bn-BD |
-| `ar` | العربية | RTL | ar-SA |
+| `POST` | `/auth/login` | Public | Authenticate, receive Sanctum token |
+| `GET` | `/auth/me` | Any | Current user, role, and permissions |
+| `POST` | `/auth/logout` | Any | Revoke current token |
 
-**Frontend:** The active locale is stored in `localStorage` under `pos_locale`. Changing language is instant with no page reload. For Arabic, `document.documentElement.dir` is set to `rtl`, applying browser-native RTL layout.
+### Branches & Users (Admin only)
 
-**Backend:** All validation errors and auth messages are served in the client's language. The `SetLocaleMiddleware` reads the `Accept-Language` header (or `?lang=` query parameter) on every API request.
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/branches` | List branches (paginated) |
+| `GET` | `/branches/all` | All active branches (for dropdowns) |
+| `POST` | `/branches` | Create branch |
+| `PUT` | `/branches/{id}` | Update branch |
+| `DELETE` | `/branches/{id}` | Soft-delete branch |
+| `GET` | `/users` | List users (paginated) |
+| `POST` | `/users` | Create user |
+| `PUT` | `/users/{id}` | Update user |
+| `PUT` | `/users/{id}/status` | Toggle active/inactive |
+| `DELETE` | `/users/{id}` | Delete user |
+| `GET` | `/role-permissions` | Get permission matrix |
+| `PUT` | `/role-permissions/{role}` | Update permissions for a role |
 
-To add a new language, create the locale file in `resources/js/locales/<code>.json`, add the entry to `SUPPORTED_LOCALES` in `resources/js/plugins/i18n.js`, and create `resources/lang/<code>/auth.php` and `validation.php`.
+### Settings
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/settings` | Any | Get application settings |
+| `PUT` | `/settings` | Admin | Update settings |
+| `POST` | `/settings/logo` | Admin | Upload company logo |
+| `DELETE` | `/settings/logo` | Admin | Remove company logo |
+
+### Products (read: any auth; write: admin + manager)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/products` | List products (paginated, filterable) |
+| `GET` | `/products/all` | All active products (for dropdowns) |
+| `GET` | `/products/search?q=` | Live product search |
+| `GET` | `/products/{id}` | Product detail |
+| `POST` | `/products` | Create product |
+| `PUT` | `/products/{id}` | Update product |
+| `PUT` | `/products/{id}/status` | Toggle active/inactive |
+| `DELETE` | `/products/{id}` | Delete product |
+| `POST` | `/products/{id}/image` | Upload product image |
+| `DELETE` | `/products/{id}/image` | Remove product image |
+| `GET` | `/categories` | List categories |
+| `GET` | `/categories/all` | All categories (for dropdowns) |
+| `POST/PUT/DELETE` | `/categories/{id}` | Category CRUD |
+| `GET` | `/brands` | List brands |
+| `GET` | `/brands/all` | All brands (for dropdowns) |
+| `POST/PUT/DELETE` | `/brands/{id}` | Brand CRUD |
+| `GET` | `/units` | List units |
+| `GET` | `/units/all` | All units (for dropdowns) |
+| `POST/PUT/DELETE` | `/units/{id}` | Unit CRUD |
+
+### Suppliers & Purchases (read: any auth; write: admin + manager)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/suppliers` | List suppliers (paginated) |
+| `GET` | `/suppliers/all` | All active suppliers (for dropdowns) |
+| `GET` | `/suppliers/{id}` | Supplier detail |
+| `POST` | `/suppliers` | Create supplier |
+| `PUT` | `/suppliers/{id}` | Update supplier |
+| `PUT` | `/suppliers/{id}/status` | Toggle active/inactive |
+| `DELETE` | `/suppliers/{id}` | Delete supplier |
+| `GET` | `/purchases` | List purchases (paginated, filterable) |
+| `GET` | `/purchases/{id}` | Purchase detail with line items |
+| `POST` | `/purchases` | Create purchase (draft or receive immediately) |
+| `PUT` | `/purchases/{id}` | Update purchase (draft only) |
+| `PUT` | `/purchases/{id}/receive` | Mark as received, update inventory |
+| `DELETE` | `/purchases/{id}` | Delete purchase (draft only) |
 
 ---
 
-## Role & Permission System
+## Planned Modules
 
-Three roles are defined: `admin`, `manager`, `cashier`.
-
-- **Admin** always has full access to all modules. This is enforced in code and cannot be changed via the UI.
-- **Manager** and **Cashier** permissions are stored in the `role_permissions` table and managed by the admin through the Role Permissions settings screen.
-- Permissions are included in every API token response and stored in `localStorage`. The frontend sidebar, route guards, and UI elements all check permissions without additional API calls.
-
-Available modules that can be toggled per role:
-
-`pos` · `sales` · `purchases` · `quotations` · `products` · `inventory` · `customers` · `suppliers` · `finance` · `employees` · `reports` · `branches` · `users`
+| Module | Scope |
+|---|---|
+| POS Terminal | Touch-optimised sales screen, receipt printing |
+| Sales / Invoicing | Customer invoices, payment registration |
+| Quotations | Customer quotes with status tracking |
+| Inventory | Stock overview, low-stock alerts, adjustments |
+| Customers | Customer records, purchase history |
+| Finance | Cash flow, expense tracking |
+| Reports | Sales analytics, stock reports, purchase history |
 
 ---
 

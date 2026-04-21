@@ -25,6 +25,21 @@ class ProductController extends Controller
         return ProductResource::collection($data);
     }
 
+    public function all(): JsonResponse
+    {
+        $products = $this->service->all()->map(fn($p) => [
+            'id'         => $p->id,
+            'sku'        => $p->sku,
+            'name'       => $p->name,
+            'cost_price' => (float) $p->cost_price,
+            'tax_rate'   => (float) $p->tax_rate,
+            'unit_id'    => $p->unit_id,
+            'image_url'  => $p->image ? Storage::url($p->image) : null,
+        ]);
+
+        return response()->json(['data' => $products]);
+    }
+
     public function search(Request $request): JsonResponse
     {
         $term = $request->string('q')->trim()->value();

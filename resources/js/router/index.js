@@ -79,7 +79,44 @@ const routes = [
                 component: () => import('@/views/products/ProductDetailView.vue'),
                 meta: { titleKey: 'menu.products', permission: 'products' },
             },
+
+
+            // ── Purchase module ────────────────────────────────────────────
+            {
+                path: 'purchases',
+                name: 'purchases',
+                component: () => import('@/views/purchases/PurchaseListView.vue'),
+                meta: { titleKey: 'menu.purchases', permission: 'purchases' },
+            },
+            {
+                path: 'purchases/new',
+                name: 'purchase-create',
+                component: () => import('@/views/purchases/PurchaseFormView.vue'),
+                meta: { titleKey: 'menu.purchases', permission: 'purchases' },
+            },
+            {
+                path: 'purchases/:id/edit',
+                name: 'purchase-edit',
+                component: () => import('@/views/purchases/PurchaseFormView.vue'),
+                meta: { titleKey: 'menu.purchases', permission: 'purchases' },
+            },
+
+            // ── Supplier module ─────────────────────────────────────────────
+            {
+                path: 'suppliers',
+                name: 'suppliers',
+                component: () => import('@/views/suppliers/SupplierListView.vue'),
+                meta: { titleKey: 'menu.suppliers', permission: 'suppliers' },
+            },
         ],
+    },
+
+    // ── Purchase invoice (standalone — no sidebar) ────────────────────────
+    {
+        path: '/purchases/:id/invoice',
+        name: 'purchase-invoice',
+        component: () => import('@/views/purchases/PurchaseInvoiceView.vue'),
+        meta: { requiresAuth: true, titleKey: 'purchases.invoiceTitle' },
     },
 
     // ── Fallback ──────────────────────────────────────────────────────────

@@ -125,7 +125,7 @@ const NAV_GROUPS = [
         items: [
             { permKey: 'pos',        labelKey: 'menu.pointOfSale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: false },
             { permKey: 'sales',      labelKey: 'menu.sales',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: false },
-            { permKey: 'purchases',  labelKey: 'menu.purchases',   to: { name: 'purchases' },   icon: TruckIcon,                 implemented: false },
+            { permKey: 'purchases',  labelKey: 'menu.purchases',   to: { name: 'purchases' },   icon: TruckIcon,                 implemented: true  },
             { permKey: 'quotations', labelKey: 'menu.quotations',  to: { name: 'quotations' },  icon: ClipboardDocumentListIcon, implemented: false },
         ],
     },
@@ -141,7 +141,7 @@ const NAV_GROUPS = [
         sectionKey: 'menu.sections.stakeholders',
         items: [
             { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: false },
-            { permKey: 'suppliers', labelKey: 'menu.suppliers', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: false },
+            { permKey: 'suppliers', labelKey: 'menu.suppliers', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: true },
         ],
     },
     {

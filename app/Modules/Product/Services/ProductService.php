@@ -27,6 +27,13 @@ class ProductService
             ->paginate($filters['per_page'] ?? 20);
     }
 
+    public function all(): Collection
+    {
+        return Product::active()
+            ->orderBy('name')
+            ->get(['id', 'sku', 'name', 'cost_price', 'tax_rate', 'unit_id', 'image']);
+    }
+
     public function search(string $term): Collection
     {
         return Product::with('unit')

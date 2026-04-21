@@ -1,371 +1,332 @@
 # POSmeister — Architecture
 
-This document describes the technical architecture of POSmeister: how the system is structured, how its major subsystems work, and the reasoning behind key design decisions.
+This document describes the technical architecture of POSmeister: how the system is structured, how its major subsystems work, and the reasoning behind the key design decisions. It is kept up to date as new modules are implemented.
 
 ---
 
 ## Table of Contents
 
 1. [System Overview](#1-system-overview)
-2. [Repository Layout](#2-repository-layout)
+2. [Module Layout](#2-module-layout)
 3. [Backend Architecture](#3-backend-architecture)
 4. [Frontend Architecture](#4-frontend-architecture)
-5. [Authentication Flow](#5-authentication-flow)
+5. [Authentication & Session Flow](#5-authentication--session-flow)
 6. [Role-Based Access Control](#6-role-based-access-control)
-7. [Multi-Branch Scoping](#7-multi-branch-scoping)
+7. [Multi-Branch Data Isolation](#7-multi-branch-data-isolation)
 8. [Internationalization](#8-internationalization)
 9. [Database Design](#9-database-design)
-10. [Request Lifecycle](#10-request-lifecycle)
+10. [Purchase & Inventory Flow](#10-purchase--inventory-flow)
 11. [Build & Deployment](#11-build--deployment)
 
 ---
 
 ## 1. System Overview
 
-POSmeister is a **Single-Page Application (SPA)** with a JSON REST API backend.
+POSmeister is a **Single-Page Application (SPA)** backed by a JSON REST API.
 
 ```
-┌─────────────────────────────────────────────────┐
-│                   Browser (SPA)                 │
-│                                                 │
-│  Vue 3 + Vite + Pinia + Vue Router + Vue I18n   │
-│                                                 │
-│  ┌──────────┐  ┌────────────┐  ┌─────────────┐ │
-│  │  Stores  │  │   Router   │  │  Composables│ │
-│  │ (Pinia)  │  │(Vue Router)│  │  (useLocale)│ │
-│  └──────────┘  └────────────┘  └─────────────┘ │
-└──────────────────────┬──────────────────────────┘
-                       │ HTTPS (JSON / Bearer token)
-┌──────────────────────▼──────────────────────────┐
-│               Laravel 13 API Server             │
-│                                                 │
-│  Middleware → Controller → Service → Resource   │
-│                                                 │
-│  ┌──────────┐  ┌──────────────┐  ┌───────────┐ │
-│  │ Sanctum  │  │   Modules    │  │   Traits  │ │
-│  │  (Auth)  │  │(Branch/User) │  │(Scoped/   │ │
-│  └──────────┘  └──────────────┘  │ Audit)    │ │
-│                                  └───────────┘ │
-└──────────────────────┬──────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────┐
-│                   Database                      │
-│           SQLite (dev) / MySQL (prod)           │
-└─────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                     Browser (SPA)                    │
+│                                                      │
+│   Vue 3 · Pinia · Vue Router · Vue I18n · Tailwind   │
+│                                                      │
+│  ┌────────────┐  ┌─────────────┐  ┌───────────────┐  │
+│  │   Stores   │  │   Router    │  │  Composables  │  │
+│  │ auth/sett. │  │(guards+meta)│  │ useAlert      │  │
+│  └────────────┘  └─────────────┘  └───────────────┘  │
+└─────────────────────────┬────────────────────────────┘
+                          │ HTTPS  Bearer token
+┌─────────────────────────▼────────────────────────────┐
+│                Laravel 13 API Server                 │
+│                                                      │
+│  Middleware chain → Controller → Service → Resource  │
+│                                                      │
+│  ┌──────────┐  ┌────────────────────┐  ┌──────────┐  │
+│  │ Sanctum  │  │   app/Modules/     │  │  Traits  │  │
+│  │  (Auth)  │  │ Branch / Product / │  │ Audit /  │  │
+│  └──────────┘  │ Purchase / etc.    │  │ Scoped   │  │
+│                └────────────────────┘  └──────────┘  │
+└─────────────────────────┬────────────────────────────┘
+                          │
+┌─────────────────────────▼────────────────────────────┐
+│                      Database                        │
+│              SQLite (dev) / MySQL (prod)             │
+└──────────────────────────────────────────────────────┘
 ```
 
-The Vue SPA is served by a single Blade view (`resources/views/app.blade.php`). All other routes, including the catch-all `/{any}`, return the same view — client-side routing handles navigation entirely.
+The Vue SPA is served by a single Blade view. All routes — including the `/{any}` catch-all — return the same Blade view, and client-side routing handles navigation entirely.
 
 ---
 
-## 2. Repository Layout
+## 2. Module Layout
 
-The project follows Laravel's standard directory conventions with one extension: a `Modules/` directory inside `app/` that groups business logic by domain.
+All domain business logic lives under `app/Modules/`. Each module is self-contained and follows the same four-layer structure:
 
 ```
-app/
-├── Http/
-│   ├── Controllers/Api/Auth/   ← Authentication only
-│   └── Middleware/             ← BranchScope, Role, SetLocale
-├── Models/
-│   └── User.php                ← Core user model (Sanctum)
-├── Modules/                    ← All domain logic lives here
-│   ├── Branch/
-│   ├── UserManagement/
-│   └── RolePermission/
-├── Providers/
-└── Traits/
-    ├── BranchScoped.php
-    └── HasAuditFields.php
-
-resources/js/
-├── app.js                      ← Vue app entry point
-├── bootstrap.js                ← Axios global setup
-├── components/
-│   ├── layout/                 ← AppShell, Sidebar, Topbar
-│   └── ui/                     ← DataTable, Modal, FormField, etc.
-├── composables/
-│   └── useLocale.js
-├── locales/                    ← en.json, de.json, bn.json, ar.json
-├── plugins/
-│   └── i18n.js                 ← Vue I18n instance
-├── router/
-│   └── index.js
-├── services/                   ← Thin Axios wrappers per resource
-├── stores/                     ← Pinia stores (auth, branch)
-└── views/                      ← Page-level Vue components
+app/Modules/
+├── Branch/
+│   ├── Controllers/BranchController.php
+│   ├── Models/Branch.php
+│   ├── Requests/StoreBranchRequest.php
+│   │           UpdateBranchRequest.php
+│   ├── Resources/BranchResource.php
+│   └── Services/BranchService.php
+│
+├── UserManagement/
+├── RolePermission/
+│
+├── Settings/
+│   ├── Controllers/SettingsController.php
+│   ├── Models/Setting.php
+│   ├── Requests/UpdateSettingsRequest.php
+│   ├── Resources/SettingsResource.php
+│   └── Services/SettingsService.php
+│
+├── Product/
+│   ├── Controllers/
+│   │   ├── ProductController.php
+│   │   ├── CategoryController.php
+│   │   ├── BrandController.php
+│   │   └── UnitController.php
+│   ├── Models/
+│   │   ├── Product.php
+│   │   ├── Category.php (→ product_categories table)
+│   │   ├── Brand.php
+│   │   ├── Unit.php
+│   │   └── Inventory.php
+│   ├── Requests/   ← Store + Update variants per resource
+│   ├── Resources/  ← ProductResource, CategoryResource, etc.
+│   └── Services/   ← ProductService, CategoryService, etc.
+│
+└── Purchase/
+    ├── Controllers/
+    │   ├── SupplierController.php
+    │   └── PurchaseController.php
+    ├── Models/
+    │   ├── Supplier.php
+    │   ├── Purchase.php
+    │   └── PurchaseItem.php
+    ├── Requests/
+    │   ├── StoreSupplierRequest.php
+    │   └── StorePurchaseRequest.php
+    ├── Resources/
+    │   ├── SupplierResource.php
+    │   └── PurchaseResource.php
+    └── Services/
+        ├── SupplierService.php
+        └── PurchaseService.php
 ```
 
 ---
 
 ## 3. Backend Architecture
 
-### 3.1 Modular structure
+### 3.1 Four-layer pattern
 
-Each business domain lives in `app/Modules/<Name>/` and contains four layers:
+Each module follows a strict four-layer pattern:
 
-| Layer | File | Responsibility |
-|---|---|---|
-| Controller | `Controllers/<Name>Controller.php` | HTTP request handling, delegates to Service |
-| Service | `Services/<Name>Service.php` | Business logic, database queries |
-| Resource | `Resources/<Name>Resource.php` | JSON response shaping |
-| Request | `Requests/<Store|Update><Name>Request.php` | Validation rules |
+| Layer | Responsibility |
+|---|---|
+| **Controller** | Reads HTTP request, delegates to Service, wraps result in Resource |
+| **Service** | All business logic and database queries — no HTTP or JSON concerns |
+| **Resource** | Transforms Eloquent models into API-safe JSON, handles type casting |
+| **Request** | Validation rules, decoupled from controller logic |
 
-Controllers are intentionally thin. They validate input (via Form Requests), call the Service, and return a Resource. No business logic lives in controllers.
-
-Example flow for `GET /api/users`:
-
-```
-UserController@index
-  → UserService::paginate($filters)
-    → User::query()->with('branch')->paginate()
-  ← UserResource::collection($paginated)
-  ← JsonResponse { data: [...], meta: {...} }
-```
+Controllers are intentionally thin. They never contain `if` statements for business rules, calculations, or database queries.
 
 ### 3.2 Middleware stack
 
-Every API request passes through this middleware chain (in order):
+Every protected API request passes through this chain:
 
 ```
-1. EnsureFrontendRequestsAreStateful  (Sanctum SPA cookie support)
-2. SetLocaleMiddleware                 (reads Accept-Language → App::setLocale)
-3. auth:sanctum                        (token validation — on protected routes)
-4. BranchScopeMiddleware              (sets app('pos.activeBranchId'))
-5. RoleMiddleware                      (role:admin, role:admin,manager, etc.)
+1. SetLocaleMiddleware     reads Accept-Language → App::setLocale
+2. auth:sanctum            validates Bearer token
+3. BranchScopeMiddleware   sets app('pos.activeBranchId')
+4. RoleMiddleware          role:admin  /  role:admin,manager  (where applicable)
 ```
 
 ### 3.3 Traits
 
-**`BranchScoped`** — Registers a global Eloquent scope that automatically filters queries to the active branch. Also auto-sets `branch_id` on `creating`. Models that need multi-tenant data isolation use this trait.
+**`HasAuditFields`** registers `creating` and `updating` Eloquent model events to set `created_by` and `updated_by` from `auth()->id()`. No controller code is needed — any model using this trait automatically gets audit fields.
+
+**`BranchScoped`** registers a global Eloquent scope that adds `WHERE branch_id = :activeBranchId` to every query on the model. Controllers and services never need to add branch conditions manually.
+
+### 3.4 Service design
+
+Services are plain PHP classes. They do not extend any framework base class, do not use traits for business logic, and take plain arrays or Eloquent models as arguments. This makes them easy to test in isolation.
+
+The PurchaseService demonstrates the most complex service in the system:
 
 ```php
-// Any model using BranchScoped:
-User::all(); // automatically WHERE branch_id = :active_branch
-User::allBranches()->get(); // escape hatch for reports
+// All three operations happen in a single DB transaction
+public function store(array $data): Purchase
+{
+    return DB::transaction(function () use ($data) {
+        $totals   = $this->calculateTotals($data['items'], $data);
+        $purchase = Purchase::create([...]);
+        $this->syncItems($purchase, $data['items']);
+
+        if ($data['receive'] ?? false) {
+            $this->receiveStock($purchase);   // updates inventory atomically
+        }
+
+        return $purchase->fresh(['supplier', 'branch', 'items.product']);
+    });
+}
 ```
 
-**`HasAuditFields`** — Listens to `creating` and `updating` Eloquent events and sets `created_by` / `updated_by` from the authenticated user's ID, without any controller involvement.
+### 3.5 Type safety in API responses
 
-### 3.4 Service layer pattern
-
-Services are plain PHP classes, not Laravel Services in any specific framework sense. They take filter arrays or Eloquent models as input and return paginated results, collections, or single models.
+Laravel's `decimal:2` cast serializes numeric columns to strings (`"19.00"`, not `19.0`). Resources explicitly cast these to `float` before returning JSON, preventing Vue's `v-model` and comparison logic from receiving unexpected string values:
 
 ```php
-// BranchService example
-public function paginate(array $filters): LengthAwarePaginator
-{
-    return Branch::query()
-        ->when($filters['search'] ?? null, fn($q, $v) => $q->where('name', 'like', "%$v%"))
-        ->when(isset($filters['is_active']) && $filters['is_active'] !== '', ...)
-        ->orderBy('name')
-        ->paginate($filters['per_page'] ?? 15);
-}
+// In PurchaseResource
+'total_amount' => (float) $this->total_amount,
+'vat_rate'     => (float) $this->vat_rate,
 ```
 
 ---
 
 ## 4. Frontend Architecture
 
-### 4.1 Application shell
+### 4.1 Application entry
 
-The Vue application mounts at `<div id="app">` in `app.blade.php`. The entry point `resources/js/app.js` registers plugins in this order:
+`resources/js/app.js` mounts the Vue application after registering plugins in the correct order. The i18n plugin must come first so translated strings are available to the router's `afterEach` title hook.
+
+### 4.2 Layout
+
+The authenticated layout is managed by `AppShell.vue`, which boots the application state on mount:
 
 ```js
-createApp(App)
-  .use(i18n)       // vue-i18n (locale already applied to document before mount)
-  .use(pinia)      // Pinia store
-  .use(router)     // Vue Router (auth guards registered)
-  .mount('#app')
+onMounted(async () => {
+    await auth.fetchMe();      // restore session from localStorage
+    settingsStore.load();      // load application settings once
+});
 ```
 
-### 4.2 Layout components
+Settings (company name, logo, currency) are loaded once and stored in Pinia. Any component that needs the currency symbol or VAT default reads from `useSettingsStore()` reactively — if the admin changes settings, the UI updates without a page reload.
 
-The authenticated layout is managed by `AppShell.vue`:
+### 4.3 The Sidebar nav config
 
-```
-AppShell.vue
-├── Sidebar.vue         ← Data-driven nav, permission-filtered
-│   ├── NavItem.vue     ← Individual nav link with active state
-│   └── SidebarSectionLabel.vue
-└── Topbar.vue          ← Breadcrumb, LanguageSwitcher, user menu
-    └── LanguageSwitcher.vue
-```
+The sidebar is driven entirely by a static `NAV_GROUPS` data structure. Each item declares:
 
-The `Sidebar` is driven entirely by a computed `NAV_GROUPS` data structure. Each item has `permKey`, `labelKey`, and `sectionKey` fields. The `visibleGroups` computed filters items through `auth.hasPermission(permKey)`. Adding a new module to the sidebar requires only a new object in the array — no template changes.
+- `permKey` — which permission key to check (or `null` for always-visible items)
+- `labelKey` — the i18n key for the label
+- `to` — the Vue Router route object
+- `implemented` — controls whether the link is active or shows a "Soon" badge
 
-### 4.3 UI component library
+The `visibleGroups` computed filters by `auth.hasPermission(permKey)`. Adding a new module requires only adding an entry to the array.
 
-The `components/ui/` directory is a small internal component library shared by all views:
+### 4.4 UI component library
+
+`components/ui/` is a small internal library:
 
 | Component | Purpose |
 |---|---|
-| `DataTable.vue` | Generic table with pagination, loading skeletons, empty state, row-action slots |
-| `Modal.vue` | Accessible modal with header, scrollable body, and footer slots |
-| `FormField.vue` | Label + input wrapper with error message and required indicator |
-| `ConfirmDialog.vue` | Destructive action confirmation modal with loading state |
-| `StatusBadge.vue` | Active/inactive pill badge |
-| `LanguageSwitcher.vue` | Locale dropdown with flag, label, and RTL indicator |
+| `DataTable.vue` | Paginated table with loading skeleton, empty state, column format functions, and row-action slots |
+| `FormField.vue` | Label + input wrapper with error display |
+| `StatusBadge.vue` | Active/inactive pill |
+| `LanguageSwitcher.vue` | Locale dropdown with RTL indicator |
 
-### 4.4 Services layer
-
-Each API resource has a corresponding service file in `resources/js/services/`. Services are thin wrappers that call the pre-configured Axios instance in `api.js`. They own no state.
+DataTable accepts a `columns` array with optional `format` functions, allowing currency formatting to be defined at the column level:
 
 ```js
-// userService.js
-export const userService = {
-  index: (params) => api.get('/users', { params }),
-  store: (data)   => api.post('/users', data),
-  update: (id, data) => api.put(`/users/${id}`, data),
-  destroy: (id)   => api.delete(`/users/${id}`),
-  toggleStatus: (id) => api.put(`/users/${id}/status`),
+{ key: 'total_amount', label: 'Total', format: (v) => formatCurrency(v) }
+```
+
+### 4.5 SweetAlert2 integration
+
+All user-triggered confirmations and notifications use a shared `useAlert.js` composable rather than native `alert()` or a custom confirm component:
+
+```js
+// Confirm before a destructive action
+const ok = await confirm({ title: 'Delete?', danger: true });
+if (!ok) return;
+
+// Notify on success
+toast('success', 'Deleted successfully.');
+```
+
+This composable is used consistently across all views and prevents the UI from having a mix of native browser dialogs and custom modals.
+
+### 4.6 Services
+
+Each API resource has a thin Axios wrapper in `resources/js/services/`. Services own no state and perform no error handling — that belongs to the view. They exist only to centralise the URL construction:
+
+```js
+export const purchaseService = {
+    index:   (params) => api.get('/purchases', { params }),
+    store:   (data)   => api.post('/purchases', data),
+    receive: (id)     => api.put(`/purchases/${id}/receive`),
 };
 ```
 
-`api.js` handles two cross-cutting concerns:
-1. **Request interceptor** — injects `Authorization: Bearer <token>` from `localStorage` on every outgoing request.
-2. **Response interceptor** — on `401`, dispatches a custom `auth:expired` DOM event. The auth store listens for this event and clears the session.
-
-### 4.5 State management (Pinia)
-
-Two stores manage global state:
-
-**`auth.js`**
-- Persists `token`, `user`, and `permissions` to `localStorage`.
-- `hasPermission(key)` returns `true` for admins unconditionally, otherwise checks the `permissions` array.
-- `fetchMe()` is called on initial load to rehydrate state from the API if a token exists.
-
-**`branch.js`**
-- Two modes: paginated list (for the Branches admin screen) and a flat `allActive` list (for dropdowns in other forms).
-- `fetchAllActive()` is idempotent — it skips the API call if data is already loaded (`allActiveLoaded` flag).
-- `branchOptions` is a computed getter that transforms `allActive` into `{ value, label }` pairs for `<select>` elements.
-
-### 4.6 Route guards
-
-`router/index.js` registers two navigation guards:
-
-**`beforeEach`** — runs on every navigation:
-1. If the route requires auth and there is no token → redirect to `/login`
-2. If the route requires guest (login page) and user is authenticated → redirect to `/dashboard`
-3. If `meta.adminOnly` is set and user is not admin → redirect to `/dashboard`
-4. If `meta.permission` is set and user lacks that permission → redirect to `/dashboard`
-
-**`afterEach`** — translates the route's `meta.titleKey` into the current locale and sets `document.title`.
-
 ---
 
-## 5. Authentication Flow
+## 5. Authentication & Session Flow
 
 ### Login
 
 ```
-Browser                     Vue (auth store)              Laravel API
-   │                              │                            │
-   │── enter credentials ────────►│                            │
-   │                              │── POST /api/auth/login ───►│
-   │                              │                            │── validate credentials
-   │                              │                            │── Hash::check(password)
-   │                              │                            │── create Sanctum token
-   │                              │                            │── load permissions
-   │                              │◄── { token, user, perms } ─│
-   │                              │── save to localStorage      │
-   │                              │── router.push('/dashboard') │
-   │◄── dashboard renders ────────│                            │
+User enters credentials
+        │
+        ▼
+auth.login() → POST /api/auth/login
+        │
+        ▼
+Laravel validates, creates Sanctum token, loads permissions
+        │
+        ▼
+{ token, user, permissions } stored in localStorage
+        │
+        ▼
+router.push('/dashboard')
 ```
 
-### Session restore (page reload)
-
-On every page load, if a token exists in `localStorage`, `auth.fetchMe()` calls `GET /api/auth/me`. This refreshes the user object and permissions without requiring a re-login. If the token is expired or revoked, the 401 response triggers `auth:expired`, which logs the user out and redirects to login.
-
-### Logout
+### Page reload
 
 ```
-Browser         Vue (auth store)        Laravel API
-   │                  │                      │
-   │── click logout ─►│                      │
-   │                  │── POST /auth/logout ─►│── revoke token
-   │                  │── clear localStorage  │
-   │                  │── router.push('/login')
+Token found in localStorage
+        │
+        ▼
+auth.fetchMe() → GET /api/auth/me
+        │
+   ┌────┴────┐
+200 OK     401 Expired
+   │           │
+   ▼           ▼
+Rehydrate   auth:expired event
+store       → clear localStorage
+            → redirect to /login
 ```
+
+The `auth:expired` event is dispatched by Axios's response interceptor on any 401 from the API. The auth store listens for it. This means expired-session handling works identically everywhere in the app without any per-component code.
 
 ---
 
 ## 6. Role-Based Access Control
 
-### Data model
+Three roles: `admin`, `manager`, `cashier`.
 
-```
-role_permissions table
-┌────────────┬──────────────┐
-│ role       │ module       │
-├────────────┼──────────────┤
-│ manager    │ pos          │
-│ manager    │ sales        │
-│ manager    │ products     │
-│ ...        │ ...          │
-│ cashier    │ pos          │
-│ cashier    │ sales        │
-│ cashier    │ customers    │
-└────────────┴──────────────┘
-```
+Admin always has full access. This is enforced in `hasPermission()` — admins bypass the permissions array entirely and cannot be accidentally locked out by a misconfigured permission matrix.
 
-A row existing in this table means the role has access to that module. Absence of a row means no access.
+Manager and Cashier permissions are stored as rows in `role_permissions`. The admin manages this through the Access Control screen. When a role's permissions change, the next API call to `/me` picks up the new set. Currently active users are not affected until their token is refreshed.
 
-### How permissions flow
-
-```
-Login/Me API response
-        │
-        ▼
-  permissions: ["pos", "sales", "users", ...]
-        │
-        ├──► auth store (in-memory + localStorage)
-        │
-        ├──► Sidebar: visibleGroups filters by auth.hasPermission(permKey)
-        │
-        ├──► Router guards: meta.permission checked in beforeEach
-        │
-        └──► UI elements: v-if="auth.hasPermission('users')"
-```
-
-### Admin bypass
-
-The `isAdmin` getter checks `user.role === 'admin'`. `hasPermission()` returns `true` immediately for admins without consulting the permissions array. This means admin cannot be locked out by the permission system, and the permissions array does not need to enumerate every module for admin users.
-
-### Permission management
-
-`RolePermissionService` owns two methods:
-
-- `getForRole(role)` — returns an array of module strings for a role, or `ALL_MODULES` if the role is `admin`.
-- `syncRole(role, modules)` — deletes all existing rows for the role and inserts the new set. This is a deliberate replace-all strategy to avoid orphaned permissions.
+Permission checks run in three places:
+1. **Route guard** (`meta.permission`) — prevents navigation to inaccessible pages
+2. **Sidebar** — hides nav items the user cannot access
+3. **API middleware** (`role:admin,manager`) — enforces access at the server, regardless of any client-side state
 
 ---
 
-## 7. Multi-Branch Scoping
+## 7. Multi-Branch Data Isolation
 
-### Concept
+`BranchScopeMiddleware` resolves the active branch on every request:
 
-Each branch is an isolated tenant. A user belongs to one branch. When a non-admin user makes an API request, their data access is silently restricted to their own branch.
+- Non-admin users: always their own `branch_id`. They cannot access another branch's data even by manipulating request parameters.
+- Admins: can pass `?branch_id=X` to switch context, useful for cross-branch reports.
 
-### Implementation
-
-`BranchScopeMiddleware` runs before any controller action on authenticated routes. It resolves the active branch ID and binds it to the service container:
-
-```php
-// Non-admin: always their own branch
-app()->instance('pos.activeBranchId', $user->branch_id);
-
-// Admin: can pass ?branch_id=X to switch context
-app()->instance('pos.activeBranchId', $request->query('branch_id', null));
-```
-
-The `BranchScoped` trait then reads this value in its global Eloquent scope:
-
-```php
-$query->where('branch_id', app('pos.activeBranchId'));
-```
-
-This design means branch filtering is invisible to controllers and services. A controller fetching users never needs to add `->where('branch_id', ...)` — it happens automatically.
+The resolved value is bound to the IoC container (`app('pos.activeBranchId')`). The `BranchScoped` trait reads this in a global Eloquent scope. The scope is invisible to service-layer code — a service simply calls `Product::all()` and the WHERE clause is added automatically.
 
 ---
 
@@ -373,154 +334,161 @@ This design means branch filtering is invisible to controllers and services. A c
 
 ### Architecture split
 
-The i18n system has two independent halves that share the same locale codes:
-
 | Half | Technology | Scope |
 |---|---|---|
-| Frontend | Vue I18n v9 | All UI text, labels, validation messages |
-| Backend | Laravel `__()` helper | API error messages, validation responses |
+| Frontend | Vue I18n v9 | All UI text |
+| Backend | Laravel `__()` | Validation errors, API messages |
 
-### Frontend i18n
+### Frontend
 
-**Initialization** — `plugins/i18n.js` reads `pos_locale` from `localStorage` before the Vue app mounts. It applies `document.documentElement.lang` and `document.documentElement.dir` at this point so the page never renders in the wrong direction.
+`plugins/i18n.js` reads `pos_locale` from `localStorage` before the Vue app mounts. It applies `document.dir` and `document.lang` at this point so Arabic RTL layout is active before the first render.
 
-**Locale structure** — Each locale file is a flat-ish JSON with dot-notated keys grouped by feature:
+The `useLocale.js` composable owns locale switching. It updates the Vue I18n locale ref, persists the choice, and flips `document.dir` — no page reload required.
 
-```
-en.json
-├── app.*         ← App name, tagline, feature list
-├── menu.*        ← Sidebar labels and section headers
-├── common.*      ← Shared words: save, cancel, delete, active, etc.
-├── auth.*        ← Login form, field labels, error messages
-├── dashboard.*   ← KPI labels, section titles, module names
-├── branches.*    ← Branch CRUD form labels and messages
-├── users.*       ← User CRUD form labels and messages
-├── permissions.* ← RBAC screen labels and module descriptions
-└── language.*    ← Language switcher labels
-```
+Locale files use dot-notated keys grouped by feature section. Column definitions in DataTable use `computed()` arrays so translated headers update immediately when the locale changes.
 
-**Locale switching** — `useLocale.js` composable owns the `setLocale()` function. It updates the Vue I18n `locale` ref, persists to `localStorage`, and updates `document.dir` and `document.lang`. No page reload required.
+One rule enforced by Vue I18n: the `@` character must be escaped as `{'@'}` in all locale strings, because `@` is reserved for linked messages. All email placeholder values follow this rule.
 
-**Reactive column headers** — DataTable column definitions that display translated headers use `computed()` to wrap the `columns` array. This ensures column labels update when the locale changes without remounting the component.
+### Backend
 
-### Backend i18n
-
-`SetLocaleMiddleware` reads the `Accept-Language` header from every API request and calls `App::setLocale()`. Laravel's `__()` and `trans()` helpers then automatically return strings from the correct `resources/lang/<code>/` directory.
-
-Resolution priority:
-1. `?lang=<code>` query parameter (explicit override)
-2. `Accept-Language` header (first matching primary tag)
-3. Default: `en`
-
-### Adding a new language
-
-1. Create `resources/js/locales/<code>.json` with all keys from `en.json`
-2. Add to `SUPPORTED_LOCALES` in `resources/js/plugins/i18n.js` with `dir`, `label`, `flag`, `intl` fields
-3. Create `resources/lang/<code>/auth.php` and `validation.php`
+`SetLocaleMiddleware` reads `Accept-Language` on every request and sets `App::setLocale()`. Laravel's validation error messages are returned in the user's language automatically.
 
 ---
 
 ## 9. Database Design
 
-### Schema overview
+### Schema
 
 ```
 branches
-┌──────────────┬──────────────────────┐
-│ id           │ bigint PK            │
-│ code         │ varchar(20) UNIQUE   │
-│ name         │ varchar(100)         │
-│ phone        │ varchar(30) NULL     │
-│ email        │ varchar(150) NULL    │
-│ address      │ text NULL            │
-│ is_active    │ boolean default true │
-│ created_by   │ bigint FK NULL       │
-│ updated_by   │ bigint FK NULL       │
-│ deleted_at   │ timestamp NULL       │ ← soft delete
-│ created_at   │ timestamp            │
-│ updated_at   │ timestamp            │
-└──────────────┴──────────────────────┘
+  id, code (UNIQUE), name, phone, email, address
+  is_active, created_by, updated_by
+  deleted_at (soft delete), timestamps
 
 users
-┌──────────────┬──────────────────────┐
-│ id           │ bigint PK            │
-│ name         │ varchar(255)         │
-│ email        │ varchar(255) UNIQUE  │
-│ phone        │ varchar(30) NULL     │
-│ password     │ varchar(255)         │
-│ role         │ enum(admin, manager, cashier) │
-│ branch_id    │ bigint FK NULL       │ → branches.id
-│ is_active    │ boolean default true │
-│ created_at   │ timestamp            │
-│ updated_at   │ timestamp            │
-└──────────────┴──────────────────────┘
+  id, name, email (UNIQUE), phone, password
+  role ENUM(admin, manager, cashier)
+  branch_id → branches.id
+  is_active, timestamps
 
 role_permissions
-┌──────────────┬──────────────────────┐
-│ id           │ bigint PK            │
-│ role         │ varchar(20)          │
-│ module       │ varchar(50)          │
-│ created_at   │ timestamp            │
-│ updated_at   │ timestamp            │
-│ UNIQUE       │ (role, module)       │
-└──────────────┴──────────────────────┘
+  id, role, module
+  UNIQUE(role, module), timestamps
 
-personal_access_tokens         ← Sanctum
-cache                          ← Laravel cache driver
-jobs                           ← Laravel queue driver
+settings
+  id (always 1 — singleton row)
+  company_name, address, phone, email
+  logo (storage path)
+  currency_code, currency_symbol
+  vat_default, invoice_prefix, invoice_footer, date_format
+  timestamps
+
+product_categories
+  id, name, description
+  created_by, updated_by, deleted_at, timestamps
+
+brands
+  id, name, description
+  created_by, updated_by, deleted_at, timestamps
+
+units
+  id, name, symbol, description
+  created_by, updated_by, deleted_at, timestamps
+
+products
+  id, sku (UNIQUE), name, description
+  category_id → product_categories.id
+  brand_id    → brands.id
+  unit_id     → units.id
+  barcode, cost_price, selling_price, wholesale_price
+  min_selling_price, tax_rate (0|7|19), reorder_level
+  is_service, is_active, image
+  created_by, updated_by, deleted_at, timestamps
+
+inventory
+  id, product_id → products.id, branch_id → branches.id
+  quantity, low_stock_alert
+  UNIQUE(product_id, branch_id)
+  timestamps
+
+suppliers
+  id, code (SUP-000001, auto-generated), name
+  contact_person, email, phone, address, city
+  country (default: Deutschland), vat_number, notes
+  is_active
+  created_by, updated_by, deleted_at, timestamps
+
+purchases
+  id, purchase_number (EK-YYYY-NNNNN), branch_id, supplier_id
+  purchase_date, status ENUM(draft, received)
+  reference, notes
+  subtotal, discount_amount, vat_amount, freight_amount, total_amount
+  created_by, updated_by, deleted_at, timestamps
+
+purchase_items
+  id, purchase_id → purchases.id (CASCADE DELETE)
+  product_id      → products.id  (RESTRICT DELETE)
+  quantity, unit_cost, vat_rate, vat_amount, line_total
+  timestamps
 ```
 
 ### Design decisions
 
-**Soft deletes on Branch** — A branch may have historical transactions. Hard-deleting a branch would orphan that data. `deleted_at` allows the branch to be hidden from the UI while retaining referential integrity.
+**`settings` as a singleton row** — `Setting::firstOrCreate(['id' => 1], $defaults)` guarantees there is always exactly one settings row. No secondary lookup is needed anywhere in the application.
 
-**No soft deletes on User** — Users can be deactivated (`is_active = false`). This is the preferred workflow. Hard delete is available for GDPR compliance.
+**`decimal:2` cast + explicit float conversion** — Eloquent's `decimal:2` cast serializes to a string in JSON (`"19.00"`). Resources explicitly cast to `float` before returning responses to prevent Vue's type-sensitive comparisons from failing silently.
 
-**Role as enum string** — Role is stored as a plain string (`admin`, `manager`, `cashier`) rather than a foreign key to a roles table. The role set is small, well-defined, and not expected to expand dynamically. A string is simpler and avoids a join on every permission check.
+**Purchase status as a two-state enum** — `draft` and `received`. The `isDraft()` method on the model gates all mutations. Once received, a purchase cannot be edited, deleted, or re-received. This is intentional — received purchases are part of the stock history.
 
-**`role_permissions` as a flat list** — Rather than a JSON column or a bitmask, each permission is an individual row. This makes it straightforward to query, index, and modify without deserialization.
+**Atomic inventory increment** — Receiving a purchase uses `Inventory::increment('quantity', $qty)` rather than a read-modify-write pattern. This translates to `UPDATE inventory SET quantity = quantity + ? WHERE ...`, which is safe under concurrent requests without application-level locking.
+
+**`withTrashed()` in purchase number generation** — The sequential counter queries `Purchase::withTrashed()->whereYear()->max('purchase_number')`. This ensures deleted draft purchases don't cause number gaps or duplicates after deletion.
+
+**`purchase_items.product_id` as RESTRICT** — Deleting a product that has been purchased should fail loudly, not silently break historical stock records. The foreign key is RESTRICT, not CASCADE.
 
 ---
 
-## 10. Request Lifecycle
-
-A full request trace for `GET /api/users?search=john&role=cashier`:
+## 10. Purchase & Inventory Flow
 
 ```
-1. HTTP request arrives at Laravel
-   │
-2. SetLocaleMiddleware
-   ├── reads Accept-Language: de
-   └── App::setLocale('de')
-   │
-3. auth:sanctum
-   ├── reads Authorization: Bearer <token>
-   ├── validates token against personal_access_tokens
-   └── sets auth()->user()
-   │
-4. BranchScopeMiddleware
-   ├── admin? → activeBranchId = null (no scope)
-   └── non-admin? → activeBranchId = user.branch_id
-   │
-5. RoleMiddleware (role:admin)
-   └── user.role === 'admin' → passes
-   │
-6. UserController@index
-   └── delegates to UserService::paginate($request->validated())
-   │
-7. UserService::paginate
-   ├── User::query()->with('branch')
-   ├── ->where('name', 'like', '%john%')
-   ├── ->where('role', 'cashier')
-   └── ->paginate(20)
-   │
-8. UserResource::collection($paginated)
-   ├── formats each user: id, name, email, phone, role, branch_name, is_active
-   └── appends pagination meta
-   │
-9. JsonResponse 200
-   └── { data: [...], meta: { total, per_page, current_page, last_page } }
+Create Purchase (draft)
+        │
+        ▼
+User fills: supplier, date, line items (product / qty / cost / VAT%)
+        │
+        ▼
+Frontend calculates totals live:
+  lineVAT   = round(qty × cost × (vatRate / 100), 2)
+  lineTotal = lineBase + lineVAT
+  subtotal  = Σ lineBase
+  vatAmount = Σ lineVAT
+  grandTotal = subtotal + vatAmount − discount + freight
+        │
+        ▼
+POST /api/purchases   (or PUT to update draft)
+        │
+        ▼
+PurchaseService::store()
+  ├── DB::transaction
+  ├── calculateTotals()  ← server recalculates, never trusts client totals
+  ├── Purchase::create()
+  ├── syncItems()        ← deletes old items, inserts new
+  └── if receive=true → receiveStock()
+        │
+        ▼
+receiveStock():
+  foreach item:
+    Inventory::firstOrCreate([product_id, branch_id], [qty=0])
+    Inventory::increment('quantity', item.quantity)  ← atomic
+  Purchase::update(['status' => 'received'])
+
+Received purchase: READ ONLY
+  ├── Cannot be edited  (isDraft() guard in update)
+  ├── Cannot be deleted (isDraft() guard in delete)
+  └── Cannot be received again (isDraft() guard in receive)
 ```
+
+The server always recalculates totals from the submitted line items. The client-side totals shown in the form are for display only and are never trusted by the API.
 
 ---
 
@@ -528,43 +496,33 @@ A full request trace for `GET /api/users?search=john&role=cashier`:
 
 ### Development
 
-```
-npm run dev     → Vite dev server with HMR on port 5173
-php artisan serve → Laravel on port 8000
+```bash
+composer run dev
+# starts: php artisan serve (port 8000)
+#         npm run dev       (Vite HMR, port 5173)
 ```
 
-Vite proxies are not configured — the SPA calls the Laravel server directly. Both must be running during development.
+### Production
 
-### Production build
-
-```
+```bash
 npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 ```
 
-Vite outputs to `public/build/` with content-hashed filenames. Laravel's `vite()` Blade helper reads `public/build/manifest.json` to inject the correct asset URLs.
+Vite code-splits automatically — each route component becomes its own hashed chunk. The result:
 
 ```
-public/build/
-├── manifest.json
-└── assets/
-    ├── app-<hash>.js      ← vendor + app bundle
-    ├── app-<hash>.css     ← Tailwind output
-    ├── i18n-<hash>.js     ← vue-i18n (large, separate chunk)
-    ├── vue-i18n-<hash>.js ← vue-i18n runtime
-    └── <view>-<hash>.js   ← one chunk per view (code splitting)
+public/build/assets/
+├── app-<hash>.css          ← full Tailwind output
+├── app-<hash>.js           ← Vue app core + Pinia + Router
+├── i18n-<hash>.js          ← all locale JSON merged
+├── useAlert-<hash>.js      ← SweetAlert2 (largest single chunk)
+├── PurchaseFormView-<hash>.js
+├── SupplierListView-<hash>.js
+├── ProductListView-<hash>.js
+└── ...one chunk per view
 ```
 
-Vite automatically code-splits each route into its own chunk. Users only download JS for the pages they visit.
-
-### Environment variables
-
-Vite exposes variables prefixed with `VITE_` to the frontend. Currently only `VITE_APP_NAME` is used. All other configuration (API base URL, etc.) is inferred from the same origin.
-
-Laravel environment variables follow standard `.env` conventions. For production, set:
-
-```env
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://your-domain.com
-DB_CONNECTION=mysql
-```
+Users loading the dashboard do not download the purchase form code until they navigate there.

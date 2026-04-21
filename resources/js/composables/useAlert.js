@@ -32,14 +32,14 @@ export function useAlert() {
      *
      * @param {{title:string, text?:string, confirmText?:string, danger?:boolean}} options
      */
-    async function confirm({ title, text = '', confirmText = 'Confirm', danger = false }) {
+    async function confirm({ title, text = '', confirmText = 'Confirm', cancelText = 'Cancel', danger = false }) {
         const result = await Swal.fire({
             title,
             text,
             icon: danger ? 'warning' : 'question',
             showCancelButton: true,
             confirmButtonText: confirmText,
-            cancelButtonText: 'Cancel',
+            cancelButtonText: cancelText,
             reverseButtons: true,
             focusCancel: true,
             buttonsStyling: false,

@@ -6,6 +6,8 @@ use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Product\Controllers\CategoryController;
 use App\Modules\Product\Controllers\ProductController;
 use App\Modules\Product\Controllers\UnitController;
+use App\Modules\Purchase\Controllers\PurchaseController;
+use App\Modules\Purchase\Controllers\SupplierController;
 use App\Modules\RolePermission\Controllers\RolePermissionController;
 use App\Modules\Settings\Controllers\SettingsController;
 use App\Modules\UserManagement\Controllers\UserController;
@@ -70,6 +72,7 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get('brands/all',     [BrandController::class, 'all']);
 
     // Products — read by all, write by admin+manager
+    Route::get('products/all',    [ProductController::class, 'all']);
     Route::get('products/search', [ProductController::class, 'search']);
     Route::get('products',        [ProductController::class, 'index']);
     Route::get('products/{product}', [ProductController::class, 'show']);
@@ -97,5 +100,26 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::delete('products/{product}',            [ProductController::class, 'destroy']);
         Route::post('products/{product}/image',        [ProductController::class, 'uploadImage']);
         Route::delete('products/{product}/image',      [ProductController::class, 'deleteImage']);
+    });
+
+    // ── Purchase Module ───────────────────────────────────────────────────
+    // Suppliers — read by all authenticated, write by admin+manager
+    Route::get('suppliers/all', [SupplierController::class, 'all']);
+    Route::get('suppliers',     [SupplierController::class, 'index']);
+    Route::get('suppliers/{supplier}', [SupplierController::class, 'show']);
+
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::post('suppliers',                         [SupplierController::class, 'store']);
+        Route::put('suppliers/{supplier}',               [SupplierController::class, 'update']);
+        Route::put('suppliers/{supplier}/status',        [SupplierController::class, 'toggleStatus']);
+        Route::delete('suppliers/{supplier}',            [SupplierController::class, 'destroy']);
+
+        // Purchases
+        Route::get('purchases',          [PurchaseController::class, 'index']);
+        Route::get('purchases/{purchase}', [PurchaseController::class, 'show']);
+        Route::post('purchases',         [PurchaseController::class, 'store']);
+        Route::put('purchases/{purchase}', [PurchaseController::class, 'update']);
+        Route::put('purchases/{purchase}/receive', [PurchaseController::class, 'receive']);
+        Route::delete('purchases/{purchase}',      [PurchaseController::class, 'destroy']);
     });
 });
