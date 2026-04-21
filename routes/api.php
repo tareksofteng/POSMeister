@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
+use App\Modules\Sales\Controllers\CustomerController;
+use App\Modules\Sales\Controllers\SaleController;
 use App\Modules\Stock\Controllers\StockController;
 use App\Modules\Product\Controllers\CategoryController;
 use App\Modules\Product\Controllers\ProductController;
@@ -102,6 +104,22 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::post('products/{product}/image',        [ProductController::class, 'uploadImage']);
         Route::delete('products/{product}/image',      [ProductController::class, 'deleteImage']);
     });
+
+    // ── Sales / POS ──────────────────────────────────────────────────────
+    // POS product search (all authenticated users)
+    Route::get('pos/products',            [SaleController::class, 'posSearch']);
+
+    // Customers — read by all, write by admin+manager+cashier
+    Route::get('customers/all',           [CustomerController::class, 'all']);
+    Route::get('customers',               [CustomerController::class, 'index']);
+    Route::post('customers',              [CustomerController::class, 'store']);
+    Route::put('customers/{customer}',    [CustomerController::class, 'update']);
+
+    // Sales — list/show by all, create by cashier+, cancel by manager+
+    Route::get('sales',                   [SaleController::class, 'index']);
+    Route::get('sales/{sale}',            [SaleController::class, 'show']);
+    Route::post('sales',                  [SaleController::class, 'store']);
+    Route::put('sales/{sale}/cancel',     [SaleController::class, 'cancel']);
 
     // ── Stock / Inventory ─────────────────────────────────────────────────
     Route::get('stock/filter-options', [StockController::class, 'filterOptions']);

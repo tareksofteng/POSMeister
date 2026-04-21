@@ -6,28 +6,47 @@ use App\Traits\HasAuditFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasAuditFields, SoftDeletes;
+    use HasFactory, HasAuditFields, SoftDeletes;
 
     protected $fillable = [
-        'sku', 'name', 'description', 'image',
-        'category_id', 'brand_id', 'unit_id', 'barcode',
-        'cost_price', 'selling_price', 'wholesale_price', 'min_selling_price',
-        'tax_rate', 'reorder_level', 'is_service', 'is_active',
+        'sku',
+        'name',
+        'description',
+        'image',
+        'category_id',
+        'brand_id',
+        'unit_id',
+        'barcode',
+        'cost_price',
+        'selling_price',
+        'wholesale_price',
+        'min_selling_price',
+        'tax_rate',
+        'reorder_level',
+        'is_service',
+        'is_active',
     ];
 
     protected $casts = [
         'cost_price'       => 'decimal:2',
         'selling_price'    => 'decimal:2',
         'wholesale_price'  => 'decimal:2',
-        'min_selling_price'=> 'decimal:2',
+        'min_selling_price' => 'decimal:2',
         'tax_rate'         => 'decimal:2',
         'is_service'       => 'boolean',
         'is_active'        => 'boolean',
     ];
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProductFactory::new();
+    }
 
     public function category(): BelongsTo
     {
