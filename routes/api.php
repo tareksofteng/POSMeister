@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
+use App\Modules\Stock\Controllers\StockController;
 use App\Modules\Product\Controllers\CategoryController;
 use App\Modules\Product\Controllers\ProductController;
 use App\Modules\Product\Controllers\UnitController;
@@ -101,6 +102,10 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::post('products/{product}/image',        [ProductController::class, 'uploadImage']);
         Route::delete('products/{product}/image',      [ProductController::class, 'deleteImage']);
     });
+
+    // ── Stock / Inventory ─────────────────────────────────────────────────
+    Route::get('stock/filter-options', [StockController::class, 'filterOptions']);
+    Route::get('stock/current',        [StockController::class, 'current']);
 
     // ── Purchase Module ───────────────────────────────────────────────────
     // Suppliers — read by all authenticated, write by admin+manager

@@ -9,3 +9,5 @@ export const supplierService = {
     toggleStatus: (id)   => api.put(`/suppliers/${id}/status`),
     destroy: (id)        => api.delete(`/suppliers/${id}`),
 };
+
+

@@ -167,7 +167,7 @@ const isEdit = computed(() => !!props.supplier?.id);
 
 const defaultForm = () => ({
     name: '', contact_person: '', email: '', phone: '',
-    address: '', city: '', country: 'Deutschland',
+    address: '', city: '', country: 'Bangladesh',
     vat_number: '', notes: '', is_active: true,
 });
 

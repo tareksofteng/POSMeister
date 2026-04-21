@@ -101,6 +101,14 @@ const routes = [
                 meta: { titleKey: 'menu.purchases', permission: 'purchases' },
             },
 
+            // ── Stock / Inventory ──────────────────────────────────────────
+            {
+                path: 'inventory',
+                name: 'inventory',
+                component: () => import('@/views/stock/StockView.vue'),
+                meta: { titleKey: 'menu.inventory', permission: 'inventory' },
+            },
+
             // ── Supplier module ─────────────────────────────────────────────
             {
                 path: 'suppliers',

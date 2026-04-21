@@ -242,9 +242,28 @@ const globalError = ref('');
 
 // ── Image state ───────────────────────────────────────────────────────────
 const imageInputRef  = ref(null);
-const selectedImage  = ref(null);   // File object
-const imagePreview   = ref(null);   // data URL or existing URL
-const removeExisting = ref(false);  // user clicked "remove" on saved image
+const selectedImage  = ref(null);
+const imagePreview   = ref(null);
+const removeExisting = ref(false);
+
+function defaultForm() {
+    return {
+        sku: '', name: '', description: '', barcode: '',
+        category_id: '', brand_id: '', unit_id: '',
+        cost_price: '', selling_price: '', wholesale_price: '', min_selling_price: '',
+        tax_rate: defaultVat.value, reorder_level: 0, is_service: false, is_active: true,
+    };
+}
+
+function resetForm() {
+    Object.assign(form, defaultForm());
+    clearErrors();
+    globalError.value    = '';
+    selectedImage.value  = null;
+    imagePreview.value   = null;
+    removeExisting.value = false;
+    if (imageInputRef.value) imageInputRef.value.value = '';
+}
 
 const taxRates = computed(() => [
     { value: 0,  label: t('products.tax.exempt') },
@@ -277,14 +296,15 @@ const profitMargin = computed(() => {
     return ((sell - cost) / sell) * 100;
 });
 
-watch(() => props.product, (val) => {
-    clearErrors();
-    globalError.value   = '';
-    selectedImage.value = null;
-    removeExisting.value = false;
-    if (imageInputRef.value) imageInputRef.value.value = '';
-
+watch(() => props.open, (isOpen) => {
+    if (!isOpen) return;
+    const val = props.product;
     if (val) {
+        clearErrors();
+        globalError.value    = '';
+        selectedImage.value  = null;
+        removeExisting.value = false;
+        if (imageInputRef.value) imageInputRef.value.value = '';
         form.sku               = val.sku               ?? '';
         form.name              = val.name              ?? '';
         form.description       = val.description       ?? '';
@@ -302,15 +322,9 @@ watch(() => props.product, (val) => {
         form.is_active         = val.is_active         ?? true;
         imagePreview.value     = val.image_url         ?? null;
     } else {
-        Object.assign(form, {
-            sku: '', name: '', description: '', barcode: '',
-            category_id: '', brand_id: '', unit_id: '',
-            cost_price: '', selling_price: '', wholesale_price: '', min_selling_price: '',
-            tax_rate: defaultVat.value, reorder_level: 0, is_service: false, is_active: true,
-        });
-        imagePreview.value = null;
+        resetForm();
     }
-}, { immediate: true });
+});
 
 function toggleService() {
     form.is_service = !form.is_service;
@@ -360,6 +374,7 @@ async function handleSubmit() {
         }
 
         emit('saved', isEdit.value);
+        if (!isEdit.value) resetForm();
     } catch (err) {
         const { status, data } = err.response ?? {};
         if (status === 422 && data?.errors) {
