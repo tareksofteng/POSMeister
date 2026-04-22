@@ -123,8 +123,8 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.commerce',
         items: [
-            { permKey: 'pos',        labelKey: 'menu.pointOfSale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: false },
-            { permKey: 'sales',      labelKey: 'menu.sales',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: false },
+            { permKey: 'pos',        labelKey: 'menu.pointOfSale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: true  },
+            { permKey: 'sales',      labelKey: 'menu.sales',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: true  },
             { permKey: 'purchases',  labelKey: 'menu.purchases',   to: { name: 'purchases' },   icon: TruckIcon,                 implemented: true  },
             { permKey: 'quotations', labelKey: 'menu.quotations',  to: { name: 'quotations' },  icon: ClipboardDocumentListIcon, implemented: false },
         ],

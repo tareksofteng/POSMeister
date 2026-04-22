@@ -101,6 +101,14 @@ const routes = [
                 meta: { titleKey: 'menu.purchases', permission: 'purchases' },
             },
 
+            // ── Sales module ───────────────────────────────────────────────
+            {
+                path: 'sales',
+                name: 'sales',
+                component: () => import('@/views/sales/SaleListView.vue'),
+                meta: { titleKey: 'menu.sales', permission: 'sales' },
+            },
+
             // ── Stock / Inventory ──────────────────────────────────────────
             {
                 path: 'inventory',
@@ -117,6 +125,22 @@ const routes = [
                 meta: { titleKey: 'menu.suppliers', permission: 'suppliers' },
             },
         ],
+    },
+
+    // ── POS terminal (standalone — full screen, no sidebar) ──────────────
+    {
+        path: '/pos',
+        name: 'pos',
+        component: () => import('@/views/pos/PosView.vue'),
+        meta: { requiresAuth: true, titleKey: 'menu.pointOfSale' },
+    },
+
+    // ── Sale invoice (standalone — no sidebar) ────────────────────────────
+    {
+        path: '/sales/:id/invoice',
+        name: 'sale-invoice',
+        component: () => import('@/views/sales/SaleInvoiceView.vue'),
+        meta: { requiresAuth: true, titleKey: 'sales.invoiceTitle' },
     },
 
     // ── Purchase invoice (standalone — no sidebar) ────────────────────────
