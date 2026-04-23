@@ -109,12 +109,16 @@
       "cashier": "Kassierer"
     },
     "kpi": {
-      "totalBranches": "Filialen gesamt",
-      "totalUsers": "Benutzer gesamt",
-      "revenueToday": "Umsatz heute",
-      "lowStock": "Niedriger Lagerstand",
-      "revenueEmpty": "Verkaufsmodul noch nicht aktiv",
-      "stockEmpty": "Inventarmodul noch nicht aktiv"
+      "revenueToday": "Umsatz Heute",
+      "revenueMonth": "Diesen Monat",
+      "totalCustomers": "Kunden",
+      "lowStock": "Niedriger Bestand",
+      "revenueSub": "{count} Verkäufe heute",
+      "revenueMonthSub": "Gesamtumsatz des Monats",
+      "customerDueSub": "{amount} ausstehend",
+      "customerNoDue": "Keine offenen Forderungen",
+      "lowStockSub": "Unter Mindestbestand",
+      "stockOk": "Alle Bestände OK"
     },
     "activeSub": "{active} aktiv · {inactive} inaktiv",
     "branchOverview": {
@@ -127,10 +131,12 @@
     "quickAccess": {
       "title": "Schnellzugriff",
       "subtitle": "Aktive Module",
-      "manageBranches": "Filialen verwalten",
-      "manageBranchesDesc": "Standorte anlegen & bearbeiten",
-      "manageUsers": "Benutzer verwalten",
-      "manageUsersDesc": "Zugänge & Rollen konfigurieren"
+      "openPOS": "POS öffnen",
+      "openPOSDesc": "Neuen Verkauf erstellen",
+      "manageProducts": "Produkte",
+      "manageProductsDesc": "Produkte hinzufügen oder bearbeiten",
+      "newPurchase": "Neuer Einkauf",
+      "newPurchaseDesc": "Wareneingang erfassen"
     },
     "systemInfo": {
       "title": "Systeminformation",
@@ -140,22 +146,29 @@
       "environment": "Umgebung"
     },
     "moduleStatus": {
-      "title": "Modul-Status",
+      "title": "Modulstatus",
       "subtitle": "Implementierungsfortschritt",
       "active": "Aktiv",
       "modules": {
         "auth": "Auth & Login",
-        "branches": "Filialen",
-        "users": "Benutzer",
-        "products": "Produkte",
+        "products": "Produkte & Lager",
         "pos": "Verkauf / POS",
+        "customers": "Kunden",
+        "purchases": "Einkauf",
         "reports": "Berichte"
       },
       "phases": {
-        "phase2": "Phase 2",
-        "phase3": "Phase 3",
         "phase4": "Phase 4"
       }
+    },
+    "recentSales": {
+      "title": "Letzte Verkäufe",
+      "subtitle": "Die 5 neuesten Transaktionen",
+      "showAll": "Alle anzeigen",
+      "empty": "Noch keine Verkäufe erfasst",
+      "startSale": "POS-Terminal öffnen →",
+      "due": "Offen",
+      "paid": "Vollständig bezahlt"
     }
   },
   "branches": {
@@ -646,5 +659,48 @@
     "invoiceFooter": "Rechnungsfußtext",
     "invoiceFooterPlaceholder": "z. B. Bank: IBAN DE89 3704 0044 0532 0130 00 · Steuer-Nr: 12/345/67890",
     "dateFormat": "Datumsformat"
+  },
+  "customers": {
+    "title": "Kunden",
+    "subtitle": "Kundenverwaltung und Forderungsübersicht",
+    "searchPlaceholder": "Name, Code oder Telefon suchen…",
+    "newCustomer": "Neuer Kunde",
+    "emptyTitle": "Noch keine Kunden",
+    "emptyMessage": "Fügen Sie Ihren ersten Kunden hinzu.",
+    "code": "Code",
+    "name": "Name",
+    "phone": "Telefon",
+    "type": "Typ",
+    "creditLimit": "Kreditlimit",
+    "currentDue": "Offen",
+    "typeRetail": "Einzelhandel",
+    "typeWholesale": "Großhandel",
+    "editTitle": "Kunde bearbeiten",
+    "addTitle": "Neuer Kunde",
+    "detailTitle": "Kundendetail",
+    "ledger": "Konto",
+    "ledgerSubtitle": "Verkaufs- und Zahlungshistorie",
+    "totalSales": "Gesamtumsatz",
+    "totalDue": "Gesamtforderung",
+    "recordPayment": "Zahlung erfassen",
+    "paymentAmount": "Betrag",
+    "paymentMethod": "Methode",
+    "paymentDate": "Datum",
+    "paymentRef": "Referenz",
+    "paymentNote": "Notiz",
+    "paymentSuccess": "Zahlung erfolgreich gespeichert.",
+    "methodCash": "Bargeld",
+    "methodCard": "Karte",
+    "methodBank": "Banküberweisung",
+    "methodOther": "Sonstige",
+    "recentSales": "Letzte Verkäufe",
+    "payments": "Zahlungen",
+    "noPayments": "Keine Zahlungen erfasst.",
+    "noSales": "Keine Verkäufe erfasst.",
+    "saleNumber": "Rechnungs-Nr.",
+    "saleDate": "Datum",
+    "saleTotal": "Gesamt",
+    "salePaid": "Bezahlt",
+    "saleDue": "Offen"
   }
 }

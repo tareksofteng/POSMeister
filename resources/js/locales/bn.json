@@ -108,12 +108,16 @@
       "cashier": "ক্যাশিয়ার"
     },
     "kpi": {
-      "totalBranches": "মোট শাখা",
-      "totalUsers": "মোট ব্যবহারকারী",
       "revenueToday": "আজকের আয়",
-      "lowStock": "কম স্টক আইটেম",
-      "revenueEmpty": "বিক্রয় মডিউল এখনো সক্রিয় নয়",
-      "stockEmpty": "ইনভেন্টরি মডিউল এখনো সক্রিয় নয়"
+      "revenueMonth": "এই মাস",
+      "totalCustomers": "গ্রাহক",
+      "lowStock": "কম মজুদ পণ্য",
+      "revenueSub": "আজ {count} টি বিক্রয়",
+      "revenueMonthSub": "চলতি মাসের মোট",
+      "customerDueSub": "{amount} বকেয়া",
+      "customerNoDue": "কোনো বকেয়া নেই",
+      "lowStockSub": "পুনরায় অর্ডার স্তরের নিচে",
+      "stockOk": "সকল মজুদ স্তর ঠিক আছে"
     },
     "activeSub": "{active} সক্রিয় · {inactive} নিষ্ক্রিয়",
     "branchOverview": {
@@ -126,10 +130,12 @@
     "quickAccess": {
       "title": "দ্রুত প্রবেশ",
       "subtitle": "সক্রিয় মডিউল",
-      "manageBranches": "শাখা পরিচালনা",
-      "manageBranchesDesc": "শাখা তৈরি ও সম্পাদনা করুন",
-      "manageUsers": "ব্যবহারকারী পরিচালনা",
-      "manageUsersDesc": "প্রবেশাধিকার ও রোল কনফিগার করুন"
+      "openPOS": "POS খুলুন",
+      "openPOSDesc": "নতুন বিক্রয় তৈরি করুন",
+      "manageProducts": "পণ্যসমূহ",
+      "manageProductsDesc": "পণ্য যোগ বা সম্পাদনা করুন",
+      "newPurchase": "নতুন ক্রয়",
+      "newPurchaseDesc": "স্টক ক্রয় রেকর্ড করুন"
     },
     "systemInfo": {
       "title": "সিস্টেম তথ্য",
@@ -143,18 +149,25 @@
       "subtitle": "বাস্তবায়নের অগ্রগতি",
       "active": "সক্রিয়",
       "modules": {
-        "auth": "অথ ও লগইন",
-        "branches": "শাখা",
-        "users": "ব্যবহারকারী",
-        "products": "পণ্য",
+        "auth": "প্রমাণীকরণ ও লগইন",
+        "products": "পণ্য ও স্টক",
         "pos": "বিক্রয় / POS",
+        "customers": "গ্রাহক",
+        "purchases": "ক্রয়",
         "reports": "প্রতিবেদন"
       },
       "phases": {
-        "phase2": "পর্যায় ২",
-        "phase3": "পর্যায় ৩",
         "phase4": "পর্যায় ৪"
       }
+    },
+    "recentSales": {
+      "title": "সাম্প্রতিক বিক্রয়",
+      "subtitle": "সর্বশেষ ৫টি লেনদেন",
+      "showAll": "সব দেখুন",
+      "empty": "এখনো কোনো বিক্রয় নেই",
+      "startSale": "POS টার্মিনাল খুলুন →",
+      "due": "বকেয়া",
+      "paid": "সম্পূর্ণ পরিশোধিত"
     }
   },
   "branches": {
@@ -644,5 +657,48 @@
     "invoiceFooter": "চালান পাদলেখ",
     "invoiceFooterPlaceholder": "যেমন: ব্যাংক তথ্য, কর নম্বর",
     "dateFormat": "তারিখ ফরম্যাট"
+  },
+  "customers": {
+    "title": "গ্রাহক",
+    "subtitle": "গ্রাহক অ্যাকাউন্ট পরিচালনা এবং বকেয়া ট্র্যাক করুন",
+    "searchPlaceholder": "নাম, কোড বা ফোন খুঁজুন…",
+    "newCustomer": "নতুন গ্রাহক",
+    "emptyTitle": "এখনো কোনো গ্রাহক নেই",
+    "emptyMessage": "শুরু করতে প্রথম গ্রাহক যোগ করুন।",
+    "code": "কোড",
+    "name": "নাম",
+    "phone": "ফোন",
+    "type": "ধরন",
+    "creditLimit": "ক্রেডিট সীমা",
+    "currentDue": "বকেয়া",
+    "typeRetail": "খুচরা",
+    "typeWholesale": "পাইকারি",
+    "editTitle": "গ্রাহক সম্পাদনা",
+    "addTitle": "নতুন গ্রাহক",
+    "detailTitle": "গ্রাহক বিবরণ",
+    "ledger": "খাতা",
+    "ledgerSubtitle": "বিক্রয় ও পেমেন্ট ইতিহাস",
+    "totalSales": "মোট বিক্রয়",
+    "totalDue": "মোট বকেয়া",
+    "recordPayment": "পেমেন্ট রেকর্ড করুন",
+    "paymentAmount": "পরিমাণ",
+    "paymentMethod": "পদ্ধতি",
+    "paymentDate": "তারিখ",
+    "paymentRef": "রেফারেন্স",
+    "paymentNote": "নোট",
+    "paymentSuccess": "পেমেন্ট সফলভাবে রেকর্ড হয়েছে।",
+    "methodCash": "নগদ",
+    "methodCard": "কার্ড",
+    "methodBank": "ব্যাংক ট্রান্সফার",
+    "methodOther": "অন্যান্য",
+    "recentSales": "সাম্প্রতিক বিক্রয়",
+    "payments": "পেমেন্ট",
+    "noPayments": "কোনো পেমেন্ট রেকর্ড নেই।",
+    "noSales": "কোনো বিক্রয় রেকর্ড নেই।",
+    "saleNumber": "চালান নং",
+    "saleDate": "তারিখ",
+    "saleTotal": "মোট",
+    "salePaid": "পরিশোধিত",
+    "saleDue": "বকেয়া"
   }
 }

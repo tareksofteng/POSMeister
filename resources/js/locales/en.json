@@ -109,12 +109,16 @@
       "cashier": "Cashier"
     },
     "kpi": {
-      "totalBranches": "Total Branches",
-      "totalUsers": "Total Users",
       "revenueToday": "Revenue Today",
+      "revenueMonth": "This Month",
+      "totalCustomers": "Customers",
       "lowStock": "Low Stock Items",
-      "revenueEmpty": "Sales module not yet active",
-      "stockEmpty": "Inventory module not yet active"
+      "revenueSub": "{count} sales today",
+      "revenueMonthSub": "Current month total",
+      "customerDueSub": "{amount} outstanding",
+      "customerNoDue": "No outstanding dues",
+      "lowStockSub": "Below reorder level",
+      "stockOk": "All stock levels OK"
     },
     "activeSub": "{active} active · {inactive} inactive",
     "branchOverview": {
@@ -127,10 +131,12 @@
     "quickAccess": {
       "title": "Quick Access",
       "subtitle": "Active modules",
-      "manageBranches": "Manage Branches",
-      "manageBranchesDesc": "Create & edit locations",
-      "manageUsers": "Manage Users",
-      "manageUsersDesc": "Configure access & roles"
+      "openPOS": "Open POS",
+      "openPOSDesc": "Create a new sale",
+      "manageProducts": "Products",
+      "manageProductsDesc": "Add or edit products",
+      "newPurchase": "New Purchase",
+      "newPurchaseDesc": "Record stock purchase"
     },
     "systemInfo": {
       "title": "System Information",
@@ -145,17 +151,24 @@
       "active": "Active",
       "modules": {
         "auth": "Auth & Login",
-        "branches": "Branches",
-        "users": "Users",
-        "products": "Products",
+        "products": "Products & Stock",
         "pos": "Sales / POS",
+        "customers": "Customers",
+        "purchases": "Purchases",
         "reports": "Reports"
       },
       "phases": {
-        "phase2": "Phase 2",
-        "phase3": "Phase 3",
         "phase4": "Phase 4"
       }
+    },
+    "recentSales": {
+      "title": "Recent Sales",
+      "subtitle": "Latest 5 transactions",
+      "showAll": "View all",
+      "empty": "No sales recorded yet",
+      "startSale": "Open POS terminal →",
+      "due": "Due",
+      "paid": "Fully paid"
     }
   },
   "branches": {
@@ -646,5 +659,48 @@
     "invoiceFooter": "Invoice Footer Text",
     "invoiceFooterPlaceholder": "e.g. Bank: IBAN DE89 3704 0044 0532 0130 00 · Steuer-Nr: 12/345/67890",
     "dateFormat": "Date Format"
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Manage customer accounts and track dues",
+    "searchPlaceholder": "Search name, code or phone…",
+    "newCustomer": "New Customer",
+    "emptyTitle": "No customers yet",
+    "emptyMessage": "Add your first customer to get started.",
+    "code": "Code",
+    "name": "Name",
+    "phone": "Phone",
+    "type": "Type",
+    "creditLimit": "Credit Limit",
+    "currentDue": "Due",
+    "typeRetail": "Retail",
+    "typeWholesale": "Wholesale",
+    "editTitle": "Edit Customer",
+    "addTitle": "New Customer",
+    "detailTitle": "Customer Detail",
+    "ledger": "Ledger",
+    "ledgerSubtitle": "Sales & payment history",
+    "totalSales": "Total Sales",
+    "totalDue": "Total Due",
+    "recordPayment": "Record Payment",
+    "paymentAmount": "Amount",
+    "paymentMethod": "Method",
+    "paymentDate": "Date",
+    "paymentRef": "Reference",
+    "paymentNote": "Note",
+    "paymentSuccess": "Payment recorded successfully.",
+    "methodCash": "Cash",
+    "methodCard": "Card",
+    "methodBank": "Bank Transfer",
+    "methodOther": "Other",
+    "recentSales": "Recent Sales",
+    "payments": "Payments",
+    "noPayments": "No payments recorded.",
+    "noSales": "No sales recorded.",
+    "saleNumber": "Invoice #",
+    "saleDate": "Date",
+    "saleTotal": "Total",
+    "salePaid": "Paid",
+    "saleDue": "Due"
   }
 }

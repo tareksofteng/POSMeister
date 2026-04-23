@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Sales\Controllers\CustomerController;
@@ -37,6 +38,9 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::get('me',      [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
+
+    // Dashboard stats
+    Route::get('dashboard/stats', [DashboardController::class, 'stats']);
 
     // ── Admin-only ────────────────────────────────────────────────────────
     Route::middleware('role:admin')->group(function ()
@@ -110,10 +114,13 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get('pos/products',            [SaleController::class, 'posSearch']);
 
     // Customers — read by all, write by admin+manager+cashier
-    Route::get('customers/all',           [CustomerController::class, 'all']);
-    Route::get('customers',               [CustomerController::class, 'index']);
-    Route::post('customers',              [CustomerController::class, 'store']);
-    Route::put('customers/{customer}',    [CustomerController::class, 'update']);
+    Route::get('customers/all',                              [CustomerController::class, 'all']);
+    Route::get('customers',                                  [CustomerController::class, 'index']);
+    Route::get('customers/{customer}',                       [CustomerController::class, 'show']);
+    Route::post('customers',                                 [CustomerController::class, 'store']);
+    Route::put('customers/{customer}',                       [CustomerController::class, 'update']);
+    Route::get('customers/{customer}/payments',              [CustomerController::class, 'payments']);
+    Route::post('customers/{customer}/payments',             [CustomerController::class, 'storePayment']);
 
     // Sales — list/show by all, create by cashier+, cancel by manager+
     Route::get('sales',                   [SaleController::class, 'index']);

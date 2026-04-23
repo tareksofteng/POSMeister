@@ -71,8 +71,10 @@ class SaleController extends Controller
         }
 
         $user     = auth()->user();
+        // $request->integer() returns 0 (not null) when absent — ?: null prevents
+        // the null-coalescing chain from stopping at 0 and missing the branch fallback.
         $branchId = $user->branch_id
-            ?? $request->integer('branch_id')
+            ?? ($request->integer('branch_id') ?: null)
             ?? \App\Modules\Branch\Models\Branch::where('is_active', true)->value('id');
 
         return response()->json(

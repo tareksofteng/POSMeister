@@ -140,7 +140,7 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.stakeholders',
         items: [
-            { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: false },
+            { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: true  },
             { permKey: 'suppliers', labelKey: 'menu.suppliers', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: true },
         ],
     },

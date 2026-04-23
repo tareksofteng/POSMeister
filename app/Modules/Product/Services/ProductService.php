@@ -11,16 +11,21 @@ class ProductService
     public function paginate(array $filters): LengthAwarePaginator
     {
         return Product::with(['category', 'brand', 'unit'])
-            ->when($filters['search'] ?? null, fn($q, $v) =>
-                $q->where(fn($sub) => $sub
-                    ->where('name', 'like', "%{$v}%")
-                    ->orWhere('sku', 'like', "%{$v}%")
-                    ->orWhere('barcode', 'like', "%{$v}%")
+            ->when(
+                $filters['search'] ?? null,
+                fn($q, $v) =>
+                $q->where(
+                    fn($sub) => $sub
+                        ->where('name', 'like', "%{$v}%")
+                        ->orWhere('sku', 'like', "%{$v}%")
+                        ->orWhere('barcode', 'like', "%{$v}%")
                 )
             )
             ->when($filters['category_id'] ?? null, fn($q, $v) => $q->where('category_id', $v))
             ->when($filters['brand_id'] ?? null,    fn($q, $v) => $q->where('brand_id', $v))
-            ->when(isset($filters['is_active']) && $filters['is_active'] !== '', fn($q) =>
+            ->when(
+                isset($filters['is_active']) && $filters['is_active'] !== '',
+                fn($q) =>
                 $q->where('is_active', (bool) $filters['is_active'])
             )
             ->orderBy('name')
@@ -38,10 +43,11 @@ class ProductService
     {
         return Product::with('unit')
             ->active()
-            ->where(fn($q) => $q
-                ->where('name', 'like', "%{$term}%")
-                ->orWhere('sku', 'like', "%{$term}%")
-                ->orWhere('barcode', $term)
+            ->where(
+                fn($q) => $q
+                    ->where('name', 'like', "%{$term}%")
+                    ->orWhere('sku', 'like', "%{$term}%")
+                    ->orWhere('barcode', $term)
             )
             ->limit(15)
             ->get(['id', 'sku', 'name', 'selling_price', 'tax_rate', 'unit_id']);

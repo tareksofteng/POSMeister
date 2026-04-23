@@ -26,8 +26,21 @@ class Customer extends Model
         return $this->hasMany(Sale::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(CustomerPayment::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    // Total outstanding due = sum of sale dues − sum of recorded payments
+    public function getCurrentDueAttribute(): float
+    {
+        $saleDues = $this->sales()->where('status', 'active')->sum('due_amount');
+        $paid     = $this->payments()->sum('amount');
+        return max(0, (float) $saleDues - (float) $paid);
     }
 }

@@ -108,12 +108,16 @@
       "cashier": "أمين الصندوق"
     },
     "kpi": {
-      "totalBranches": "إجمالي الفروع",
-      "totalUsers": "إجمالي المستخدمين",
       "revenueToday": "إيرادات اليوم",
+      "revenueMonth": "هذا الشهر",
+      "totalCustomers": "العملاء",
       "lowStock": "مخزون منخفض",
-      "revenueEmpty": "وحدة المبيعات غير نشطة بعد",
-      "stockEmpty": "وحدة المخزون غير نشطة بعد"
+      "revenueSub": "{count} مبيعات اليوم",
+      "revenueMonthSub": "إجمالي الشهر الحالي",
+      "customerDueSub": "{amount} مستحق",
+      "customerNoDue": "لا مستحقات معلقة",
+      "lowStockSub": "تحت مستوى إعادة الطلب",
+      "stockOk": "جميع مستويات المخزون جيدة"
     },
     "activeSub": "{active} نشط · {inactive} غير نشط",
     "branchOverview": {
@@ -126,10 +130,12 @@
     "quickAccess": {
       "title": "وصول سريع",
       "subtitle": "الوحدات النشطة",
-      "manageBranches": "إدارة الفروع",
-      "manageBranchesDesc": "إنشاء وتحرير المواقع",
-      "manageUsers": "إدارة المستخدمين",
-      "manageUsersDesc": "تكوين الوصول والأدوار"
+      "openPOS": "فتح نقطة البيع",
+      "openPOSDesc": "إنشاء عملية بيع جديدة",
+      "manageProducts": "المنتجات",
+      "manageProductsDesc": "إضافة أو تعديل المنتجات",
+      "newPurchase": "مشتريات جديدة",
+      "newPurchaseDesc": "تسجيل استلام مخزون"
     },
     "systemInfo": {
       "title": "معلومات النظام",
@@ -143,18 +149,25 @@
       "subtitle": "تقدم التنفيذ",
       "active": "نشط",
       "modules": {
-        "auth": "المصادقة والدخول",
-        "branches": "الفروع",
-        "users": "المستخدمون",
-        "products": "المنتجات",
-        "pos": "المبيعات / POS",
+        "auth": "المصادقة وتسجيل الدخول",
+        "products": "المنتجات والمخزون",
+        "pos": "المبيعات / نقطة البيع",
+        "customers": "العملاء",
+        "purchases": "المشتريات",
         "reports": "التقارير"
       },
       "phases": {
-        "phase2": "المرحلة 2",
-        "phase3": "المرحلة 3",
         "phase4": "المرحلة 4"
       }
+    },
+    "recentSales": {
+      "title": "المبيعات الأخيرة",
+      "subtitle": "آخر 5 معاملات",
+      "showAll": "عرض الكل",
+      "empty": "لم يتم تسجيل مبيعات بعد",
+      "startSale": "فتح نقطة البيع ←",
+      "due": "مستحق",
+      "paid": "مدفوع بالكامل"
     }
   },
   "branches": {
@@ -644,5 +657,48 @@
     "invoiceFooter": "نص تذييل الفاتورة",
     "invoiceFooterPlaceholder": "مثال: معلومات البنك، الرقم الضريبي",
     "dateFormat": "تنسيق التاريخ"
+  },
+  "customers": {
+    "title": "العملاء",
+    "subtitle": "إدارة حسابات العملاء وتتبع المستحقات",
+    "searchPlaceholder": "ابحث بالاسم أو الكود أو الهاتف...",
+    "newCustomer": "عميل جديد",
+    "emptyTitle": "لا يوجد عملاء بعد",
+    "emptyMessage": "أضف أول عميل للبدء.",
+    "code": "الكود",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "type": "النوع",
+    "creditLimit": "حد الائتمان",
+    "currentDue": "المستحق",
+    "typeRetail": "تجزئة",
+    "typeWholesale": "جملة",
+    "editTitle": "تعديل العميل",
+    "addTitle": "عميل جديد",
+    "detailTitle": "تفاصيل العميل",
+    "ledger": "دفتر الحسابات",
+    "ledgerSubtitle": "سجل المبيعات والمدفوعات",
+    "totalSales": "إجمالي المبيعات",
+    "totalDue": "إجمالي المستحق",
+    "recordPayment": "تسجيل دفعة",
+    "paymentAmount": "المبلغ",
+    "paymentMethod": "الطريقة",
+    "paymentDate": "التاريخ",
+    "paymentRef": "المرجع",
+    "paymentNote": "ملاحظة",
+    "paymentSuccess": "تم تسجيل الدفعة بنجاح.",
+    "methodCash": "نقد",
+    "methodCard": "بطاقة",
+    "methodBank": "تحويل بنكي",
+    "methodOther": "أخرى",
+    "recentSales": "المبيعات الأخيرة",
+    "payments": "المدفوعات",
+    "noPayments": "لا مدفوعات مسجلة.",
+    "noSales": "لا مبيعات مسجلة.",
+    "saleNumber": "رقم الفاتورة",
+    "saleDate": "التاريخ",
+    "saleTotal": "الإجمالي",
+    "salePaid": "المدفوع",
+    "saleDue": "المتبقي"
   }
 }

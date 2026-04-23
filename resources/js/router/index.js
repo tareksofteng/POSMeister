@@ -117,6 +117,14 @@ const routes = [
                 meta: { titleKey: 'menu.inventory', permission: 'inventory' },
             },
 
+            // ── Customer module ────────────────────────────────────────────
+            {
+                path: 'customers',
+                name: 'customers',
+                component: () => import('@/views/customers/CustomerListView.vue'),
+                meta: { titleKey: 'menu.customers', permission: 'customers' },
+            },
+
             // ── Supplier module ─────────────────────────────────────────────
             {
                 path: 'suppliers',

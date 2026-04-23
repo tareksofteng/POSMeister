@@ -23,111 +23,108 @@
         <!-- ── KPI Row ─────────────────────────────────────────────────── -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <StatCard
-                :label="t('dashboard.kpi.totalBranches')"
-                :value="kpi.branches.total"
-                :sub="t('dashboard.activeSub', { active: kpi.branches.active, inactive: kpi.branches.inactive })"
-                :icon="BuildingOffice2Icon"
+                :label="t('dashboard.kpi.revenueToday')"
+                :value="kpi.loading ? '…' : formatCurrency(stats.today_revenue)"
+                :sub="t('dashboard.kpi.revenueSub', { count: stats.today_sales_count })"
+                :icon="BanknotesIcon"
+                icon-bg="bg-emerald-50"
+                icon-color="text-emerald-600"
+                :loading="kpi.loading"
+            />
+            <StatCard
+                :label="t('dashboard.kpi.revenueMonth')"
+                :value="kpi.loading ? '…' : formatCurrency(stats.month_revenue)"
+                :sub="t('dashboard.kpi.revenueMonthSub')"
+                :icon="ChartBarIcon"
                 icon-bg="bg-indigo-50"
                 icon-color="text-indigo-600"
                 :loading="kpi.loading"
             />
             <StatCard
-                :label="t('dashboard.kpi.totalUsers')"
-                :value="kpi.users.total"
-                :sub="t('dashboard.activeSub', { active: kpi.users.active, inactive: kpi.users.inactive })"
+                :label="t('dashboard.kpi.totalCustomers')"
+                :value="kpi.loading ? '…' : stats.total_customers"
+                :sub="stats.total_customer_due > 0
+                    ? t('dashboard.kpi.customerDueSub', { amount: formatCurrency(stats.total_customer_due) })
+                    : t('dashboard.kpi.customerNoDue')"
                 :icon="UsersIcon"
                 icon-bg="bg-violet-50"
                 icon-color="text-violet-600"
                 :loading="kpi.loading"
             />
             <StatCard
-                :label="t('dashboard.kpi.revenueToday')"
-                value="€ 0,00"
-                :sub="t('dashboard.kpi.revenueEmpty')"
-                :icon="BanknotesIcon"
-                icon-bg="bg-emerald-50"
-                icon-color="text-emerald-600"
-                :loading="false"
-            />
-            <StatCard
                 :label="t('dashboard.kpi.lowStock')"
-                value="—"
-                :sub="t('dashboard.kpi.stockEmpty')"
+                :value="kpi.loading ? '…' : stats.low_stock_count"
+                :sub="stats.low_stock_count > 0
+                    ? t('dashboard.kpi.lowStockSub')
+                    : t('dashboard.kpi.stockOk')"
                 :icon="ExclamationTriangleIcon"
-                icon-bg="bg-amber-50"
-                icon-color="text-amber-600"
-                :loading="false"
+                :icon-bg="stats.low_stock_count > 0 ? 'bg-amber-50' : 'bg-gray-50'"
+                :icon-color="stats.low_stock_count > 0 ? 'text-amber-600' : 'text-gray-400'"
+                :loading="kpi.loading"
             />
         </div>
 
         <!-- ── Main Content Grid ───────────────────────────────────────── -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-            <!-- Branch Overview (2/3) -->
+            <!-- Recent Sales (2/3) -->
             <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-semibold text-gray-900">{{ t('dashboard.branchOverview.title') }}</h2>
-                        <p class="text-xs text-gray-400 mt-0.5">{{ t('dashboard.branchOverview.subtitle') }}</p>
+                        <h2 class="text-sm font-semibold text-gray-900">{{ t('dashboard.recentSales.title') }}</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ t('dashboard.recentSales.subtitle') }}</p>
                     </div>
                     <RouterLink
-                        :to="{ name: 'branches' }"
+                        :to="{ name: 'sales' }"
                         class="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"
                     >
-                        {{ t('dashboard.branchOverview.showAll') }}
+                        {{ t('dashboard.recentSales.showAll') }}
                         <ChevronRightIcon class="w-3.5 h-3.5" />
                     </RouterLink>
                 </div>
 
-                <!-- Loading -->
+                <!-- Loading skeleton -->
                 <div v-if="kpi.loading" class="p-4 space-y-3">
-                    <div v-for="i in 3" :key="i" class="animate-pulse flex items-center gap-4 px-2 py-3">
-                        <div class="w-8 h-8 rounded-lg bg-gray-100"></div>
+                    <div v-for="i in 4" :key="i" class="animate-pulse flex items-center gap-4 px-2 py-3">
                         <div class="flex-1 space-y-1.5">
-                            <div class="h-3.5 bg-gray-100 rounded w-32"></div>
-                            <div class="h-3 bg-gray-100 rounded w-20"></div>
+                            <div class="h-3.5 bg-gray-100 rounded w-28"></div>
+                            <div class="h-3 bg-gray-100 rounded w-40"></div>
                         </div>
-                        <div class="h-5 bg-gray-100 rounded-full w-14"></div>
+                        <div class="h-5 bg-gray-100 rounded w-20"></div>
                     </div>
                 </div>
 
-                <!-- Branch list -->
-                <div v-else-if="recentBranches.length" class="divide-y divide-gray-50">
+                <!-- Sales table -->
+                <div v-else-if="stats.recent_sales?.length" class="divide-y divide-gray-50">
                     <div
-                        v-for="branch in recentBranches"
-                        :key="branch.id"
+                        v-for="sale in stats.recent_sales"
+                        :key="sale.id"
                         class="flex items-center gap-4 px-6 py-3.5 hover:bg-gray-50 transition-colors"
                     >
-                        <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                            <BuildingOffice2Icon class="w-4 h-4 text-indigo-500" />
-                        </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-gray-900 truncate">{{ branch.name }}</p>
+                            <p class="text-sm font-semibold text-gray-900 font-mono">{{ sale.sale_number }}</p>
                             <p class="text-xs text-gray-400 truncate">
-                                <span class="font-mono bg-gray-100 px-1 rounded text-gray-500">{{ branch.code }}</span>
-                                <span v-if="branch.phone" class="ml-2">{{ branch.phone }}</span>
+                                {{ sale.customer_name }}
+                                <span class="mx-1">·</span>
+                                {{ sale.sale_date }}
                             </p>
                         </div>
-                        <div class="flex items-center gap-1.5 text-xs text-gray-400 flex-shrink-0">
-                            <UsersIcon class="w-3.5 h-3.5" />
-                            <span>{{ branch.user_count ?? 0 }}</span>
+                        <div class="text-right flex-shrink-0">
+                            <p class="text-sm font-semibold text-gray-900">{{ formatCurrency(sale.grand_total) }}</p>
+                            <p v-if="sale.due_amount > 0" class="text-xs text-amber-600 font-medium">
+                                {{ t('dashboard.recentSales.due') }}: {{ formatCurrency(sale.due_amount) }}
+                            </p>
+                            <p v-else class="text-xs text-emerald-600 font-medium">{{ t('dashboard.recentSales.paid') }}</p>
                         </div>
-                        <span :class="[
-                            'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0',
-                            branch.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500',
-                        ]">
-                            <span :class="['w-1.5 h-1.5 rounded-full', branch.is_active ? 'bg-emerald-500' : 'bg-gray-400']"></span>
-                            {{ branch.is_active ? t('common.active') : t('common.inactive') }}
-                        </span>
                     </div>
                 </div>
 
                 <!-- Empty -->
                 <div v-else class="flex flex-col items-center justify-center py-14 text-center">
-                    <BuildingOffice2Icon class="w-10 h-10 text-gray-200 mb-3" />
-                    <p class="text-sm font-medium text-gray-400">{{ t('dashboard.branchOverview.noBranches') }}</p>
-                    <RouterLink :to="{ name: 'branches' }" class="mt-3 text-xs font-semibold text-indigo-600 hover:underline">
-                        {{ t('dashboard.branchOverview.createFirst') }}
+                    <ShoppingCartIcon class="w-10 h-10 text-gray-200 mb-3" />
+                    <p class="text-sm font-medium text-gray-400">{{ t('dashboard.recentSales.empty') }}</p>
+                    <RouterLink :to="{ name: 'pos' }" class="mt-3 text-xs font-semibold text-indigo-600 hover:underline">
+                        {{ t('dashboard.recentSales.startSale') }}
                     </RouterLink>
                 </div>
             </div>
@@ -205,28 +202,36 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
+import { useSettingsStore } from '@/stores/settings';
 import { useLocale } from '@/composables/useLocale';
-import { branchService } from '@/services/branchService';
-import { userService } from '@/services/userService';
+import { dashboardService } from '@/services/dashboardService';
 import { RouterLink } from 'vue-router';
 
 import {
-    BuildingOffice2Icon, UsersIcon, BanknotesIcon, ExclamationTriangleIcon,
-    UserCircleIcon, ChevronRightIcon,
+    BanknotesIcon, UsersIcon, ExclamationTriangleIcon,
+    ChevronRightIcon, ShoppingCartIcon, ChartBarIcon,
+    TagIcon, TruckIcon,
 } from '@heroicons/vue/24/outline';
 
 import StatCard from './StatCard.vue';
 
-const { t }          = useI18n();
-const { intlLocale } = useLocale();
-const auth           = useAuthStore();
+const { t }           = useI18n();
+const { intlLocale }  = useLocale();
+const auth            = useAuthStore();
+const settingsStore   = useSettingsStore();
+
+// ── Currency formatter ─────────────────────────────────────────────────────
+function formatCurrency(value) {
+    const code = settingsStore.settings?.currency_code ?? 'EUR';
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value ?? 0);
+}
 
 // ── Greeting + date ────────────────────────────────────────────────────────
 const now  = new Date();
 const hour = now.getHours();
 const greetingKey = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
 
-const greeting  = computed(() => t(`dashboard.greeting.${greetingKey}`));
+const greeting   = computed(() => t(`dashboard.greeting.${greetingKey}`));
 const dateString = computed(() =>
     new Intl.DateTimeFormat(intlLocale.value, {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -243,30 +248,22 @@ const ROLE_CLASSES = {
 const roleBadgeClass = computed(() => ROLE_CLASSES[auth.userRole] ?? ROLE_CLASSES.cashier);
 const roleBadgeLabel = computed(() => t(`dashboard.roleBadges.${auth.userRole ?? 'cashier'}`));
 
-// ── KPI Data ───────────────────────────────────────────────────────────────
-const kpi = reactive({
-    loading: true,
-    branches: { total: 0, active: 0, inactive: 0 },
-    users:    { total: 0, active: 0, inactive: 0 },
+// ── Stats ─────────────────────────────────────────────────────────────────
+const kpi   = reactive({ loading: true });
+const stats = ref({
+    today_revenue:      0,
+    today_sales_count:  0,
+    month_revenue:      0,
+    total_customers:    0,
+    total_customer_due: 0,
+    low_stock_count:    0,
+    recent_sales:       [],
 });
-const recentBranches = ref([]);
 
 onMounted(async () => {
     try {
-        const [brAll, brActive, usAll, usActive] = await Promise.all([
-            branchService.index({ per_page: 6, page: 1 }),
-            branchService.index({ is_active: 1, per_page: 1 }),
-            userService.index({ per_page: 1 }),
-            userService.index({ is_active: 1, per_page: 1 }),
-        ]);
-        kpi.branches.total    = brAll.data.meta.total;
-        kpi.branches.active   = brActive.data.meta.total;
-        kpi.branches.inactive = kpi.branches.total - kpi.branches.active;
-        recentBranches.value  = brAll.data.data;
-
-        kpi.users.total    = usAll.data.meta.total;
-        kpi.users.active   = usActive.data.meta.total;
-        kpi.users.inactive = kpi.users.total - kpi.users.active;
+        const { data } = await dashboardService.stats();
+        stats.value = data;
     } catch { /* non-critical */ } finally {
         kpi.loading = false;
     }
@@ -275,26 +272,34 @@ onMounted(async () => {
 // ── Quick links ────────────────────────────────────────────────────────────
 const quickLinks = computed(() => [
     {
-        label: t('dashboard.quickAccess.manageBranches'),
-        description: t('dashboard.quickAccess.manageBranchesDesc'),
-        to: { name: 'branches' },
-        icon: BuildingOffice2Icon,
-        iconBg: 'bg-indigo-50',
-        iconColor: 'text-indigo-600',
+        label:       t('dashboard.quickAccess.openPOS'),
+        description: t('dashboard.quickAccess.openPOSDesc'),
+        to:          { name: 'pos' },
+        icon:        ShoppingCartIcon,
+        iconBg:      'bg-emerald-50',
+        iconColor:   'text-emerald-600',
     },
     {
-        label: t('dashboard.quickAccess.manageUsers'),
-        description: t('dashboard.quickAccess.manageUsersDesc'),
-        to: { name: 'users' },
-        icon: UserCircleIcon,
-        iconBg: 'bg-violet-50',
-        iconColor: 'text-violet-600',
+        label:       t('dashboard.quickAccess.manageProducts'),
+        description: t('dashboard.quickAccess.manageProductsDesc'),
+        to:          { name: 'products' },
+        icon:        TagIcon,
+        iconBg:      'bg-indigo-50',
+        iconColor:   'text-indigo-600',
+    },
+    {
+        label:       t('dashboard.quickAccess.newPurchase'),
+        description: t('dashboard.quickAccess.newPurchaseDesc'),
+        to:          { name: 'purchase-create' },
+        icon:        TruckIcon,
+        iconBg:      'bg-violet-50',
+        iconColor:   'text-violet-600',
     },
 ]);
 
 // ── System Info ────────────────────────────────────────────────────────────
 const systemInfo = computed(() => [
-    { label: t('dashboard.systemInfo.version'),     value: 'v0.3.0 — Phase 1' },
+    { label: t('dashboard.systemInfo.version'),     value: 'v1.0.0 — Phase 2' },
     { label: t('dashboard.systemInfo.framework'),   value: 'Laravel 13 + Vue 3' },
     { label: t('dashboard.systemInfo.auth'),        value: 'Sanctum (Token)' },
     { label: t('dashboard.systemInfo.environment'), value: 'Development' },
@@ -302,11 +307,11 @@ const systemInfo = computed(() => [
 
 // ── Module status ──────────────────────────────────────────────────────────
 const moduleStatusList = [
-    { key: 'auth',     active: true,  phase: '' },
-    { key: 'branches', active: true,  phase: '' },
-    { key: 'users',    active: true,  phase: '' },
-    { key: 'products', active: false, phase: 'phase2' },
-    { key: 'pos',      active: false, phase: 'phase3' },
-    { key: 'reports',  active: false, phase: 'phase4' },
+    { key: 'auth',      active: true,  phase: '' },
+    { key: 'products',  active: true,  phase: '' },
+    { key: 'pos',       active: true,  phase: '' },
+    { key: 'customers', active: true,  phase: '' },
+    { key: 'purchases', active: true,  phase: '' },
+    { key: 'reports',   active: false, phase: 'phase4' },
 ];
 </script>
