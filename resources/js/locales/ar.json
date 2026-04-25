@@ -49,7 +49,7 @@
     "active": "نشط",
     "inactive": "غير نشط",
     "status": "الحالة",
-    "loading": "جارٍ التحميل...",
+    "loading": "جارٍ التحميل",
     "noResults": "لا توجد نتائج",
     "actions": "الإجراءات",
     "soon": "قريباً",
@@ -501,7 +501,8 @@
     "printDate": "تاريخ الطباعة",
     "invoiceNote": "ملاحظة",
     "position": "م.",
-    "unit": "الوحدة"
+    "unit": "الوحدة",
+    "typeToSearch": "اكتب حرفين على الأقل للبحث…"
   },
   "stock": {
     "title": "المخزون",

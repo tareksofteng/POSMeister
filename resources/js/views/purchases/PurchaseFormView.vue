@@ -102,28 +102,13 @@
                         <tr v-for="(line, idx) in form.items" :key="idx" class="hover:bg-gray-50/50 transition-colors">
                             <!-- Product selector -->
                             <td class="px-4 py-2">
-                                <div class="flex items-center gap-2">
-                                    <img
-                                        v-if="line._image_url"
-                                        :src="line._image_url"
-                                        class="w-8 h-8 rounded object-cover flex-shrink-0 border border-gray-200"
-                                        alt=""
-                                    />
-                                    <div v-else class="w-8 h-8 rounded bg-gray-100 flex-shrink-0 border border-gray-200 flex items-center justify-center">
-                                        <PhotoIcon class="w-4 h-4 text-gray-300" />
-                                    </div>
-                                    <select
-                                        v-model="line.product_id"
-                                        @change="onProductChange(line)"
-                                        class="form-input text-xs flex-1"
-                                        :disabled="isLocked"
-                                    >
-                                        <option value="">— {{ t('purchases.selectProduct') }} —</option>
-                                        <option v-for="p in products" :key="p.id" :value="p.id">
-                                            {{ p.name }} <template v-if="p.sku">({{ p.sku }})</template>
-                                        </option>
-                                    </select>
-                                </div>
+                                <ProductSearchInput
+                                    v-model="line.product_id"
+                                    :product="line._product"
+                                    :disabled="isLocked"
+                                    :placeholder="t('purchases.selectProduct')"
+                                    @select="onProductSelect(line, $event)"
+                                />
                             </td>
 
                             <!-- Qty -->
@@ -287,8 +272,9 @@ import { useAlert } from '@/composables/useAlert';
 import {
     ArrowLeftIcon, PlusIcon, XMarkIcon,
     CheckBadgeIcon, ExclamationTriangleIcon,
-    DocumentArrowDownIcon, PhotoIcon,
+    DocumentArrowDownIcon,
 } from '@heroicons/vue/24/outline';
+import ProductSearchInput from '@/components/ui/ProductSearchInput.vue';
 
 const { t }    = useI18n();
 const router   = useRouter();
@@ -306,12 +292,11 @@ const isLocked  = computed(() => purchase.value?.status === 'received');
 
 const suppliers = ref([]);
 const branches  = ref([]);
-const products  = ref([]);
 
 // ── Form state ─────────────────────────────────────────────────────────────
 
 function newLine() {
-    return { product_id: '', quantity: 1, unit_cost: 0, vat_rate: defaultVat.value, _vat_amount: 0, _line_total: 0, _image_url: null };
+    return { product_id: null, quantity: 1, unit_cost: 0, vat_rate: defaultVat.value, _vat_amount: 0, _line_total: 0, _product: null };
 }
 
 const form = ref({
@@ -376,15 +361,18 @@ function removeLine(idx) {
     form.value.items.splice(idx, 1);
 }
 
-function onProductChange(line) {
-    const product = products.value.find(p => p.id === line.product_id);
+function onProductSelect(line, product) {
     if (!product) {
-        line._image_url = null;
+        line.product_id = null;
+        line._product   = null;
+        line.unit_cost  = 0;
+        recalc(line);
         return;
     }
+    line.product_id = product.id;
+    line._product   = product;
     line.unit_cost  = parseFloat(product.cost_price ?? 0);
     line.vat_rate   = parseFloat(product.tax_rate   ?? defaultVat.value);
-    line._image_url = product.image_url ?? null;
     recalc(line);
 }
 
@@ -404,13 +392,6 @@ async function loadBranches() {
     } catch { /* silent */ }
 }
 
-async function loadProducts() {
-    try {
-        const { data } = await api.get('/products/all');
-        products.value = data.data ?? data;
-    } catch { /* silent */ }
-}
-
 async function loadPurchase() {
     try {
         const { data } = await purchaseService.show(route.params.id);
@@ -426,7 +407,6 @@ async function loadPurchase() {
             discount_amount: p.discount_amount,
             freight_amount:  p.freight_amount,
             items: (p.items ?? []).map(item => {
-                const product = products.value.find(pr => pr.id === item.product_id);
                 const base    = item.quantity * item.unit_cost;
                 const lineVat = Math.round(base * (item.vat_rate / 100) * 100) / 100;
                 return {
@@ -436,7 +416,16 @@ async function loadPurchase() {
                     vat_rate:    item.vat_rate,
                     _vat_amount: lineVat,
                     _line_total: Math.round((base + lineVat) * 100) / 100,
-                    _image_url:  product?.image_url ?? null,
+                    // Reconstruct a product object from the flat resource fields
+                    _product: item.product_id ? {
+                        id:          item.product_id,
+                        name:        item.product_name ?? '—',
+                        sku:         item.product_sku  ?? '',
+                        cost_price:  item.unit_cost,
+                        tax_rate:    item.vat_rate,
+                        image_url:   item.image_url    ?? null,
+                        unit_symbol: item.unit_symbol  ?? '',
+                    } : null,
                 };
             }),
         };
@@ -447,7 +436,7 @@ async function loadPurchase() {
 }
 
 onMounted(async () => {
-    await Promise.all([loadSuppliers(), loadProducts(), loadBranches()]);
+    await Promise.all([loadSuppliers(), loadBranches()]);
     if (isEdit.value) await loadPurchase();
     form.value.items.forEach(recalc);
 });

@@ -45,6 +45,9 @@ class PurchaseResource extends JsonResource
                     'product_name' => $item->product?->name ?? '—',
                     'product_sku'  => $item->product?->sku ?? '',
                     'unit_name'    => $item->product?->unit?->name ?? null,
+                    'unit_symbol'  => $item->product?->unit?->symbol ?? null,
+                    'image_url'    => $item->product?->image
+                                      ? \Storage::url($item->product->image) : null,
                     'quantity'     => (float) $item->quantity,
                     'unit_cost'    => (float) $item->unit_cost,
                     'vat_rate'     => (float) $item->vat_rate,

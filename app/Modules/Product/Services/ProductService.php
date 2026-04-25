@@ -41,16 +41,24 @@ class ProductService
 
     public function search(string $term): Collection
     {
-        return Product::with('unit')
-            ->active()
+        $base = Product::with('unit')->active();
+
+        if ($term === '') {
+            return $base
+                ->latest()
+                ->limit(100)
+                ->get(['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate', 'unit_id', 'image']);
+        }
+
+        return $base
             ->where(
                 fn($q) => $q
                     ->where('name', 'like', "%{$term}%")
                     ->orWhere('sku', 'like', "%{$term}%")
                     ->orWhere('barcode', $term)
             )
-            ->limit(15)
-            ->get(['id', 'sku', 'name', 'selling_price', 'tax_rate', 'unit_id']);
+            ->limit(50)
+            ->get(['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate', 'unit_id', 'image']);
     }
 
     public function store(array $data): Product

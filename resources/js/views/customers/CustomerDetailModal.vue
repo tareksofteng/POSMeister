@@ -301,7 +301,7 @@ function methodLabel(method) {
 </script>
 
 <style scoped>
-@reference '../../../../css/app.css';
+@reference '../../../css/app.css';
 .form-label { @apply block text-sm font-medium text-gray-700 mb-1; }
 .form-input  { @apply w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors; }
 .form-error  { @apply mt-1 text-xs text-red-600; }

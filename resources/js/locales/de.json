@@ -49,8 +49,8 @@
     "active": "Aktiv",
     "inactive": "Inaktiv",
     "status": "Status",
-    "loading": "Lädt...",
-    "noResults": "Keine Ergebnisse gefunden",
+    "loading": "Laden",
+    "noResults": "Keine Ergebnisse",
     "actions": "Aktionen",
     "soon": "Bald",
     "systemActive": "System aktiv",
@@ -503,7 +503,8 @@
     "printDate": "Druckdatum",
     "invoiceNote": "Notiz",
     "position": "Pos.",
-    "unit": "Einheit"
+    "unit": "Einheit",
+    "typeToSearch": "Mindestens 2 Zeichen eingeben…"
   },
   "stock": {
     "title": "Lagerbestand",

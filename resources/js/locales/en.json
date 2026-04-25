@@ -49,7 +49,7 @@
     "active": "Active",
     "inactive": "Inactive",
     "status": "Status",
-    "loading": "Loading...",
+    "loading": "Loading",
     "noResults": "No results found",
     "actions": "Actions",
     "soon": "Soon",
@@ -503,7 +503,8 @@
     "printDate": "Print Date",
     "invoiceNote": "Note",
     "position": "Pos.",
-    "unit": "Unit"
+    "unit": "Unit",
+    "typeToSearch": "Type at least 2 characters to search…"
   },
   "stock": {
     "title": "Inventory",

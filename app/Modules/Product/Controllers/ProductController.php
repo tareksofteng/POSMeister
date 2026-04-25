@@ -43,8 +43,21 @@ class ProductController extends Controller
     public function search(Request $request): JsonResponse
     {
         $term = $request->string('q')->trim()->value();
-        if (strlen($term) < 2) return response()->json([]);
-        return response()->json($this->service->search($term));
+        if (strlen($term) === 1) return response()->json([]);
+
+        $results = $this->service->search($term)->map(fn($p) => [
+            'id'           => $p->id,
+            'sku'          => $p->sku,
+            'name'         => $p->name,
+            'cost_price'   => (float) $p->cost_price,
+            'selling_price'=> (float) $p->selling_price,
+            'tax_rate'     => (float) $p->tax_rate,
+            'unit_name'    => $p->unit?->name ?? '',
+            'unit_symbol'  => $p->unit?->symbol ?? '',
+            'image_url'    => $p->image ? Storage::url($p->image) : null,
+        ]);
+
+        return response()->json($results);
     }
 
     public function show(Product $product): ProductResource
