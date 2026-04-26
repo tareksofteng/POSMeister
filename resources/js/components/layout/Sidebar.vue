@@ -8,7 +8,6 @@
         <!-- Logo / Brand -->
         <div class="flex h-16 items-center px-4 border-b border-slate-800">
             <div class="flex items-center gap-3 min-w-0">
-                <!-- Company logo if set, else default icon -->
                 <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 shadow-lg overflow-hidden">
                     <img
                         v-if="settingsStore.settings?.logo_url"
@@ -38,12 +37,35 @@
                 <template #icon><Squares2X2Icon class="nav-icon" /></template>
             </NavItem>
 
-            <!-- Dynamic permission-based groups -->
+            <!-- Permission-based section groups -->
             <template v-for="group in visibleGroups" :key="group.sectionKey">
                 <SidebarSectionLabel v-if="!collapsed && group.items.length" :label="t(group.sectionKey)" />
 
-                <template v-for="item in group.items" :key="item.permKey">
+                <template v-for="item in group.items" :key="item.labelKey">
+
+                    <!-- ── Accordion group (e.g. Verkauf, Einkauf) ── -->
+                    <NavGroup
+                        v-if="item.isGroup"
+                        :collapsed="collapsed"
+                        :label="t(item.labelKey)"
+                        :child-routes="item.childRoutes"
+                    >
+                        <template #icon>
+                            <component :is="item.icon" class="nav-icon" />
+                        </template>
+                        <NavItem
+                            v-for="child in item.children"
+                            :key="child.labelKey"
+                            :collapsed="collapsed"
+                            :to="child.to"
+                            :label="t(child.labelKey)"
+                            :disabled="!child.implemented"
+                        />
+                    </NavGroup>
+
+                    <!-- ── Regular nav item ── -->
                     <NavItem
+                        v-else
                         :collapsed="collapsed"
                         :to="item.to"
                         :label="t(item.labelKey)"
@@ -53,6 +75,7 @@
                             <component :is="item.icon" class="nav-icon" />
                         </template>
                     </NavItem>
+
                 </template>
             </template>
 
@@ -98,35 +121,66 @@ import {
 } from '@heroicons/vue/24/outline';
 
 import NavItem             from './NavItem.vue';
+import NavGroup            from './NavGroup.vue';
 import SidebarSectionLabel from './SidebarSectionLabel.vue';
 
 defineProps({
     collapsed: { type: Boolean, default: false },
 });
 
-const { t }        = useI18n();
-const auth         = useAuthStore();
+const { t }         = useI18n();
+const auth          = useAuthStore();
 const settingsStore = useSettingsStore();
-const router       = useRouter();
+const router        = useRouter();
 
 const userInitial = computed(() =>
     auth.userName ? auth.userName.charAt(0).toUpperCase() : '?'
 );
 
 // ── Nav config ─────────────────────────────────────────────────────────────
-// sectionKey → i18n key for section label
-// labelKey   → i18n key for item label
-// permKey    → permission module key (null = always visible)
-// adminOnly  → only show to admins
+// isGroup:true items render as collapsible accordion parents (NavGroup)
+// Regular items render as flat NavItem links
 
 const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.commerce',
         items: [
-            { permKey: 'pos',        labelKey: 'menu.pointOfSale', to: { name: 'pos' },        icon: ShoppingCartIcon,          implemented: true  },
-            { permKey: 'sales',      labelKey: 'menu.sales',       to: { name: 'sales' },       icon: DocumentTextIcon,          implemented: true  },
-            { permKey: 'purchases',  labelKey: 'menu.purchases',   to: { name: 'purchases' },   icon: TruckIcon,                 implemented: true  },
-            { permKey: 'quotations', labelKey: 'menu.quotations',  to: { name: 'quotations' },  icon: ClipboardDocumentListIcon, implemented: false },
+            {
+                permKey: 'pos',
+                labelKey: 'menu.pointOfSale',
+                to:   { name: 'pos' },
+                icon: ShoppingCartIcon,
+                implemented: true,
+            },
+            {
+                isGroup:     true,
+                permKey:     'sales',
+                labelKey:    'menu.sales',
+                icon:        DocumentTextIcon,
+                childRoutes: ['sales', 'sale-returns'],
+                children: [
+                    { labelKey: 'menu.salesList',    to: { name: 'sales' },        implemented: true },
+                    { labelKey: 'menu.saleReturns',  to: { name: 'sale-returns' }, implemented: true },
+                ],
+            },
+            {
+                isGroup:     true,
+                permKey:     'purchases',
+                labelKey:    'menu.purchases',
+                icon:        TruckIcon,
+                childRoutes: ['purchases', 'purchase-returns', 'purchase-create', 'purchase-edit'],
+                children: [
+                    { labelKey: 'menu.purchaseList',    to: { name: 'purchases' },         implemented: true },
+                    { labelKey: 'menu.purchaseReturns', to: { name: 'purchase-returns' },  implemented: true },
+                ],
+            },
+            {
+                permKey: 'quotations',
+                labelKey: 'menu.quotations',
+                to:   { name: 'quotations' },
+                icon: ClipboardDocumentListIcon,
+                implemented: false,
+            },
         ],
     },
     {
@@ -140,7 +194,7 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.stakeholders',
         items: [
-            { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: true  },
+            { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: true },
             { permKey: 'suppliers', labelKey: 'menu.suppliers', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: true },
         ],
     },
@@ -160,10 +214,10 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.system',
         items: [
-            { permKey: 'branches',         labelKey: 'menu.branches',         to: { name: 'branches' },         icon: BuildingOffice2Icon, implemented: true  },
-            { permKey: 'users',            labelKey: 'menu.users',            to: { name: 'users' },             icon: UserCircleIcon,     implemented: true  },
-            { permKey: 'role-permissions', labelKey: 'menu.rolePermissions',  to: { name: 'role-permissions' }, icon: ShieldCheckIcon,    implemented: true,  adminOnly: true },
-            { permKey: null,               labelKey: 'menu.settings',         to: { name: 'settings' },          icon: CogIcon,            implemented: true, adminOnly: true },
+            { permKey: 'branches',         labelKey: 'menu.branches',        to: { name: 'branches' },         icon: BuildingOffice2Icon, implemented: true },
+            { permKey: 'users',            labelKey: 'menu.users',           to: { name: 'users' },            icon: UserCircleIcon,      implemented: true },
+            { permKey: 'role-permissions', labelKey: 'menu.rolePermissions', to: { name: 'role-permissions' }, icon: ShieldCheckIcon,     implemented: true, adminOnly: true },
+            { permKey: null,               labelKey: 'menu.settings',        to: { name: 'settings' },         icon: CogIcon,             implemented: true, adminOnly: true },
         ],
     },
 ];
@@ -172,7 +226,8 @@ const visibleGroups = computed(() =>
     NAV_GROUPS.map(group => ({
         ...group,
         items: group.items.filter(item => {
-            if (!item.permKey) return true;
+            if (item.isGroup)   return auth.hasPermission(item.permKey);
+            if (!item.permKey)  return true;
             if (item.adminOnly) return auth.isAdmin;
             return auth.hasPermission(item.permKey);
         }),

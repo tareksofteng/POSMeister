@@ -4,8 +4,10 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
+use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Sales\Controllers\CustomerController;
 use App\Modules\Sales\Controllers\SaleController;
+use App\Modules\Sales\Controllers\SaleReturnController;
 use App\Modules\Stock\Controllers\StockController;
 use App\Modules\Product\Controllers\CategoryController;
 use App\Modules\Product\Controllers\ProductController;
@@ -145,11 +147,21 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::delete('suppliers/{supplier}',            [SupplierController::class, 'destroy']);
 
         // Purchases
-        Route::get('purchases',          [PurchaseController::class, 'index']);
-        Route::get('purchases/{purchase}', [PurchaseController::class, 'show']);
-        Route::post('purchases',         [PurchaseController::class, 'store']);
-        Route::put('purchases/{purchase}', [PurchaseController::class, 'update']);
-        Route::put('purchases/{purchase}/receive', [PurchaseController::class, 'receive']);
-        Route::delete('purchases/{purchase}',      [PurchaseController::class, 'destroy']);
+        Route::get('purchases',                       [PurchaseController::class, 'index']);
+        Route::get('purchases/{purchase}',            [PurchaseController::class, 'show']);
+        Route::post('purchases',                      [PurchaseController::class, 'store']);
+        Route::put('purchases/{purchase}',            [PurchaseController::class, 'update']);
+        Route::put('purchases/{purchase}/receive',    [PurchaseController::class, 'receive']);
+        Route::delete('purchases/{purchase}',         [PurchaseController::class, 'destroy']);
+
+        // Purchase Returns
+        Route::get('purchase-returns',                                [PurchaseReturnController::class, 'index']);
+        Route::get('purchases/{purchaseId}/return-details',           [PurchaseReturnController::class, 'returnDetails']);
+        Route::post('purchase-returns',                               [PurchaseReturnController::class, 'store']);
+
+        // Sale Returns
+        Route::get('sale-returns',                                    [SaleReturnController::class, 'index']);
+        Route::get('sales/{saleId}/return-details',                   [SaleReturnController::class, 'returnDetails']);
+        Route::post('sale-returns',                                   [SaleReturnController::class, 'store']);
     });
 });

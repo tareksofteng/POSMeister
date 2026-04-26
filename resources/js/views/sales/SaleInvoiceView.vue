@@ -191,8 +191,18 @@
                             >
                                 <td class="py-2.5 text-center text-xs text-gray-400 font-mono">{{ idx + 1 }}</td>
                                 <td class="py-2.5 pl-3">
-                                    <span class="font-medium text-gray-900">{{ item.product_name }}</span>
-                                    <span v-if="item.product_sku" class="ml-2 text-xs text-gray-400 font-mono">({{ item.product_sku }})</span>
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-9 h-9 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0 no-print">
+                                            <img v-if="item.image_url" :src="item.image_url" :alt="item.name" class="w-full h-full object-cover" />
+                                            <div v-else class="w-full h-full flex items-center justify-center">
+                                                <PhotoIcon class="w-4 h-4 text-gray-300" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="font-medium text-gray-900">{{ item.name }}</span>
+                                            <span v-if="item.sku" class="ml-1.5 text-xs text-gray-400 font-mono">({{ item.sku }})</span>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="py-2.5 text-right font-mono text-gray-700 tabular-nums">{{ item.quantity }}</td>
                                 <td class="py-2.5 text-center text-xs text-gray-500">{{ item.unit_name ?? '—' }}</td>
@@ -335,7 +345,7 @@ import { useSettingsStore } from '@/stores/settings';
 import {
     ArrowLeftIcon, PrinterIcon, XCircleIcon,
     BuildingOffice2Icon, PhoneIcon, EnvelopeIcon,
-    BanknotesIcon, CreditCardIcon, ExclamationTriangleIcon,
+    BanknotesIcon, CreditCardIcon, ExclamationTriangleIcon, PhotoIcon,
 } from '@heroicons/vue/24/outline';
 
 const { t }    = useI18n();

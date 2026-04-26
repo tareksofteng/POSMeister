@@ -108,6 +108,20 @@ const routes = [
                 component: () => import('@/views/sales/SaleListView.vue'),
                 meta: { titleKey: 'menu.sales', permission: 'sales' },
             },
+            {
+                path: 'sale-returns',
+                name: 'sale-returns',
+                component: () => import('@/views/sales/SaleReturnView.vue'),
+                meta: { titleKey: 'menu.saleReturns', permission: 'sales' },
+            },
+
+            // ── Purchase returns ───────────────────────────────────────────
+            {
+                path: 'purchase-returns',
+                name: 'purchase-returns',
+                component: () => import('@/views/purchases/PurchaseReturnView.vue'),
+                meta: { titleKey: 'menu.purchaseReturns', permission: 'purchases' },
+            },
 
             // ── Stock / Inventory ──────────────────────────────────────────
             {
