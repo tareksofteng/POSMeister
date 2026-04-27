@@ -169,11 +169,12 @@ const NAV_GROUPS = [
                 permKey:     'purchases',
                 labelKey:    'menu.purchases',
                 icon:        TruckIcon,
-                childRoutes: ['purchases', 'purchase-returns', 'purchase-create', 'purchase-edit'],
+                childRoutes: ['purchases', 'purchase-returns', 'purchase-create', 'purchase-edit', 'purchase-record'],
                 children: [
                     { labelKey: 'menu.newPurchase',     to: { name: 'purchase-create' },   implemented: true },
                     { labelKey: 'menu.purchaseList',    to: { name: 'purchases' },         implemented: true },
                     { labelKey: 'menu.purchaseReturns', to: { name: 'purchase-returns' },  implemented: true },
+                    { labelKey: 'menu.purchaseRecord',  to: { name: 'purchase-record' },   implemented: true },
                 ],
             },
             {

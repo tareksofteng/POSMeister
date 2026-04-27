@@ -41,7 +41,8 @@
     "newSale": "নতুন বিক্রয়",
     "purchaseReturns": "ক্রয় রিটার্ন",
     "purchaseList": "ক্রয় তালিকা",
-    "newPurchase": "নতুন ক্রয়"
+    "newPurchase": "নতুন ক্রয়",
+    "purchaseRecord": "ক্রয় রেকর্ড"
   },
   "common": {
     "save": "সংরক্ষণ করুন",
@@ -691,6 +692,22 @@
     "noReturns": "এখনো কোনো বিক্রয় রিটার্ন নেই।",
     "returnNumber": "রিটার্ন নং",
     "positions": "আইটেম"
+  },
+  "purchaseRecord": {
+    "title": "ক্রয় রেকর্ড",
+    "subtitle": "সময়কাল, সরবরাহকারী এবং অবস্থা অনুযায়ী ক্রয় বিশ্লেষণ করুন",
+    "from": "থেকে",
+    "to": "পর্যন্ত",
+    "supplier": "সরবরাহকারী",
+    "allSuppliers": "সকল সরবরাহকারী",
+    "search": "অনুসন্ধান",
+    "print": "প্রিন্ট",
+    "withDetails": "পণ্য বিবরণ সহ",
+    "totalOrders": "ক্রয়",
+    "items": "আইটেম",
+    "product": "পণ্য",
+    "noResults": "নির্বাচিত ফিল্টারে কোনো ক্রয় পাওয়া যায়নি।",
+    "grandTotalRow": "সর্বমোট"
   },
   "appSettings": {
     "title": "অ্যাপ্লিকেশন সেটিংস",

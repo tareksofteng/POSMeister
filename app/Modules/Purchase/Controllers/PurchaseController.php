@@ -24,6 +24,25 @@ class PurchaseController extends Controller
         );
     }
 
+    public function record(Request $request): JsonResponse
+    {
+        $purchases = $this->service->record(
+            $request->only('date_from', 'date_to', 'supplier_id', 'status')
+        );
+
+        return response()->json([
+            'data'    => PurchaseResource::collection($purchases),
+            'summary' => [
+                'count'           => $purchases->count(),
+                'subtotal'        => round($purchases->sum('subtotal'), 2),
+                'vat_amount'      => round($purchases->sum('vat_amount'), 2),
+                'discount_amount' => round($purchases->sum('discount_amount'), 2),
+                'freight_amount'  => round($purchases->sum('freight_amount'), 2),
+                'total_amount'    => round($purchases->sum('total_amount'), 2),
+            ],
+        ]);
+    }
+
     public function show(Purchase $purchase): PurchaseResource
     {
         return new PurchaseResource($this->service->find($purchase->id));

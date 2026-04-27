@@ -21,6 +21,7 @@
     "purchaseReturns": "Purchase Returns",
     "purchaseList": "Purchase List",
     "newPurchase": "New Purchase",
+    "purchaseRecord": "Purchase Record",
     "quotations": "Quotations",
     "products": "Products",
     "inventory": "Inventory",
@@ -693,6 +694,22 @@
     "noReturns": "No sale returns recorded yet.",
     "returnNumber": "Return No.",
     "positions": "Items"
+  },
+  "purchaseRecord": {
+    "title": "Purchase Record",
+    "subtitle": "Analyse purchases by period, supplier and status",
+    "from": "From",
+    "to": "To",
+    "supplier": "Supplier",
+    "allSuppliers": "All Suppliers",
+    "search": "Search",
+    "print": "Print",
+    "withDetails": "Show item details",
+    "totalOrders": "Purchases",
+    "items": "Items",
+    "product": "Product",
+    "noResults": "No purchases found for the selected filters.",
+    "grandTotalRow": "Grand Total"
   },
   "appSettings": {
     "title": "Application Settings",

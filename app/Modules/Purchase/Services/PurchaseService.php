@@ -53,6 +53,30 @@ class PurchaseService
                  ->paginate($filters['per_page'] ?? 20);
     }
 
+    // ── Record report (no pagination, items eager-loaded) ─────────────────
+
+    public function record(array $filters = []): \Illuminate\Database\Eloquent\Collection
+    {
+        $q = Purchase::with(['supplier', 'branch', 'items.product.unit'])
+            ->orderByDesc('purchase_date')
+            ->orderByDesc('id');
+
+        if (!empty($filters['date_from'])) {
+            $q->whereDate('purchase_date', '>=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $q->whereDate('purchase_date', '<=', $filters['date_to']);
+        }
+        if (!empty($filters['supplier_id'])) {
+            $q->where('supplier_id', $filters['supplier_id']);
+        }
+        if (!empty($filters['status'])) {
+            $q->where('status', $filters['status']);
+        }
+
+        return $q->get();
+    }
+
     public function find(int $id): Purchase
     {
         return Purchase::with([

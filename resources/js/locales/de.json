@@ -21,6 +21,7 @@
     "purchaseReturns": "Einkaufsrückgaben",
     "purchaseList": "Einkaufsliste",
     "newPurchase": "Neuer Einkauf",
+    "purchaseRecord": "Einkaufsbericht",
     "quotations": "Angebote",
     "products": "Produkte",
     "inventory": "Inventar",
@@ -693,6 +694,22 @@
     "noReturns": "Noch keine Verkaufsrückgaben erfasst.",
     "returnNumber": "Rückgabe-Nr.",
     "positions": "Pos."
+  },
+  "purchaseRecord": {
+    "title": "Einkaufsbericht",
+    "subtitle": "Einkäufe nach Zeitraum, Lieferant und Status auswerten",
+    "from": "Von",
+    "to": "Bis",
+    "supplier": "Lieferant",
+    "allSuppliers": "Alle Lieferanten",
+    "search": "Auswerten",
+    "print": "Drucken",
+    "withDetails": "Mit Artikeldetails",
+    "totalOrders": "Einkäufe",
+    "items": "Artikel",
+    "product": "Produkt",
+    "noResults": "Keine Einkäufe für die gewählten Filter gefunden.",
+    "grandTotalRow": "Gesamtsumme"
   },
   "appSettings": {
     "title": "Anwendungseinstellungen",

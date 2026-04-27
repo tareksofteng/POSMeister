@@ -148,6 +148,7 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
         // Purchases
         Route::get('purchases',                       [PurchaseController::class, 'index']);
+        Route::get('purchases/record',                [PurchaseController::class, 'record']); // must be before {purchase}
         Route::get('purchases/{purchase}',            [PurchaseController::class, 'show']);
         Route::post('purchases',                      [PurchaseController::class, 'store']);
         Route::put('purchases/{purchase}',            [PurchaseController::class, 'update']);

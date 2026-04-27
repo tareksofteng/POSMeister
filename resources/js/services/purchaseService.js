@@ -8,6 +8,9 @@ export const purchaseService = {
     receive: (id)          => api.put(`/purchases/${id}/receive`),
     destroy: (id)          => api.delete(`/purchases/${id}`),
 
+    // Purchase Record report
+    record: (params = {}) => api.get('/purchases/record', { params }),
+
     // Purchase Returns
     returnDetails: (purchaseId)  => api.get(`/purchases/${purchaseId}/return-details`),
     storeReturn:   (data)        => api.post('/purchase-returns', data),

@@ -21,6 +21,7 @@
     "purchaseReturns": "مرتجعات الشراء",
     "purchaseList": "قائمة المشتريات",
     "newPurchase": "شراء جديد",
+    "purchaseRecord": "سجل المشتريات",
     "quotations": "عروض الأسعار",
     "products": "المنتجات",
     "inventory": "المخزون",
@@ -691,6 +692,22 @@
     "noReturns": "لا توجد مرتجعات بيع بعد.",
     "returnNumber": "رقم المرتجع",
     "positions": "عناصر"
+  },
+  "purchaseRecord": {
+    "title": "سجل المشتريات",
+    "subtitle": "تحليل المشتريات حسب الفترة والمورد والحالة",
+    "from": "من",
+    "to": "إلى",
+    "supplier": "المورد",
+    "allSuppliers": "جميع الموردين",
+    "search": "بحث",
+    "print": "طباعة",
+    "withDetails": "عرض تفاصيل المنتجات",
+    "totalOrders": "المشتريات",
+    "items": "العناصر",
+    "product": "المنتج",
+    "noResults": "لا توجد مشتريات للفلاتر المحددة.",
+    "grandTotalRow": "الإجمالي الكلي"
   },
   "appSettings": {
     "title": "إعدادات التطبيق",

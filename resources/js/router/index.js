@@ -123,6 +123,14 @@ const routes = [
                 meta: { titleKey: 'menu.purchaseReturns', permission: 'purchases' },
             },
 
+            // ── Purchase record report ─────────────────────────────────────
+            {
+                path: 'purchase-record',
+                name: 'purchase-record',
+                component: () => import('@/views/purchases/PurchaseRecordView.vue'),
+                meta: { titleKey: 'menu.purchaseRecord', permission: 'purchases' },
+            },
+
             // ── Stock / Inventory ──────────────────────────────────────────
             {
                 path: 'inventory',
