@@ -125,6 +125,7 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::post('customers/{customer}/payments',             [CustomerController::class, 'storePayment']);
 
     // Sales — list/show by all, create by cashier+, cancel by manager+
+    Route::get('sales/record',            [SaleController::class, 'record']); // must be before {sale}
     Route::get('sales',                   [SaleController::class, 'index']);
     Route::get('sales/{sale}',            [SaleController::class, 'show']);
     Route::post('sales',                  [SaleController::class, 'store']);

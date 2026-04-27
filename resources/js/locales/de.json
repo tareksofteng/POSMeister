@@ -22,6 +22,7 @@
     "purchaseList": "Einkaufsliste",
     "newPurchase": "Neuer Einkauf",
     "purchaseRecord": "Einkaufsbericht",
+    "saleRecord": "Verkaufsbericht",
     "quotations": "Angebote",
     "products": "Produkte",
     "inventory": "Inventar",
@@ -779,5 +780,27 @@
     "saleTotal": "Gesamt",
     "salePaid": "Bezahlt",
     "saleDue": "Offen"
+  },
+  "saleRecord": {
+    "title": "Verkaufsbericht",
+    "subtitle": "Verkäufe nach Zeitraum, Kunde, Typ und Status auswerten",
+    "from": "Von",
+    "to": "Bis",
+    "customer": "Kunde",
+    "allCustomers": "Alle Kunden",
+    "saleType": "Verkaufstyp",
+    "allTypes": "Alle Typen",
+    "retail": "Einzelhandel",
+    "wholesale": "Großhandel",
+    "search": "Auswerten",
+    "print": "Drucken",
+    "withDetails": "Mit Artikeldetails",
+    "totalOrders": "Verkäufe",
+    "items": "Artikel",
+    "product": "Produkt",
+    "noResults": "Keine Verkäufe für die gewählten Filter gefunden.",
+    "grandTotalRow": "Gesamtsumme",
+    "totalPaid": "Bezahlt",
+    "due": "Offen"
   }
 }

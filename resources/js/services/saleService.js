@@ -2,6 +2,7 @@ import api from './api';
 
 export const saleService = {
     index:        (params = {}) => api.get('/sales', { params }),
+    record:       (params = {}) => api.get('/sales/record', { params }),
     show:         (id)          => api.get(`/sales/${id}`),
     store:        (data)        => api.post('/sales', data),
     cancel:       (id)          => api.put(`/sales/${id}/cancel`),

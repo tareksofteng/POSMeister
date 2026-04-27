@@ -42,7 +42,8 @@
     "purchaseReturns": "ক্রয় রিটার্ন",
     "purchaseList": "ক্রয় তালিকা",
     "newPurchase": "নতুন ক্রয়",
-    "purchaseRecord": "ক্রয় রেকর্ড"
+    "purchaseRecord": "ক্রয় রেকর্ড",
+    "saleRecord": "বিক্রয় রেকর্ড"
   },
   "common": {
     "save": "সংরক্ষণ করুন",
@@ -777,5 +778,27 @@
     "saleTotal": "মোট",
     "salePaid": "পরিশোধিত",
     "saleDue": "বকেয়া"
+  },
+  "saleRecord": {
+    "title": "বিক্রয় রেকর্ড",
+    "subtitle": "সময়কাল, গ্রাহক, ধরন ও স্ট্যাটাস অনুযায়ী বিক্রয় বিশ্লেষণ করুন",
+    "from": "থেকে",
+    "to": "পর্যন্ত",
+    "customer": "গ্রাহক",
+    "allCustomers": "সকল গ্রাহক",
+    "saleType": "বিক্রয়ের ধরন",
+    "allTypes": "সকল ধরন",
+    "retail": "খুচরা",
+    "wholesale": "পাইকারি",
+    "search": "অনুসন্ধান",
+    "print": "প্রিন্ট",
+    "withDetails": "আইটেম বিস্তারিত দেখান",
+    "totalOrders": "বিক্রয়",
+    "items": "আইটেম",
+    "product": "পণ্য",
+    "noResults": "নির্বাচিত ফিল্টারের জন্য কোনো বিক্রয় পাওয়া যায়নি।",
+    "grandTotalRow": "মোট সর্বমোট",
+    "totalPaid": "মোট পরিশোধিত",
+    "due": "বকেয়া"
   }
 }

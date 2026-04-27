@@ -22,6 +22,7 @@
     "purchaseList": "Purchase List",
     "newPurchase": "New Purchase",
     "purchaseRecord": "Purchase Record",
+    "saleRecord": "Sale Record",
     "quotations": "Quotations",
     "products": "Products",
     "inventory": "Inventory",
@@ -779,5 +780,27 @@
     "saleTotal": "Total",
     "salePaid": "Paid",
     "saleDue": "Due"
+  },
+  "saleRecord": {
+    "title": "Sale Record",
+    "subtitle": "Analyse sales by period, customer, type and status",
+    "from": "From",
+    "to": "To",
+    "customer": "Customer",
+    "allCustomers": "All Customers",
+    "saleType": "Sale Type",
+    "allTypes": "All Types",
+    "retail": "Retail",
+    "wholesale": "Wholesale",
+    "search": "Search",
+    "print": "Print",
+    "withDetails": "Show item details",
+    "totalOrders": "Sales",
+    "items": "Items",
+    "product": "Product",
+    "noResults": "No sales found for the selected filters.",
+    "grandTotalRow": "Grand Total",
+    "totalPaid": "Total Paid",
+    "due": "Due"
   }
 }

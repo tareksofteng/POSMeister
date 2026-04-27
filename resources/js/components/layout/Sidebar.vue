@@ -157,11 +157,12 @@ const NAV_GROUPS = [
                 permKey:     'sales',
                 labelKey:    'menu.sales',
                 icon:        DocumentTextIcon,
-                childRoutes: ['pos', 'sales', 'sale-returns'],
+                childRoutes: ['pos', 'sales', 'sale-returns', 'sale-record'],
                 children: [
                     { labelKey: 'menu.newSale',      to: { name: 'pos' },          implemented: true },
                     { labelKey: 'menu.salesList',    to: { name: 'sales' },        implemented: true },
                     { labelKey: 'menu.saleReturns',  to: { name: 'sale-returns' }, implemented: true },
+                    { labelKey: 'menu.saleRecord',   to: { name: 'sale-record' },  implemented: true },
                 ],
             },
             {

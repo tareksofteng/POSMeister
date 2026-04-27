@@ -54,6 +54,30 @@ class SaleService
             ->findOrFail($id);
     }
 
+    public function record(array $filters = []): \Illuminate\Database\Eloquent\Collection
+    {
+        $q = Sale::with(['customer', 'branch', 'items.product.unit'])
+            ->orderByDesc('sale_date')->orderByDesc('id');
+
+        if (!empty($filters['date_from'])) {
+            $q->whereDate('sale_date', '>=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $q->whereDate('sale_date', '<=', $filters['date_to']);
+        }
+        if (!empty($filters['customer_id'])) {
+            $q->where('customer_id', $filters['customer_id']);
+        }
+        if (!empty($filters['status'])) {
+            $q->where('status', $filters['status']);
+        }
+        if (!empty($filters['sale_type'])) {
+            $q->where('sale_type', $filters['sale_type']);
+        }
+
+        return $q->get();
+    }
+
     // ── Create ────────────────────────────────────────────────────────────
 
     public function store(array $data): Sale

@@ -53,6 +53,25 @@ class SaleController extends Controller
         }
     }
 
+    public function record(Request $request): JsonResponse
+    {
+        $sales = $this->service->record($request->only('date_from', 'date_to', 'customer_id', 'status', 'sale_type'));
+
+        return response()->json([
+            'data'    => SaleResource::collection($sales),
+            'summary' => [
+                'count'           => $sales->count(),
+                'subtotal'        => round($sales->sum('subtotal'), 2),
+                'vat_amount'      => round($sales->sum('vat_amount'), 2),
+                'discount_amount' => round($sales->sum('discount_amount'), 2),
+                'freight_amount'  => round($sales->sum('freight_amount'), 2),
+                'grand_total'     => round($sales->sum('grand_total'), 2),
+                'total_paid'      => round($sales->sum('total_paid'), 2),
+                'due_amount'      => round($sales->sum('due_amount'), 2),
+            ],
+        ]);
+    }
+
     public function cancel(Sale $sale): SaleResource
     {
         try {

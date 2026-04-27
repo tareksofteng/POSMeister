@@ -22,6 +22,7 @@
     "purchaseList": "قائمة المشتريات",
     "newPurchase": "شراء جديد",
     "purchaseRecord": "سجل المشتريات",
+    "saleRecord": "سجل المبيعات",
     "quotations": "عروض الأسعار",
     "products": "المنتجات",
     "inventory": "المخزون",
@@ -777,5 +778,27 @@
     "saleTotal": "الإجمالي",
     "salePaid": "المدفوع",
     "saleDue": "المتبقي"
+  },
+  "saleRecord": {
+    "title": "سجل المبيعات",
+    "subtitle": "تحليل المبيعات حسب الفترة والعميل والنوع والحالة",
+    "from": "من",
+    "to": "إلى",
+    "customer": "العميل",
+    "allCustomers": "جميع العملاء",
+    "saleType": "نوع البيع",
+    "allTypes": "جميع الأنواع",
+    "retail": "تجزئة",
+    "wholesale": "جملة",
+    "search": "بحث",
+    "print": "طباعة",
+    "withDetails": "عرض تفاصيل العناصر",
+    "totalOrders": "المبيعات",
+    "items": "العناصر",
+    "product": "المنتج",
+    "noResults": "لم يتم العثور على مبيعات للفلاتر المحددة.",
+    "grandTotalRow": "الإجمالي الكلي",
+    "totalPaid": "إجمالي المدفوع",
+    "due": "المتبقي"
   }
 }
