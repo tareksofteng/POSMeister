@@ -157,8 +157,9 @@ const NAV_GROUPS = [
                 permKey:     'sales',
                 labelKey:    'menu.sales',
                 icon:        DocumentTextIcon,
-                childRoutes: ['sales', 'sale-returns'],
+                childRoutes: ['pos', 'sales', 'sale-returns'],
                 children: [
+                    { labelKey: 'menu.newSale',      to: { name: 'pos' },          implemented: true },
                     { labelKey: 'menu.salesList',    to: { name: 'sales' },        implemented: true },
                     { labelKey: 'menu.saleReturns',  to: { name: 'sale-returns' }, implemented: true },
                 ],
@@ -170,6 +171,7 @@ const NAV_GROUPS = [
                 icon:        TruckIcon,
                 childRoutes: ['purchases', 'purchase-returns', 'purchase-create', 'purchase-edit'],
                 children: [
+                    { labelKey: 'menu.newPurchase',     to: { name: 'purchase-create' },   implemented: true },
                     { labelKey: 'menu.purchaseList',    to: { name: 'purchases' },         implemented: true },
                     { labelKey: 'menu.purchaseReturns', to: { name: 'purchase-returns' },  implemented: true },
                 ],

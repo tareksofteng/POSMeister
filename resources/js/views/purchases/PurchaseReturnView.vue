@@ -72,7 +72,7 @@
                     </p>
                     <dl class="space-y-1.5 text-sm">
                         <div class="flex justify-between">
-                            <dt class="text-gray-500">{{ t('purchases.invoiceNumber') }}</dt>
+                            <dt class="text-gray-500">{{ t('purchases.number') }}</dt>
                             <dd class="font-mono font-semibold text-gray-900">{{ returnData.purchase.purchase_number }}</dd>
                         </div>
                         <div class="flex justify-between">
@@ -256,7 +256,7 @@ import { useI18n } from 'vue-i18n';
 import { useSettingsStore } from '@/stores/settings';
 import { useAlert } from '@/composables/useAlert';
 import { purchaseService } from '@/services/purchaseService';
-import { useDebounce } from '@vueuse/core';
+import { refDebounced } from '@vueuse/core';
 import { MagnifyingGlassIcon, PhotoIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/outline';
 
 const { t }       = useI18n();
@@ -279,7 +279,7 @@ function formatDate(dateStr) {
 const invoiceSearch  = ref('');
 const searchResults  = ref([]);
 const showDropdown   = ref(false);
-const debouncedQuery = useDebounce(invoiceSearch, 300);
+const debouncedQuery = refDebounced(invoiceSearch, 300);
 
 watch(debouncedQuery, async (q) => {
     if (!q.trim()) { searchResults.value = []; return; }

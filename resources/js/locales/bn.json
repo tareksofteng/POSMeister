@@ -37,7 +37,11 @@
     },
     "productSettings": "পণ্য সেটিংস",
     "saleReturns": "বিক্রয় রিটার্ন",
-    "purchaseReturns": "ক্রয় রিটার্ন"
+    "salesList": "বিক্রয় তালিকা",
+    "newSale": "নতুন বিক্রয়",
+    "purchaseReturns": "ক্রয় রিটার্ন",
+    "purchaseList": "ক্রয় তালিকা",
+    "newPurchase": "নতুন ক্রয়"
   },
   "common": {
     "save": "সংরক্ষণ করুন",

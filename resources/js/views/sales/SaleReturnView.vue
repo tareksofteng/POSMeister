@@ -254,7 +254,7 @@ import { useI18n } from 'vue-i18n';
 import { useSettingsStore } from '@/stores/settings';
 import { useAlert } from '@/composables/useAlert';
 import { saleService } from '@/services/saleService';
-import { useDebounce } from '@vueuse/core';
+import { refDebounced } from '@vueuse/core';
 import { MagnifyingGlassIcon, PhotoIcon, ArrowUturnRightIcon } from '@heroicons/vue/24/outline';
 
 const { t }       = useI18n();
@@ -277,7 +277,7 @@ function formatDate(dateStr) {
 const invoiceSearch  = ref('');
 const searchResults  = ref([]);
 const showDropdown   = ref(false);
-const debouncedQuery = useDebounce(invoiceSearch, 300);
+const debouncedQuery = refDebounced(invoiceSearch, 300);
 
 watch(debouncedQuery, async (q) => {
     if (!q.trim()) { searchResults.value = []; return; }
