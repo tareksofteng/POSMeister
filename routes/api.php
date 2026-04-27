@@ -157,12 +157,16 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::delete('purchases/{purchase}',         [PurchaseController::class, 'destroy']);
 
         // Purchase Returns
+        Route::get('purchase-returns/record',                         [PurchaseReturnController::class, 'record']); // must be before {id}
         Route::get('purchase-returns',                                [PurchaseReturnController::class, 'index']);
+        Route::get('purchase-returns/{id}',                          [PurchaseReturnController::class, 'show']);
         Route::get('purchases/{purchaseId}/return-details',           [PurchaseReturnController::class, 'returnDetails']);
         Route::post('purchase-returns',                               [PurchaseReturnController::class, 'store']);
 
         // Sale Returns
+        Route::get('sale-returns/record',                             [SaleReturnController::class, 'record']); // must be before {id}
         Route::get('sale-returns',                                    [SaleReturnController::class, 'index']);
+        Route::get('sale-returns/{id}',                              [SaleReturnController::class, 'show']);
         Route::get('sales/{saleId}/return-details',                   [SaleReturnController::class, 'returnDetails']);
         Route::post('sale-returns',                                   [SaleReturnController::class, 'store']);
     });

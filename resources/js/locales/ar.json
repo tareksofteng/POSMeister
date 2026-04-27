@@ -665,7 +665,18 @@
     "recentReturns": "المرتجعات الأخيرة",
     "noReturns": "لا توجد مرتجعات شراء بعد.",
     "returnNumber": "رقم المرتجع",
-    "positions": "عناصر"
+    "positions": "عناصر",
+    "invoiceTitle": "مرتجع المورد",
+    "printInvoice": "طباعة",
+    "backToList": "العودة للقائمة",
+    "originalPurchase": "أمر الشراء الأصلي",
+    "sectionHeader": "تفاصيل المرتجع",
+    "createdBy": "أنشأ بواسطة",
+    "printDate": "تاريخ الطباعة",
+    "inWords": "المبلغ كتابةً",
+    "noteLabel": "ملاحظة",
+    "confirmedBy": "تأكيد استلام المرتجع",
+    "authorizedSignature": "التوقيع المعتمد"
   },
   "saleReturns": {
     "title": "مرتجعات البيع",
@@ -692,7 +703,20 @@
     "recentReturns": "المرتجعات الأخيرة",
     "noReturns": "لا توجد مرتجعات بيع بعد.",
     "returnNumber": "رقم المرتجع",
-    "positions": "عناصر"
+    "positions": "عناصر",
+    "invoiceTitle": "إشعار دائن / مرتجع",
+    "printInvoice": "طباعة",
+    "backToList": "العودة للقائمة",
+    "originalSale": "فاتورة البيع الأصلية",
+    "customer": "العميل",
+    "sectionHeader": "تفاصيل المرتجع",
+    "createdBy": "أنشأ بواسطة",
+    "printDate": "تاريخ الطباعة",
+    "inWords": "المبلغ كتابةً",
+    "noteLabel": "ملاحظة",
+    "creditNote": "إشعار دائن — سيتم استرداد المبلغ",
+    "customerSignature": "توقيع العميل",
+    "authorizedSignature": "التوقيع المعتمد"
   },
   "purchaseRecord": {
     "title": "سجل المشتريات",

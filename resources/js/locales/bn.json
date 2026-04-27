@@ -665,7 +665,18 @@
     "recentReturns": "সাম্প্রতিক রিটার্ন",
     "noReturns": "এখনো কোনো ক্রয় রিটার্ন নেই।",
     "returnNumber": "রিটার্ন নং",
-    "positions": "আইটেম"
+    "positions": "আইটেম",
+    "invoiceTitle": "সরবরাহকারী রিটার্ন",
+    "printInvoice": "প্রিন্ট",
+    "backToList": "তালিকায় ফিরুন",
+    "originalPurchase": "মূল ক্রয়",
+    "sectionHeader": "রিটার্ন বিবরণ",
+    "createdBy": "তৈরি করেছেন",
+    "printDate": "প্রিন্টের তারিখ",
+    "inWords": "কথায় পরিমাণ",
+    "noteLabel": "নোট",
+    "confirmedBy": "পণ্য ফেরত দিয়েছেন",
+    "authorizedSignature": "অনুমোদিত স্বাক্ষর"
   },
   "saleReturns": {
     "title": "বিক্রয় রিটার্ন",
@@ -692,7 +703,20 @@
     "recentReturns": "সাম্প্রতিক রিটার্ন",
     "noReturns": "এখনো কোনো বিক্রয় রিটার্ন নেই।",
     "returnNumber": "রিটার্ন নং",
-    "positions": "আইটেম"
+    "positions": "আইটেম",
+    "invoiceTitle": "ক্রেডিট নোট / রিটার্ন",
+    "printInvoice": "প্রিন্ট",
+    "backToList": "তালিকায় ফিরুন",
+    "originalSale": "মূল বিক্রয়",
+    "customer": "গ্রাহক",
+    "sectionHeader": "রিটার্ন বিবরণ",
+    "createdBy": "তৈরি করেছেন",
+    "printDate": "প্রিন্টের তারিখ",
+    "inWords": "কথায় পরিমাণ",
+    "noteLabel": "নোট",
+    "creditNote": "ক্রেডিট নোট — পরিমাণ ফেরত দেওয়া হবে",
+    "customerSignature": "গ্রাহকের স্বাক্ষর",
+    "authorizedSignature": "অনুমোদিত স্বাক্ষর"
   },
   "purchaseRecord": {
     "title": "ক্রয় রেকর্ড",

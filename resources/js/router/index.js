@@ -139,6 +139,22 @@ const routes = [
                 meta: { titleKey: 'menu.saleRecord', permission: 'sales' },
             },
 
+            // ── Purchase return record report ──────────────────────────────
+            {
+                path: 'purchase-return-record',
+                name: 'purchase-return-record',
+                component: () => import('@/views/purchases/PurchaseReturnRecordView.vue'),
+                meta: { titleKey: 'menu.purchaseReturnRecord', permission: 'purchases' },
+            },
+
+            // ── Sale return record report ──────────────────────────────────
+            {
+                path: 'sale-return-record',
+                name: 'sale-return-record',
+                component: () => import('@/views/sales/SaleReturnRecordView.vue'),
+                meta: { titleKey: 'menu.saleReturnRecord', permission: 'sales' },
+            },
+
             // ── Stock / Inventory ──────────────────────────────────────────
             {
                 path: 'inventory',
@@ -181,12 +197,28 @@ const routes = [
         meta: { requiresAuth: true, titleKey: 'sales.invoiceTitle' },
     },
 
+    // ── Sale return invoice (standalone — no sidebar) ─────────────────────
+    {
+        path: '/sale-returns/:id/invoice',
+        name: 'sale-return-invoice',
+        component: () => import('@/views/sales/SaleReturnInvoiceView.vue'),
+        meta: { requiresAuth: true, titleKey: 'saleReturns.invoiceTitle' },
+    },
+
     // ── Purchase invoice (standalone — no sidebar) ────────────────────────
     {
         path: '/purchases/:id/invoice',
         name: 'purchase-invoice',
         component: () => import('@/views/purchases/PurchaseInvoiceView.vue'),
         meta: { requiresAuth: true, titleKey: 'purchases.invoiceTitle' },
+    },
+
+    // ── Purchase return invoice (standalone — no sidebar) ─────────────────
+    {
+        path: '/purchase-returns/:id/invoice',
+        name: 'purchase-return-invoice',
+        component: () => import('@/views/purchases/PurchaseReturnInvoiceView.vue'),
+        meta: { requiresAuth: true, titleKey: 'purchaseReturns.invoiceTitle' },
     },
 
     // ── Fallback ──────────────────────────────────────────────────────────

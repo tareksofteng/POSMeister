@@ -22,6 +22,24 @@ class SaleReturnController extends Controller
         return SaleReturnResource::collection($returns);
     }
 
+    public function show(int $id): SaleReturnResource
+    {
+        return new SaleReturnResource($this->service->find($id));
+    }
+
+    public function record(Request $request): JsonResponse
+    {
+        $returns = $this->service->record($request->only('date_from', 'date_to', 'customer_id'));
+
+        return response()->json([
+            'data'    => SaleReturnResource::collection($returns),
+            'summary' => [
+                'count'        => $returns->count(),
+                'total_amount' => round($returns->sum('total_amount'), 2),
+            ],
+        ]);
+    }
+
     public function returnDetails(int $saleId): JsonResponse
     {
         try {

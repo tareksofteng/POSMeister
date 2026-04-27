@@ -12,4 +12,6 @@ export const saleService = {
     returnDetails: (saleId)      => api.get(`/sales/${saleId}/return-details`),
     storeReturn:   (data)        => api.post('/sale-returns', data),
     indexReturns:  (params = {}) => api.get('/sale-returns', { params }),
+    returnShow:    (id)          => api.get(`/sale-returns/${id}`),
+    returnRecord:  (params = {}) => api.get('/sale-returns/record', { params }),
 };

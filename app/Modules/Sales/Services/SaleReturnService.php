@@ -15,6 +15,30 @@ class SaleReturnService
 {
     // ── List ─────────────────────────────────────────────────────────────
 
+    public function find(int $id): SaleReturn
+    {
+        return SaleReturn::with(['sale', 'customer', 'branch', 'items.product.unit', 'creator'])
+            ->findOrFail($id);
+    }
+
+    public function record(array $filters = []): \Illuminate\Database\Eloquent\Collection
+    {
+        $q = SaleReturn::with(['sale', 'customer', 'branch', 'items.product.unit'])
+            ->orderByDesc('return_date')->orderByDesc('id');
+
+        if (!empty($filters['date_from'])) {
+            $q->whereDate('return_date', '>=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $q->whereDate('return_date', '<=', $filters['date_to']);
+        }
+        if (!empty($filters['customer_id'])) {
+            $q->where('customer_id', $filters['customer_id']);
+        }
+
+        return $q->get();
+    }
+
     public function paginate(array $filters = []): LengthAwarePaginator
     {
         $q = SaleReturn::with(['sale', 'customer', 'branch'])

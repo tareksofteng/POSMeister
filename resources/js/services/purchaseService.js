@@ -15,4 +15,6 @@ export const purchaseService = {
     returnDetails: (purchaseId)  => api.get(`/purchases/${purchaseId}/return-details`),
     storeReturn:   (data)        => api.post('/purchase-returns', data),
     indexReturns:  (params = {}) => api.get('/purchase-returns', { params }),
+    returnShow:    (id)          => api.get(`/purchase-returns/${id}`),
+    returnRecord:  (params = {}) => api.get('/purchase-returns/record', { params }),
 };

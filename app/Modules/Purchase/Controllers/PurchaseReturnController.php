@@ -22,6 +22,24 @@ class PurchaseReturnController extends Controller
         return PurchaseReturnResource::collection($returns);
     }
 
+    public function show(int $id): PurchaseReturnResource
+    {
+        return new PurchaseReturnResource($this->service->find($id));
+    }
+
+    public function record(Request $request): JsonResponse
+    {
+        $returns = $this->service->record($request->only('date_from', 'date_to', 'supplier_id'));
+
+        return response()->json([
+            'data'    => PurchaseReturnResource::collection($returns),
+            'summary' => [
+                'count'        => $returns->count(),
+                'total_amount' => round($returns->sum('total_amount'), 2),
+            ],
+        ]);
+    }
+
     public function returnDetails(int $purchaseId): JsonResponse
     {
         try {

@@ -15,6 +15,30 @@ class PurchaseReturnService
 {
     // ── List ─────────────────────────────────────────────────────────────
 
+    public function find(int $id): PurchaseReturn
+    {
+        return PurchaseReturn::with(['purchase', 'supplier', 'branch', 'items.product.unit', 'creator'])
+            ->findOrFail($id);
+    }
+
+    public function record(array $filters = []): \Illuminate\Database\Eloquent\Collection
+    {
+        $q = PurchaseReturn::with(['purchase', 'supplier', 'branch', 'items.product.unit'])
+            ->orderByDesc('return_date')->orderByDesc('id');
+
+        if (!empty($filters['date_from'])) {
+            $q->whereDate('return_date', '>=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $q->whereDate('return_date', '<=', $filters['date_to']);
+        }
+        if (!empty($filters['supplier_id'])) {
+            $q->where('supplier_id', $filters['supplier_id']);
+        }
+
+        return $q->get();
+    }
+
     public function paginate(array $filters = []): LengthAwarePaginator
     {
         $q = PurchaseReturn::with(['purchase', 'supplier', 'branch'])
