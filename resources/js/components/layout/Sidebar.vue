@@ -200,8 +200,28 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.stakeholders',
         items: [
-            { permKey: 'customers', labelKey: 'menu.customers', to: { name: 'customers' }, icon: UsersIcon,              implemented: true },
-            { permKey: 'suppliers', labelKey: 'menu.suppliers', to: { name: 'suppliers' }, icon: BuildingStorefrontIcon, implemented: true },
+            {
+                isGroup:     true,
+                permKey:     'customers',
+                labelKey:    'menu.customers',
+                icon:        UsersIcon,
+                childRoutes: ['customers', 'customer-payments'],
+                children: [
+                    { labelKey: 'menu.customerList',     to: { name: 'customers' },         implemented: true },
+                    { labelKey: 'menu.customerPayments', to: { name: 'customer-payments' }, implemented: true },
+                ],
+            },
+            {
+                isGroup:     true,
+                permKey:     'suppliers',
+                labelKey:    'menu.suppliers',
+                icon:        BuildingStorefrontIcon,
+                childRoutes: ['suppliers', 'supplier-payments'],
+                children: [
+                    { labelKey: 'menu.supplierList',     to: { name: 'suppliers' },         implemented: true },
+                    { labelKey: 'menu.supplierPayments', to: { name: 'supplier-payments' }, implemented: true },
+                ],
+            },
         ],
     },
     {

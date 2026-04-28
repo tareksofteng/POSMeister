@@ -5,7 +5,9 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Purchase\Controllers\PurchaseReturnController;
+use App\Modules\Purchase\Controllers\SupplierPaymentController;
 use App\Modules\Sales\Controllers\CustomerController;
+use App\Modules\Sales\Controllers\CustomerPaymentController;
 use App\Modules\Sales\Controllers\SaleController;
 use App\Modules\Sales\Controllers\SaleReturnController;
 use App\Modules\Stock\Controllers\StockController;
@@ -124,6 +126,11 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get('customers/{customer}/payments',              [CustomerController::class, 'payments']);
     Route::post('customers/{customer}/payments',             [CustomerController::class, 'storePayment']);
 
+    // ── Customer Payments (standalone — global list) ──────────────────────
+    Route::get('customer-payments',        [CustomerPaymentController::class, 'index']);
+    Route::post('customer-payments',       [CustomerPaymentController::class, 'store']);
+    Route::get('customer-payments/{id}',   [CustomerPaymentController::class, 'show']);
+
     // Sales — list/show by all, create by cashier+, cancel by manager+
     Route::get('sales/record',            [SaleController::class, 'record']); // must be before {sale}
     Route::get('sales',                   [SaleController::class, 'index']);
@@ -155,6 +162,11 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::put('purchases/{purchase}',            [PurchaseController::class, 'update']);
         Route::put('purchases/{purchase}/receive',    [PurchaseController::class, 'receive']);
         Route::delete('purchases/{purchase}',         [PurchaseController::class, 'destroy']);
+
+        // ── Supplier Payments ─────────────────────────────────────────────
+        Route::get('supplier-payments',        [SupplierPaymentController::class, 'index']);
+        Route::post('supplier-payments',       [SupplierPaymentController::class, 'store']);
+        Route::get('supplier-payments/{id}',   [SupplierPaymentController::class, 'show']);
 
         // Purchase Returns
         Route::get('purchase-returns/record',                         [PurchaseReturnController::class, 'record']); // must be before {id}

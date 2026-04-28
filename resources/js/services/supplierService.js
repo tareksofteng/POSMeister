@@ -8,6 +8,10 @@ export const supplierService = {
     update:(id, data)    => api.put(`/suppliers/${id}`, data),
     toggleStatus: (id)   => api.put(`/suppliers/${id}/status`),
     destroy: (id)        => api.delete(`/suppliers/${id}`),
+    // payment endpoints
+    payments:      (params = {}) => api.get('/supplier-payments', { params }),
+    createPayment: (data)         => api.post('/supplier-payments', data),
+    showPayment:   (id)           => api.get(`/supplier-payments/${id}`),
 };
 
 

@@ -178,6 +178,20 @@ const routes = [
                 component: () => import('@/views/suppliers/SupplierListView.vue'),
                 meta: { titleKey: 'menu.suppliers', permission: 'suppliers' },
             },
+
+            // ── Payment module ──────────────────────────────────────────────
+            {
+                path: 'payments/customers',
+                name: 'customer-payments',
+                component: () => import('@/views/payments/CustomerPaymentView.vue'),
+                meta: { titleKey: 'menu.customerPayments', permission: 'customers' },
+            },
+            {
+                path: 'payments/suppliers',
+                name: 'supplier-payments',
+                component: () => import('@/views/payments/SupplierPaymentView.vue'),
+                meta: { titleKey: 'menu.supplierPayments', permission: 'suppliers' },
+            },
         ],
     },
 
@@ -219,6 +233,22 @@ const routes = [
         name: 'purchase-return-invoice',
         component: () => import('@/views/purchases/PurchaseReturnInvoiceView.vue'),
         meta: { requiresAuth: true, titleKey: 'purchaseReturns.invoiceTitle' },
+    },
+
+    // ── Customer payment receipt (standalone — no sidebar) ───────────────
+    {
+        path: '/payments/customers/:id/receipt',
+        name: 'customer-payment-receipt',
+        component: () => import('@/views/payments/CustomerPaymentReceiptView.vue'),
+        meta: { requiresAuth: true, titleKey: 'customerPayments.receiptTitle' },
+    },
+
+    // ── Supplier payment receipt (standalone — no sidebar) ───────────────
+    {
+        path: '/payments/suppliers/:id/receipt',
+        name: 'supplier-payment-receipt',
+        component: () => import('@/views/payments/SupplierPaymentReceiptView.vue'),
+        meta: { requiresAuth: true, titleKey: 'supplierPayments.receiptTitle' },
     },
 
     // ── Fallback ──────────────────────────────────────────────────────────
