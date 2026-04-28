@@ -65,6 +65,23 @@ class ProductController extends Controller
         return new ProductResource($product->load(['category', 'brand', 'unit']));
     }
 
+    /** Slim payload for barcode generation page. */
+    public function barcodeData(Product $product): JsonResponse
+    {
+        return response()->json([
+            'data' => [
+                'id'             => $product->id,
+                'sku'            => $product->sku,
+                'name'           => $product->name,
+                'barcode'        => $product->barcode ?: $product->sku,
+                'selling_price'  => (float) $product->selling_price,
+                'wholesale_price'=> (float) $product->wholesale_price,
+                'unit_symbol'    => $product->unit?->symbol ?? '',
+                'image_url'      => $product->image ? '/storage/' . $product->image : null,
+            ],
+        ]);
+    }
+
     public function store(StoreProductRequest $request): ProductResource
     {
         return new ProductResource($this->service->store($request->validated()));

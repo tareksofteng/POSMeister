@@ -50,6 +50,7 @@
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         autocomplete="off"
                         @keydown.escape="searchQuery = ''; searchResults = []"
+                        @keydown.enter.prevent="handleSearchEnter"
                     />
                     <!-- Search results dropdown -->
                     <div
@@ -453,6 +454,34 @@ watch(debouncedSearch, async (q) => {
         searchLoading.value = false;
     }
 });
+
+// ── Barcode scanner: Enter key → auto-add if exactly one match ────────────
+async function handleSearchEnter() {
+    const q = searchQuery.value.trim();
+    if (!q) return;
+
+    // If results are already loaded and there's exactly one → add it
+    if (searchResults.value.length === 1) {
+        addToCart(searchResults.value[0]);
+        return;
+    }
+
+    // Otherwise do an immediate (non-debounced) lookup — barcode scanners send
+    // the full value followed by Enter in a single burst, so debounce may not
+    // have fired yet.
+    searchLoading.value = true;
+    try {
+        const { data } = await saleService.posSearch(q, authStore.branchId);
+        searchResults.value = data;
+        if (data.length === 1) {
+            addToCart(data[0]);
+        }
+    } catch {
+        searchResults.value = [];
+    } finally {
+        searchLoading.value = false;
+    }
+}
 
 // Auto-set cash = grand total when total changes and no amount entered yet
 watch(grandTotal, (val) => {

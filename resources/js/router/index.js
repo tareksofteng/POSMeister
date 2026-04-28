@@ -235,6 +235,14 @@ const routes = [
         meta: { requiresAuth: true, titleKey: 'purchaseReturns.invoiceTitle' },
     },
 
+    // ── Product barcode generator (standalone — no sidebar) ──────────────
+    {
+        path: '/products/:id/barcode',
+        name: 'product-barcode',
+        component: () => import('@/views/products/ProductBarcodeView.vue'),
+        meta: { requiresAuth: true, titleKey: 'barcode.title' },
+    },
+
     // ── Customer payment receipt (standalone — no sidebar) ───────────────
     {
         path: '/payments/customers/:id/receipt',

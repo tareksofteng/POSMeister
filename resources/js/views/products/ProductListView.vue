@@ -74,6 +74,13 @@
                 <button @click="openEdit(row)" class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" :title="t('common.edit')">
                     <PencilSquareIcon class="w-4 h-4" />
                 </button>
+                <button
+                    @click="router.push({ name: 'product-barcode', params: { id: row.id } })"
+                    class="p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                    :title="t('products.generateBarcode')"
+                >
+                    <QrCodeIcon class="w-4 h-4" />
+                </button>
                 <button @click="confirmToggle(row)" class="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" :title="row.is_active ? t('common.deactivate') : t('common.activate')">
                     <NoSymbolIcon v-if="row.is_active" class="w-4 h-4" />
                     <CheckCircleIcon v-else class="w-4 h-4" />
@@ -108,7 +115,7 @@ import { unitService }     from '@/services/unitService';
 import DataTable        from '@/components/ui/DataTable.vue';
 import ProductFormModal from './ProductFormModal.vue';
 import { useAlert } from '@/composables/useAlert';
-import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon } from '@heroicons/vue/24/outline';
+import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon, QrCodeIcon } from '@heroicons/vue/24/outline';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

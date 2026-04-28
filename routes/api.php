@@ -83,10 +83,11 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get('brands/all',     [BrandController::class, 'all']);
 
     // Products — read by all, write by admin+manager
-    Route::get('products/all',    [ProductController::class, 'all']);
-    Route::get('products/search', [ProductController::class, 'search']);
-    Route::get('products',        [ProductController::class, 'index']);
-    Route::get('products/{product}', [ProductController::class, 'show']);
+    Route::get('products/all',              [ProductController::class, 'all']);
+    Route::get('products/search',           [ProductController::class, 'search']);
+    Route::get('products',                  [ProductController::class, 'index']);
+    Route::get('products/{product}/barcode',[ProductController::class, 'barcodeData']); // before {product}
+    Route::get('products/{product}',        [ProductController::class, 'show']);
 
     Route::middleware('role:admin,manager')->group(function () {
         // Categories

@@ -3,6 +3,7 @@ import api from './api';
 export const productService = {
     index:        (params)    => api.get('/products', { params }),
     show:         (id)        => api.get(`/products/${id}`),
+    barcodeData:  (id)        => api.get(`/products/${id}/barcode`),
     search:       (q)         => api.get('/products/search', { params: { q } }),
     store:        (data)      => api.post('/products', data),
     update:       (id, data)  => api.put(`/products/${id}`, data),
