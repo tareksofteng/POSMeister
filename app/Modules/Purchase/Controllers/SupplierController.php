@@ -27,6 +27,23 @@ class SupplierController extends Controller
         return response()->json(['data' => $this->service->all()]);
     }
 
+    public function dueReport(Request $request): JsonResponse
+    {
+        $rows    = $this->service->dueReport($request->only('supplier_id'));
+        $withDue = $rows->filter(fn($r) => $r['due_amount'] > 0);
+
+        return response()->json([
+            'data'    => $rows->values(),
+            'summary' => [
+                'total_suppliers'     => $rows->count(),
+                'suppliers_with_due'  => $withDue->count(),
+                'total_bill'          => round($rows->sum('bill_amount'),  2),
+                'total_paid'          => round($rows->sum('total_paid'),   2),
+                'total_due'           => round($rows->sum('due_amount'),   2),
+            ],
+        ]);
+    }
+
     public function store(StoreSupplierRequest $request): JsonResponse
     {
         $supplier = $this->service->store($request->validated());

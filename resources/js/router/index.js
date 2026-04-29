@@ -184,6 +184,12 @@ const routes = [
                 component: () => import('@/views/suppliers/SupplierListView.vue'),
                 meta: { titleKey: 'menu.suppliers', permission: 'suppliers' },
             },
+            {
+                path: 'suppliers/due',
+                name: 'supplier-due',
+                component: () => import('@/views/suppliers/SupplierDueView.vue'),
+                meta: { titleKey: 'menu.supplierDue', permission: 'suppliers' },
+            },
 
             // ── Payment module ──────────────────────────────────────────────
             {

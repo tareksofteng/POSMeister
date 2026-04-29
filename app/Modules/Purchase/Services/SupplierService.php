@@ -5,6 +5,7 @@ namespace App\Modules\Purchase\Services;
 use App\Modules\Purchase\Models\Supplier;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierService
 {
@@ -59,6 +60,43 @@ class SupplierService
     {
         $supplier->update(['is_active' => !$supplier->is_active]);
         return $supplier->fresh();
+    }
+
+    public function dueReport(array $filters = []): Collection
+    {
+        $q = Supplier::query()
+            ->withSum(
+                ['purchases as bill_amount' => fn($s) => $s->where('status', 'received')],
+                'total_amount'
+            )
+            ->withSum('payments as cash_paid', 'amount')
+            ->withSum('purchaseReturns as returned_amount', 'total_amount')
+            ->orderBy('name');
+
+        if (!empty($filters['supplier_id'])) {
+            $q->where('id', $filters['supplier_id']);
+        }
+
+        return $q->get()->map(function (Supplier $s) {
+            $bill     = (float) ($s->bill_amount     ?? 0);
+            $cashPaid = (float) ($s->cash_paid       ?? 0);
+            $returned = (float) ($s->returned_amount ?? 0);
+            $due      = max(0, $bill - $cashPaid - $returned);
+
+            return [
+                'id'             => $s->id,
+                'code'           => $s->code,
+                'name'           => $s->name,
+                'contact_person' => $s->contact_person,
+                'phone'          => $s->phone,
+                'address'        => $s->address,
+                'bill_amount'    => $bill,
+                'cash_paid'      => $cashPaid,
+                'returned_amount'=> $returned,
+                'total_paid'     => $cashPaid + $returned,
+                'due_amount'     => $due,
+            ];
+        });
     }
 
     private function generateCode(): string

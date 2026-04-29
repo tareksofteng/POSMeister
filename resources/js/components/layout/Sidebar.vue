@@ -217,10 +217,11 @@ const NAV_GROUPS = [
                 permKey:     'suppliers',
                 labelKey:    'menu.suppliers',
                 icon:        BuildingStorefrontIcon,
-                childRoutes: ['suppliers', 'supplier-payments'],
+                childRoutes: ['suppliers', 'supplier-payments', 'supplier-due'],
                 children: [
                     { labelKey: 'menu.supplierList',     to: { name: 'suppliers' },         implemented: true },
                     { labelKey: 'menu.supplierPayments', to: { name: 'supplier-payments' }, implemented: true },
+                    { labelKey: 'menu.supplierDue',      to: { name: 'supplier-due' },      implemented: true },
                 ],
             },
         ],

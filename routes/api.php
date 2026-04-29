@@ -146,8 +146,9 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
     // ── Purchase Module ───────────────────────────────────────────────────
     // Suppliers — read by all authenticated, write by admin+manager
-    Route::get('suppliers/all', [SupplierController::class, 'all']);
-    Route::get('suppliers',     [SupplierController::class, 'index']);
+    Route::get('suppliers/all',        [SupplierController::class, 'all']);
+    Route::get('suppliers/due-report', [SupplierController::class, 'dueReport']); // must be before {supplier}
+    Route::get('suppliers',            [SupplierController::class, 'index']);
     Route::get('suppliers/{supplier}', [SupplierController::class, 'show']);
 
     Route::middleware('role:admin,manager')->group(function () {

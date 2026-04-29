@@ -8,6 +8,8 @@ export const supplierService = {
     update:(id, data)    => api.put(`/suppliers/${id}`, data),
     toggleStatus: (id)   => api.put(`/suppliers/${id}/status`),
     destroy: (id)        => api.delete(`/suppliers/${id}`),
+    // due report
+    dueReport:     (params = {}) => api.get('/suppliers/due-report', { params }),
     // payment endpoints
     payments:      (params = {}) => api.get('/supplier-payments', { params }),
     createPayment: (data)         => api.post('/supplier-payments', data),

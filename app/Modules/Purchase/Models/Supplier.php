@@ -30,6 +30,11 @@ class Supplier extends Model
         return $this->hasMany(SupplierPayment::class);
     }
 
+    public function purchaseReturns(): HasMany
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
