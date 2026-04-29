@@ -205,10 +205,11 @@ const NAV_GROUPS = [
                 permKey:     'customers',
                 labelKey:    'menu.customers',
                 icon:        UsersIcon,
-                childRoutes: ['customers', 'customer-payments'],
+                childRoutes: ['customers', 'customer-payments', 'customer-due'],
                 children: [
                     { labelKey: 'menu.customerList',     to: { name: 'customers' },         implemented: true },
                     { labelKey: 'menu.customerPayments', to: { name: 'customer-payments' }, implemented: true },
+                    { labelKey: 'menu.customerDue',      to: { name: 'customer-due' },      implemented: true },
                 ],
             },
             {

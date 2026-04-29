@@ -120,6 +120,7 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
     // Customers — read by all, write by admin+manager+cashier
     Route::get('customers/all',                              [CustomerController::class, 'all']);
+    Route::get('customers/due-report',                       [CustomerController::class, 'dueReport']); // must be before {customer}
     Route::get('customers',                                  [CustomerController::class, 'index']);
     Route::get('customers/{customer}',                       [CustomerController::class, 'show']);
     Route::post('customers',                                 [CustomerController::class, 'store']);

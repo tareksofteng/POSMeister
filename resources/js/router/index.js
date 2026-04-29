@@ -170,6 +170,12 @@ const routes = [
                 component: () => import('@/views/customers/CustomerListView.vue'),
                 meta: { titleKey: 'menu.customers', permission: 'customers' },
             },
+            {
+                path: 'customers/due',
+                name: 'customer-due',
+                component: () => import('@/views/customers/CustomerDueView.vue'),
+                meta: { titleKey: 'menu.customerDue', permission: 'customers' },
+            },
 
             // ── Supplier module ─────────────────────────────────────────────
             {

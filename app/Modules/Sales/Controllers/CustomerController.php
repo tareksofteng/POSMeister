@@ -44,6 +44,28 @@ class CustomerController extends Controller
         ]);
     }
 
+    // ── Due Report ────────────────────────────────────────────────────────
+
+    public function dueReport(Request $request): JsonResponse
+    {
+        $rows = $this->service->dueReport(
+            $request->only('customer_id')
+        );
+
+        $withDue = $rows->filter(fn($r) => $r['due_amount'] > 0);
+
+        return response()->json([
+            'data'    => $rows->values(),
+            'summary' => [
+                'total_customers'     => $rows->count(),
+                'customers_with_due'  => $withDue->count(),
+                'total_bill'          => round($rows->sum('bill_amount'),    2),
+                'total_paid'          => round($rows->sum('total_paid'),     2),
+                'total_due'           => round($rows->sum('due_amount'),     2),
+            ],
+        ]);
+    }
+
     // ── Payments ──────────────────────────────────────────────────────────
 
     public function payments(Customer $customer): JsonResponse

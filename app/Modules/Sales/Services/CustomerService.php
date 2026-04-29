@@ -4,8 +4,10 @@ namespace App\Modules\Sales\Services;
 
 use App\Modules\Sales\Models\Customer;
 use App\Modules\Sales\Models\CustomerPayment;
+use App\Modules\Sales\Models\SaleReturn;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CustomerService
 {
@@ -78,6 +80,54 @@ class CustomerService
             'note'           => $data['note'] ?? null,
             'created_by'     => auth()->id(),
         ]);
+    }
+
+    // ── Due Report ────────────────────────────────────────────────────────
+
+    /**
+     * Returns per-customer due breakdown:
+     *   bill_amount        = sum of active sale grand totals
+     *   invoice_paid       = sum of total_paid on those sales (paid at invoice time)
+     *   cash_received      = sum of standalone customer payment records
+     *   returned_amount    = sum of sale return total_amount for the customer
+     *   due_amount         = bill_amount − invoice_paid − cash_received − returned_amount
+     */
+    public function dueReport(array $filters = []): Collection
+    {
+        $q = Customer::query()
+            ->withSum(['sales as bill_amount' => fn($s) => $s->where('status', 'active')], 'grand_total')
+            ->withSum(['sales as invoice_paid' => fn($s) => $s->where('status', 'active')], 'total_paid')
+            ->withSum('payments as cash_received', 'amount')
+            ->withSum('saleReturns as returned_amount', 'total_amount')
+            ->orderBy('name');
+
+        if (!empty($filters['customer_id'])) {
+            $q->where('id', $filters['customer_id']);
+        }
+
+        return $q->get()->map(function (Customer $c) {
+            $bill     = (float) ($c->bill_amount     ?? 0);
+            $invPaid  = (float) ($c->invoice_paid    ?? 0);
+            $cash     = (float) ($c->cash_received   ?? 0);
+            $returned = (float) ($c->returned_amount ?? 0);
+            $due      = max(0, $bill - $invPaid - $cash - $returned);
+
+            return [
+                'id'              => $c->id,
+                'code'            => $c->code,
+                'name'            => $c->name,
+                'phone'           => $c->phone,
+                'email'           => $c->email,
+                'address'         => $c->address,
+                'customer_type'   => $c->customer_type,
+                'bill_amount'     => $bill,
+                'invoice_paid'    => $invPaid,
+                'cash_received'   => $cash,
+                'returned_amount' => $returned,
+                'total_paid'      => $invPaid + $cash + $returned,
+                'due_amount'      => $due,
+            ];
+        });
     }
 
     // ── Create / Update ───────────────────────────────────────────────────
