@@ -8,6 +8,7 @@ use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
 use App\Modules\Sales\Controllers\CustomerController;
 use App\Modules\Sales\Controllers\CustomerPaymentController;
+use App\Modules\Sales\Controllers\QuotationController;
 use App\Modules\Sales\Controllers\SaleController;
 use App\Modules\Sales\Controllers\SaleReturnController;
 use App\Modules\Stock\Controllers\StockController;
@@ -132,6 +133,14 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get('customer-payments',        [CustomerPaymentController::class, 'index']);
     Route::post('customer-payments',       [CustomerPaymentController::class, 'store']);
     Route::get('customer-payments/{id}',   [CustomerPaymentController::class, 'show']);
+
+    // ── Quotations / Angebote ─────────────────────────────────────────────
+    Route::get('quotations',                            [QuotationController::class, 'index']);
+    Route::get('quotations/{quotation}',                [QuotationController::class, 'show']);
+    Route::post('quotations',                           [QuotationController::class, 'store']);
+    Route::put('quotations/{quotation}',                [QuotationController::class, 'update']);
+    Route::put('quotations/{quotation}/status',         [QuotationController::class, 'updateStatus']);
+    Route::delete('quotations/{quotation}',             [QuotationController::class, 'destroy']);
 
     // Sales — list/show by all, create by cashier+, cancel by manager+
     Route::get('sales/record',            [SaleController::class, 'record']); // must be before {sale}

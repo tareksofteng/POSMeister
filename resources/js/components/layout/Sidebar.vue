@@ -181,11 +181,11 @@ const NAV_GROUPS = [
                 ],
             },
             {
-                permKey: 'quotations',
+                permKey: 'sales',
                 labelKey: 'menu.quotations',
                 to:   { name: 'quotations' },
                 icon: ClipboardDocumentListIcon,
-                implemented: false,
+                implemented: true,
             },
         ],
     },

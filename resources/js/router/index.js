@@ -204,7 +204,35 @@ const routes = [
                 component: () => import('@/views/payments/SupplierPaymentView.vue'),
                 meta: { titleKey: 'menu.supplierPayments', permission: 'suppliers' },
             },
+
+            // ── Quotations / Angebote ──────────────────────────────────────
+            {
+                path: 'quotations',
+                name: 'quotations',
+                component: () => import('@/views/quotations/QuotationListView.vue'),
+                meta: { titleKey: 'menu.quotations', permission: 'sales' },
+            },
+            {
+                path: 'quotations/create',
+                name: 'quotation-create',
+                component: () => import('@/views/quotations/QuotationFormView.vue'),
+                meta: { titleKey: 'quotations.createTitle', permission: 'sales' },
+            },
+            {
+                path: 'quotations/:id/edit',
+                name: 'quotation-edit',
+                component: () => import('@/views/quotations/QuotationFormView.vue'),
+                meta: { titleKey: 'quotations.editTitle', permission: 'sales' },
+            },
         ],
+    },
+
+    // ── Quotation invoice (standalone — no sidebar) ──────────────────────
+    {
+        path: '/quotations/:id/invoice',
+        name: 'quotation-invoice',
+        component: () => import('@/views/quotations/QuotationInvoiceView.vue'),
+        meta: { requiresAuth: true, titleKey: 'quotations.docTitle' },
     },
 
     // ── POS terminal (standalone — full screen, no sidebar) ──────────────
