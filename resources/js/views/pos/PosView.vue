@@ -149,7 +149,7 @@
                                             min="0.01"
                                             step="0.01"
                                             v-model.number="line.quantity"
-                                            @change="onQtyChange(line)"
+                                            @input="onQtyChange(line)"
                                             class="w-20 text-right border border-gray-200 rounded-lg px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 tabular-nums"
                                         />
                                     </td>
@@ -159,7 +159,7 @@
                                             min="0"
                                             step="0.01"
                                             v-model.number="line.unit_price"
-                                            @change="recalcLine(line)"
+                                            @input="recalcLine(line)"
                                             class="w-24 text-right border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 tabular-nums"
                                         />
                                     </td>

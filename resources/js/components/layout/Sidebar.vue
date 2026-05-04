@@ -236,7 +236,18 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.reports',
         items: [
-            { permKey: 'reports', labelKey: 'menu.reports', to: { name: 'reports' }, icon: ChartBarIcon, implemented: false },
+            {
+                isGroup:     true,
+                permKey:     'reports',
+                labelKey:    'menu.ledgers',
+                icon:        ChartBarIcon,
+                childRoutes: ['report-customer-ledger', 'report-supplier-ledger', 'report-product-ledger'],
+                children: [
+                    { labelKey: 'menu.customerLedger', to: { name: 'report-customer-ledger' }, implemented: true },
+                    { labelKey: 'menu.supplierLedger', to: { name: 'report-supplier-ledger' }, implemented: true },
+                    { labelKey: 'menu.productLedger',  to: { name: 'report-product-ledger' },  implemented: true },
+                ],
+            },
         ],
     },
     {

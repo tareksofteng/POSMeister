@@ -205,6 +205,26 @@ const routes = [
                 meta: { titleKey: 'menu.supplierPayments', permission: 'suppliers' },
             },
 
+            // Ledger reports
+            {
+                path: 'reports/customer-ledger',
+                name: 'report-customer-ledger',
+                component: () => import('@/views/reports/CustomerLedgerView.vue'),
+                meta: { titleKey: 'menu.customerLedger', permission: 'reports' },
+            },
+            {
+                path: 'reports/supplier-ledger',
+                name: 'report-supplier-ledger',
+                component: () => import('@/views/reports/SupplierLedgerView.vue'),
+                meta: { titleKey: 'menu.supplierLedger', permission: 'reports' },
+            },
+            {
+                path: 'reports/product-ledger',
+                name: 'report-product-ledger',
+                component: () => import('@/views/reports/ProductLedgerView.vue'),
+                meta: { titleKey: 'menu.productLedger', permission: 'reports' },
+            },
+
             // ── Quotations / Angebote ──────────────────────────────────────
             {
                 path: 'quotations',

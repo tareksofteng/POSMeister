@@ -6,6 +6,7 @@ use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
+use App\Modules\Reports\Controllers\LedgerController;
 use App\Modules\Sales\Controllers\CustomerController;
 use App\Modules\Sales\Controllers\CustomerPaymentController;
 use App\Modules\Sales\Controllers\QuotationController;
@@ -46,6 +47,11 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
     // Dashboard stats
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+
+    // Ledger reports
+    Route::get('reports/customer-ledger', [LedgerController::class, 'customer']);
+    Route::get('reports/supplier-ledger', [LedgerController::class, 'supplier']);
+    Route::get('reports/product-ledger',  [LedgerController::class, 'product']);
 
     // ── Admin-only ────────────────────────────────────────────────────────
     Route::middleware('role:admin')->group(function ()
