@@ -205,6 +205,13 @@ const routes = [
                 meta: { titleKey: 'menu.supplierPayments', permission: 'suppliers' },
             },
 
+            {
+                path: 'sales/create',
+                name: 'sale-create',
+                component: () => import('@/views/sales/SaleFormView.vue'),
+                meta: { titleKey: 'sales.createTitle', permission: 'sales' },
+            },
+
             // Ledger reports
             {
                 path: 'reports/customer-ledger',

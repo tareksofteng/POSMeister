@@ -10,10 +10,16 @@
                     <span v-if="meta" class="text-gray-400">({{ meta.total }} {{ t('common.total') }})</span>
                 </p>
             </div>
-            <RouterLink :to="{ name: 'pos' }" class="btn-primary">
-                <ShoppingCartIcon class="w-4 h-4" />
-                {{ t('sales.newSale') }}
-            </RouterLink>
+            <div class="flex items-center gap-2">
+                <RouterLink :to="{ name: 'pos' }" class="btn-secondary">
+                    <ShoppingCartIcon class="w-4 h-4" />
+                    {{ t('menu.cashTerminal') }}
+                </RouterLink>
+                <RouterLink :to="{ name: 'sale-create' }" class="btn-primary">
+                    <DocumentPlusIcon class="w-4 h-4" />
+                    {{ t('sales.newSale') }}
+                </RouterLink>
+            </div>
         </div>
 
         <!-- Filters -->
@@ -86,7 +92,7 @@ import { useDebounce } from '@vueuse/core';
 import { useAlert } from '@/composables/useAlert';
 import DataTable from '@/components/ui/DataTable.vue';
 import {
-    ShoppingCartIcon, MagnifyingGlassIcon,
+    ShoppingCartIcon, DocumentPlusIcon, MagnifyingGlassIcon,
     DocumentTextIcon, XCircleIcon,
 } from '@heroicons/vue/24/outline';
 
@@ -169,6 +175,9 @@ async function confirmCancel(row) {
 <style scoped>
 @reference '../../../css/app.css';
 .btn-primary {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm;
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm;
+}
+.btn-secondary {
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors;
 }
 </style>
