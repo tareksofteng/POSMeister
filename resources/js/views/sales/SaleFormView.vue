@@ -3,7 +3,8 @@
         <div class="bg-white border-b border-slate-200">
             <div class="max-w-6xl mx-auto px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
-                    <RouterLink :to="{ name: 'sales' }" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg">
+                    <RouterLink :to="{ name: 'sales' }"
+                        class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg">
                         <ArrowLeftIcon class="w-5 h-5" />
                     </RouterLink>
                     <div class="min-w-0">
@@ -11,20 +12,15 @@
                         <p class="text-xs text-slate-500">{{ t('sales.createSubtitle') }}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <RouterLink :to="{ name: 'sales' }" class="btn-soft">{{ t('common.cancel') }}</RouterLink>
-                    <button @click="save" :disabled="saving" class="btn-emerald">
-                        <CheckIcon v-if="!saving" class="w-4 h-4" />
-                        <ArrowPathIcon v-else class="w-4 h-4 animate-spin" />
-                        {{ saving ? t('common.saving') : t('sales.saveSale') }}
-                    </button>
-                </div>
+
             </div>
         </div>
 
         <div class="max-w-6xl mx-auto px-6 lg:px-8 pt-6 space-y-5">
 
-            <div v-if="serverError" class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{{ serverError }}</div>
+            <div v-if="serverError"
+                class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{{ serverError }}
+            </div>
 
             <section class="card">
                 <header class="card-head">
@@ -34,16 +30,12 @@
 
                 <div class="card-body space-y-4">
                     <div class="flex gap-1.5 p-1 bg-slate-100 rounded-lg w-fit">
-                        <button
-                            type="button"
-                            @click="setCustomerType('walkin')"
-                            :class="['tab-btn', form.customer_type === 'walkin' ? 'tab-active' : 'tab-idle']"
-                        >{{ t('sales.walkin') }}</button>
-                        <button
-                            type="button"
-                            @click="setCustomerType('registered')"
-                            :class="['tab-btn', form.customer_type === 'registered' ? 'tab-active' : 'tab-idle']"
-                        >{{ t('sales.registered') }}</button>
+                        <button type="button" @click="setCustomerType('walkin')"
+                            :class="['tab-btn', form.customer_type === 'walkin' ? 'tab-active' : 'tab-idle']">{{
+                                t('sales.walkin') }}</button>
+                        <button type="button" @click="setCustomerType('registered')"
+                            :class="['tab-btn', form.customer_type === 'registered' ? 'tab-active' : 'tab-idle']">{{
+                                t('sales.registered') }}</button>
                     </div>
 
                     <div v-if="form.customer_type === 'registered'">
@@ -59,7 +51,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="lbl">{{ t('sales.customerName') }}</label>
-                            <input v-model="form.customer_name" type="text" class="ctrl" :placeholder="t('sales.customerNamePh')" />
+                            <input v-model="form.customer_name" type="text" class="ctrl"
+                                :placeholder="t('sales.customerNamePh')" />
                         </div>
                         <div>
                             <label class="lbl">{{ t('sales.customerPhone') }}</label>
@@ -77,7 +70,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="sm:col-span-2">
                             <label class="lbl">{{ t('sales.customerAddress') }}</label>
-                            <input v-model="form.customer_address" type="text" class="ctrl" :placeholder="t('sales.customerAddressPh')" />
+                            <input v-model="form.customer_address" type="text" class="ctrl"
+                                :placeholder="t('sales.customerAddressPh')" />
                         </div>
                         <div>
                             <label class="lbl">{{ t('sales.date') }} <span class="text-rose-500">*</span></label>
@@ -114,36 +108,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(line, idx) in form.items" :key="idx" class="border-b border-slate-100 hover:bg-emerald-50/30">
+                            <tr v-for="(line, idx) in form.items" :key="idx"
+                                class="border-b border-slate-100 hover:bg-emerald-50/30">
                                 <td class="td text-center text-xs text-slate-400 font-mono">{{ idx + 1 }}</td>
                                 <td class="td">
-                                    <ProductSearchInput
-                                        v-model="line.product_id"
-                                        :product="line._product"
-                                        :placeholder="t('sales.searchProduct')"
-                                        @select="onProductPick(line, $event)"
-                                    />
+                                    <ProductSearchInput v-model="line.product_id" :product="line._product"
+                                        :placeholder="t('sales.searchProduct')" @select="onProductPick(line, $event)" />
                                     <p v-if="line._product?.stock != null" class="mt-1 text-[11px] text-slate-400">
-                                        {{ t('sales.stock') }}: {{ line._product.stock }} {{ line._product.unit_symbol }}
+                                        {{ t('sales.stock') }}: {{ line._product.stock }} {{ line._product.unit_symbol
+                                        }}
                                     </p>
                                 </td>
                                 <td class="td">
-                                    <input
-                                        v-model.number="line.quantity"
-                                        @input="recalcLine(line)"
-                                        type="number" min="0.01" step="0.01"
-                                        class="ctrl-sm text-right"
-                                    />
+                                    <input v-model.number="line.quantity" @input="recalcLine(line)" type="number"
+                                        min="0.01" step="0.01" class="ctrl-sm text-right" />
                                 </td>
                                 <td class="td">
                                     <div class="relative">
-                                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">{{ currencySymbol }}</span>
-                                        <input
-                                            v-model.number="line.unit_price"
-                                            @input="recalcLine(line)"
-                                            type="number" min="0" step="0.01"
-                                            class="ctrl-sm text-right pl-5"
-                                        />
+                                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">{{
+                                            currencySymbol }}</span>
+                                        <input v-model.number="line.unit_price" @input="recalcLine(line)" type="number"
+                                            min="0" step="0.01" class="ctrl-sm text-right pl-5" />
                                     </div>
                                 </td>
                                 <td class="td">
@@ -153,9 +138,11 @@
                                         <option :value="19">19 %</option>
                                     </select>
                                 </td>
-                                <td class="td text-right font-mono font-semibold tabular-nums">{{ fmtCurrency(line._line_total) }}</td>
+                                <td class="td text-right font-mono font-semibold tabular-nums">{{
+                                    fmtCurrency(line._line_total) }}</td>
                                 <td class="td text-center">
-                                    <button @click="removeLine(idx)" type="button" class="p-1 text-slate-300 hover:text-rose-500 rounded">
+                                    <button @click="removeLine(idx)" type="button"
+                                        class="p-1 text-slate-300 hover:text-rose-500 rounded">
                                         <XMarkIcon class="w-4 h-4" />
                                     </button>
                                 </td>
@@ -182,15 +169,19 @@
                             <div>
                                 <label class="lbl">{{ t('sales.discount') }}</label>
                                 <div class="relative">
-                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">{{ currencySymbol }}</span>
-                                    <input v-model.number="form.discount_amount" type="number" min="0" step="0.01" class="ctrl pl-6 text-right" />
+                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">{{
+                                        currencySymbol }}</span>
+                                    <input v-model.number="form.discount_amount" type="number" min="0" step="0.01"
+                                        class="ctrl pl-6 text-right" />
                                 </div>
                             </div>
                             <div>
                                 <label class="lbl">{{ t('sales.freight') }}</label>
                                 <div class="relative">
-                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">{{ currencySymbol }}</span>
-                                    <input v-model.number="form.freight_amount" type="number" min="0" step="0.01" class="ctrl pl-6 text-right" />
+                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">{{
+                                        currencySymbol }}</span>
+                                    <input v-model.number="form.freight_amount" type="number" min="0" step="0.01"
+                                        class="ctrl pl-6 text-right" />
                                 </div>
                             </div>
                         </div>
@@ -201,20 +192,23 @@
                                     <BanknotesIcon class="w-3.5 h-3.5 text-emerald-600" />
                                     {{ t('sales.cashPaid') }}
                                 </label>
-                                <input v-model.number="form.cash_paid" @focus="autoFillCash" type="number" min="0" step="0.01" class="ctrl text-right" />
+                                <input v-model.number="form.cash_paid" @focus="autoFillCash" type="number" min="0"
+                                    step="0.01" class="ctrl text-right" />
                             </div>
                             <div>
                                 <label class="lbl flex items-center gap-1.5">
                                     <CreditCardIcon class="w-3.5 h-3.5 text-emerald-600" />
                                     {{ t('sales.cardPaid') }}
                                 </label>
-                                <input v-model.number="form.card_paid" type="number" min="0" step="0.01" class="ctrl text-right" />
+                                <input v-model.number="form.card_paid" type="number" min="0" step="0.01"
+                                    class="ctrl text-right" />
                             </div>
                         </div>
 
                         <div>
                             <label class="lbl">{{ t('sales.note') }}</label>
-                            <textarea v-model="form.note" rows="2" class="ctrl resize-none" :placeholder="t('sales.notePlaceholder')"></textarea>
+                            <textarea v-model="form.note" rows="2" class="ctrl resize-none"
+                                :placeholder="t('sales.notePlaceholder')"></textarea>
                         </div>
                     </div>
                 </section>
@@ -244,7 +238,8 @@
                             </div>
                             <div class="flex justify-between items-center pt-3 border-t-2 border-emerald-300 mt-3">
                                 <dt class="font-bold text-slate-900 text-base">{{ t('sales.grandTotal') }}</dt>
-                                <dd class="font-mono font-bold text-emerald-700 text-lg tabular-nums">{{ fmtCurrency(totals.grand) }}</dd>
+                                <dd class="font-mono font-bold text-emerald-700 text-lg tabular-nums">{{
+                                    fmtCurrency(totals.grand) }}</dd>
                             </div>
 
                             <div class="pt-3 mt-3 border-t border-emerald-200 space-y-1.5">
@@ -263,7 +258,16 @@
                             </div>
                         </dl>
                     </div>
+
                 </section>
+                <div class="flex items-center gap-2">
+                    <RouterLink :to="{ name: 'sales' }" class="btn-soft">{{ t('common.cancel') }}</RouterLink>
+                    <button @click="save" :disabled="saving" class="btn-emerald">
+                        <CheckIcon v-if="!saving" class="w-4 h-4" />
+                        <ArrowPathIcon v-else class="w-4 h-4 animate-spin" />
+                        {{ saving ? t('common.saving') : t('sales.saveSale') }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -333,17 +337,17 @@ const totals = computed(() => {
         vat += round2(base * ((l.tax_rate || 0) / 100));
     }
     const discount = form.value.discount_amount || 0;
-    const freight  = form.value.freight_amount  || 0;
+    const freight = form.value.freight_amount || 0;
     return {
         subtotal: round2(net),
-        vat:      round2(vat),
-        grand:    round2(net - discount + vat + freight),
+        vat: round2(vat),
+        grand: round2(net - discount + vat + freight),
     };
 });
 
 const totalPaid = computed(() => round2((form.value.cash_paid || 0) + (form.value.card_paid || 0)));
-const change    = computed(() => Math.max(0, totalPaid.value - totals.value.grand));
-const due       = computed(() => Math.max(0, totals.value.grand - totalPaid.value));
+const change = computed(() => Math.max(0, totalPaid.value - totals.value.grand));
+const due = computed(() => Math.max(0, totals.value.grand - totalPaid.value));
 
 function round2(n) {
     return Math.round((n || 0) * 100) / 100;
@@ -351,7 +355,7 @@ function round2(n) {
 
 function recalcLine(l) {
     const base = (l.quantity || 0) * (l.unit_price || 0);
-    const vat  = round2(base * ((l.tax_rate || 0) / 100));
+    const vat = round2(base * ((l.tax_rate || 0) / 100));
     l._line_total = round2(base + vat);
 }
 
@@ -373,8 +377,8 @@ function setCustomerType(kind) {
 function onCustomerPick() {
     const c = customers.value.find(x => x.id === form.value.customer_id);
     if (c) {
-        form.value.customer_name    = c.name ?? '';
-        form.value.customer_phone   = c.phone ?? '';
+        form.value.customer_name = c.name ?? '';
+        form.value.customer_phone = c.phone ?? '';
         form.value.customer_address = c.address ?? '';
     }
 }
@@ -391,7 +395,7 @@ function onProductPick(line, p) {
     line._product = p;
     const wholesale = form.value.sale_type === 'wholesale' && p.wholesale_price > 0;
     line.unit_price = parseFloat(wholesale ? p.wholesale_price : p.selling_price) || 0;
-    line.tax_rate   = parseFloat(p.tax_rate ?? defaultVat.value);
+    line.tax_rate = parseFloat(p.tax_rate ?? defaultVat.value);
     recalcLine(line);
 }
 
@@ -429,7 +433,7 @@ async function save() {
     if (due.value > 0) {
         const ok = await confirm({
             title: t('sales.partialPaymentTitle'),
-            text:  t('sales.partialPaymentMessage', { amount: fmtCurrency(due.value) }),
+            text: t('sales.partialPaymentMessage', { amount: fmtCurrency(due.value) }),
             confirmText: t('common.confirm'),
         });
         if (!ok) return;
@@ -437,24 +441,24 @@ async function save() {
 
     saving.value = true;
     const payload = {
-        sale_date:        form.value.sale_date,
-        customer_id:      form.value.customer_type === 'registered' ? form.value.customer_id : null,
-        customer_name:    form.value.customer_name || null,
-        customer_phone:   form.value.customer_phone || null,
+        sale_date: form.value.sale_date,
+        customer_id: form.value.customer_type === 'registered' ? form.value.customer_id : null,
+        customer_name: form.value.customer_name || null,
+        customer_phone: form.value.customer_phone || null,
         customer_address: form.value.customer_address || null,
-        customer_type:    form.value.customer_type,
-        sale_type:        form.value.sale_type,
-        discount_amount:  form.value.discount_amount || 0,
-        freight_amount:   form.value.freight_amount  || 0,
-        cash_paid:        form.value.cash_paid || 0,
-        card_paid:        form.value.card_paid || 0,
-        note:             form.value.note || null,
+        customer_type: form.value.customer_type,
+        sale_type: form.value.sale_type,
+        discount_amount: form.value.discount_amount || 0,
+        freight_amount: form.value.freight_amount || 0,
+        cash_paid: form.value.cash_paid || 0,
+        card_paid: form.value.card_paid || 0,
+        note: form.value.note || null,
         items: valid.map(l => ({
             product_id: l.product_id,
-            quantity:   l.quantity,
+            quantity: l.quantity,
             unit_price: l.unit_price,
             cost_price: l._product?.cost_price ?? 0,
-            tax_rate:   l.tax_rate ?? 0,
+            tax_rate: l.tax_rate ?? 0,
             is_service: false,
         })),
     };
@@ -465,9 +469,9 @@ async function save() {
         toast('success', t('common.createdSuccess'));
         const goToInvoice = await confirm({
             title: t('sales.printPromptTitle'),
-            text:  t('sales.printPromptText'),
+            text: t('sales.printPromptText'),
             confirmText: t('sales.openInvoice'),
-            cancelText:  t('sales.skipInvoice'),
+            cancelText: t('sales.skipInvoice'),
         });
         router.push(goToInvoice
             ? { name: 'sale-invoice', params: { id } }
@@ -492,25 +496,71 @@ onMounted(loadCustomers);
 <style scoped>
 @reference '../../../css/app.css';
 
-.card { @apply bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden; }
-.card-head { @apply flex items-center gap-2 px-5 py-3 border-b border-slate-100; }
-.card-head h2 { @apply text-sm font-semibold text-slate-700 uppercase tracking-wide; }
-.card-body { @apply p-5; }
+.card {
+    @apply bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden;
+}
 
-.lbl { @apply block text-xs font-medium text-slate-600 mb-1.5; }
-.ctrl { @apply w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent; }
-.ctrl-sm { @apply w-full px-2 py-1.5 text-xs border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent; }
-.err { @apply text-xs text-rose-600 mt-1; }
+.card-head {
+    @apply flex items-center gap-2 px-5 py-3 border-b border-slate-100;
+}
 
-.th   { @apply px-4 py-2.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wide; }
-.th-r { @apply px-4 py-2.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wide; }
-.td   { @apply px-4 py-2; }
+.card-head h2 {
+    @apply text-sm font-semibold text-slate-700 uppercase tracking-wide;
+}
 
-.tab-btn { @apply px-3 py-1.5 text-xs font-semibold rounded-md transition-colors; }
-.tab-active { @apply bg-white text-emerald-700 shadow-sm; }
-.tab-idle   { @apply text-slate-500 hover:text-slate-700; }
+.card-body {
+    @apply p-5;
+}
 
-.btn-emerald { @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors; }
-.btn-soft    { @apply inline-flex items-center px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm hover:bg-slate-50 transition-colors; }
-.btn-tiny    { @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors; }
+.lbl {
+    @apply block text-xs font-medium text-slate-600 mb-1.5;
+}
+
+.ctrl {
+    @apply w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent;
+}
+
+.ctrl-sm {
+    @apply w-full px-2 py-1.5 text-xs border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent;
+}
+
+.err {
+    @apply text-xs text-rose-600 mt-1;
+}
+
+.th {
+    @apply px-4 py-2.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wide;
+}
+
+.th-r {
+    @apply px-4 py-2.5 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wide;
+}
+
+.td {
+    @apply px-4 py-2;
+}
+
+.tab-btn {
+    @apply px-3 py-1.5 text-xs font-semibold rounded-md transition-colors;
+}
+
+.tab-active {
+    @apply bg-white text-emerald-700 shadow-sm;
+}
+
+.tab-idle {
+    @apply text-slate-500 hover:text-slate-700;
+}
+
+.btn-emerald {
+    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+}
+
+.btn-soft {
+    @apply inline-flex items-center px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm hover:bg-slate-50 transition-colors;
+}
+
+.btn-tiny {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors;
+}
 </style>
