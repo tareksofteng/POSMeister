@@ -260,14 +260,15 @@
                     </div>
 
                 </section>
-                <div class="flex items-center gap-2">
-                    <RouterLink :to="{ name: 'sales' }" class="btn-soft">{{ t('common.cancel') }}</RouterLink>
-                    <button @click="save" :disabled="saving" class="btn-emerald">
-                        <CheckIcon v-if="!saving" class="w-4 h-4" />
-                        <ArrowPathIcon v-else class="w-4 h-4 animate-spin" />
-                        {{ saving ? t('common.saving') : t('sales.saveSale') }}
-                    </button>
-                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <RouterLink :to="{ name: 'sales' }" class="btn-soft">{{ t('common.cancel') }}</RouterLink>
+                <button @click="save" :disabled="saving" class="btn-emerald">
+                    <CheckIcon v-if="!saving" class="w-4 h-4" />
+                    <ArrowPathIcon v-else class="w-4 h-4 animate-spin" />
+                    {{ saving ? t('common.saving') : t('sales.saveSale') }}
+                </button>
             </div>
         </div>
     </div>
@@ -279,7 +280,6 @@ import { useI18n } from 'vue-i18n';
 import { useRouter, RouterLink } from 'vue-router';
 import { saleService } from '@/services/saleService';
 import { customerService } from '@/services/customerService';
-import { useSettingsStore } from '@/stores/settings';
 import { useAlert } from '@/composables/useAlert';
 import { useCurrency } from '@/composables/useCurrency';
 import ProductSearchInput from '@/components/ui/ProductSearchInput.vue';
@@ -292,10 +292,7 @@ import {
 const { t } = useI18n();
 const router = useRouter();
 const { toast, confirm } = useAlert();
-const settingsStore = useSettingsStore();
 const { fmtCurrency, currencySymbol } = useCurrency();
-
-const defaultVat = computed(() => settingsStore.settings?.vat_default ?? 19);
 
 const customers = ref([]);
 const errors = ref({});
@@ -307,7 +304,7 @@ function makeLine() {
         product_id: null,
         quantity: 1,
         unit_price: 0,
-        tax_rate: defaultVat.value,
+        tax_rate: 0,
         _line_total: 0,
         _product: null,
     };
@@ -395,7 +392,7 @@ function onProductPick(line, p) {
     line._product = p;
     const wholesale = form.value.sale_type === 'wholesale' && p.wholesale_price > 0;
     line.unit_price = parseFloat(wholesale ? p.wholesale_price : p.selling_price) || 0;
-    line.tax_rate = parseFloat(p.tax_rate ?? defaultVat.value);
+    // keep whatever VAT the user already chose on this line; do not override from product
     recalcLine(line);
 }
 

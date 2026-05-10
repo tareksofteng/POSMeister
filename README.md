@@ -151,6 +151,29 @@ This starts the Laravel development server (`php artisan serve`) and the Vite HM
 
 ---
 
+## Running with Docker
+
+The repository ships with a `Dockerfile` and `docker-compose.yml`. The full stack (PHP-FPM, nginx, MySQL 8, Vite dev server) boots without a local PHP, MySQL, or Node toolchain.
+
+```bash
+cp .env.docker .env
+docker compose up -d
+docker compose exec app php artisan migrate --seed
+```
+
+App: `http://localhost:8080` &nbsp;·&nbsp; Vite HMR: `http://localhost:5173`
+
+| Service | Image                     | Port |
+| ------- | ------------------------- | ---- |
+| `web`   | nginx:1.27-alpine         | 8080 |
+| `app`   | local build (php:8.3-fpm) | 9000 |
+| `db`    | mysql:8.0                 | 3306 |
+| `node`  | node:20-alpine            | 5173 |
+
+The `app` container auto-installs Composer dependencies on first run, generates `APP_KEY` if missing, and waits for MySQL before php-fpm starts. Set `RUN_MIGRATIONS=true` to also run pending migrations on boot.
+
+---
+
 ## Production Build
 
 ```bash
