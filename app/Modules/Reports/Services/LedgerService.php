@@ -203,8 +203,12 @@ class LedgerService
 
         // wareneingang
         PurchaseItem::query()
-            ->select('purchase_items.quantity', 'purchase_items.unit_cost as rate',
-                     'purchases.purchase_date as date', 'purchases.purchase_number as ref')
+            ->select(
+                'purchase_items.quantity',
+                'purchase_items.unit_cost as rate',
+                'purchases.purchase_date as date',
+                'purchases.purchase_number as ref'
+            )
             ->join('purchases', 'purchases.id', '=', 'purchase_items.purchase_id')
             ->where('purchase_items.product_id', $productId)
             ->where('purchases.status', 'received')
@@ -224,8 +228,12 @@ class LedgerService
 
         // verkauf (warenausgang)
         SaleItem::query()
-            ->select('sale_items.quantity', 'sale_items.unit_price as rate',
-                     'sales.sale_date as date', 'sales.sale_number as ref')
+            ->select(
+                'sale_items.quantity',
+                'sale_items.unit_price as rate',
+                'sales.sale_date as date',
+                'sales.sale_number as ref'
+            )
             ->join('sales', 'sales.id', '=', 'sale_items.sale_id')
             ->where('sale_items.product_id', $productId)
             ->where('sales.status', 'active')
@@ -245,8 +253,12 @@ class LedgerService
             ]));
 
         PurchaseReturnItem::query()
-            ->select('purchase_return_items.quantity', 'purchase_return_items.unit_cost as rate',
-                     'purchase_returns.return_date as date', 'purchase_returns.return_number as ref')
+            ->select(
+                'purchase_return_items.quantity',
+                'purchase_return_items.unit_cost as rate',
+                'purchase_returns.return_date as date',
+                'purchase_returns.return_number as ref'
+            )
             ->join('purchase_returns', 'purchase_returns.id', '=', 'purchase_return_items.purchase_return_id')
             ->where('purchase_return_items.product_id', $productId)
             ->whereNull('purchase_returns.deleted_at')
@@ -264,8 +276,12 @@ class LedgerService
             ]));
 
         SaleReturnItem::query()
-            ->select('sale_return_items.quantity', 'sale_return_items.unit_price as rate',
-                     'sale_returns.return_date as date', 'sale_returns.return_number as ref')
+            ->select(
+                'sale_return_items.quantity',
+                'sale_return_items.unit_price as rate',
+                'sale_returns.return_date as date',
+                'sale_returns.return_number as ref'
+            )
             ->join('sale_returns', 'sale_returns.id', '=', 'sale_return_items.sale_return_id')
             ->where('sale_return_items.product_id', $productId)
             ->whereNull('sale_returns.deleted_at')

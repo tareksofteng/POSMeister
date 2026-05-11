@@ -251,6 +251,32 @@ const routes = [
                 component: () => import('@/views/quotations/QuotationFormView.vue'),
                 meta: { titleKey: 'quotations.editTitle', permission: 'sales' },
             },
+
+            // HRM
+            {
+                path: 'hrm/employees',
+                name: 'hrm-employees',
+                component: () => import('@/views/hrm/EmployeeListView.vue'),
+                meta: { titleKey: 'menu.employees', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/employees/create',
+                name: 'hrm-employee-create',
+                component: () => import('@/views/hrm/EmployeeFormView.vue'),
+                meta: { titleKey: 'hrm.form.createTitle', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/employees/:id',
+                name: 'hrm-employee-show',
+                component: () => import('@/views/hrm/EmployeeProfileView.vue'),
+                meta: { titleKey: 'hrm.profile.title', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/employees/:id/edit',
+                name: 'hrm-employee-edit',
+                component: () => import('@/views/hrm/EmployeeFormView.vue'),
+                meta: { titleKey: 'hrm.form.editTitle', permission: 'hrm' },
+            },
         ],
     },
 

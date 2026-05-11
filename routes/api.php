@@ -6,6 +6,10 @@ use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
+use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
+use App\Modules\HRM\Controllers\DesignationController as HrmDesignationController;
+use App\Modules\HRM\Controllers\EmployeeController as HrmEmployeeController;
+use App\Modules\HRM\Controllers\ShiftController as HrmShiftController;
 use App\Modules\Reports\Controllers\LedgerController;
 use App\Modules\Sales\Controllers\CustomerController;
 use App\Modules\Sales\Controllers\CustomerPaymentController;
@@ -52,6 +56,28 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get('reports/customer-ledger', [LedgerController::class, 'customer']);
     Route::get('reports/supplier-ledger', [LedgerController::class, 'supplier']);
     Route::get('reports/product-ledger',  [LedgerController::class, 'product']);
+
+    // HRM (admin + manager only)
+    Route::middleware('role:admin,manager')->prefix('hrm')->group(function () {
+        Route::get('departments/all',  [HrmDepartmentController::class, 'all']);
+        Route::get('departments',      [HrmDepartmentController::class, 'index']);
+
+        Route::get('designations/all', [HrmDesignationController::class, 'all']);
+        Route::get('designations',     [HrmDesignationController::class, 'index']);
+
+        Route::get('shifts/all',       [HrmShiftController::class, 'all']);
+        Route::get('shifts',           [HrmShiftController::class, 'index']);
+
+        Route::get('employees/stats',                 [HrmEmployeeController::class, 'stats']);
+        Route::get('employees',                       [HrmEmployeeController::class, 'index']);
+        Route::post('employees',                      [HrmEmployeeController::class, 'store']);
+        Route::get('employees/{employee}',            [HrmEmployeeController::class, 'show']);
+        Route::put('employees/{employee}',            [HrmEmployeeController::class, 'update']);
+        Route::put('employees/{employee}/status',     [HrmEmployeeController::class, 'setStatus']);
+        Route::delete('employees/{employee}',         [HrmEmployeeController::class, 'destroy']);
+        Route::post('employees/{employee}/photo',     [HrmEmployeeController::class, 'uploadPhoto']);
+        Route::delete('employees/{employee}/photo',   [HrmEmployeeController::class, 'deletePhoto']);
+    });
 
     // ── Admin-only ────────────────────────────────────────────────────────
     Route::middleware('role:admin')->group(function ()

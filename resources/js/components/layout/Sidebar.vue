@@ -230,8 +230,17 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.financeHr',
         items: [
-            { permKey: 'finance',   labelKey: 'menu.finance',   to: { name: 'finance' },   icon: BanknotesIcon, implemented: false },
-            { permKey: 'employees', labelKey: 'menu.employees', to: { name: 'employees' }, icon: UserGroupIcon, implemented: false },
+            { permKey: 'finance',   labelKey: 'menu.finance',   to: { name: 'finance' },        icon: BanknotesIcon, implemented: false },
+            {
+                isGroup:     true,
+                permKey:     'hrm',
+                labelKey:    'menu.hrm',
+                icon:        UserGroupIcon,
+                childRoutes: ['hrm-employees', 'hrm-employee-create', 'hrm-employee-show', 'hrm-employee-edit'],
+                children: [
+                    { labelKey: 'menu.employees', to: { name: 'hrm-employees' }, implemented: true },
+                ],
+            },
         ],
     },
     {

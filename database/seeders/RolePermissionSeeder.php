@@ -15,6 +15,7 @@ class RolePermissionSeeder extends Seeder
             'products', 'inventory',
             'customers', 'suppliers',
             'reports',
+            'hrm',
         ]);
 
         // Cashier: front-desk only
