@@ -6,6 +6,7 @@ use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
+use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\DesignationController as HrmDesignationController;
 use App\Modules\HRM\Controllers\EmployeeController as HrmEmployeeController;
@@ -79,6 +80,12 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::put('shifts/{shift}',                   [HrmShiftController::class, 'update']);
         Route::put('shifts/{shift}/status',            [HrmShiftController::class, 'toggleStatus']);
         Route::delete('shifts/{shift}',                [HrmShiftController::class, 'destroy']);
+
+        // Attendance
+        Route::get('attendance/daily',                [HrmAttendanceController::class, 'daily']);
+        Route::get('attendance/monthly',              [HrmAttendanceController::class, 'monthly']);
+        Route::post('attendance/bulk',                [HrmAttendanceController::class, 'bulkMark']);
+        Route::delete('attendance/{attendance}',      [HrmAttendanceController::class, 'destroy']);
 
         Route::get('employees/stats',                 [HrmEmployeeController::class, 'stats']);
         Route::get('employees',                       [HrmEmployeeController::class, 'index']);

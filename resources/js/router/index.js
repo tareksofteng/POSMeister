@@ -295,6 +295,18 @@ const routes = [
                 component: () => import('@/views/hrm/ShiftListView.vue'),
                 meta: { titleKey: 'menu.shifts', permission: 'hrm' },
             },
+            {
+                path: 'hrm/attendance',
+                name: 'hrm-attendance-daily',
+                component: () => import('@/views/hrm/AttendanceDailyView.vue'),
+                meta: { titleKey: 'menu.attendance', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/attendance/monthly',
+                name: 'hrm-attendance-monthly',
+                component: () => import('@/views/hrm/AttendanceMonthlyView.vue'),
+                meta: { titleKey: 'menu.attendanceMonthly', permission: 'hrm' },
+            },
         ],
     },
 

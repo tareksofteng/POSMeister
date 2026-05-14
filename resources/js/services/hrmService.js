@@ -34,6 +34,13 @@ export const designationService = {
     destroy:      (id)          => api.delete(`/hrm/designations/${id}`),
 };
 
+export const attendanceService = {
+    daily:    (params)        => api.get('/hrm/attendance/daily',   { params }),
+    monthly:  (params)        => api.get('/hrm/attendance/monthly', { params }),
+    bulkMark: (date, rows)    => api.post('/hrm/attendance/bulk', { date, rows }),
+    destroy:  (id)            => api.delete(`/hrm/attendance/${id}`),
+};
+
 export const shiftService = {
     index:        ()         => api.get('/hrm/shifts'),
     all:          ()         => api.get('/hrm/shifts/all'),

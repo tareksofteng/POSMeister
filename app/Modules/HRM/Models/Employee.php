@@ -7,6 +7,7 @@ use App\Modules\Branch\Models\Branch;
 use App\Traits\HasAuditFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -62,6 +63,11 @@ class Employee extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
     }
 
     public function scopeActive($query)
