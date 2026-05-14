@@ -236,9 +236,15 @@ const NAV_GROUPS = [
                 permKey:     'hrm',
                 labelKey:    'menu.hrm',
                 icon:        UserGroupIcon,
-                childRoutes: ['hrm-employees', 'hrm-employee-create', 'hrm-employee-show', 'hrm-employee-edit'],
+                childRoutes: [
+                    'hrm-employees', 'hrm-employee-create', 'hrm-employee-show', 'hrm-employee-edit',
+                    'hrm-departments', 'hrm-designations', 'hrm-shifts',
+                ],
                 children: [
-                    { labelKey: 'menu.employees', to: { name: 'hrm-employees' }, implemented: true },
+                    { labelKey: 'menu.employees',    to: { name: 'hrm-employees' },    implemented: true },
+                    { labelKey: 'menu.departments',  to: { name: 'hrm-departments' },  implemented: true },
+                    { labelKey: 'menu.designations', to: { name: 'hrm-designations' }, implemented: true },
+                    { labelKey: 'menu.shifts',       to: { name: 'hrm-shifts' },       implemented: true },
                 ],
             },
         ],

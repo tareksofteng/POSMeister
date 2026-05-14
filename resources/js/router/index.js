@@ -277,6 +277,24 @@ const routes = [
                 component: () => import('@/views/hrm/EmployeeFormView.vue'),
                 meta: { titleKey: 'hrm.form.editTitle', permission: 'hrm' },
             },
+            {
+                path: 'hrm/departments',
+                name: 'hrm-departments',
+                component: () => import('@/views/hrm/DepartmentListView.vue'),
+                meta: { titleKey: 'menu.departments', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/designations',
+                name: 'hrm-designations',
+                component: () => import('@/views/hrm/DesignationListView.vue'),
+                meta: { titleKey: 'menu.designations', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/shifts',
+                name: 'hrm-shifts',
+                component: () => import('@/views/hrm/ShiftListView.vue'),
+                meta: { titleKey: 'menu.shifts', permission: 'hrm' },
+            },
         ],
     },
 

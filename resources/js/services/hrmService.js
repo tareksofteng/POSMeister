@@ -17,18 +17,30 @@ export const employeeService = {
 };
 
 export const departmentService = {
-    index: () => api.get('/hrm/departments'),
-    all:   () => api.get('/hrm/departments/all'),
+    index:        ()         => api.get('/hrm/departments'),
+    all:          ()         => api.get('/hrm/departments/all'),
+    store:        (data)     => api.post('/hrm/departments', data),
+    update:       (id, data) => api.put(`/hrm/departments/${id}`, data),
+    toggleStatus: (id)       => api.put(`/hrm/departments/${id}/status`),
+    destroy:      (id)       => api.delete(`/hrm/departments/${id}`),
 };
 
 export const designationService = {
-    index: (params = {}) => api.get('/hrm/designations',     { params }),
-    all:   (params = {}) => api.get('/hrm/designations/all', { params }),
+    index:        (params = {}) => api.get('/hrm/designations',     { params }),
+    all:          (params = {}) => api.get('/hrm/designations/all', { params }),
+    store:        (data)        => api.post('/hrm/designations', data),
+    update:       (id, data)    => api.put(`/hrm/designations/${id}`, data),
+    toggleStatus: (id)          => api.put(`/hrm/designations/${id}/status`),
+    destroy:      (id)          => api.delete(`/hrm/designations/${id}`),
 };
 
 export const shiftService = {
-    index: () => api.get('/hrm/shifts'),
-    all:   () => api.get('/hrm/shifts/all'),
+    index:        ()         => api.get('/hrm/shifts'),
+    all:          ()         => api.get('/hrm/shifts/all'),
+    store:        (data)     => api.post('/hrm/shifts', data),
+    update:       (id, data) => api.put(`/hrm/shifts/${id}`, data),
+    toggleStatus: (id)       => api.put(`/hrm/shifts/${id}/status`),
+    destroy:      (id)       => api.delete(`/hrm/shifts/${id}`),
 };
 
 function multipart() {

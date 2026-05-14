@@ -40,6 +40,9 @@
     "finance": "Finanzen",
     "employees": "Mitarbeiter",
     "hrm": "Personalwesen",
+    "departments": "Abteilungen",
+    "designations": "Positionen",
+    "shifts": "Schichten",
     "reports": "Berichte",
     "ledgers": "Kontenblätter",
     "customerLedger": "Kundenkonto",
@@ -1373,7 +1376,12 @@
       "photo": "Foto",
       "national_id": "Personalausweis-Nr.",
       "passport_number": "Reisepass-Nr.",
-      "work_permit_no": "Arbeitserlaubnis-Nr."
+      "work_permit_no": "Arbeitserlaubnis-Nr.",
+      "name": "Name",
+      "code": "Kürzel",
+      "title": "Bezeichnung",
+      "description": "Beschreibung",
+      "shift_name": "Schichtname"
     },
     "gender":     { "male": "Männlich", "female": "Weiblich", "other": "Divers" },
     "marital":    { "single": "Ledig", "married": "Verheiratet", "divorced": "Geschieden", "widowed": "Verwitwet" },
@@ -1381,6 +1389,45 @@
     "status_active":     "Aktiv",
     "status_inactive":   "Inaktiv",
     "status_terminated": "Gekündigt",
-    "status_resigned":   "Ausgeschieden"
+    "status_resigned":   "Ausgeschieden",
+    "departments": {
+      "title": "Abteilungen",
+      "subtitle": "Organisationseinheiten im Unternehmen",
+      "add": "Abteilung anlegen",
+      "empty": "Noch keine Abteilungen. Legen Sie die erste an, um zu starten.",
+      "createTitle": "Neue Abteilung",
+      "editTitle": "Abteilung bearbeiten",
+      "deleteTitle": "Abteilung löschen",
+      "deleteMessage": "\"{name}\" wirklich löschen?",
+      "designations": "Positionen",
+      "employees": "Mitarbeiter"
+    },
+    "designations": {
+      "title": "Positionen",
+      "subtitle": "Stellenbezeichnungen und Hierarchiestufen",
+      "add": "Position anlegen",
+      "empty": "Keine Positionen passen zum Filter.",
+      "createTitle": "Neue Position",
+      "editTitle": "Position bearbeiten",
+      "deleteTitle": "Position löschen",
+      "deleteMessage": "\"{name}\" wirklich löschen?",
+      "level": "Stufe",
+      "levelHint": "Niedrigere Werte stehen höher in der Hierarchie."
+    },
+    "shifts": {
+      "title": "Schichten",
+      "subtitle": "Arbeitszeiten und Toleranzfristen",
+      "add": "Schicht anlegen",
+      "empty": "Noch keine Schichten angelegt.",
+      "createTitle": "Neue Schicht",
+      "editTitle": "Schicht bearbeiten",
+      "deleteTitle": "Schicht löschen",
+      "deleteMessage": "\"{name}\" wirklich löschen?",
+      "start": "Beginn",
+      "end": "Ende",
+      "grace": "Toleranz",
+      "minutes": "Minuten",
+      "graceHint": "Toleranzminuten nach Schichtbeginn, bevor Verspätung gezählt wird."
+    }
   }
 }

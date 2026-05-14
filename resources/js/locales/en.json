@@ -40,6 +40,9 @@
     "finance": "Finance",
     "employees": "Employees",
     "hrm": "Human Resources",
+    "departments": "Departments",
+    "designations": "Positions",
+    "shifts": "Shifts",
     "reports": "Reports",
     "ledgers": "Ledgers",
     "customerLedger": "Customer Ledger",
@@ -1373,7 +1376,12 @@
       "photo": "Photo",
       "national_id": "National ID",
       "passport_number": "Passport number",
-      "work_permit_no": "Work permit no."
+      "work_permit_no": "Work permit no.",
+      "name": "Name",
+      "code": "Code",
+      "title": "Title",
+      "description": "Description",
+      "shift_name": "Shift name"
     },
     "gender":     { "male": "Male", "female": "Female", "other": "Other" },
     "marital":    { "single": "Single", "married": "Married", "divorced": "Divorced", "widowed": "Widowed" },
@@ -1381,6 +1389,45 @@
     "status_active":     "Active",
     "status_inactive":   "Inactive",
     "status_terminated": "Terminated",
-    "status_resigned":   "Resigned"
+    "status_resigned":   "Resigned",
+    "departments": {
+      "title": "Departments",
+      "subtitle": "Organisational units in the company",
+      "add": "Add department",
+      "empty": "No departments yet. Add the first one to get started.",
+      "createTitle": "New department",
+      "editTitle": "Edit department",
+      "deleteTitle": "Delete department",
+      "deleteMessage": "Permanently delete \"{name}\"?",
+      "designations": "Positions",
+      "employees": "Employees"
+    },
+    "designations": {
+      "title": "Positions",
+      "subtitle": "Job titles and hierarchy levels",
+      "add": "Add position",
+      "empty": "No positions match the current filter.",
+      "createTitle": "New position",
+      "editTitle": "Edit position",
+      "deleteTitle": "Delete position",
+      "deleteMessage": "Permanently delete \"{name}\"?",
+      "level": "Level",
+      "levelHint": "Lower numbers rank higher in the hierarchy."
+    },
+    "shifts": {
+      "title": "Shifts",
+      "subtitle": "Work schedules and grace periods",
+      "add": "Add shift",
+      "empty": "No shifts defined yet.",
+      "createTitle": "New shift",
+      "editTitle": "Edit shift",
+      "deleteTitle": "Delete shift",
+      "deleteMessage": "Permanently delete \"{name}\"?",
+      "start": "Start",
+      "end": "End",
+      "grace": "Grace",
+      "minutes": "minutes",
+      "graceHint": "Minutes after start before an arrival counts as late."
+    }
   }
 }

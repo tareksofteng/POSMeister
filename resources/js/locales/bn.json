@@ -29,6 +29,9 @@
     "finance": "অর্থ",
     "employees": "কর্মচারী",
     "hrm": "মানব সম্পদ",
+    "departments": "বিভাগ",
+    "designations": "পদবী",
+    "shifts": "শিফট",
     "reports": "প্রতিবেদন",
     "ledgers": "খাতা",
     "customerLedger": "গ্রাহক খাতা",
@@ -1371,7 +1374,12 @@
       "photo": "ছবি",
       "national_id": "জাতীয় পরিচয়পত্র",
       "passport_number": "পাসপোর্ট নম্বর",
-      "work_permit_no": "কাজের অনুমতি নম্বর"
+      "work_permit_no": "কাজের অনুমতি নম্বর",
+      "name": "নাম",
+      "code": "কোড",
+      "title": "শিরোনাম",
+      "description": "বিবরণ",
+      "shift_name": "শিফটের নাম"
     },
     "gender":     { "male": "পুরুষ", "female": "মহিলা", "other": "অন্যান্য" },
     "marital":    { "single": "অবিবাহিত", "married": "বিবাহিত", "divorced": "বিবাহবিচ্ছিন্ন", "widowed": "বিধবা/বিপত্নীক" },
@@ -1379,6 +1387,45 @@
     "status_active":     "সক্রিয়",
     "status_inactive":   "নিষ্ক্রিয়",
     "status_terminated": "বরখাস্ত",
-    "status_resigned":   "পদত্যাগী"
+    "status_resigned":   "পদত্যাগী",
+    "departments": {
+      "title": "বিভাগসমূহ",
+      "subtitle": "প্রতিষ্ঠানের সাংগঠনিক ইউনিট",
+      "add": "নতুন বিভাগ",
+      "empty": "এখনো কোনো বিভাগ নেই। শুরু করতে প্রথমটি যোগ করুন।",
+      "createTitle": "নতুন বিভাগ",
+      "editTitle": "বিভাগ সম্পাদনা",
+      "deleteTitle": "বিভাগ মুছুন",
+      "deleteMessage": "\"{name}\" স্থায়ীভাবে মুছবেন?",
+      "designations": "পদবী",
+      "employees": "কর্মচারী"
+    },
+    "designations": {
+      "title": "পদবী",
+      "subtitle": "পদবী ও পদক্রমের স্তর",
+      "add": "নতুন পদবী",
+      "empty": "ফিল্টারে কোনো পদবী মেলেনি।",
+      "createTitle": "নতুন পদবী",
+      "editTitle": "পদবী সম্পাদনা",
+      "deleteTitle": "পদবী মুছুন",
+      "deleteMessage": "\"{name}\" স্থায়ীভাবে মুছবেন?",
+      "level": "স্তর",
+      "levelHint": "ছোট সংখ্যা মানে উচ্চতর পদক্রম।"
+    },
+    "shifts": {
+      "title": "শিফট",
+      "subtitle": "কাজের সময়সূচি ও সহনশীলতা",
+      "add": "নতুন শিফট",
+      "empty": "এখনো কোনো শিফট তৈরি হয়নি।",
+      "createTitle": "নতুন শিফট",
+      "editTitle": "শিফট সম্পাদনা",
+      "deleteTitle": "শিফট মুছুন",
+      "deleteMessage": "\"{name}\" স্থায়ীভাবে মুছবেন?",
+      "start": "শুরু",
+      "end": "শেষ",
+      "grace": "সহনশীলতা",
+      "minutes": "মিনিট",
+      "graceHint": "শিফট শুরুর পর কত মিনিট পর্যন্ত দেরি হিসেবে গণ্য হবে না।"
+    }
   }
 }

@@ -40,6 +40,9 @@
     "finance": "المالية",
     "employees": "الموظفون",
     "hrm": "الموارد البشرية",
+    "departments": "الأقسام",
+    "designations": "المسميات الوظيفية",
+    "shifts": "الورديات",
     "reports": "التقارير",
     "ledgers": "كشوف الحسابات",
     "customerLedger": "كشف حساب العميل",
@@ -1371,7 +1374,12 @@
       "photo": "الصورة",
       "national_id": "رقم الهوية",
       "passport_number": "رقم جواز السفر",
-      "work_permit_no": "رقم تصريح العمل"
+      "work_permit_no": "رقم تصريح العمل",
+      "name": "الاسم",
+      "code": "الرمز",
+      "title": "المسمى",
+      "description": "الوصف",
+      "shift_name": "اسم الوردية"
     },
     "gender":     { "male": "ذكر", "female": "أنثى", "other": "آخر" },
     "marital":    { "single": "أعزب", "married": "متزوج", "divorced": "مطلق", "widowed": "أرمل" },
@@ -1379,6 +1387,45 @@
     "status_active":     "نشط",
     "status_inactive":   "غير نشط",
     "status_terminated": "منهي خدمته",
-    "status_resigned":   "مستقيل"
+    "status_resigned":   "مستقيل",
+    "departments": {
+      "title": "الأقسام",
+      "subtitle": "الوحدات التنظيمية في الشركة",
+      "add": "إضافة قسم",
+      "empty": "لا توجد أقسام بعد. أضف الأول للبدء.",
+      "createTitle": "قسم جديد",
+      "editTitle": "تعديل القسم",
+      "deleteTitle": "حذف القسم",
+      "deleteMessage": "حذف \"{name}\" نهائيًا؟",
+      "designations": "المسميات",
+      "employees": "الموظفون"
+    },
+    "designations": {
+      "title": "المسميات الوظيفية",
+      "subtitle": "المسميات الوظيفية ومستويات التسلسل الهرمي",
+      "add": "إضافة مسمى",
+      "empty": "لا توجد مسميات مطابقة لعامل التصفية.",
+      "createTitle": "مسمى جديد",
+      "editTitle": "تعديل المسمى",
+      "deleteTitle": "حذف المسمى",
+      "deleteMessage": "حذف \"{name}\" نهائيًا؟",
+      "level": "المستوى",
+      "levelHint": "الأرقام الأقل تعني مرتبة أعلى."
+    },
+    "shifts": {
+      "title": "الورديات",
+      "subtitle": "جداول العمل وفترات السماح",
+      "add": "إضافة وردية",
+      "empty": "لا توجد ورديات بعد.",
+      "createTitle": "وردية جديدة",
+      "editTitle": "تعديل الوردية",
+      "deleteTitle": "حذف الوردية",
+      "deleteMessage": "حذف \"{name}\" نهائيًا؟",
+      "start": "البداية",
+      "end": "النهاية",
+      "grace": "السماح",
+      "minutes": "دقيقة",
+      "graceHint": "الدقائق بعد البداية قبل احتساب التأخير."
+    }
   }
 }

@@ -59,14 +59,26 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
     // HRM (admin + manager only)
     Route::middleware('role:admin,manager')->prefix('hrm')->group(function () {
-        Route::get('departments/all',  [HrmDepartmentController::class, 'all']);
-        Route::get('departments',      [HrmDepartmentController::class, 'index']);
+        Route::get('departments/all',                  [HrmDepartmentController::class, 'all']);
+        Route::get('departments',                      [HrmDepartmentController::class, 'index']);
+        Route::post('departments',                     [HrmDepartmentController::class, 'store']);
+        Route::put('departments/{department}',         [HrmDepartmentController::class, 'update']);
+        Route::put('departments/{department}/status',  [HrmDepartmentController::class, 'toggleStatus']);
+        Route::delete('departments/{department}',      [HrmDepartmentController::class, 'destroy']);
 
-        Route::get('designations/all', [HrmDesignationController::class, 'all']);
-        Route::get('designations',     [HrmDesignationController::class, 'index']);
+        Route::get('designations/all',                 [HrmDesignationController::class, 'all']);
+        Route::get('designations',                     [HrmDesignationController::class, 'index']);
+        Route::post('designations',                    [HrmDesignationController::class, 'store']);
+        Route::put('designations/{designation}',       [HrmDesignationController::class, 'update']);
+        Route::put('designations/{designation}/status',[HrmDesignationController::class, 'toggleStatus']);
+        Route::delete('designations/{designation}',    [HrmDesignationController::class, 'destroy']);
 
-        Route::get('shifts/all',       [HrmShiftController::class, 'all']);
-        Route::get('shifts',           [HrmShiftController::class, 'index']);
+        Route::get('shifts/all',                       [HrmShiftController::class, 'all']);
+        Route::get('shifts',                           [HrmShiftController::class, 'index']);
+        Route::post('shifts',                          [HrmShiftController::class, 'store']);
+        Route::put('shifts/{shift}',                   [HrmShiftController::class, 'update']);
+        Route::put('shifts/{shift}/status',            [HrmShiftController::class, 'toggleStatus']);
+        Route::delete('shifts/{shift}',                [HrmShiftController::class, 'destroy']);
 
         Route::get('employees/stats',                 [HrmEmployeeController::class, 'stats']);
         Route::get('employees',                       [HrmEmployeeController::class, 'index']);

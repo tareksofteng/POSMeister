@@ -14,7 +14,9 @@ class DesignationResource extends JsonResource
             'department_id'   => $this->department_id,
             'department_name' => $this->whenLoaded('department', fn() => $this->department?->name),
             'hierarchy_level' => $this->hierarchy_level,
+            'description'     => $this->description,
             'is_active'       => (bool) $this->is_active,
+            'employees_count' => $this->whenCounted('employees'),
         ];
     }
 }
