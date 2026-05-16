@@ -307,6 +307,24 @@ const routes = [
                 component: () => import('@/views/hrm/AttendanceMonthlyView.vue'),
                 meta: { titleKey: 'menu.attendanceMonthly', permission: 'hrm' },
             },
+            {
+                path: 'hrm/payroll',
+                name: 'hrm-payroll',
+                component: () => import('@/views/hrm/PayrollPeriodListView.vue'),
+                meta: { titleKey: 'menu.payroll', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/payroll/:id',
+                name: 'hrm-payroll-period',
+                component: () => import('@/views/hrm/PayrollPeriodDetailView.vue'),
+                meta: { titleKey: 'menu.payroll', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/payslips/:id',
+                name: 'hrm-payslip',
+                component: () => import('@/views/hrm/PayslipDetailView.vue'),
+                meta: { titleKey: 'hrm.payroll.payslip', permission: 'hrm' },
+            },
         ],
     },
 

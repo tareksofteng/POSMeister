@@ -34,6 +34,26 @@ export const designationService = {
     destroy:      (id)          => api.delete(`/hrm/designations/${id}`),
 };
 
+export const payrollPeriodService = {
+    index:    (params = {}) => api.get('/hrm/payroll-periods', { params }),
+    show:     (id)          => api.get(`/hrm/payroll-periods/${id}`),
+    store:    (data)        => api.post('/hrm/payroll-periods', data),
+    update:   (id, data)    => api.put(`/hrm/payroll-periods/${id}`, data),
+    destroy:  (id)          => api.delete(`/hrm/payroll-periods/${id}`),
+    generate: (id)          => api.post(`/hrm/payroll-periods/${id}/generate`),
+    finalize: (id)          => api.post(`/hrm/payroll-periods/${id}/finalize`),
+};
+
+export const payslipService = {
+    index:      (params = {}) => api.get('/hrm/payslips', { params }),
+    show:       (id)          => api.get(`/hrm/payslips/${id}`),
+    update:     (id, data)    => api.put(`/hrm/payslips/${id}`, data),
+    destroy:    (id)          => api.delete(`/hrm/payslips/${id}`),
+    addItem:    (id, item)    => api.post(`/hrm/payslips/${id}/items`, item),
+    removeItem: (id, itemId)  => api.delete(`/hrm/payslips/${id}/items/${itemId}`),
+    pay:        (id, data)    => api.post(`/hrm/payslips/${id}/pay`, data),
+};
+
 export const attendanceService = {
     daily:    (params)        => api.get('/hrm/attendance/daily',   { params }),
     monthly:  (params)        => api.get('/hrm/attendance/monthly', { params }),

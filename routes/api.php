@@ -8,6 +8,8 @@ use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
+use App\Modules\HRM\Controllers\PayrollPeriodController as HrmPayrollPeriodController;
+use App\Modules\HRM\Controllers\PayslipController as HrmPayslipController;
 use App\Modules\HRM\Controllers\DesignationController as HrmDesignationController;
 use App\Modules\HRM\Controllers\EmployeeController as HrmEmployeeController;
 use App\Modules\HRM\Controllers\ShiftController as HrmShiftController;
@@ -86,6 +88,23 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::get('attendance/monthly',              [HrmAttendanceController::class, 'monthly']);
         Route::post('attendance/bulk',                [HrmAttendanceController::class, 'bulkMark']);
         Route::delete('attendance/{attendance}',      [HrmAttendanceController::class, 'destroy']);
+
+        // Payroll
+        Route::get('payroll-periods',                       [HrmPayrollPeriodController::class, 'index']);
+        Route::post('payroll-periods',                      [HrmPayrollPeriodController::class, 'store']);
+        Route::get('payroll-periods/{period}',              [HrmPayrollPeriodController::class, 'show']);
+        Route::put('payroll-periods/{period}',              [HrmPayrollPeriodController::class, 'update']);
+        Route::delete('payroll-periods/{period}',           [HrmPayrollPeriodController::class, 'destroy']);
+        Route::post('payroll-periods/{period}/generate',    [HrmPayrollPeriodController::class, 'generate']);
+        Route::post('payroll-periods/{period}/finalize',    [HrmPayrollPeriodController::class, 'finalize']);
+
+        Route::get('payslips',                              [HrmPayslipController::class, 'index']);
+        Route::get('payslips/{payslip}',                    [HrmPayslipController::class, 'show']);
+        Route::put('payslips/{payslip}',                    [HrmPayslipController::class, 'update']);
+        Route::post('payslips/{payslip}/items',             [HrmPayslipController::class, 'addItem']);
+        Route::delete('payslips/{payslip}/items/{itemId}',  [HrmPayslipController::class, 'removeItem']);
+        Route::post('payslips/{payslip}/pay',               [HrmPayslipController::class, 'pay']);
+        Route::delete('payslips/{payslip}',                 [HrmPayslipController::class, 'destroy']);
 
         Route::get('employees/stats',                 [HrmEmployeeController::class, 'stats']);
         Route::get('employees',                       [HrmEmployeeController::class, 'index']);
