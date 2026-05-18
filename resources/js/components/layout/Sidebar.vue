@@ -241,6 +241,7 @@ const NAV_GROUPS = [
                     'hrm-departments', 'hrm-designations', 'hrm-shifts',
                     'hrm-attendance-daily', 'hrm-attendance-monthly',
                     'hrm-payroll', 'hrm-payroll-period', 'hrm-payslip',
+                    'hrm-reports',
                 ],
                 children: [
                     { labelKey: 'menu.employees',          to: { name: 'hrm-employees' },           implemented: true },
@@ -250,6 +251,7 @@ const NAV_GROUPS = [
                     { labelKey: 'menu.attendance',         to: { name: 'hrm-attendance-daily' },    implemented: true },
                     { labelKey: 'menu.attendanceMonthly',  to: { name: 'hrm-attendance-monthly' },  implemented: true },
                     { labelKey: 'menu.payroll',            to: { name: 'hrm-payroll' },             implemented: true },
+                    { labelKey: 'menu.hrmReports',         to: { name: 'hrm-reports' },             implemented: true },
                 ],
             },
         ],

@@ -46,6 +46,7 @@
     "attendance": "Anwesenheit",
     "attendanceMonthly": "Monatsbericht",
     "payroll": "Lohnabrechnung",
+    "hrmReports": "HR-Berichte",
     "reports": "Berichte",
     "ledgers": "Kontenblätter",
     "customerLedger": "Kundenkonto",
@@ -1538,6 +1539,34 @@
       "payslip_paid":           "Bezahlt",
       "payslip_partially_paid": "Teilweise",
       "payslip_cancelled":      "Storniert"
+    },
+    "reports": {
+      "title": "HR-Berichte",
+      "subtitle": "Personalbestand, Anwesenheit und Lohnauswertungen auf einen Blick",
+      "refresh": "Aktualisieren",
+      "noData": "Keine Daten für diese Auswahl.",
+      "days": "Tage",
+      "employee": "Mitarbeiter",
+      "noRecentHires": "Keine Neueinstellungen in den letzten 30 Tagen.",
+      "noPayrollPeriod": "Legen Sie eine erste Lohnperiode an, um Auswertungen zu sehen.",
+      "kpi_total":         "Mitarbeiter gesamt",
+      "kpi_active":        "Aktiv",
+      "kpi_presentToday":  "Heute anwesend",
+      "kpi_absentToday":   "Heute abwesend",
+      "kpi_payrollMonth":  "Netto-Lohnsumme diesen Monat",
+      "byDepartment":      "Nach Abteilung",
+      "byBranch":          "Nach Filiale",
+      "byEmploymentType":  "Nach Arbeitsverhältnis",
+      "recentHires":       "Neueinstellungen",
+      "attendanceTitle":   "Anwesenheitsauswertung",
+      "attendanceSubtitle":"Statusverteilung über alle Mitarbeiter im gewählten Zeitraum",
+      "attendanceTotals":  "Summen",
+      "topPunctual":       "Pünktlichste",
+      "topAbsent":         "Häufigste Abwesenheiten",
+      "payrollTitle":      "Lohnauswertung",
+      "payrollSubtitle":   "Aggregierte Werte aller Abrechnungen der Periode",
+      "payrollTotals":     "Summen",
+      "topEarners":        "Top-Verdiener"
     }
   }
 }

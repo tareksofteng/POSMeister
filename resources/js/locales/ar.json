@@ -46,6 +46,7 @@
     "attendance": "الحضور",
     "attendanceMonthly": "تقرير شهري",
     "payroll": "الرواتب",
+    "hrmReports": "تقارير الموارد البشرية",
     "reports": "التقارير",
     "ledgers": "كشوف الحسابات",
     "customerLedger": "كشف حساب العميل",
@@ -1536,6 +1537,34 @@
       "payslip_paid":           "مدفوع",
       "payslip_partially_paid": "جزئي",
       "payslip_cancelled":      "ملغى"
+    },
+    "reports": {
+      "title": "تقارير الموارد البشرية",
+      "subtitle": "نظرة سريعة على القوى العاملة والحضور والرواتب",
+      "refresh": "تحديث",
+      "noData": "لا توجد بيانات لهذا التحديد.",
+      "days": "أيام",
+      "employee": "الموظف",
+      "noRecentHires": "لا توجد تعيينات في آخر 30 يومًا.",
+      "noPayrollPeriod": "أنشئ أول فترة رواتب لعرض التحليلات هنا.",
+      "kpi_total":         "إجمالي الموظفين",
+      "kpi_active":        "نشطون",
+      "kpi_presentToday":  "حاضرون اليوم",
+      "kpi_absentToday":   "غائبون اليوم",
+      "kpi_payrollMonth":  "صافي رواتب الشهر",
+      "byDepartment":      "حسب القسم",
+      "byBranch":          "حسب الفرع",
+      "byEmploymentType":  "حسب نوع التوظيف",
+      "recentHires":       "تعيينات حديثة",
+      "attendanceTitle":   "ملخص الحضور",
+      "attendanceSubtitle":"توزيع الحالات لكل الموظفين في الفترة",
+      "attendanceTotals":  "الإجماليات",
+      "topPunctual":       "الأكثر التزامًا",
+      "topAbsent":         "الأكثر غيابًا",
+      "payrollTitle":      "ملخص الرواتب",
+      "payrollSubtitle":   "إجمالي قيم الكشوف للفترة المختارة",
+      "payrollTotals":     "الإجماليات",
+      "topEarners":        "الأعلى صافيًا"
     }
   }
 }

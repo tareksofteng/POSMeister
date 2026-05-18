@@ -325,6 +325,12 @@ const routes = [
                 component: () => import('@/views/hrm/PayslipDetailView.vue'),
                 meta: { titleKey: 'hrm.payroll.payslip', permission: 'hrm' },
             },
+            {
+                path: 'hrm/reports',
+                name: 'hrm-reports',
+                component: () => import('@/views/hrm/HrmReportsView.vue'),
+                meta: { titleKey: 'menu.hrmReports', permission: 'hrm' },
+            },
         ],
     },
 

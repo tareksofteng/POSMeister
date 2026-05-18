@@ -8,6 +8,7 @@ use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
+use App\Modules\HRM\Controllers\HrmReportsController;
 use App\Modules\HRM\Controllers\PayrollPeriodController as HrmPayrollPeriodController;
 use App\Modules\HRM\Controllers\PayslipController as HrmPayslipController;
 use App\Modules\HRM\Controllers\DesignationController as HrmDesignationController;
@@ -105,6 +106,11 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::delete('payslips/{payslip}/items/{itemId}',  [HrmPayslipController::class, 'removeItem']);
         Route::post('payslips/{payslip}/pay',               [HrmPayslipController::class, 'pay']);
         Route::delete('payslips/{payslip}',                 [HrmPayslipController::class, 'destroy']);
+
+        // HR Reports
+        Route::get('reports/dashboard',                     [HrmReportsController::class, 'dashboard']);
+        Route::get('reports/attendance',                    [HrmReportsController::class, 'attendance']);
+        Route::get('reports/payroll',                       [HrmReportsController::class, 'payroll']);
 
         Route::get('employees/stats',                 [HrmEmployeeController::class, 'stats']);
         Route::get('employees',                       [HrmEmployeeController::class, 'index']);

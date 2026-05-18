@@ -54,6 +54,12 @@ export const payslipService = {
     pay:        (id, data)    => api.post(`/hrm/payslips/${id}/pay`, data),
 };
 
+export const hrmReportsService = {
+    dashboard:  ()             => api.get('/hrm/reports/dashboard'),
+    attendance: (params = {})  => api.get('/hrm/reports/attendance', { params }),
+    payroll:    (params = {})  => api.get('/hrm/reports/payroll',    { params }),
+};
+
 export const attendanceService = {
     daily:    (params)        => api.get('/hrm/attendance/daily',   { params }),
     monthly:  (params)        => api.get('/hrm/attendance/monthly', { params }),

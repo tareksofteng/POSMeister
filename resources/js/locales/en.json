@@ -46,6 +46,7 @@
     "attendance": "Attendance",
     "attendanceMonthly": "Monthly report",
     "payroll": "Payroll",
+    "hrmReports": "HR Reports",
     "reports": "Reports",
     "ledgers": "Ledgers",
     "customerLedger": "Customer Ledger",
@@ -1538,6 +1539,34 @@
       "payslip_paid":           "Paid",
       "payslip_partially_paid": "Partial",
       "payslip_cancelled":      "Cancelled"
+    },
+    "reports": {
+      "title": "HR Reports",
+      "subtitle": "Headcount, attendance and payroll analytics at a glance",
+      "refresh": "Refresh",
+      "noData": "No data for this selection.",
+      "days": "days",
+      "employee": "Employee",
+      "noRecentHires": "No new hires in the last 30 days.",
+      "noPayrollPeriod": "Create your first payroll period to see analytics here.",
+      "kpi_total":         "Total employees",
+      "kpi_active":        "Active",
+      "kpi_presentToday":  "Present today",
+      "kpi_absentToday":   "Absent today",
+      "kpi_payrollMonth":  "Net payroll this month",
+      "byDepartment":      "By department",
+      "byBranch":          "By branch",
+      "byEmploymentType":  "By employment type",
+      "recentHires":       "Recent hires",
+      "attendanceTitle":   "Attendance summary",
+      "attendanceSubtitle":"Status counts across all employees in the selected range",
+      "attendanceTotals":  "Totals",
+      "topPunctual":       "Most punctual",
+      "topAbsent":         "Most absent",
+      "payrollTitle":      "Payroll summary",
+      "payrollSubtitle":   "Aggregate payslip totals for the selected period",
+      "payrollTotals":     "Totals",
+      "topEarners":        "Top net earners"
     }
   }
 }

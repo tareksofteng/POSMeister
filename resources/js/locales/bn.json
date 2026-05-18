@@ -35,6 +35,7 @@
     "attendance": "উপস্থিতি",
     "attendanceMonthly": "মাসিক রিপোর্ট",
     "payroll": "বেতন",
+    "hrmReports": "এইচআর রিপোর্ট",
     "reports": "প্রতিবেদন",
     "ledgers": "খাতা",
     "customerLedger": "গ্রাহক খাতা",
@@ -1536,6 +1537,34 @@
       "payslip_paid":           "পরিশোধিত",
       "payslip_partially_paid": "আংশিক",
       "payslip_cancelled":      "বাতিল"
+    },
+    "reports": {
+      "title": "এইচআর রিপোর্ট",
+      "subtitle": "কর্মচারী, উপস্থিতি ও বেতনের বিশ্লেষণ এক নজরে",
+      "refresh": "রিফ্রেশ",
+      "noData": "এই নির্বাচনের জন্য কোনো তথ্য নেই।",
+      "days": "দিন",
+      "employee": "কর্মচারী",
+      "noRecentHires": "গত ৩০ দিনে কোনো নতুন নিয়োগ নেই।",
+      "noPayrollPeriod": "বিশ্লেষণ দেখতে প্রথম বেতন সময়কাল তৈরি করুন।",
+      "kpi_total":         "মোট কর্মচারী",
+      "kpi_active":        "সক্রিয়",
+      "kpi_presentToday":  "আজ উপস্থিত",
+      "kpi_absentToday":   "আজ অনুপস্থিত",
+      "kpi_payrollMonth":  "এই মাসের নিট বেতন",
+      "byDepartment":      "বিভাগ অনুযায়ী",
+      "byBranch":          "শাখা অনুযায়ী",
+      "byEmploymentType":  "চাকরির ধরন অনুযায়ী",
+      "recentHires":       "সাম্প্রতিক নিয়োগ",
+      "attendanceTitle":   "উপস্থিতি সারসংক্ষেপ",
+      "attendanceSubtitle":"নির্বাচিত সময়ে সকল কর্মচারীর স্ট্যাটাস বিতরণ",
+      "attendanceTotals":  "মোট",
+      "topPunctual":       "সবচেয়ে নিয়মিত",
+      "topAbsent":         "সবচেয়ে অনুপস্থিত",
+      "payrollTitle":      "বেতন সারসংক্ষেপ",
+      "payrollSubtitle":   "নির্বাচিত সময়ের সকল পে-স্লিপের সমষ্টিগত মান",
+      "payrollTotals":     "মোট",
+      "topEarners":        "শীর্ষ নিট আয়কারী"
     }
   }
 }
