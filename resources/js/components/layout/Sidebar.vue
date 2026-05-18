@@ -115,7 +115,7 @@ import { useSettingsStore } from '@/stores/settings';
 import {
     Squares2X2Icon, ShoppingCartIcon, DocumentTextIcon, TruckIcon,
     ClipboardDocumentListIcon, TagIcon, ArchiveBoxIcon, UsersIcon,
-    BuildingStorefrontIcon, BanknotesIcon, UserGroupIcon, ChartBarIcon,
+    BuildingStorefrontIcon, BanknotesIcon, UserGroupIcon, ChartBarIcon, ReceiptPercentIcon,
     CogIcon, ArrowRightStartOnRectangleIcon, BuildingOffice2Icon,
     UserCircleIcon, ShieldCheckIcon,
 } from '@heroicons/vue/24/outline';
@@ -252,6 +252,17 @@ const NAV_GROUPS = [
                     { labelKey: 'menu.attendanceMonthly',  to: { name: 'hrm-attendance-monthly' },  implemented: true },
                     { labelKey: 'menu.payroll',            to: { name: 'hrm-payroll' },             implemented: true },
                     { labelKey: 'menu.hrmReports',         to: { name: 'hrm-reports' },             implemented: true },
+                ],
+            },
+            {
+                isGroup:     true,
+                permKey:     'expenses',
+                labelKey:    'menu.expenses',
+                icon:        ReceiptPercentIcon,
+                childRoutes: ['expenses', 'expense-categories'],
+                children: [
+                    { labelKey: 'menu.expenseList',       to: { name: 'expenses' },           implemented: true },
+                    { labelKey: 'menu.expenseCategories', to: { name: 'expense-categories' }, implemented: true },
                 ],
             },
         ],

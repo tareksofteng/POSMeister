@@ -47,6 +47,9 @@
     "attendanceMonthly": "Monthly report",
     "payroll": "Payroll",
     "hrmReports": "HR Reports",
+    "expenses": "Expenses",
+    "expenseList": "All expenses",
+    "expenseCategories": "Categories",
     "reports": "Reports",
     "ledgers": "Ledgers",
     "customerLedger": "Customer Ledger",
@@ -1567,6 +1570,61 @@
       "payrollSubtitle":   "Aggregate payslip totals for the selected period",
       "payrollTotals":     "Totals",
       "topEarners":        "Top net earners"
+    }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "subtitle": "Track operating costs, receipts and payments",
+    "add": "Add expense",
+    "createTitle": "New expense",
+    "editTitle": "Edit expense",
+    "searchPh": "Search by title, number or reference",
+    "empty": "No expenses match the current filters.",
+    "deleteTitle": "Delete expense",
+    "deleteMessage": "Permanently delete expense {number}?",
+    "openAttachment": "Open receipt",
+    "uploadAttachment": "Upload receipt",
+    "changeAttachment": "Change receipt",
+    "viewCurrent": "View current receipt",
+    "attachmentHint": "JPG, PNG, WEBP or PDF. Up to 5 MB.",
+    "fields": {
+      "expense_number": "Number",
+      "title": "Title",
+      "category": "Category",
+      "branch": "Branch",
+      "amount": "Amount",
+      "date": "Date",
+      "payment_method": "Payment method",
+      "reference_no": "Reference",
+      "description": "Description",
+      "attachment": "Receipt",
+      "name": "Name",
+      "code": "Code"
+    },
+    "filters": {
+      "allCategories": "All categories",
+      "allStatuses": "All statuses"
+    },
+    "summary": {
+      "total": "Total"
+    },
+    "paymentMethod": {
+      "cheque": "Cheque"
+    },
+    "status_pending":  "Pending",
+    "status_approved": "Approved",
+    "status_paid":     "Paid",
+    "status_rejected": "Rejected",
+    "categories": {
+      "title": "Expense categories",
+      "subtitle": "Organise your expenses by category",
+      "add": "Add category",
+      "createTitle": "New category",
+      "editTitle": "Edit category",
+      "empty": "No categories yet. Add one to start tracking expenses.",
+      "expensesCount": "Expenses",
+      "deleteTitle": "Delete category",
+      "deleteMessage": "Permanently delete \"{name}\"?"
     }
   }
 }

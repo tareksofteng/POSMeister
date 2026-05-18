@@ -36,6 +36,9 @@
     "attendanceMonthly": "মাসিক রিপোর্ট",
     "payroll": "বেতন",
     "hrmReports": "এইচআর রিপোর্ট",
+    "expenses": "খরচ",
+    "expenseList": "সব খরচ",
+    "expenseCategories": "ক্যাটাগরি",
     "reports": "প্রতিবেদন",
     "ledgers": "খাতা",
     "customerLedger": "গ্রাহক খাতা",
@@ -1565,6 +1568,61 @@
       "payrollSubtitle":   "নির্বাচিত সময়ের সকল পে-স্লিপের সমষ্টিগত মান",
       "payrollTotals":     "মোট",
       "topEarners":        "শীর্ষ নিট আয়কারী"
+    }
+  },
+  "expenses": {
+    "title": "খরচ",
+    "subtitle": "পরিচালনা ব্যয়, রসিদ এবং পেমেন্ট পরিচালনা করুন",
+    "add": "নতুন খরচ",
+    "createTitle": "নতুন খরচ",
+    "editTitle": "খরচ সম্পাদনা",
+    "searchPh": "শিরোনাম, নম্বর বা রেফারেন্স দ্বারা খুঁজুন",
+    "empty": "ফিল্টারের সাথে মিলে এমন কোনো খরচ নেই।",
+    "deleteTitle": "খরচ মুছুন",
+    "deleteMessage": "খরচ {number} স্থায়ীভাবে মুছবেন?",
+    "openAttachment": "রসিদ খুলুন",
+    "uploadAttachment": "রসিদ আপলোড",
+    "changeAttachment": "রসিদ পরিবর্তন",
+    "viewCurrent": "বর্তমান রসিদ দেখুন",
+    "attachmentHint": "JPG, PNG, WEBP বা PDF। সর্বোচ্চ ৫ এমবি।",
+    "fields": {
+      "expense_number": "নম্বর",
+      "title": "শিরোনাম",
+      "category": "ক্যাটাগরি",
+      "branch": "শাখা",
+      "amount": "পরিমাণ",
+      "date": "তারিখ",
+      "payment_method": "পেমেন্ট পদ্ধতি",
+      "reference_no": "রেফারেন্স",
+      "description": "বিবরণ",
+      "attachment": "রসিদ",
+      "name": "নাম",
+      "code": "কোড"
+    },
+    "filters": {
+      "allCategories": "সব ক্যাটাগরি",
+      "allStatuses": "সব স্ট্যাটাস"
+    },
+    "summary": {
+      "total": "মোট"
+    },
+    "paymentMethod": {
+      "cheque": "চেক"
+    },
+    "status_pending":  "অপেক্ষমাণ",
+    "status_approved": "অনুমোদিত",
+    "status_paid":     "পরিশোধিত",
+    "status_rejected": "প্রত্যাখ্যাত",
+    "categories": {
+      "title": "খরচের ক্যাটাগরি",
+      "subtitle": "ক্যাটাগরি অনুসারে খরচ সংগঠিত করুন",
+      "add": "নতুন ক্যাটাগরি",
+      "createTitle": "নতুন ক্যাটাগরি",
+      "editTitle": "ক্যাটাগরি সম্পাদনা",
+      "empty": "এখনো কোনো ক্যাটাগরি নেই। খরচ ট্র্যাক করতে একটি যোগ করুন।",
+      "expensesCount": "খরচ",
+      "deleteTitle": "ক্যাটাগরি মুছুন",
+      "deleteMessage": "\"{name}\" স্থায়ীভাবে মুছবেন?"
     }
   }
 }

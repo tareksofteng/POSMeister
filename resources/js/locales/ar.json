@@ -47,6 +47,9 @@
     "attendanceMonthly": "تقرير شهري",
     "payroll": "الرواتب",
     "hrmReports": "تقارير الموارد البشرية",
+    "expenses": "المصروفات",
+    "expenseList": "كل المصروفات",
+    "expenseCategories": "الفئات",
     "reports": "التقارير",
     "ledgers": "كشوف الحسابات",
     "customerLedger": "كشف حساب العميل",
@@ -1565,6 +1568,61 @@
       "payrollSubtitle":   "إجمالي قيم الكشوف للفترة المختارة",
       "payrollTotals":     "الإجماليات",
       "topEarners":        "الأعلى صافيًا"
+    }
+  },
+  "expenses": {
+    "title": "المصروفات",
+    "subtitle": "متابعة التكاليف التشغيلية والفواتير والمدفوعات",
+    "add": "إضافة مصروف",
+    "createTitle": "مصروف جديد",
+    "editTitle": "تعديل المصروف",
+    "searchPh": "ابحث بالعنوان أو الرقم أو المرجع",
+    "empty": "لا توجد مصروفات مطابقة للفلتر.",
+    "deleteTitle": "حذف المصروف",
+    "deleteMessage": "حذف المصروف {number} نهائيًا؟",
+    "openAttachment": "فتح الإيصال",
+    "uploadAttachment": "رفع إيصال",
+    "changeAttachment": "تغيير الإيصال",
+    "viewCurrent": "عرض الإيصال الحالي",
+    "attachmentHint": "JPG أو PNG أو WEBP أو PDF. حتى 5 ميجابايت.",
+    "fields": {
+      "expense_number": "الرقم",
+      "title": "العنوان",
+      "category": "الفئة",
+      "branch": "الفرع",
+      "amount": "المبلغ",
+      "date": "التاريخ",
+      "payment_method": "طريقة الدفع",
+      "reference_no": "المرجع",
+      "description": "الوصف",
+      "attachment": "الإيصال",
+      "name": "الاسم",
+      "code": "الرمز"
+    },
+    "filters": {
+      "allCategories": "كل الفئات",
+      "allStatuses": "كل الحالات"
+    },
+    "summary": {
+      "total": "الإجمالي"
+    },
+    "paymentMethod": {
+      "cheque": "شيك"
+    },
+    "status_pending":  "معلّق",
+    "status_approved": "معتمد",
+    "status_paid":     "مدفوع",
+    "status_rejected": "مرفوض",
+    "categories": {
+      "title": "فئات المصروفات",
+      "subtitle": "تنظيم المصروفات حسب الفئة",
+      "add": "إضافة فئة",
+      "createTitle": "فئة جديدة",
+      "editTitle": "تعديل الفئة",
+      "empty": "لا توجد فئات بعد. أضف فئة لبدء تسجيل المصروفات.",
+      "expensesCount": "مصروفات",
+      "deleteTitle": "حذف الفئة",
+      "deleteMessage": "حذف \"{name}\" نهائيًا؟"
     }
   }
 }

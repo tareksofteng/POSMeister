@@ -331,6 +331,20 @@ const routes = [
                 component: () => import('@/views/hrm/HrmReportsView.vue'),
                 meta: { titleKey: 'menu.hrmReports', permission: 'hrm' },
             },
+
+            // Expense module
+            {
+                path: 'expenses/categories',
+                name: 'expense-categories',
+                component: () => import('@/views/expenses/ExpenseCategoryListView.vue'),
+                meta: { titleKey: 'menu.expenseCategories', permission: 'expenses' },
+            },
+            {
+                path: 'expenses',
+                name: 'expenses',
+                component: () => import('@/views/expenses/ExpenseListView.vue'),
+                meta: { titleKey: 'menu.expenses', permission: 'expenses' },
+            },
         ],
     },
 

@@ -6,6 +6,8 @@ use App\Modules\Branch\Controllers\BranchController;
 use App\Modules\Product\Controllers\BrandController;
 use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
+use App\Modules\Expense\Controllers\ExpenseCategoryController;
+use App\Modules\Expense\Controllers\ExpenseController as ExpenseModuleController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -146,6 +148,23 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::put('settings',              [SettingsController::class, 'update']);
         Route::post('settings/logo',        [SettingsController::class, 'uploadLogo']);
         Route::delete('settings/logo',      [SettingsController::class, 'deleteLogo']);
+    });
+
+    // Expense module (admin + manager)
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('expense-categories/all',                  [ExpenseCategoryController::class, 'all']);
+        Route::get('expense-categories',                      [ExpenseCategoryController::class, 'index']);
+        Route::post('expense-categories',                     [ExpenseCategoryController::class, 'store']);
+        Route::put('expense-categories/{category}',           [ExpenseCategoryController::class, 'update']);
+        Route::put('expense-categories/{category}/status',    [ExpenseCategoryController::class, 'toggleStatus']);
+        Route::delete('expense-categories/{category}',        [ExpenseCategoryController::class, 'destroy']);
+
+        Route::get('expenses/summary',                        [ExpenseModuleController::class, 'summary']);
+        Route::get('expenses',                                [ExpenseModuleController::class, 'index']);
+        Route::post('expenses',                               [ExpenseModuleController::class, 'store']);
+        Route::get('expenses/{expense}',                      [ExpenseModuleController::class, 'show']);
+        Route::put('expenses/{expense}',                      [ExpenseModuleController::class, 'update']);
+        Route::delete('expenses/{expense}',                   [ExpenseModuleController::class, 'destroy']);
     });
 
     // ── Product Module ────────────────────────────────────────────────────

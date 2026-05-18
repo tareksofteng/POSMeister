@@ -47,6 +47,9 @@
     "attendanceMonthly": "Monatsbericht",
     "payroll": "Lohnabrechnung",
     "hrmReports": "HR-Berichte",
+    "expenses": "Ausgaben",
+    "expenseList": "Alle Ausgaben",
+    "expenseCategories": "Kategorien",
     "reports": "Berichte",
     "ledgers": "Kontenblätter",
     "customerLedger": "Kundenkonto",
@@ -1567,6 +1570,61 @@
       "payrollSubtitle":   "Aggregierte Werte aller Abrechnungen der Periode",
       "payrollTotals":     "Summen",
       "topEarners":        "Top-Verdiener"
+    }
+  },
+  "expenses": {
+    "title": "Ausgaben",
+    "subtitle": "Betriebsausgaben, Belege und Zahlungen verwalten",
+    "add": "Ausgabe erfassen",
+    "createTitle": "Neue Ausgabe",
+    "editTitle": "Ausgabe bearbeiten",
+    "searchPh": "Suche nach Bezeichnung, Nummer oder Referenz",
+    "empty": "Keine Ausgaben entsprechen den Filtern.",
+    "deleteTitle": "Ausgabe löschen",
+    "deleteMessage": "Ausgabe {number} unwiderruflich löschen?",
+    "openAttachment": "Beleg öffnen",
+    "uploadAttachment": "Beleg hochladen",
+    "changeAttachment": "Beleg ändern",
+    "viewCurrent": "Aktuellen Beleg anzeigen",
+    "attachmentHint": "JPG, PNG, WEBP oder PDF. Maximal 5 MB.",
+    "fields": {
+      "expense_number": "Nummer",
+      "title": "Bezeichnung",
+      "category": "Kategorie",
+      "branch": "Filiale",
+      "amount": "Betrag",
+      "date": "Datum",
+      "payment_method": "Zahlungsart",
+      "reference_no": "Belegnummer",
+      "description": "Beschreibung",
+      "attachment": "Beleg",
+      "name": "Name",
+      "code": "Kürzel"
+    },
+    "filters": {
+      "allCategories": "Alle Kategorien",
+      "allStatuses": "Alle Status"
+    },
+    "summary": {
+      "total": "Gesamt"
+    },
+    "paymentMethod": {
+      "cheque": "Scheck"
+    },
+    "status_pending":  "Offen",
+    "status_approved": "Genehmigt",
+    "status_paid":     "Bezahlt",
+    "status_rejected": "Abgelehnt",
+    "categories": {
+      "title": "Ausgabenkategorien",
+      "subtitle": "Ausgaben nach Kategorie organisieren",
+      "add": "Kategorie anlegen",
+      "createTitle": "Neue Kategorie",
+      "editTitle": "Kategorie bearbeiten",
+      "empty": "Noch keine Kategorien. Legen Sie die erste an, um Ausgaben zu erfassen.",
+      "expensesCount": "Ausgaben",
+      "deleteTitle": "Kategorie löschen",
+      "deleteMessage": "\"{name}\" wirklich löschen?"
     }
   }
 }
