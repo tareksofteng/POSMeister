@@ -345,6 +345,12 @@ const routes = [
                 component: () => import('@/views/expenses/ExpenseListView.vue'),
                 meta: { titleKey: 'menu.expenses', permission: 'expenses' },
             },
+            {
+                path: 'expenses/reports',
+                name: 'expense-reports',
+                component: () => import('@/views/expenses/ExpenseReportsView.vue'),
+                meta: { titleKey: 'menu.expenseReports', permission: 'expenses' },
+            },
         ],
     },
 

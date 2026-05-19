@@ -6,10 +6,31 @@
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('expenses.title') }}</h1>
                 <p class="mt-1 text-sm text-slate-500">{{ t('expenses.subtitle') }}</p>
             </div>
-            <button @click="openCreate" class="btn-primary">
-                <PlusIcon class="w-4 h-4" />
-                {{ t('expenses.add') }}
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+                <RouterLink :to="{ name: 'expense-reports' }" class="btn-soft">
+                    <ChartBarIcon class="w-4 h-4" />
+                    {{ t('expenses.openReports') }}
+                </RouterLink>
+                <div class="relative">
+                    <button @click="exportMenuOpen = !exportMenuOpen" class="btn-soft" type="button">
+                        <ArrowDownTrayIcon class="w-4 h-4" />
+                        {{ t('expenses.export') }}
+                    </button>
+                    <div v-if="exportMenuOpen" v-click-outside="() => exportMenuOpen = false"
+                         class="absolute right-0 mt-1 w-52 rounded-lg bg-white border border-slate-200 shadow-lg z-20 py-1 text-sm">
+                        <a :href="csvUrl('standard')" target="_blank" class="block px-3 py-2 hover:bg-slate-50" @click="exportMenuOpen = false">
+                            {{ t('expenses.exportCsv') }}
+                        </a>
+                        <a :href="csvUrl('datev')" target="_blank" class="block px-3 py-2 hover:bg-slate-50" @click="exportMenuOpen = false">
+                            {{ t('expenses.exportDatev') }}
+                        </a>
+                    </div>
+                </div>
+                <button @click="openCreate" class="btn-primary">
+                    <PlusIcon class="w-4 h-4" />
+                    {{ t('expenses.add') }}
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
@@ -36,6 +57,11 @@
                 <option value="paid">{{ t('expenses.status_paid') }}</option>
                 <option value="rejected">{{ t('expenses.status_rejected') }}</option>
             </select>
+            <select v-model="filters.is_recurring" class="ctrl w-40">
+                <option value="">{{ t('expenses.filters.allTypes') }}</option>
+                <option value="1">{{ t('expenses.filters.recurringOnly') }}</option>
+                <option value="0">{{ t('expenses.filters.oneOffOnly') }}</option>
+            </select>
             <div>
                 <label class="text-[10px] text-slate-500 block">{{ t('common.dateFrom') }}</label>
                 <input v-model="filters.from" type="date" class="ctrl w-40" />
@@ -60,7 +86,7 @@
                             <th class="th">{{ t('expenses.fields.payment_method') }}</th>
                             <th class="th text-right">{{ t('expenses.fields.amount') }}</th>
                             <th class="th">{{ t('common.status') }}</th>
-                            <th class="th w-32 text-right">{{ t('common.actions') }}</th>
+                            <th class="th w-48 text-right">{{ t('common.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -77,7 +103,10 @@
                             </td>
                         </tr>
                         <tr v-else v-for="e in expenses" :key="e.id" class="hover:bg-slate-50/60">
-                            <td class="td font-mono text-xs text-slate-600">{{ e.expense_number }}</td>
+                            <td class="td">
+                                <span class="font-mono text-xs text-slate-600">{{ e.expense_number }}</span>
+                                <ArrowPathIcon v-if="e.is_recurring" class="w-3.5 h-3.5 inline-block ml-1 text-indigo-500" :title="t('expenses.recurring.badge')" />
+                            </td>
                             <td class="td text-slate-700">{{ formatDate(e.expense_date) }}</td>
                             <td class="td">
                                 <p class="font-medium text-slate-900">{{ e.title }}</p>
@@ -96,10 +125,22 @@
                                     <a v-if="e.attachment_url" :href="e.attachment_url" target="_blank" class="action-btn" :title="t('expenses.openAttachment')">
                                         <PaperClipIcon class="w-4 h-4" />
                                     </a>
-                                    <button @click="openEdit(e)" class="action-btn" :title="t('common.edit')">
+                                    <button v-if="e.status === 'pending'" @click="approveOne(e)" class="action-btn hover:text-indigo-700 hover:bg-indigo-50" :title="t('expenses.approval.approve')">
+                                        <CheckCircleIcon class="w-4 h-4" />
+                                    </button>
+                                    <button v-if="e.status === 'pending'" @click="openReject(e)" class="action-btn hover:text-rose-600 hover:bg-rose-50" :title="t('expenses.approval.reject')">
+                                        <XCircleIcon class="w-4 h-4" />
+                                    </button>
+                                    <button v-if="e.status === 'approved'" @click="openPay(e)" class="action-btn hover:text-emerald-700 hover:bg-emerald-50" :title="t('expenses.approval.markPaid')">
+                                        <BanknotesIcon class="w-4 h-4" />
+                                    </button>
+                                    <button v-if="e.status === 'rejected' || e.status === 'approved'" @click="reopenOne(e)" class="action-btn hover:text-amber-700 hover:bg-amber-50" :title="t('expenses.approval.reopen')">
+                                        <ArrowUturnLeftIcon class="w-4 h-4" />
+                                    </button>
+                                    <button v-if="e.status !== 'paid'" @click="openEdit(e)" class="action-btn" :title="t('common.edit')">
                                         <PencilSquareIcon class="w-4 h-4" />
                                     </button>
-                                    <button @click="confirmDelete(e)" class="action-btn hover:text-rose-600 hover:bg-rose-50" :title="t('common.delete')">
+                                    <button v-if="e.status !== 'paid'" @click="confirmDelete(e)" class="action-btn hover:text-rose-600 hover:bg-rose-50" :title="t('common.delete')">
                                         <TrashIcon class="w-4 h-4" />
                                     </button>
                                 </div>
@@ -133,21 +174,33 @@
             :branches="branches"
             @saved="onSaved"
         />
+
+        <ExpenseApprovalModal
+            v-model="approvalOpen"
+            :mode="approvalMode"
+            :expense="approvalTarget"
+            @done="onSaved"
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, h } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { RouterLink } from 'vue-router';
 import { expenseService, expenseCategoryService } from '@/services/expenseService';
 import { branchService } from '@/services/branchService';
 import { useDebounce } from '@vueuse/core';
 import { useAlert } from '@/composables/useAlert';
 import { useCurrency } from '@/composables/useCurrency';
 import ExpenseFormModal from './ExpenseFormModal.vue';
+import ExpenseApprovalModal from './ExpenseApprovalModal.vue';
 import {
     PlusIcon, MagnifyingGlassIcon, ReceiptPercentIcon,
     PencilSquareIcon, TrashIcon, PaperClipIcon,
+    CheckCircleIcon, XCircleIcon, BanknotesIcon,
+    ArrowUturnLeftIcon, ArrowDownTrayIcon, ArrowPathIcon,
+    ChartBarIcon,
 } from '@heroicons/vue/24/outline';
 
 const { t } = useI18n();
@@ -162,6 +215,7 @@ const summary = ref({ total_amount: 0, pending: 0, approved: 0, paid: 0, rejecte
 
 const loading = ref(false);
 const errorMsg = ref('');
+const exportMenuOpen = ref(false);
 
 const searchTerm = ref('');
 const debouncedSearch = useDebounce(searchTerm, 350);
@@ -169,6 +223,7 @@ const debouncedSearch = useDebounce(searchTerm, 350);
 const filters = ref({
     expense_category_id: null,
     status: '',
+    is_recurring: '',
     from: '',
     to: '',
     page: 1,
@@ -177,6 +232,10 @@ const filters = ref({
 
 const modalOpen = ref(false);
 const editing = ref(null);
+
+const approvalOpen = ref(false);
+const approvalMode = ref('reject');
+const approvalTarget = ref(null);
 
 const visiblePages = computed(() => {
     if (!meta.value) return [];
@@ -215,6 +274,20 @@ const StatusBadge = (props) => {
 };
 StatusBadge.props = ['status'];
 
+const vClickOutside = {
+    mounted(el, binding) {
+        el._clickOutside = (evt) => {
+            if (!(el === evt.target || el.contains(evt.target))) {
+                binding.value(evt);
+            }
+        };
+        document.addEventListener('click', el._clickOutside);
+    },
+    unmounted(el) {
+        document.removeEventListener('click', el._clickOutside);
+    },
+};
+
 function formatDate(s) {
     return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
 }
@@ -224,9 +297,18 @@ function paymentLabel(method) {
     return t('paymentMethod.' + method);
 }
 
+function csvUrl(format) {
+    return expenseService.exportCsvUrl({
+        ...filters.value,
+        is_recurring: filters.value.is_recurring,
+        format,
+    });
+}
+
 watch(debouncedSearch, () => { filters.value.page = 1; fetchList(); });
 watch(() => filters.value.expense_category_id, () => { filters.value.page = 1; fetchList(); fetchSummary(); });
 watch(() => filters.value.status,              () => { filters.value.page = 1; fetchList(); });
+watch(() => filters.value.is_recurring,        () => { filters.value.page = 1; fetchList(); });
 watch(() => filters.value.from,                () => { filters.value.page = 1; fetchList(); fetchSummary(); });
 watch(() => filters.value.to,                  () => { filters.value.page = 1; fetchList(); fetchSummary(); });
 
@@ -239,6 +321,7 @@ async function fetchList() {
             search: debouncedSearch.value || undefined,
             expense_category_id: filters.value.expense_category_id || undefined,
             status: filters.value.status || undefined,
+            is_recurring: filters.value.is_recurring === '' ? undefined : filters.value.is_recurring,
             from: filters.value.from || undefined,
             to: filters.value.to || undefined,
         };
@@ -268,18 +351,14 @@ async function loadCategories() {
     try {
         const { data } = await expenseCategoryService.all();
         categories.value = data.data ?? [];
-    } catch {
-        categories.value = [];
-    }
+    } catch { categories.value = []; }
 }
 
 async function loadBranches() {
     try {
         const { data } = await branchService.all();
         branches.value = data.data ?? [];
-    } catch {
-        branches.value = [];
-    }
+    } catch { branches.value = []; }
 }
 
 function goToPage(p) {
@@ -302,6 +381,50 @@ function onSaved() {
     fetchSummary();
 }
 
+async function approveOne(e) {
+    const ok = await confirm({
+        title: t('expenses.approval.approveTitle'),
+        text:  t('expenses.approval.approveMessage', { number: e.expense_number }),
+        confirmText: t('expenses.approval.approve'),
+    });
+    if (!ok) return;
+    try {
+        await expenseService.approve(e.id);
+        toast('success', t('expenses.approval.approvedSuccess'));
+        onSaved();
+    } catch (err) {
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
+    }
+}
+
+function openReject(e) {
+    approvalMode.value = 'reject';
+    approvalTarget.value = e;
+    approvalOpen.value = true;
+}
+
+function openPay(e) {
+    approvalMode.value = 'pay';
+    approvalTarget.value = e;
+    approvalOpen.value = true;
+}
+
+async function reopenOne(e) {
+    const ok = await confirm({
+        title: t('expenses.approval.reopenTitle'),
+        text:  t('expenses.approval.reopenMessage', { number: e.expense_number }),
+        confirmText: t('expenses.approval.reopen'),
+    });
+    if (!ok) return;
+    try {
+        await expenseService.reopen(e.id);
+        toast('success', t('expenses.approval.reopenedSuccess'));
+        onSaved();
+    } catch (err) {
+        toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
+    }
+}
+
 async function confirmDelete(e) {
     const ok = await confirm({
         title: t('expenses.deleteTitle'),
@@ -313,8 +436,7 @@ async function confirmDelete(e) {
     try {
         await expenseService.destroy(e.id);
         toast('success', t('common.deletedSuccess'));
-        fetchList();
-        fetchSummary();
+        onSaved();
     } catch (err) {
         toast('error', err.response?.data?.message ?? t('common.unexpectedError'));
     }
@@ -330,6 +452,7 @@ onMounted(async () => {
 <style scoped>
 @reference '../../../css/app.css';
 .btn-primary { @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors shadow-sm; }
+.btn-soft    { @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm hover:bg-slate-50 transition-colors; }
 .action-btn  { @apply p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors inline-flex; }
 .th          { @apply px-4 py-2.5 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wide; }
 .td          { @apply px-4 py-2.5 align-middle; }

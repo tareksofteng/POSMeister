@@ -22,8 +22,12 @@ class StoreExpenseRequest extends FormRequest
             'expense_date'        => ['required', 'date'],
             'payment_method'      => ['required', 'in:cash,card,bank_transfer,cheque,other'],
             'reference_no'        => ['nullable', 'string', 'max:100'],
-            'status'              => ['nullable', 'in:pending,approved,paid,rejected'],
             'attachment'          => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
+
+            'is_recurring'        => ['nullable', 'boolean'],
+            'recurring_frequency' => ['nullable', 'required_if:is_recurring,1,true', 'in:weekly,monthly,yearly'],
+            'next_due_date'       => ['nullable', 'required_if:is_recurring,1,true', 'date'],
+            'recurring_end_date'  => ['nullable', 'date', 'after_or_equal:next_due_date'],
         ];
     }
 }

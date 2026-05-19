@@ -259,10 +259,11 @@ const NAV_GROUPS = [
                 permKey:     'expenses',
                 labelKey:    'menu.expenses',
                 icon:        ReceiptPercentIcon,
-                childRoutes: ['expenses', 'expense-categories'],
+                childRoutes: ['expenses', 'expense-categories', 'expense-reports'],
                 children: [
                     { labelKey: 'menu.expenseList',       to: { name: 'expenses' },           implemented: true },
                     { labelKey: 'menu.expenseCategories', to: { name: 'expense-categories' }, implemented: true },
+                    { labelKey: 'menu.expenseReports',    to: { name: 'expense-reports' },    implemented: true },
                 ],
             },
         ],

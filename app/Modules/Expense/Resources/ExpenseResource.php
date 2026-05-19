@@ -35,6 +35,25 @@ class ExpenseResource extends JsonResource
 
             'status'          => $this->status,
 
+            // Workflow trail
+            'approved_by'        => $this->approved_by,
+            'approved_at'        => $this->approved_at?->format('Y-m-d H:i'),
+            'approver_name'      => $this->whenLoaded('approver', fn() => $this->approver?->name),
+            'rejected_by'        => $this->rejected_by,
+            'rejected_at'        => $this->rejected_at?->format('Y-m-d H:i'),
+            'rejecter_name'      => $this->whenLoaded('rejecter', fn() => $this->rejecter?->name),
+            'rejection_reason'   => $this->rejection_reason,
+            'paid_by'            => $this->paid_by,
+            'paid_at'            => $this->paid_at?->format('Y-m-d H:i'),
+            'payer_name'         => $this->whenLoaded('payer', fn() => $this->payer?->name),
+
+            // Recurring
+            'is_recurring'        => (bool) $this->is_recurring,
+            'recurring_frequency' => $this->recurring_frequency,
+            'next_due_date'       => $this->next_due_date?->format('Y-m-d'),
+            'recurring_end_date'  => $this->recurring_end_date?->format('Y-m-d'),
+            'parent_expense_id'   => $this->parent_expense_id,
+
             'created_by_name' => $this->whenLoaded('creator', fn() => $this->creator?->name, '—'),
             'created_at'      => $this->created_at?->format('Y-m-d H:i'),
         ];

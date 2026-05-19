@@ -8,6 +8,7 @@ use App\Modules\Purchase\Controllers\PurchaseReturnController;
 use App\Modules\Purchase\Controllers\SupplierPaymentController;
 use App\Modules\Expense\Controllers\ExpenseCategoryController;
 use App\Modules\Expense\Controllers\ExpenseController as ExpenseModuleController;
+use App\Modules\Expense\Controllers\ExpenseReportsController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -160,11 +161,24 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::delete('expense-categories/{category}',        [ExpenseCategoryController::class, 'destroy']);
 
         Route::get('expenses/summary',                        [ExpenseModuleController::class, 'summary']);
+        Route::get('expenses/export.csv',                     [ExpenseModuleController::class, 'exportCsv']);
         Route::get('expenses',                                [ExpenseModuleController::class, 'index']);
         Route::post('expenses',                               [ExpenseModuleController::class, 'store']);
         Route::get('expenses/{expense}',                      [ExpenseModuleController::class, 'show']);
         Route::put('expenses/{expense}',                      [ExpenseModuleController::class, 'update']);
         Route::delete('expenses/{expense}',                   [ExpenseModuleController::class, 'destroy']);
+
+        Route::post('expenses/{expense}/approve',             [ExpenseModuleController::class, 'approve']);
+        Route::post('expenses/{expense}/reject',              [ExpenseModuleController::class, 'reject']);
+        Route::post('expenses/{expense}/mark-paid',           [ExpenseModuleController::class, 'markPaid']);
+        Route::post('expenses/{expense}/reopen',              [ExpenseModuleController::class, 'reopen']);
+        Route::get('expenses/{expense}/audit-log',            [ExpenseModuleController::class, 'auditLog']);
+
+        // Expense reports
+        Route::get('expense-reports/dashboard',               [ExpenseReportsController::class, 'dashboard']);
+        Route::get('expense-reports/category-breakdown',      [ExpenseReportsController::class, 'categoryBreakdown']);
+        Route::get('expense-reports/monthly-trend',           [ExpenseReportsController::class, 'monthlyTrend']);
+        Route::get('expense-reports/branch-breakdown',        [ExpenseReportsController::class, 'branchBreakdown']);
     });
 
     // ── Product Module ────────────────────────────────────────────────────
