@@ -351,6 +351,32 @@ const routes = [
                 component: () => import('@/views/expenses/ExpenseReportsView.vue'),
                 meta: { titleKey: 'menu.expenseReports', permission: 'expenses' },
             },
+
+            // Finance module
+            {
+                path: 'finance/budgets',
+                name: 'finance-budgets',
+                component: () => import('@/views/finance/BudgetListView.vue'),
+                meta: { titleKey: 'menu.budgets', permission: 'finance' },
+            },
+            {
+                path: 'finance/budgets/:id/analytics',
+                name: 'finance-budget-analytics',
+                component: () => import('@/views/finance/BudgetAnalyticsView.vue'),
+                meta: { titleKey: 'finance.analytics.title', permission: 'finance' },
+            },
+            {
+                path: 'finance/cashflow',
+                name: 'finance-cashflow',
+                component: () => import('@/views/finance/CashflowDashboardView.vue'),
+                meta: { titleKey: 'menu.cashflow', permission: 'finance' },
+            },
+            {
+                path: 'finance/calendar',
+                name: 'finance-calendar',
+                component: () => import('@/views/finance/FinancialCalendarView.vue'),
+                meta: { titleKey: 'menu.financialCalendar', permission: 'finance' },
+            },
         ],
     },
 

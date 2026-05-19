@@ -230,7 +230,20 @@ const NAV_GROUPS = [
     {
         sectionKey: 'menu.sections.financeHr',
         items: [
-            { permKey: 'finance',   labelKey: 'menu.finance',   to: { name: 'finance' },        icon: BanknotesIcon, implemented: false },
+            {
+                isGroup:     true,
+                permKey:     'finance',
+                labelKey:    'menu.finance',
+                icon:        BanknotesIcon,
+                childRoutes: [
+                    'finance-cashflow', 'finance-budgets', 'finance-budget-analytics', 'finance-calendar',
+                ],
+                children: [
+                    { labelKey: 'menu.cashflow',           to: { name: 'finance-cashflow' },  implemented: true },
+                    { labelKey: 'menu.budgets',            to: { name: 'finance-budgets' },   implemented: true },
+                    { labelKey: 'menu.financialCalendar',  to: { name: 'finance-calendar' },  implemented: true },
+                ],
+            },
             {
                 isGroup:     true,
                 permKey:     'hrm',

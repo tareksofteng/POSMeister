@@ -9,6 +9,11 @@ use App\Modules\Purchase\Controllers\SupplierPaymentController;
 use App\Modules\Expense\Controllers\ExpenseCategoryController;
 use App\Modules\Expense\Controllers\ExpenseController as ExpenseModuleController;
 use App\Modules\Expense\Controllers\ExpenseReportsController;
+use App\Modules\Finance\Controllers\BudgetAnalyticsController;
+use App\Modules\Finance\Controllers\BudgetController;
+use App\Modules\Finance\Controllers\CashflowController;
+use App\Modules\Finance\Controllers\FinancialAlertController;
+use App\Modules\Finance\Controllers\FinancialCalendarController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -179,6 +184,25 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::get('expense-reports/category-breakdown',      [ExpenseReportsController::class, 'categoryBreakdown']);
         Route::get('expense-reports/monthly-trend',           [ExpenseReportsController::class, 'monthlyTrend']);
         Route::get('expense-reports/branch-breakdown',        [ExpenseReportsController::class, 'branchBreakdown']);
+    });
+
+    // Finance module (admin + manager)
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('budgets',                          [BudgetController::class, 'index']);
+        Route::post('budgets',                         [BudgetController::class, 'store']);
+        Route::get('budgets/{budget}',                 [BudgetController::class, 'show']);
+        Route::put('budgets/{budget}',                 [BudgetController::class, 'update']);
+        Route::put('budgets/{budget}/status',          [BudgetController::class, 'setStatus']);
+        Route::post('budgets/{budget}/duplicate',      [BudgetController::class, 'duplicate']);
+        Route::delete('budgets/{budget}',              [BudgetController::class, 'destroy']);
+
+        Route::get('budgets/{budget}/analytics',       [BudgetAnalyticsController::class, 'show']);
+
+        Route::get('cashflow/dashboard',               [CashflowController::class, 'dashboard']);
+        Route::get('cashflow/forecast',                [CashflowController::class, 'forecast']);
+
+        Route::get('finance/alerts',                   [FinancialAlertController::class, 'index']);
+        Route::get('finance/calendar',                 [FinancialCalendarController::class, 'month']);
     });
 
     // ── Product Module ────────────────────────────────────────────────────
