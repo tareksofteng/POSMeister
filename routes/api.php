@@ -14,6 +14,7 @@ use App\Modules\Finance\Controllers\BudgetController;
 use App\Modules\Finance\Controllers\CashflowController;
 use App\Modules\Finance\Controllers\FinancialAlertController;
 use App\Modules\Finance\Controllers\FinancialCalendarController;
+use App\Modules\Finance\Controllers\FinancialDashboardController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -203,6 +204,15 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
         Route::get('finance/alerts',                   [FinancialAlertController::class, 'index']);
         Route::get('finance/calendar',                 [FinancialCalendarController::class, 'month']);
+
+        Route::get('finance/dashboard',                [FinancialDashboardController::class, 'dashboard']);
+        Route::get('finance/sales-trend',              [FinancialDashboardController::class, 'salesTrend']);
+        Route::get('finance/profit-analysis',          [FinancialDashboardController::class, 'profitAnalysis']);
+        Route::get('finance/branch-performance',       [FinancialDashboardController::class, 'branchPerformance']);
+        Route::get('finance/top-products',             [FinancialDashboardController::class, 'topProducts']);
+        Route::get('finance/top-customers',            [FinancialDashboardController::class, 'topCustomers']);
+        Route::get('finance/expense-breakdown',        [FinancialDashboardController::class, 'expenseBreakdown']);
+        Route::get('finance/inventory-insights',       [FinancialDashboardController::class, 'inventoryInsights']);
     });
 
     // ── Product Module ────────────────────────────────────────────────────

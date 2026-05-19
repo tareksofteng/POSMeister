@@ -236,9 +236,10 @@ const NAV_GROUPS = [
                 labelKey:    'menu.finance',
                 icon:        BanknotesIcon,
                 childRoutes: [
-                    'finance-cashflow', 'finance-budgets', 'finance-budget-analytics', 'finance-calendar',
+                    'finance-dashboard', 'finance-cashflow', 'finance-budgets', 'finance-budget-analytics', 'finance-calendar',
                 ],
                 children: [
+                    { labelKey: 'menu.financialDashboard', to: { name: 'finance-dashboard' }, implemented: true },
                     { labelKey: 'menu.cashflow',           to: { name: 'finance-cashflow' },  implemented: true },
                     { labelKey: 'menu.budgets',            to: { name: 'finance-budgets' },   implemented: true },
                     { labelKey: 'menu.financialCalendar',  to: { name: 'finance-calendar' },  implemented: true },

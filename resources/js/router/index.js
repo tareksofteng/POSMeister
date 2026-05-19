@@ -354,6 +354,12 @@ const routes = [
 
             // Finance module
             {
+                path: 'finance/dashboard',
+                name: 'finance-dashboard',
+                component: () => import('@/views/finance/FinancialDashboardView.vue'),
+                meta: { titleKey: 'menu.financialDashboard', permission: 'finance' },
+            },
+            {
                 path: 'finance/budgets',
                 name: 'finance-budgets',
                 component: () => import('@/views/finance/BudgetListView.vue'),

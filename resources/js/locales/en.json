@@ -53,6 +53,7 @@
     "expenseReports": "Reports & Analytics",
     "budgets": "Budgets",
     "cashflow": "Cashflow",
+    "financialDashboard": "Executive overview",
     "financialCalendar": "Financial calendar",
     "reports": "Reports",
     "ledgers": "Ledgers",
@@ -1812,6 +1813,85 @@
       "legend_highExpense": "High expense",
       "legend_payroll":     "Payroll period",
       "legend_budgetEnd":   "Budget end"
+    },
+    "dashboard": {
+      "title":    "Financial overview",
+      "subtitle": "Revenue, profit and operations at a glance",
+      "refresh":  "Refresh",
+      "empty":    "Nothing to show for this period",
+      "preset":   "Period",
+      "preset_thisMonth":   "This month",
+      "preset_lastMonth":   "Last month",
+      "preset_thisQuarter": "This quarter",
+      "preset_ytd":         "Year to date",
+      "preset_custom":      "Custom",
+      "greetingMorning": "Good morning",
+      "greetingDay":     "Hello",
+      "greetingEvening": "Good evening",
+      "kpi": {
+        "totalSales":      "Revenue",
+        "totalPurchases":  "Purchases",
+        "grossProfit":     "Gross profit",
+        "netProfit":       "Net profit",
+        "totalExpenses":   "Expenses",
+        "payroll":         "Payroll",
+        "inventoryValue":  "Stock value",
+        "receivables":     "Receivables",
+        "payables":        "Payables",
+        "revenueGrowth":   "Growth",
+        "margin":          "margin",
+        "vsPrevious":      "vs. previous period",
+        "unpaidInvoices":  "Unpaid invoices",
+        "unpaidSuppliers": "Unpaid to suppliers"
+      },
+      "salesTrend": {
+        "title":    "Revenue vs expenses",
+        "subtitle": "Monthly comparison for {year}",
+        "expenses": "Expenses"
+      },
+      "profit": {
+        "title":        "Profit analysis",
+        "revenue":      "Revenue",
+        "cogs":         "Cost of goods",
+        "gross_profit": "Gross profit",
+        "expenses":     "Operating expenses",
+        "payroll":      "Payroll",
+        "net_profit":   "Net profit",
+        "monthly":      "Monthly profit"
+      },
+      "branch": {
+        "title":  "Branch performance",
+        "branch": "Branch",
+        "profit": "Profit",
+        "margin": "Margin"
+      },
+      "topProducts": {
+        "title": "Top products",
+        "sold":  "sold"
+      },
+      "topCustomers": {
+        "title":    "Top customers",
+        "invoices": "invoices",
+        "open":     "Open"
+      },
+      "expenseBreakdown": {
+        "title": "Expenses by category"
+      },
+      "inventory": {
+        "title":        "Inventory snapshot",
+        "stockValue":   "Stock value",
+        "stockUnits":   "Units in stock",
+        "lowStock":     "Low stock",
+        "outOfStock":   "Out of stock",
+        "lowStockList": "Items below reorder level"
+      },
+      "quickActions": {
+        "title":          "Quick actions",
+        "budgets":        "Manage budgets",
+        "cashflow":       "Cashflow detail",
+        "calendar":       "Financial calendar",
+        "expenseReports": "Expense reports"
+      }
     }
   }
 }

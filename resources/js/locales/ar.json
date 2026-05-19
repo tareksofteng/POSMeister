@@ -53,6 +53,7 @@
     "expenseReports": "التقارير والتحليلات",
     "budgets": "الميزانيات",
     "cashflow": "التدفق النقدي",
+    "financialDashboard": "نظرة عامة تنفيذية",
     "financialCalendar": "التقويم المالي",
     "reports": "التقارير",
     "ledgers": "كشوف الحسابات",
@@ -1810,6 +1811,85 @@
       "legend_highExpense": "مصروف مرتفع",
       "legend_payroll":     "فترة رواتب",
       "legend_budgetEnd":   "نهاية ميزانية"
+    },
+    "dashboard": {
+      "title":    "النظرة المالية العامة",
+      "subtitle": "الإيرادات والأرباح والعمليات في لمحة",
+      "refresh":  "تحديث",
+      "empty":    "لا توجد بيانات في هذه الفترة",
+      "preset":   "الفترة",
+      "preset_thisMonth":   "هذا الشهر",
+      "preset_lastMonth":   "الشهر الماضي",
+      "preset_thisQuarter": "هذا الربع",
+      "preset_ytd":         "منذ بداية السنة",
+      "preset_custom":      "مخصص",
+      "greetingMorning": "صباح الخير",
+      "greetingDay":     "مرحبًا",
+      "greetingEvening": "مساء الخير",
+      "kpi": {
+        "totalSales":      "الإيرادات",
+        "totalPurchases":  "المشتريات",
+        "grossProfit":     "إجمالي الربح",
+        "netProfit":       "صافي الربح",
+        "totalExpenses":   "المصروفات",
+        "payroll":         "الرواتب",
+        "inventoryValue":  "قيمة المخزون",
+        "receivables":     "الذمم المدينة",
+        "payables":        "الذمم الدائنة",
+        "revenueGrowth":   "النمو",
+        "margin":          "هامش",
+        "vsPrevious":      "مقارنة بالفترة السابقة",
+        "unpaidInvoices":  "فواتير غير مدفوعة",
+        "unpaidSuppliers": "مستحق للموردين"
+      },
+      "salesTrend": {
+        "title":    "الإيرادات مقابل المصروفات",
+        "subtitle": "مقارنة شهرية {year}",
+        "expenses": "المصروفات"
+      },
+      "profit": {
+        "title":        "تحليل الربح",
+        "revenue":      "الإيرادات",
+        "cogs":         "تكلفة البضاعة",
+        "gross_profit": "إجمالي الربح",
+        "expenses":     "مصروفات تشغيلية",
+        "payroll":      "الرواتب",
+        "net_profit":   "صافي الربح",
+        "monthly":      "الربح الشهري"
+      },
+      "branch": {
+        "title":  "أداء الفروع",
+        "branch": "الفرع",
+        "profit": "الربح",
+        "margin": "الهامش"
+      },
+      "topProducts": {
+        "title": "أفضل المنتجات",
+        "sold":  "تم بيعها"
+      },
+      "topCustomers": {
+        "title":    "أفضل العملاء",
+        "invoices": "فواتير",
+        "open":     "مفتوح"
+      },
+      "expenseBreakdown": {
+        "title": "المصروفات حسب الفئة"
+      },
+      "inventory": {
+        "title":        "نظرة على المخزون",
+        "stockValue":   "قيمة المخزون",
+        "stockUnits":   "وحدات في المخزون",
+        "lowStock":     "مخزون منخفض",
+        "outOfStock":   "نفاد المخزون",
+        "lowStockList": "أصناف تحت مستوى إعادة الطلب"
+      },
+      "quickActions": {
+        "title":          "إجراءات سريعة",
+        "budgets":        "إدارة الميزانيات",
+        "cashflow":       "تفاصيل التدفق النقدي",
+        "calendar":       "التقويم المالي",
+        "expenseReports": "تقارير المصروفات"
+      }
     }
   }
 }

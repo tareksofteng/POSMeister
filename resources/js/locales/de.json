@@ -53,6 +53,7 @@
     "expenseReports": "Berichte & Analyse",
     "budgets": "Budgetplanung",
     "cashflow": "Cashflow",
+    "financialDashboard": "Geschäftsübersicht",
     "financialCalendar": "Finanzkalender",
     "reports": "Berichte",
     "ledgers": "Kontenblätter",
@@ -1812,6 +1813,85 @@
       "legend_highExpense": "Hohe Ausgabe",
       "legend_payroll":     "Lohnperiode",
       "legend_budgetEnd":   "Budget-Ende"
+    },
+    "dashboard": {
+      "title":    "Geschäftsübersicht",
+      "subtitle": "Umsatz, Gewinn und Operations auf einen Blick",
+      "refresh":  "Aktualisieren",
+      "empty":    "Keine Daten im gewählten Zeitraum",
+      "preset":   "Zeitraum",
+      "preset_thisMonth":   "Dieser Monat",
+      "preset_lastMonth":   "Letzter Monat",
+      "preset_thisQuarter": "Dieses Quartal",
+      "preset_ytd":         "Seit Jahresbeginn",
+      "preset_custom":      "Benutzerdefiniert",
+      "greetingMorning": "Guten Morgen",
+      "greetingDay":     "Hallo",
+      "greetingEvening": "Guten Abend",
+      "kpi": {
+        "totalSales":      "Umsatz",
+        "totalPurchases":  "Einkauf",
+        "grossProfit":     "Bruttogewinn",
+        "netProfit":       "Nettogewinn",
+        "totalExpenses":   "Ausgaben",
+        "payroll":         "Personalkosten",
+        "inventoryValue":  "Lagerwert",
+        "receivables":     "Forderungen",
+        "payables":        "Verbindlichkeiten",
+        "revenueGrowth":   "Wachstum",
+        "margin":          "Marge",
+        "vsPrevious":      "ggü. Vorperiode",
+        "unpaidInvoices":  "Offene Rechnungen",
+        "unpaidSuppliers": "Offen an Lieferanten"
+      },
+      "salesTrend": {
+        "title":    "Umsatz vs. Ausgaben",
+        "subtitle": "Monatlicher Vergleich {year}",
+        "expenses": "Ausgaben"
+      },
+      "profit": {
+        "title":        "Gewinnanalyse",
+        "revenue":      "Umsatz",
+        "cogs":         "Wareneinsatz",
+        "gross_profit": "Bruttogewinn",
+        "expenses":     "Betriebsausgaben",
+        "payroll":      "Personalkosten",
+        "net_profit":   "Nettogewinn",
+        "monthly":      "Monatlicher Gewinn"
+      },
+      "branch": {
+        "title":  "Filialleistung",
+        "branch": "Filiale",
+        "profit": "Gewinn",
+        "margin": "Marge"
+      },
+      "topProducts": {
+        "title": "Top-Produkte",
+        "sold":  "verkauft"
+      },
+      "topCustomers": {
+        "title":    "Top-Kunden",
+        "invoices": "Rechnungen",
+        "open":     "Offen"
+      },
+      "expenseBreakdown": {
+        "title": "Ausgaben nach Kategorie"
+      },
+      "inventory": {
+        "title":        "Lagerbestand",
+        "stockValue":   "Lagerwert",
+        "stockUnits":   "Einheiten im Lager",
+        "lowStock":     "Mindestbestand",
+        "outOfStock":   "Nicht verfügbar",
+        "lowStockList": "Artikel unter Meldebestand"
+      },
+      "quickActions": {
+        "title":          "Schnellzugriff",
+        "budgets":        "Budgets verwalten",
+        "cashflow":       "Cashflow-Details",
+        "calendar":       "Finanzkalender",
+        "expenseReports": "Ausgaben-Berichte"
+      }
     }
   }
 }

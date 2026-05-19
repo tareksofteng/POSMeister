@@ -23,3 +23,14 @@ export const financeAlertService = {
 export const financialCalendarService = {
     month: (params) => api.get('/finance/calendar', { params }),
 };
+
+export const financialDashboardService = {
+    dashboard:         (params = {}) => api.get('/finance/dashboard',           { params }),
+    salesTrend:        (params = {}) => api.get('/finance/sales-trend',         { params }),
+    profitAnalysis:    (params = {}) => api.get('/finance/profit-analysis',     { params }),
+    branchPerformance: (params = {}) => api.get('/finance/branch-performance',  { params }),
+    topProducts:       (params = {}) => api.get('/finance/top-products',        { params }),
+    topCustomers:      (params = {}) => api.get('/finance/top-customers',       { params }),
+    expenseBreakdown:  (params = {}) => api.get('/finance/expense-breakdown',   { params }),
+    inventoryInsights: (params = {}) => api.get('/finance/inventory-insights',  { params }),
+};

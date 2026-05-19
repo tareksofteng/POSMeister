@@ -42,6 +42,7 @@
     "expenseReports": "রিপোর্ট ও বিশ্লেষণ",
     "budgets": "বাজেট",
     "cashflow": "ক্যাশফ্লো",
+    "financialDashboard": "নির্বাহী সারসংক্ষেপ",
     "financialCalendar": "আর্থিক ক্যালেন্ডার",
     "reports": "প্রতিবেদন",
     "ledgers": "খাতা",
@@ -1810,6 +1811,85 @@
       "legend_highExpense": "উচ্চ খরচ",
       "legend_payroll":     "বেতন সময়কাল",
       "legend_budgetEnd":   "বাজেট সমাপ্তি"
+    },
+    "dashboard": {
+      "title":    "আর্থিক সারসংক্ষেপ",
+      "subtitle": "আয়, লাভ ও অপারেশনের সংক্ষিপ্ত চিত্র",
+      "refresh":  "রিফ্রেশ",
+      "empty":    "এই সময়সীমায় কোনো তথ্য নেই",
+      "preset":   "সময়সীমা",
+      "preset_thisMonth":   "এই মাস",
+      "preset_lastMonth":   "গত মাস",
+      "preset_thisQuarter": "এই কোয়ার্টার",
+      "preset_ytd":         "বছরের শুরু থেকে",
+      "preset_custom":      "কাস্টম",
+      "greetingMorning": "শুভ সকাল",
+      "greetingDay":     "হ্যালো",
+      "greetingEvening": "শুভ সন্ধ্যা",
+      "kpi": {
+        "totalSales":      "আয়",
+        "totalPurchases":  "ক্রয়",
+        "grossProfit":     "মোট মুনাফা",
+        "netProfit":       "নিট মুনাফা",
+        "totalExpenses":   "খরচ",
+        "payroll":         "বেতন খরচ",
+        "inventoryValue":  "স্টকের মূল্য",
+        "receivables":     "প্রাপ্য",
+        "payables":        "প্রদেয়",
+        "revenueGrowth":   "বৃদ্ধি",
+        "margin":          "মার্জিন",
+        "vsPrevious":      "পূর্ববর্তী সময়সীমার তুলনায়",
+        "unpaidInvoices":  "বাকি চালান",
+        "unpaidSuppliers": "সরবরাহকারীর বাকি"
+      },
+      "salesTrend": {
+        "title":    "আয় বনাম খরচ",
+        "subtitle": "{year} সালের মাসিক তুলনা",
+        "expenses": "খরচ"
+      },
+      "profit": {
+        "title":        "মুনাফা বিশ্লেষণ",
+        "revenue":      "আয়",
+        "cogs":         "পণ্যের খরচ",
+        "gross_profit": "মোট মুনাফা",
+        "expenses":     "অপারেটিং খরচ",
+        "payroll":      "বেতন",
+        "net_profit":   "নিট মুনাফা",
+        "monthly":      "মাসিক মুনাফা"
+      },
+      "branch": {
+        "title":  "শাখার কর্মক্ষমতা",
+        "branch": "শাখা",
+        "profit": "মুনাফা",
+        "margin": "মার্জিন"
+      },
+      "topProducts": {
+        "title": "শীর্ষ পণ্য",
+        "sold":  "বিক্রি"
+      },
+      "topCustomers": {
+        "title":    "শীর্ষ ক্রেতা",
+        "invoices": "চালান",
+        "open":     "বাকি"
+      },
+      "expenseBreakdown": {
+        "title": "ক্যাটাগরি অনুযায়ী খরচ"
+      },
+      "inventory": {
+        "title":        "স্টক পরিস্থিতি",
+        "stockValue":   "স্টকের মূল্য",
+        "stockUnits":   "স্টকে ইউনিট",
+        "lowStock":     "কম স্টক",
+        "outOfStock":   "স্টক শেষ",
+        "lowStockList": "রিঅর্ডার লেভেলের নিচের পণ্য"
+      },
+      "quickActions": {
+        "title":          "দ্রুত অ্যাকশন",
+        "budgets":        "বাজেট ব্যবস্থাপনা",
+        "cashflow":       "ক্যাশফ্লো বিস্তারিত",
+        "calendar":       "আর্থিক ক্যালেন্ডার",
+        "expenseReports": "খরচের প্রতিবেদন"
+      }
     }
   }
 }
