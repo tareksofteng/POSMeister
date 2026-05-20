@@ -463,6 +463,38 @@ const routes = [
                 component: () => import('@/views/accounting/BankAccountView.vue'),
                 meta: { titleKey: 'accounting.bank.title', permission: 'accounting' },
             },
+
+            // CRM module
+            {
+                path: 'crm',
+                name: 'crm-intelligence',
+                component: () => import('@/views/crm/CustomerIntelligenceView.vue'),
+                meta: { titleKey: 'crm.intelligence.title', permission: 'crm' },
+            },
+            {
+                path: 'crm/segments',
+                name: 'crm-segments',
+                component: () => import('@/views/crm/CustomerSegmentsView.vue'),
+                meta: { titleKey: 'crm.segments.pageTitle', permission: 'crm' },
+            },
+            {
+                path: 'crm/customers/:id',
+                name: 'crm-customer-profile',
+                component: () => import('@/views/crm/CustomerProfileView.vue'),
+                meta: { titleKey: 'crm.profile.title', permission: 'crm' },
+            },
+            {
+                path: 'crm/wallets',
+                name: 'crm-wallets',
+                component: () => import('@/views/crm/WalletTransactionsView.vue'),
+                meta: { titleKey: 'crm.wallet.recentTitle', permission: 'crm' },
+            },
+            {
+                path: 'crm/loyalty-settings',
+                name: 'crm-loyalty-settings',
+                component: () => import('@/views/crm/LoyaltySettingsView.vue'),
+                meta: { titleKey: 'crm.loyaltySettings.title', permission: 'crm' },
+            },
         ],
     },
 

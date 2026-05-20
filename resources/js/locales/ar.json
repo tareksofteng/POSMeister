@@ -55,6 +55,11 @@
     "cashflow": "التدفق النقدي",
     "financialDashboard": "نظرة عامة تنفيذية",
     "financialCalendar": "التقويم المالي",
+    "crm":                "علاقات العملاء",
+    "crmIntelligence":    "تحليلات العملاء",
+    "crmSegments":        "شرائح العملاء",
+    "crmWallets":         "نشاط المحفظة",
+    "crmLoyalty":         "برنامج الولاء",
     "stockOverview":         "نظرة على المخزون",
     "inventoryIntelligence": "ذكاء المخزون",
     "reorderSuggestions":    "اقتراحات إعادة الطلب",
@@ -2198,6 +2203,108 @@
       "outstanding":  "المستحق",
       "leadTime":     "مدة التوريد",
       "lastPurchase": "آخر شراء"
+    }
+  },
+  "crm": {
+    "module": "علاقات العملاء",
+    "nav": {
+      "intelligence":    "تحليلات",
+      "segments":        "شرائح",
+      "wallets":         "محافظ",
+      "loyaltySettings": "إعدادات الولاء",
+      "customers":       "قائمة العملاء"
+    },
+    "fields": {
+      "customer":      "العميل",
+      "contact":       "بيانات الاتصال",
+      "tier":          "المستوى",
+      "visits":        "زيارات",
+      "lifetimeSpent": "إنفاق العمر",
+      "lastVisit":     "آخر زيارة",
+      "dateTime":      "التاريخ والوقت",
+      "dob":           "تاريخ الميلاد"
+    },
+    "kpi": {
+      "active":         "العملاء النشطون",
+      "newMonth":       "جدد هذا الشهر",
+      "repeatPct":      "نسبة المتكررين",
+      "aov":            "متوسط قيمة الطلب",
+      "clv":            "متوسط قيمة العمر",
+      "inactive":       "عملاء غير نشطين",
+      "recentOrders":   "الطلبات الأخيرة",
+      "recentRevenue":  "الإيرادات الأخيرة",
+      "pointsOut":      "النقاط القائمة",
+      "points":         "نقاط الولاء",
+      "liability":      "التزام الولاء"
+    },
+    "intelligence": {
+      "title":         "تحليلات العملاء",
+      "subtitle":      "نظرة حية على قاعدة العملاء والاحتفاظ وقيمة الولاء",
+      "topSpending":   "العملاء الأكثر إنفاقًا",
+      "quickActions":  "إجراءات سريعة"
+    },
+    "segments": {
+      "title":          "شرائح العملاء",
+      "pageTitle":      "شرائح العملاء",
+      "pageSubtitle":   "تصنيف تلقائي حسب السلوك والولاء",
+      "vip":            "VIP",
+      "inactive":       "غير نشط",
+      "churn_risk":     "مخاطر الانسحاب",
+      "discount_sensitive": "حساس للخصومات",
+      "high_frequency": "زيارات متكررة",
+      "never":          "أبدًا",
+      "empty":          "لا عملاء في هذه الشريحة"
+    },
+    "profile": {
+      "title":    "ملف العميل",
+      "timeline": "سجل الأنشطة",
+      "empty":    "لا توجد أنشطة بعد"
+    },
+    "behavior": {
+      "visits":         "إجمالي الزيارات",
+      "avgBasket":      "متوسط السلة",
+      "lifetimeRev":    "إيرادات العمر",
+      "visitsPerMonth": "زيارات / شهر",
+      "favourites":     "المنتجات المفضلة",
+      "category":       "الفئة المفضلة"
+    },
+    "loyalty": {
+      "balance":      "رصيد النقاط",
+      "value":        "القيمة القابلة للاسترداد",
+      "tierProgress": "تقدم المستوى",
+      "toNext":       "أنفق {amount} للوصول إلى {tier}"
+    },
+    "loyaltySettings": {
+      "title":          "إعدادات برنامج الولاء",
+      "subtitle":       "تكوين نسب الكسب والاسترداد وحدود المستويات",
+      "general":        "عام",
+      "enable":         "تفعيل برنامج الولاء",
+      "earnPer":        "نقاط لكل وحدة عملة",
+      "earnHint":       "مثال: 1 = نقطة واحدة لكل 1 €",
+      "redeemRatio":    "نقاط مقابل وحدة عملة",
+      "redeemHint":     "مثال: 100 = 100 نقطة تساوي 1 €",
+      "minRedeem":      "الحد الأدنى للاسترداد",
+      "tierThresholds": "حدود المستويات",
+      "minSpend":       "أدنى إنفاق عمري",
+      "discountPct":    "خصم المستوى %",
+      "autoDowngrade":  "السماح بالتنزيل التلقائي"
+    },
+    "wallet": {
+      "balance":      "المحفظة",
+      "recentTitle":  "نشاط المحفظة",
+      "recentSubtitle":"آخر حركات المحافظ عبر الفروع",
+      "type":         "النوع",
+      "note":         "ملاحظة",
+      "amount":       "المبلغ",
+      "empty":        "لا توجد حركات",
+      "types": {
+        "credit":   "إيداع",
+        "debit":    "سحب",
+        "refund":   "استرداد",
+        "cashback": "كاش باك",
+        "deposit":  "إيداع",
+        "adjust":   "تعديل"
+      }
     }
   }
 }

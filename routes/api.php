@@ -24,6 +24,11 @@ use App\Modules\Inventory\Controllers\InventoryAnalyticsController;
 use App\Modules\Inventory\Controllers\InventoryIntelligenceController;
 use App\Modules\Inventory\Controllers\ProcurementController;
 use App\Modules\Inventory\Controllers\SupplierAnalyticsController;
+use App\Modules\CRM\Controllers\CampaignController;
+use App\Modules\CRM\Controllers\CustomerIntelligenceController;
+use App\Modules\CRM\Controllers\LoyaltyController;
+use App\Modules\CRM\Controllers\LoyaltySettingsController;
+use App\Modules\CRM\Controllers\WalletController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -287,6 +292,51 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::prefix('supplier-analytics')->group(function () {
             Route::get('leaderboard',     [SupplierAnalyticsController::class, 'leaderboard']);
             Route::get('{supplierId}',    [SupplierAnalyticsController::class, 'show']);
+        });
+    });
+
+    // CRM: Loyalty, Wallets, Customer Intelligence, Campaigns
+    Route::middleware('role:admin,manager')->group(function () {
+
+        // Customer intelligence + segments + per-customer profile
+        Route::prefix('customer-intelligence')->group(function () {
+            Route::get('dashboard',                  [CustomerIntelligenceController::class, 'dashboard']);
+            Route::get('segments',                   [CustomerIntelligenceController::class, 'segments']);
+            Route::get('segments/{name}',            [CustomerIntelligenceController::class, 'segmentList']);
+            Route::get('customers/{customer}/profile',  [CustomerIntelligenceController::class, 'profile']);
+            Route::get('customers/{customer}/behavior', [CustomerIntelligenceController::class, 'behavior']);
+        });
+
+        // Loyalty programme
+        Route::prefix('loyalty')->group(function () {
+            Route::get('settings',                              [LoyaltySettingsController::class, 'show']);
+            Route::put('settings',                              [LoyaltySettingsController::class, 'update']);
+            Route::get('customers/{customer}/summary',          [LoyaltyController::class, 'summary']);
+            Route::get('customers/{customer}/transactions',     [LoyaltyController::class, 'transactions']);
+            Route::post('customers/{customer}/adjust',          [LoyaltyController::class, 'adjust']);
+            Route::post('customers/{customer}/redeem',          [LoyaltyController::class, 'redeem']);
+        });
+
+        // Customer wallets
+        Route::prefix('customer-wallets')->group(function () {
+            Route::get('recent',                                [WalletController::class, 'recentAll']);
+            Route::get('customers/{customer}/summary',          [WalletController::class, 'summary']);
+            Route::put('customers/{customer}/settings',         [WalletController::class, 'settings']);
+            Route::get('customers/{customer}/transactions',     [WalletController::class, 'transactions']);
+            Route::post('customers/{customer}/credit',          [WalletController::class, 'credit']);
+            Route::post('customers/{customer}/debit',           [WalletController::class, 'debit']);
+            Route::post('customers/{customer}/adjust',          [WalletController::class, 'adjust']);
+        });
+
+        // Campaign foundation (channels not yet wired — queue-ready only)
+        Route::prefix('crm/campaigns')->group(function () {
+            Route::get('/',                       [CampaignController::class, 'index']);
+            Route::post('/',                      [CampaignController::class, 'store']);
+            Route::put('{campaign}',              [CampaignController::class, 'update']);
+            Route::post('{campaign}/schedule',    [CampaignController::class, 'schedule']);
+            Route::post('{campaign}/queue',       [CampaignController::class, 'queueDispatch']);
+            Route::post('{campaign}/cancel',      [CampaignController::class, 'cancel']);
+            Route::get('{campaign}/preview',      [CampaignController::class, 'preview']);
         });
     });
 

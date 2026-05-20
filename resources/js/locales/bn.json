@@ -44,6 +44,11 @@
     "cashflow": "ক্যাশফ্লো",
     "financialDashboard": "নির্বাহী সারসংক্ষেপ",
     "financialCalendar": "আর্থিক ক্যালেন্ডার",
+    "crm":                "কাস্টমার রিলেশন্স",
+    "crmIntelligence":    "কাস্টমার বিশ্লেষণ",
+    "crmSegments":        "কাস্টমার সেগমেন্ট",
+    "crmWallets":         "ওয়ালেট কার্যক্রম",
+    "crmLoyalty":         "লয়্যালটি প্রোগ্রাম",
     "stockOverview":         "স্টক সারসংক্ষেপ",
     "inventoryIntelligence": "ইনভেন্টরি ইন্টেলিজেন্স",
     "reorderSuggestions":    "রি-অর্ডার সাজেশন",
@@ -2198,6 +2203,108 @@
       "outstanding":  "বাকি",
       "leadTime":     "লিড টাইম",
       "lastPurchase": "শেষ ক্রয়"
+    }
+  },
+  "crm": {
+    "module": "কাস্টমার রিলেশন্স",
+    "nav": {
+      "intelligence":    "বিশ্লেষণ",
+      "segments":        "সেগমেন্ট",
+      "wallets":         "ওয়ালেট",
+      "loyaltySettings": "লয়্যালটি সেটিংস",
+      "customers":       "ক্রেতার তালিকা"
+    },
+    "fields": {
+      "customer":      "ক্রেতা",
+      "contact":       "যোগাযোগ",
+      "tier":          "স্তর",
+      "visits":        "ভিজিট",
+      "lifetimeSpent": "মোট খরচ",
+      "lastVisit":     "শেষ ভিজিট",
+      "dateTime":      "তারিখ ও সময়",
+      "dob":           "জন্মদিন"
+    },
+    "kpi": {
+      "active":         "সক্রিয় ক্রেতা",
+      "newMonth":       "এই মাসে নতুন",
+      "repeatPct":      "পুনরাবৃত্ত ক্রেতা %",
+      "aov":            "গড় অর্ডার মূল্য",
+      "clv":            "গড় লাইফটাইম মূল্য",
+      "inactive":       "নিষ্ক্রিয় ক্রেতা",
+      "recentOrders":   "সাম্প্রতিক অর্ডার",
+      "recentRevenue":  "সাম্প্রতিক আয়",
+      "pointsOut":      "অবশিষ্ট পয়েন্ট",
+      "points":         "লয়্যালটি পয়েন্ট",
+      "liability":      "লয়্যালটি দায়"
+    },
+    "intelligence": {
+      "title":         "কাস্টমার বিশ্লেষণ",
+      "subtitle":      "ক্রেতা ভিত্তি, রিটেনশন এবং লয়্যালটির লাইভ সারসংক্ষেপ",
+      "topSpending":   "সর্বোচ্চ খরচকারী ক্রেতা",
+      "quickActions":  "দ্রুত অ্যাকশন"
+    },
+    "segments": {
+      "title":          "ক্রেতা সেগমেন্ট",
+      "pageTitle":      "ক্রেতা সেগমেন্ট",
+      "pageSubtitle":   "আচরণ ও লয়্যালটি অনুযায়ী স্বয়ংক্রিয় শ্রেণীবিভাগ",
+      "vip":            "VIP",
+      "inactive":       "নিষ্ক্রিয়",
+      "churn_risk":     "ছেড়ে যাওয়ার ঝুঁকি",
+      "discount_sensitive": "ডিসকাউন্ট প্রিয়",
+      "high_frequency": "ঘন ঘন ক্রেতা",
+      "never":          "কখনো না",
+      "empty":          "এই সেগমেন্টে কোনো ক্রেতা নেই"
+    },
+    "profile": {
+      "title":    "ক্রেতার প্রোফাইল",
+      "timeline": "কার্যকলাপের সময়রেখা",
+      "empty":    "এখনো কোনো কার্যকলাপ নেই"
+    },
+    "behavior": {
+      "visits":         "মোট ভিজিট",
+      "avgBasket":      "গড় বাস্কেট",
+      "lifetimeRev":    "লাইফটাইম আয়",
+      "visitsPerMonth": "ভিজিট / মাস",
+      "favourites":     "পছন্দের পণ্য",
+      "category":       "পছন্দের ক্যাটাগরি"
+    },
+    "loyalty": {
+      "balance":      "পয়েন্ট ব্যালেন্স",
+      "value":        "ব্যবহারযোগ্য মূল্য",
+      "tierProgress": "টিয়ার অগ্রগতি",
+      "toNext":       "{tier} পেতে আরও {amount} খরচ করুন"
+    },
+    "loyaltySettings": {
+      "title":          "লয়্যালটি প্রোগ্রাম সেটিংস",
+      "subtitle":       "অর্জন, রিডেম্পশন ও টিয়ার থ্রেশহোল্ড কনফিগার করুন",
+      "general":        "সাধারণ",
+      "enable":         "লয়্যালটি প্রোগ্রাম সক্রিয়",
+      "earnPer":        "প্রতি মুদ্রা ইউনিটে পয়েন্ট",
+      "earnHint":       "উদাহরণ: 1 = প্রতি ১ €-তে ১ পয়েন্ট",
+      "redeemRatio":    "১ মুদ্রা ইউনিটের জন্য পয়েন্ট",
+      "redeemHint":     "উদাহরণ: 100 = ১০০ পয়েন্ট = ১ €",
+      "minRedeem":      "ন্যূনতম রিডেম্পশন",
+      "tierThresholds": "টিয়ার থ্রেশহোল্ড",
+      "minSpend":       "ন্যূনতম লাইফটাইম খরচ",
+      "discountPct":    "টিয়ার ডিসকাউন্ট %",
+      "autoDowngrade":  "স্বয়ংক্রিয় ডাউনগ্রেড অনুমতি দিন"
+    },
+    "wallet": {
+      "balance":      "ওয়ালেট",
+      "recentTitle":  "ওয়ালেট কার্যক্রম",
+      "recentSubtitle":"সকল শাখার সাম্প্রতিক ওয়ালেট লেনদেন",
+      "type":         "ধরন",
+      "note":         "নোট",
+      "amount":       "পরিমাণ",
+      "empty":        "এখনো কোনো ওয়ালেট লেনদেন নেই",
+      "types": {
+        "credit":   "ক্রেডিট",
+        "debit":    "ডেবিট",
+        "refund":   "রিফান্ড",
+        "cashback": "ক্যাশব্যাক",
+        "deposit":  "জমা",
+        "adjust":   "সংশোধন"
+      }
     }
   }
 }

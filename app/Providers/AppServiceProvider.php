@@ -8,6 +8,7 @@ use App\Modules\Accounting\Observers\PayslipAccountingObserver;
 use App\Modules\Accounting\Observers\PurchaseAccountingObserver;
 use App\Modules\Accounting\Observers\SaleAccountingObserver;
 use App\Modules\Accounting\Observers\SupplierPaymentAccountingObserver;
+use App\Modules\CRM\Observers\SaleLoyaltyObserver;
 use App\Modules\Expense\Models\Expense;
 use App\Modules\HRM\Models\Payslip;
 use App\Modules\Purchase\Models\Purchase;
@@ -33,5 +34,8 @@ class AppServiceProvider extends ServiceProvider
         Payslip::observe(PayslipAccountingObserver::class);
         CustomerPayment::observe(CustomerPaymentAccountingObserver::class);
         SupplierPayment::observe(SupplierPaymentAccountingObserver::class);
+
+        // Loyalty engine — awards points on completed sales.
+        Sale::observe(SaleLoyaltyObserver::class);
     }
 }

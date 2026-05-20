@@ -55,6 +55,11 @@
     "cashflow": "Cashflow",
     "financialDashboard": "Geschäftsübersicht",
     "financialCalendar": "Finanzkalender",
+    "crm":                "Kundenbindung",
+    "crmIntelligence":    "Kundenanalyse",
+    "crmSegments":        "Kundensegmente",
+    "crmWallets":         "Wallet-Aktivitäten",
+    "crmLoyalty":         "Treueprogramm",
     "stockOverview":         "Lagerübersicht",
     "inventoryIntelligence": "Lagerintelligenz",
     "reorderSuggestions":    "Nachbestellung",
@@ -2200,6 +2205,108 @@
       "outstanding":  "Offen",
       "leadTime":     "Lieferzeit",
       "lastPurchase": "Letzter Einkauf"
+    }
+  },
+  "crm": {
+    "module": "Kundenbindung",
+    "nav": {
+      "intelligence":    "Kundenanalyse",
+      "segments":        "Segmente",
+      "wallets":         "Wallets",
+      "loyaltySettings": "Treueprogramm",
+      "customers":       "Kundenliste"
+    },
+    "fields": {
+      "customer":      "Kunde",
+      "contact":       "Kontakt",
+      "tier":          "Stufe",
+      "visits":        "Besuche",
+      "lifetimeSpent": "Lebensumsatz",
+      "lastVisit":     "Letzter Besuch",
+      "dateTime":      "Datum / Uhrzeit",
+      "dob":           "Geburtstag"
+    },
+    "kpi": {
+      "active":         "Aktive Kunden",
+      "newMonth":       "Neu diesen Monat",
+      "repeatPct":      "Stammkunden-Anteil",
+      "aov":            "Durchschn. Bonwert",
+      "clv":            "Durchschn. Kundenwert",
+      "inactive":       "Inaktive Kunden",
+      "recentOrders":   "Letzte Aufträge",
+      "recentRevenue":  "Letzte Umsätze",
+      "pointsOut":      "Ausstehende Punkte",
+      "points":         "Treuepunkte",
+      "liability":      "Treueverbindlichkeit"
+    },
+    "intelligence": {
+      "title":         "Kundenanalyse",
+      "subtitle":      "Live-Übersicht von Kundenstamm, Bindung und Treuewert",
+      "topSpending":   "Top-umsatzstärkste Kunden",
+      "quickActions":  "Schnellzugriff"
+    },
+    "segments": {
+      "title":          "Kundensegmente",
+      "pageTitle":      "Kundensegmente",
+      "pageSubtitle":   "Automatisch klassifiziert nach Verhalten und Treuestufe",
+      "vip":            "VIP",
+      "inactive":       "Inaktive Kunden",
+      "churn_risk":     "Abwanderungsrisiko",
+      "discount_sensitive": "Preissensibel",
+      "high_frequency": "Häufige Käufer",
+      "never":          "Nie",
+      "empty":          "Keine Kunden in diesem Segment"
+    },
+    "profile": {
+      "title":    "Kundenprofil",
+      "timeline": "Aktivitätsverlauf",
+      "empty":    "Noch keine Aktivität"
+    },
+    "behavior": {
+      "visits":         "Gesamtbesuche",
+      "avgBasket":      "Durchschn. Warenkorb",
+      "lifetimeRev":    "Lebensumsatz",
+      "visitsPerMonth": "Besuche / Monat",
+      "favourites":     "Lieblingsartikel",
+      "category":       "Lieblingskategorie"
+    },
+    "loyalty": {
+      "balance":      "Punktestand",
+      "value":        "Einlösbarer Wert",
+      "tierProgress": "Stufen-Fortschritt",
+      "toNext":       "Noch {amount} bis Stufe {tier}"
+    },
+    "loyaltySettings": {
+      "title":          "Treueprogramm-Einstellungen",
+      "subtitle":       "Sammlung, Einlösung und Stufenschwellen konfigurieren",
+      "general":        "Allgemein",
+      "enable":         "Treueprogramm aktivieren",
+      "earnPer":        "Punkte pro Währungseinheit",
+      "earnHint":       "Beispiel: 1 = ein Punkt pro 1 €",
+      "redeemRatio":    "Punkte für 1 Währungseinheit",
+      "redeemHint":     "Beispiel: 100 = 100 Punkte entsprechen 1 €",
+      "minRedeem":      "Mindest-Einlösung (Punkte)",
+      "tierThresholds": "Stufen-Schwellen",
+      "minSpend":       "Mindest-Lebensumsatz",
+      "discountPct":    "Stufen-Rabatt %",
+      "autoDowngrade":  "Automatische Herabstufung erlauben"
+    },
+    "wallet": {
+      "balance":      "Wallet",
+      "recentTitle":  "Wallet-Aktivitäten",
+      "recentSubtitle":"Letzte Wallet-Bewegungen aller Kunden, filial-übergreifend",
+      "type":         "Typ",
+      "note":         "Notiz",
+      "amount":       "Betrag",
+      "empty":        "Noch keine Wallet-Buchungen",
+      "types": {
+        "credit":   "Gutschrift",
+        "debit":    "Belastung",
+        "refund":   "Erstattung",
+        "cashback": "Cashback",
+        "deposit":  "Einzahlung",
+        "adjust":   "Korrektur"
+      }
     }
   }
 }

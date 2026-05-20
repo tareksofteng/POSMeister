@@ -285,6 +285,22 @@ const NAV_GROUPS = [
             },
             {
                 isGroup:     true,
+                permKey:     'crm',
+                labelKey:    'menu.crm',
+                icon:        UserGroupIcon,
+                childRoutes: [
+                    'crm-intelligence', 'crm-segments', 'crm-customer-profile',
+                    'crm-wallets', 'crm-loyalty-settings',
+                ],
+                children: [
+                    { labelKey: 'menu.crmIntelligence',  to: { name: 'crm-intelligence' },     implemented: true },
+                    { labelKey: 'menu.crmSegments',      to: { name: 'crm-segments' },         implemented: true },
+                    { labelKey: 'menu.crmWallets',       to: { name: 'crm-wallets' },          implemented: true },
+                    { labelKey: 'menu.crmLoyalty',       to: { name: 'crm-loyalty-settings' }, implemented: true },
+                ],
+            },
+            {
+                isGroup:     true,
                 permKey:     'hrm',
                 labelKey:    'menu.hrm',
                 icon:        UserGroupIcon,

@@ -55,6 +55,11 @@
     "cashflow": "Cashflow",
     "financialDashboard": "Executive overview",
     "financialCalendar": "Financial calendar",
+    "crm":                "Customer relations",
+    "crmIntelligence":    "Customer intelligence",
+    "crmSegments":        "Segments",
+    "crmWallets":         "Wallet activity",
+    "crmLoyalty":         "Loyalty programme",
     "stockOverview":         "Stock overview",
     "inventoryIntelligence": "Inventory intelligence",
     "reorderSuggestions":    "Reorder suggestions",
@@ -2200,6 +2205,108 @@
       "outstanding":  "Outstanding",
       "leadTime":     "Lead time",
       "lastPurchase": "Last purchase"
+    }
+  },
+  "crm": {
+    "module": "Customer Relations",
+    "nav": {
+      "intelligence":    "Intelligence",
+      "segments":        "Segments",
+      "wallets":         "Wallets",
+      "loyaltySettings": "Loyalty settings",
+      "customers":       "Customer list"
+    },
+    "fields": {
+      "customer":      "Customer",
+      "contact":       "Contact",
+      "tier":          "Tier",
+      "visits":        "Visits",
+      "lifetimeSpent": "Lifetime spent",
+      "lastVisit":     "Last visit",
+      "dateTime":      "Date / time",
+      "dob":           "Birthday"
+    },
+    "kpi": {
+      "active":         "Active customers",
+      "newMonth":       "New this month",
+      "repeatPct":      "Repeat customers",
+      "aov":            "Avg. order value",
+      "clv":            "Avg. lifetime value",
+      "inactive":       "Inactive customers",
+      "recentOrders":   "Recent orders",
+      "recentRevenue":  "Recent revenue",
+      "pointsOut":      "Points outstanding",
+      "points":         "loyalty points",
+      "liability":      "Loyalty liability"
+    },
+    "intelligence": {
+      "title":         "Customer intelligence",
+      "subtitle":      "Live snapshot of your customer base, retention and loyalty value",
+      "topSpending":   "Top spending customers",
+      "quickActions":  "Quick actions"
+    },
+    "segments": {
+      "title":          "Customer segments",
+      "pageTitle":      "Customer segments",
+      "pageSubtitle":   "Automatically classified by behaviour and loyalty",
+      "vip":            "VIP",
+      "inactive":       "Inactive",
+      "churn_risk":     "Churn risk",
+      "discount_sensitive": "Discount-sensitive",
+      "high_frequency": "High frequency",
+      "never":          "Never",
+      "empty":          "No customers in this segment"
+    },
+    "profile": {
+      "title":    "Customer profile",
+      "timeline": "Activity timeline",
+      "empty":    "No activity recorded yet"
+    },
+    "behavior": {
+      "visits":         "Total visits",
+      "avgBasket":      "Avg. basket",
+      "lifetimeRev":    "Lifetime revenue",
+      "visitsPerMonth": "Visits / month",
+      "favourites":     "Favourite products",
+      "category":       "Favourite category"
+    },
+    "loyalty": {
+      "balance":      "Points balance",
+      "value":        "Redeemable value",
+      "tierProgress": "Tier progress",
+      "toNext":       "Spend {amount} more to reach {tier}"
+    },
+    "loyaltySettings": {
+      "title":          "Loyalty programme settings",
+      "subtitle":       "Configure earn ratio, redemption and tier thresholds",
+      "general":        "General",
+      "enable":         "Enable loyalty programme",
+      "earnPer":        "Points earned per currency unit",
+      "earnHint":       "Example: 1 = one point per €1 spent",
+      "redeemRatio":    "Points needed for 1 currency unit",
+      "redeemHint":     "Example: 100 = 100 points worth €1",
+      "minRedeem":      "Minimum redemption (points)",
+      "tierThresholds": "Tier thresholds",
+      "minSpend":       "Min. lifetime spend",
+      "discountPct":    "Tier discount %",
+      "autoDowngrade":  "Auto-downgrade customers if lifetime spend drops"
+    },
+    "wallet": {
+      "balance":      "Wallet",
+      "recentTitle":  "Wallet activity",
+      "recentSubtitle":"Recent customer wallet transactions across all branches",
+      "type":         "Type",
+      "note":         "Note",
+      "amount":       "Amount",
+      "empty":        "No wallet transactions yet",
+      "types": {
+        "credit":   "Credit",
+        "debit":    "Debit",
+        "refund":   "Refund",
+        "cashback": "Cashback",
+        "deposit":  "Deposit",
+        "adjust":   "Adjustment"
+      }
     }
   }
 }

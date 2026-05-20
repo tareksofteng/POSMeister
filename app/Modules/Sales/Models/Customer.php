@@ -12,14 +12,35 @@ class Customer extends Model
     use HasAuditFields, SoftDeletes;
 
     protected $fillable = [
-        'code', 'name', 'phone', 'email', 'address',
+        'code', 'name', 'phone', 'email', 'date_of_birth', 'address',
         'customer_type', 'credit_limit', 'is_active', 'branch_id',
     ];
 
     protected $casts = [
-        'credit_limit' => 'decimal:2',
-        'is_active'    => 'boolean',
+        'date_of_birth' => 'date',
+        'credit_limit'  => 'decimal:2',
+        'is_active'     => 'boolean',
     ];
+
+    public function loyaltyProfile()
+    {
+        return $this->hasOne(\App\Modules\CRM\Models\CustomerLoyaltyProfile::class);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(\App\Modules\CRM\Models\CustomerWallet::class);
+    }
+
+    public function loyaltyTransactions()
+    {
+        return $this->hasMany(\App\Modules\CRM\Models\LoyaltyTransaction::class);
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasMany(\App\Modules\CRM\Models\WalletTransaction::class);
+    }
 
     public function sales(): HasMany
     {
