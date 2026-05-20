@@ -195,7 +195,23 @@ const NAV_GROUPS = [
         items: [
             { permKey: 'products',  labelKey: 'menu.products',        to: { name: 'products' },         icon: TagIcon,        implemented: true  },
             { permKey: 'products',  labelKey: 'menu.productSettings', to: { name: 'product-settings' }, icon: CogIcon,        implemented: true  },
-            { permKey: 'inventory', labelKey: 'menu.inventory',       to: { name: 'inventory' },        icon: ArchiveBoxIcon, implemented: true  },
+            {
+                isGroup:     true,
+                permKey:     'inventory',
+                labelKey:    'menu.inventory',
+                icon:        ArchiveBoxIcon,
+                childRoutes: [
+                    'inventory', 'inventory-intelligence', 'inventory-reorder',
+                    'inventory-dead-stock', 'inventory-analytics',
+                ],
+                children: [
+                    { labelKey: 'menu.stockOverview',          to: { name: 'inventory' },              implemented: true },
+                    { labelKey: 'menu.inventoryIntelligence', to: { name: 'inventory-intelligence' }, implemented: true },
+                    { labelKey: 'menu.reorderSuggestions',    to: { name: 'inventory-reorder' },      implemented: true },
+                    { labelKey: 'menu.deadStock',             to: { name: 'inventory-dead-stock' },   implemented: true },
+                    { labelKey: 'menu.inventoryAnalytics',    to: { name: 'inventory-analytics' },    implemented: true },
+                ],
+            },
         ],
     },
     {

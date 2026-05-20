@@ -20,6 +20,10 @@ use App\Modules\Accounting\Controllers\BankAccountController;
 use App\Modules\Accounting\Controllers\CashbookController;
 use App\Modules\Accounting\Controllers\ChartOfAccountController;
 use App\Modules\Accounting\Controllers\JournalEntryController;
+use App\Modules\Inventory\Controllers\InventoryAnalyticsController;
+use App\Modules\Inventory\Controllers\InventoryIntelligenceController;
+use App\Modules\Inventory\Controllers\ProcurementController;
+use App\Modules\Inventory\Controllers\SupplierAnalyticsController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -256,6 +260,34 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::post('cashbooks',                 [CashbookController::class, 'store']);
         Route::put('cashbooks/{cashbook}',       [CashbookController::class, 'update']);
         Route::delete('cashbooks/{cashbook}',    [CashbookController::class, 'destroy']);
+    });
+
+    // Inventory Intelligence + Procurement (admin + manager)
+    Route::middleware('role:admin,manager')->group(function () {
+
+        Route::prefix('inventory-intelligence')->group(function () {
+            Route::get('dashboard',     [InventoryIntelligenceController::class, 'dashboard']);
+            Route::get('movement',      [InventoryIntelligenceController::class, 'movement']);
+            Route::get('dead-stock',    [InventoryIntelligenceController::class, 'deadStock']);
+            Route::get('aging',         [InventoryIntelligenceController::class, 'aging']);
+            Route::get('branch-health', [InventoryIntelligenceController::class, 'branchHealth']);
+        });
+
+        Route::prefix('procurement')->group(function () {
+            Route::get('suggestions',             [ProcurementController::class, 'suggestions']);
+            Route::get('suggestions-by-supplier', [ProcurementController::class, 'suggestionsBySupplier']);
+        });
+
+        Route::prefix('inventory-reports')->group(function () {
+            Route::get('valuation',     [InventoryAnalyticsController::class, 'valuation']);
+            Route::get('profitability', [InventoryAnalyticsController::class, 'profitability']);
+            Route::get('movement',      [InventoryAnalyticsController::class, 'movement']);
+        });
+
+        Route::prefix('supplier-analytics')->group(function () {
+            Route::get('leaderboard',     [SupplierAnalyticsController::class, 'leaderboard']);
+            Route::get('{supplierId}',    [SupplierAnalyticsController::class, 'show']);
+        });
     });
 
     // ── Product Module ────────────────────────────────────────────────────

@@ -162,6 +162,30 @@ const routes = [
                 component: () => import('@/views/stock/StockView.vue'),
                 meta: { titleKey: 'menu.inventory', permission: 'inventory' },
             },
+            {
+                path: 'inventory/intelligence',
+                name: 'inventory-intelligence',
+                component: () => import('@/views/inventory/InventoryIntelligenceView.vue'),
+                meta: { titleKey: 'inventory.intelligence.title', permission: 'inventory' },
+            },
+            {
+                path: 'inventory/reorder',
+                name: 'inventory-reorder',
+                component: () => import('@/views/inventory/ReorderSuggestionsView.vue'),
+                meta: { titleKey: 'inventory.reorder.title', permission: 'inventory' },
+            },
+            {
+                path: 'inventory/dead-stock',
+                name: 'inventory-dead-stock',
+                component: () => import('@/views/inventory/DeadStockReportView.vue'),
+                meta: { titleKey: 'inventory.deadStock.title', permission: 'inventory' },
+            },
+            {
+                path: 'inventory/analytics',
+                name: 'inventory-analytics',
+                component: () => import('@/views/inventory/InventoryAnalyticsView.vue'),
+                meta: { titleKey: 'inventory.analytics.title', permission: 'inventory' },
+            },
 
             // ── Customer module ────────────────────────────────────────────
             {

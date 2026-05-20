@@ -13,7 +13,7 @@ class Supplier extends Model
 
     protected $fillable = [
         'code', 'name', 'contact_person', 'email', 'phone',
-        'address', 'city', 'country', 'vat_number', 'notes', 'is_active',
+        'address', 'city', 'country', 'vat_number', 'lead_time_days', 'notes', 'is_active',
     ];
 
     protected $casts = [
