@@ -18,6 +18,7 @@ class RolePermissionSeeder extends Seeder
             'hrm',
             'expenses',
             'finance',
+            'accounting',
         ]);
 
         // Cashier: front-desk only

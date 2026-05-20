@@ -55,6 +55,16 @@
     "cashflow": "التدفق النقدي",
     "financialDashboard": "نظرة عامة تنفيذية",
     "financialCalendar": "التقويم المالي",
+    "accounting": "المحاسبة",
+    "accountingDashboard": "لوحة المحاسبة",
+    "coa": "دليل الحسابات",
+    "journal": "قيود اليومية",
+    "ledger": "دفتر الأستاذ",
+    "trialBalance": "ميزان المراجعة",
+    "profitLoss": "الأرباح والخسائر",
+    "balanceSheet": "الميزانية العمومية",
+    "cashbook": "دفتر الكاش",
+    "banks": "الحسابات البنكية",
     "reports": "التقارير",
     "ledgers": "كشوف الحسابات",
     "customerLedger": "كشف حساب العميل",
@@ -1889,6 +1899,186 @@
         "cashflow":       "تفاصيل التدفق النقدي",
         "calendar":       "التقويم المالي",
         "expenseReports": "تقارير المصروفات"
+      }
+    }
+  },
+  "accounting": {
+    "module": "المحاسبة",
+    "nav": {
+      "dashboard":    "نظرة عامة",
+      "coa":          "دليل الحسابات",
+      "journal":      "قيود اليومية",
+      "ledger":       "دفتر الأستاذ",
+      "trialBalance": "ميزان المراجعة",
+      "profitLoss":   "الأرباح والخسائر",
+      "balanceSheet": "الميزانية العمومية",
+      "cashbook":     "دفتر الكاش",
+      "banks":        "الحسابات البنكية"
+    },
+    "fields": {
+      "accountCode":     "رقم الحساب",
+      "accountName":     "اسم الحساب",
+      "accountType":     "النوع",
+      "normalBalance":   "الرصيد الطبيعي",
+      "entryDate":       "التاريخ",
+      "entryNumber":     "رقم القيد",
+      "reference":       "المرجع",
+      "referenceNumber": "رقم المرجع",
+      "refType":         "المصدر",
+      "narration":       "البيان",
+      "debit":           "مدين",
+      "credit":          "دائن",
+      "balance":         "الرصيد",
+      "amount":          "المبلغ",
+      "totals":          "الإجمالي",
+      "account":         "الحساب"
+    },
+    "types": {
+      "asset":     "أصول",
+      "liability": "خصوم",
+      "equity":    "حقوق ملكية",
+      "revenue":   "إيرادات",
+      "expense":   "مصروفات"
+    },
+    "balance": {
+      "debit":  "مدين",
+      "credit": "دائن"
+    },
+    "status": {
+      "draft":    "مسودة",
+      "posted":   "مرحّل",
+      "reversed": "ملغى"
+    },
+    "refType": {
+      "sale":             "مبيعات",
+      "purchase":         "مشتريات",
+      "expense":          "مصروف",
+      "payslip":          "رواتب",
+      "customer_payment": "دفعة عميل",
+      "supplier_payment": "دفعة مورد",
+      "manual":           "يدوي",
+      "reversal":         "إلغاء"
+    },
+    "dashboard": {
+      "title":          "لوحة المحاسبة",
+      "subtitle":       "نظرة لحظية على الدفاتر",
+      "asOf":           "بتاريخ",
+      "refresh":        "تحديث",
+      "cashBalance":    "النقد في الصندوق",
+      "bankBalance":    "رصيد البنك",
+      "receivables":    "المدينون",
+      "payables":       "الدائنون",
+      "monthRevenue":   "إيرادات الشهر",
+      "monthExpense":   "مصروفات الشهر",
+      "ytdProfit":      "نتيجة العام حتى الآن",
+      "ytdProfitHint":  "الإيرادات ناقصاً المصروفات منذ بداية يناير",
+      "recentEntries":  "آخر القيود",
+      "viewAll":        "عرض الكل",
+      "empty":          "لا توجد قيود في هذه الفترة",
+      "quickActions":   "إجراءات سريعة"
+    },
+    "coa": {
+      "title":          "دليل الحسابات",
+      "subtitle":       "إدارة ترقيم الحسابات وأنواعها",
+      "add":            "حساب جديد",
+      "createTitle":    "حساب جديد",
+      "editTitle":      "تعديل الحساب",
+      "empty":          "لا توجد حسابات مطابقة",
+      "systemBadge":    "نظامي",
+      "searchPh":       "رمز أو اسم…",
+      "deleteConfirm":  "حذف الحساب \"{name}\"؟"
+    },
+    "journal": {
+      "title":          "قيود اليومية",
+      "subtitle":       "كل القيود اليدوية والآلية",
+      "addManual":      "قيد يدوي جديد",
+      "manualTitle":    "قيد يدوي جديد",
+      "narrationPh":    "وصف القيد (مثل تسوية، رصيد افتتاحي)",
+      "lines":          "البنود",
+      "addLine":        "إضافة بند",
+      "selectAccount":  "اختر الحساب…",
+      "notBalanced":    "المدين والدائن مختلفان بمقدار {diff}",
+      "balanceHint":    "يجب أن يساوي مجموع المدين مجموع الدائن قبل الترحيل.",
+      "reverse":        "إلغاء",
+      "reverseConfirm": "إنشاء قيد عكسي للقيد {number}؟",
+      "reversed":       "تم إلغاء القيد",
+      "empty":          "لا توجد قيود"
+    },
+    "ledger": {
+      "title":         "دفتر الأستاذ",
+      "subtitle":      "تاريخ الحساب مع الرصيد الجاري",
+      "selectAccount": "اختر حساباً…",
+      "opening":       "رصيد افتتاحي",
+      "closing":       "رصيد ختامي",
+      "empty":         "لا حركات في الفترة المختارة"
+    },
+    "trialBalance": {
+      "title":            "ميزان المراجعة",
+      "subtitle":         "يجب أن يتساوى المدين والدائن",
+      "asOf":             "بتاريخ",
+      "opening":          "افتتاحي",
+      "balanced":         "متوازن",
+      "imbalanced":       "غير متوازن",
+      "imbalanceTitle":   "الميزان غير متطابق",
+      "imbalanceHint":    "فرق {diff}. يرجى مراجعة آخر القيود.",
+      "noData":           "لا بيانات لهذا التاريخ"
+    },
+    "pl": {
+      "title":        "الأرباح والخسائر",
+      "subtitle":     "قائمة الدخل للفترة المختارة",
+      "revenue":      "الإيرادات",
+      "expense":      "المصروفات",
+      "revenueTotal": "إجمالي الإيرادات",
+      "expenseTotal": "إجمالي المصروفات",
+      "netResult":    "النتيجة الصافية",
+      "profit":       "ربح",
+      "loss":         "خسارة",
+      "noRevenue":    "لا توجد إيرادات",
+      "noExpense":    "لا توجد مصروفات"
+    },
+    "balanceSheet": {
+      "title":          "الميزانية العمومية",
+      "subtitle":       "الأصول والخصوم وحقوق الملكية بتاريخ معين",
+      "asOf":           "بتاريخ",
+      "assets":         "الأصول",
+      "liabilities":    "الخصوم",
+      "equity":         "حقوق الملكية",
+      "assetTotal":     "إجمالي الأصول",
+      "liabilityTotal": "إجمالي الخصوم",
+      "equityTotal":    "إجمالي حقوق الملكية",
+      "passivaTotal":   "إجمالي الخصوم وحقوق الملكية",
+      "ytdProfit":      "نتيجة العام",
+      "imbalanceHint":  "الأصول لا تساوي الخصوم وحقوق الملكية. يرجى المراجعة."
+    },
+    "cashbook": {
+      "title":         "دفتر الكاش",
+      "subtitle":      "حركات الكاش والبنك اليومية",
+      "account":       "الحساب",
+      "selectAccount": "اختر حساباً…",
+      "opening":       "رصيد افتتاحي",
+      "closing":       "رصيد ختامي",
+      "cashIn":        "وارد",
+      "cashOut":       "صادر",
+      "empty":         "لا حركات في الفترة المختارة"
+    },
+    "bank": {
+      "title":          "الحسابات البنكية",
+      "subtitle":       "سجل الحسابات البنكية المرتبطة بدليل الحسابات",
+      "add":            "إضافة حساب بنكي",
+      "createTitle":    "حساب بنكي جديد",
+      "editTitle":      "تعديل حساب بنكي",
+      "empty":          "لا توجد حسابات بنكية",
+      "accountNumber":  "رقم الحساب",
+      "coa":            "الحساب المرتبط (دليل)",
+      "currentBalance": "الرصيد الحالي",
+      "deleteConfirm":  "حذف الحساب البنكي \"{name}\"؟",
+      "fields": {
+        "name":           "الاسم",
+        "bankName":       "اسم البنك",
+        "accountNumber":  "رقم الحساب",
+        "coa":            "الحساب المرتبط (دليل)",
+        "openingBalance": "الرصيد الافتتاحي",
+        "openingDate":    "تاريخ الافتتاح"
       }
     }
   }

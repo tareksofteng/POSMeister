@@ -117,7 +117,7 @@ import {
     ClipboardDocumentListIcon, TagIcon, ArchiveBoxIcon, UsersIcon,
     BuildingStorefrontIcon, BanknotesIcon, UserGroupIcon, ChartBarIcon, ReceiptPercentIcon,
     CogIcon, ArrowRightStartOnRectangleIcon, BuildingOffice2Icon,
-    UserCircleIcon, ShieldCheckIcon,
+    UserCircleIcon, ShieldCheckIcon, BookOpenIcon,
 } from '@heroicons/vue/24/outline';
 
 import NavItem             from './NavItem.vue';
@@ -243,6 +243,28 @@ const NAV_GROUPS = [
                     { labelKey: 'menu.cashflow',           to: { name: 'finance-cashflow' },  implemented: true },
                     { labelKey: 'menu.budgets',            to: { name: 'finance-budgets' },   implemented: true },
                     { labelKey: 'menu.financialCalendar',  to: { name: 'finance-calendar' },  implemented: true },
+                ],
+            },
+            {
+                isGroup:     true,
+                permKey:     'accounting',
+                labelKey:    'menu.accounting',
+                icon:        BookOpenIcon,
+                childRoutes: [
+                    'accounting-dashboard', 'accounting-coa', 'accounting-journal', 'accounting-ledger',
+                    'accounting-trial-balance', 'accounting-profit-loss', 'accounting-balance-sheet',
+                    'accounting-cashbook', 'accounting-banks',
+                ],
+                children: [
+                    { labelKey: 'menu.accountingDashboard', to: { name: 'accounting-dashboard' },    implemented: true },
+                    { labelKey: 'menu.coa',                 to: { name: 'accounting-coa' },          implemented: true },
+                    { labelKey: 'menu.journal',             to: { name: 'accounting-journal' },      implemented: true },
+                    { labelKey: 'menu.ledger',              to: { name: 'accounting-ledger' },       implemented: true },
+                    { labelKey: 'menu.trialBalance',        to: { name: 'accounting-trial-balance' },implemented: true },
+                    { labelKey: 'menu.profitLoss',          to: { name: 'accounting-profit-loss' },  implemented: true },
+                    { labelKey: 'menu.balanceSheet',        to: { name: 'accounting-balance-sheet' },implemented: true },
+                    { labelKey: 'menu.cashbook',            to: { name: 'accounting-cashbook' },     implemented: true },
+                    { labelKey: 'menu.banks',               to: { name: 'accounting-banks' },        implemented: true },
                 ],
             },
             {

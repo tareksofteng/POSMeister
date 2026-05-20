@@ -44,6 +44,16 @@
     "cashflow": "ক্যাশফ্লো",
     "financialDashboard": "নির্বাহী সারসংক্ষেপ",
     "financialCalendar": "আর্থিক ক্যালেন্ডার",
+    "accounting": "হিসাবরক্ষণ",
+    "accountingDashboard": "হিসাব ড্যাশবোর্ড",
+    "coa": "হিসাবের তালিকা",
+    "journal": "জার্নাল এন্ট্রি",
+    "ledger": "প্রধান খাতা",
+    "trialBalance": "রেওয়ামিল",
+    "profitLoss": "লাভ ও লোকসান",
+    "balanceSheet": "ব্যালান্স শিট",
+    "cashbook": "ক্যাশ বই",
+    "banks": "ব্যাংক হিসাব",
     "reports": "প্রতিবেদন",
     "ledgers": "খাতা",
     "customerLedger": "গ্রাহক খাতা",
@@ -1889,6 +1899,186 @@
         "cashflow":       "ক্যাশফ্লো বিস্তারিত",
         "calendar":       "আর্থিক ক্যালেন্ডার",
         "expenseReports": "খরচের প্রতিবেদন"
+      }
+    }
+  },
+  "accounting": {
+    "module": "হিসাবরক্ষণ",
+    "nav": {
+      "dashboard":    "সারসংক্ষেপ",
+      "coa":          "হিসাবের তালিকা",
+      "journal":      "জার্নাল এন্ট্রি",
+      "ledger":       "প্রধান খাতা",
+      "trialBalance": "রেওয়ামিল",
+      "profitLoss":   "লাভ ও লোকসান",
+      "balanceSheet": "ব্যালান্স শিট",
+      "cashbook":     "ক্যাশ বই",
+      "banks":        "ব্যাংক হিসাব"
+    },
+    "fields": {
+      "accountCode":     "হিসাব নং",
+      "accountName":     "হিসাবের নাম",
+      "accountType":     "ধরন",
+      "normalBalance":   "স্বাভাবিক ব্যালেন্স",
+      "entryDate":       "তারিখ",
+      "entryNumber":     "ভাউচার",
+      "reference":       "রেফারেন্স",
+      "referenceNumber": "রেফারেন্স নং",
+      "refType":         "উৎস",
+      "narration":       "বিবরণ",
+      "debit":           "ডেবিট",
+      "credit":          "ক্রেডিট",
+      "balance":         "ব্যালেন্স",
+      "amount":          "পরিমাণ",
+      "totals":          "মোট",
+      "account":         "হিসাব"
+    },
+    "types": {
+      "asset":     "সম্পদ",
+      "liability": "দায়",
+      "equity":    "মূলধন",
+      "revenue":   "আয়",
+      "expense":   "খরচ"
+    },
+    "balance": {
+      "debit":  "ডেবিট",
+      "credit": "ক্রেডিট"
+    },
+    "status": {
+      "draft":    "খসড়া",
+      "posted":   "পোস্টেড",
+      "reversed": "রিভার্সড"
+    },
+    "refType": {
+      "sale":             "বিক্রয়",
+      "purchase":         "ক্রয়",
+      "expense":          "খরচ",
+      "payslip":          "বেতন",
+      "customer_payment": "ক্রেতার পেমেন্ট",
+      "supplier_payment": "সরবরাহকারীর পেমেন্ট",
+      "manual":           "ম্যানুয়াল",
+      "reversal":         "রিভার্সাল"
+    },
+    "dashboard": {
+      "title":          "হিসাব ড্যাশবোর্ড",
+      "subtitle":       "বইয়ের তাৎক্ষণিক চিত্র",
+      "asOf":           "তারিখ পর্যন্ত",
+      "refresh":        "রিফ্রেশ",
+      "cashBalance":    "ক্যাশ ব্যালেন্স",
+      "bankBalance":    "ব্যাংক ব্যালেন্স",
+      "receivables":    "প্রাপ্য",
+      "payables":       "প্রদেয়",
+      "monthRevenue":   "এই মাসের আয়",
+      "monthExpense":   "এই মাসের খরচ",
+      "ytdProfit":      "বছর-শুরু থেকে ফলাফল",
+      "ytdProfitHint":  "১ জানুয়ারি থেকে আয় বিয়োগ খরচ",
+      "recentEntries":  "সাম্প্রতিক এন্ট্রি",
+      "viewAll":        "সব দেখুন",
+      "empty":          "এই সময়ে কোনো এন্ট্রি নেই",
+      "quickActions":   "দ্রুত অ্যাকশন"
+    },
+    "coa": {
+      "title":          "হিসাবের তালিকা",
+      "subtitle":       "হিসাব নম্বর এবং ধরন ব্যবস্থাপনা",
+      "add":            "নতুন হিসাব",
+      "createTitle":    "নতুন হিসাব",
+      "editTitle":      "হিসাব সম্পাদনা",
+      "empty":          "ফিল্টারে কোনো হিসাব মেলে না",
+      "systemBadge":    "সিস্টেম",
+      "searchPh":       "কোড বা নাম…",
+      "deleteConfirm":  "\"{name}\" হিসাবটি মুছবেন?"
+    },
+    "journal": {
+      "title":          "জার্নাল এন্ট্রি",
+      "subtitle":       "সকল স্বয়ংক্রিয় ও ম্যানুয়াল এন্ট্রি",
+      "addManual":      "নতুন ম্যানুয়াল এন্ট্রি",
+      "manualTitle":    "নতুন ম্যানুয়াল এন্ট্রি",
+      "narrationPh":    "এন্ট্রির বিবরণ (যেমন সংশোধন, ওপেনিং ব্যালেন্স)",
+      "lines":          "লাইন",
+      "addLine":        "লাইন যোগ",
+      "selectAccount":  "হিসাব নির্বাচন করুন…",
+      "notBalanced":    "ডেবিট ও ক্রেডিটে {diff} পার্থক্য",
+      "balanceHint":    "পোস্ট করার আগে মোট ডেবিট = মোট ক্রেডিট হতে হবে।",
+      "reverse":        "রিভার্স",
+      "reverseConfirm": "{number} এর জন্য রিভার্স এন্ট্রি তৈরি করবেন?",
+      "reversed":       "এন্ট্রি রিভার্স করা হয়েছে",
+      "empty":          "কোনো এন্ট্রি নেই"
+    },
+    "ledger": {
+      "title":         "প্রধান খাতা",
+      "subtitle":      "চলমান ব্যালেন্স সহ হিসাবের ইতিহাস",
+      "selectAccount": "একটি হিসাব নির্বাচন করুন…",
+      "opening":       "ওপেনিং ব্যালেন্স",
+      "closing":       "ক্লোজিং ব্যালেন্স",
+      "empty":         "নির্বাচিত সময়ে কোনো লেনদেন নেই"
+    },
+    "trialBalance": {
+      "title":            "রেওয়ামিল",
+      "subtitle":         "ডেবিট মোট = ক্রেডিট মোট হতে হবে",
+      "asOf":             "তারিখ পর্যন্ত",
+      "opening":          "ওপেনিং",
+      "balanced":         "সমান",
+      "imbalanced":       "অসমান",
+      "imbalanceTitle":   "রেওয়ামিল মিলছে না",
+      "imbalanceHint":    "{diff} এর পার্থক্য। সাম্প্রতিক এন্ট্রি পরীক্ষা করুন।",
+      "noData":           "এই তারিখের জন্য কোনো তথ্য নেই"
+    },
+    "pl": {
+      "title":        "লাভ ও লোকসান",
+      "subtitle":     "নির্বাচিত সময়ের আয়-ব্যয় বিবরণী",
+      "revenue":      "আয়",
+      "expense":      "খরচ",
+      "revenueTotal": "মোট আয়",
+      "expenseTotal": "মোট খরচ",
+      "netResult":    "নিট ফলাফল",
+      "profit":       "মুনাফা",
+      "loss":         "লোকসান",
+      "noRevenue":    "কোনো আয় নেই",
+      "noExpense":    "কোনো খরচ নেই"
+    },
+    "balanceSheet": {
+      "title":          "ব্যালান্স শিট",
+      "subtitle":       "নির্দিষ্ট তারিখে সম্পদ, দায় ও মূলধন",
+      "asOf":           "তারিখ পর্যন্ত",
+      "assets":         "সম্পদ",
+      "liabilities":    "দায়",
+      "equity":         "মূলধন",
+      "assetTotal":     "মোট সম্পদ",
+      "liabilityTotal": "মোট দায়",
+      "equityTotal":    "মোট মূলধন",
+      "passivaTotal":   "মোট দায় + মূলধন",
+      "ytdProfit":      "বছরের ফলাফল",
+      "imbalanceHint":  "সম্পদ ও দায়+মূলধন সমান নয়। সাম্প্রতিক এন্ট্রি পরীক্ষা করুন।"
+    },
+    "cashbook": {
+      "title":         "ক্যাশ বই",
+      "subtitle":      "দৈনিক ক্যাশ ও ব্যাংক লেনদেন",
+      "account":       "হিসাব",
+      "selectAccount": "হিসাব নির্বাচন করুন…",
+      "opening":       "ওপেনিং ব্যালেন্স",
+      "closing":       "ক্লোজিং ব্যালেন্স",
+      "cashIn":        "আগমন",
+      "cashOut":       "নির্গমন",
+      "empty":         "নির্বাচিত সময়ে কোনো লেনদেন নেই"
+    },
+    "bank": {
+      "title":          "ব্যাংক হিসাব",
+      "subtitle":       "হিসাবের তালিকার সাথে যুক্ত ব্যাংক হিসাব রেজিস্ট্রি",
+      "add":            "ব্যাংক হিসাব যোগ",
+      "createTitle":    "নতুন ব্যাংক হিসাব",
+      "editTitle":      "ব্যাংক হিসাব সম্পাদনা",
+      "empty":          "এখনো কোনো ব্যাংক হিসাব নেই",
+      "accountNumber":  "হিসাব নম্বর",
+      "coa":            "যুক্ত CoA হিসাব",
+      "currentBalance": "বর্তমান ব্যালেন্স",
+      "deleteConfirm":  "ব্যাংক হিসাব \"{name}\" মুছবেন?",
+      "fields": {
+        "name":           "প্রদর্শন নাম",
+        "bankName":       "ব্যাংকের নাম",
+        "accountNumber":  "হিসাব নম্বর",
+        "coa":            "যুক্ত CoA হিসাব",
+        "openingBalance": "ওপেনিং ব্যালেন্স",
+        "openingDate":    "ওপেনিং তারিখ"
       }
     }
   }

@@ -55,6 +55,16 @@
     "cashflow": "Cashflow",
     "financialDashboard": "Executive overview",
     "financialCalendar": "Financial calendar",
+    "accounting": "Accounting",
+    "accountingDashboard": "Accounting overview",
+    "coa": "Chart of accounts",
+    "journal": "Journal entries",
+    "ledger": "General ledger",
+    "trialBalance": "Trial balance",
+    "profitLoss": "Profit & loss",
+    "balanceSheet": "Balance sheet",
+    "cashbook": "Cashbook",
+    "banks": "Bank accounts",
     "reports": "Reports",
     "ledgers": "Ledgers",
     "customerLedger": "Customer Ledger",
@@ -1891,6 +1901,186 @@
         "cashflow":       "Cashflow detail",
         "calendar":       "Financial calendar",
         "expenseReports": "Expense reports"
+      }
+    }
+  },
+  "accounting": {
+    "module": "Accounting",
+    "nav": {
+      "dashboard":    "Overview",
+      "coa":          "Chart of accounts",
+      "journal":      "Journal entries",
+      "ledger":       "General ledger",
+      "trialBalance": "Trial balance",
+      "profitLoss":   "Profit & loss",
+      "balanceSheet": "Balance sheet",
+      "cashbook":     "Cashbook",
+      "banks":        "Bank accounts"
+    },
+    "fields": {
+      "accountCode":     "Account no.",
+      "accountName":     "Account name",
+      "accountType":     "Type",
+      "normalBalance":   "Normal balance",
+      "entryDate":       "Date",
+      "entryNumber":     "Voucher",
+      "reference":       "Reference",
+      "referenceNumber": "Reference no.",
+      "refType":         "Source",
+      "narration":       "Description",
+      "debit":           "Debit",
+      "credit":          "Credit",
+      "balance":         "Balance",
+      "amount":          "Amount",
+      "totals":          "Totals",
+      "account":         "Account"
+    },
+    "types": {
+      "asset":     "Asset",
+      "liability": "Liability",
+      "equity":    "Equity",
+      "revenue":   "Revenue",
+      "expense":   "Expense"
+    },
+    "balance": {
+      "debit":  "Debit",
+      "credit": "Credit"
+    },
+    "status": {
+      "draft":    "Draft",
+      "posted":   "Posted",
+      "reversed": "Reversed"
+    },
+    "refType": {
+      "sale":             "Sale",
+      "purchase":         "Purchase",
+      "expense":          "Expense",
+      "payslip":          "Payroll",
+      "customer_payment": "Customer payment",
+      "supplier_payment": "Supplier payment",
+      "manual":           "Manual",
+      "reversal":         "Reversal"
+    },
+    "dashboard": {
+      "title":          "Accounting overview",
+      "subtitle":       "Live snapshot of your books",
+      "asOf":           "As of",
+      "refresh":        "Refresh",
+      "cashBalance":    "Cash on hand",
+      "bankBalance":    "Bank balance",
+      "receivables":    "Receivables",
+      "payables":       "Payables",
+      "monthRevenue":   "Revenue this month",
+      "monthExpense":   "Expenses this month",
+      "ytdProfit":      "Year-to-date result",
+      "ytdProfitHint":  "Revenue minus expenses since 1 January",
+      "recentEntries":  "Recent postings",
+      "viewAll":        "View all",
+      "empty":          "No entries yet for this period",
+      "quickActions":   "Quick actions"
+    },
+    "coa": {
+      "title":          "Chart of accounts",
+      "subtitle":       "Manage account numbering and types",
+      "add":            "New account",
+      "createTitle":    "New account",
+      "editTitle":      "Edit account",
+      "empty":          "No accounts match the filters",
+      "systemBadge":    "system",
+      "searchPh":       "Code or name…",
+      "deleteConfirm":  "Delete account \"{name}\"?"
+    },
+    "journal": {
+      "title":          "Journal entries",
+      "subtitle":       "All bookings, automatic and manual",
+      "addManual":      "New manual entry",
+      "manualTitle":    "New manual entry",
+      "narrationPh":    "Booking description (e.g. correction, opening balance)",
+      "lines":          "Lines",
+      "addLine":        "Add line",
+      "selectAccount":  "Select account…",
+      "notBalanced":    "Debit and credit differ by {diff}",
+      "balanceHint":    "Total debit must equal total credit before you can post.",
+      "reverse":        "Reverse",
+      "reverseConfirm": "Create a reversing entry for {number}?",
+      "reversed":       "Entry reversed",
+      "empty":          "No journal entries"
+    },
+    "ledger": {
+      "title":         "General ledger",
+      "subtitle":      "Per-account history with running balance",
+      "selectAccount": "Select an account…",
+      "opening":       "Opening balance",
+      "closing":       "Closing balance",
+      "empty":         "No movements for this account in the selected range"
+    },
+    "trialBalance": {
+      "title":            "Trial balance",
+      "subtitle":         "Sum of debits must equal sum of credits",
+      "asOf":             "As of",
+      "opening":          "Opening",
+      "balanced":         "balanced",
+      "imbalanced":       "imbalanced",
+      "imbalanceTitle":   "Trial balance does not match",
+      "imbalanceHint":    "Difference of {diff}. A posted entry may be corrupted — review recent journals.",
+      "noData":           "No data available for the selected date"
+    },
+    "pl": {
+      "title":        "Profit & loss",
+      "subtitle":     "Income statement for the selected period",
+      "revenue":      "Revenue",
+      "expense":      "Expenses",
+      "revenueTotal": "Total revenue",
+      "expenseTotal": "Total expenses",
+      "netResult":    "Net result",
+      "profit":       "Profit",
+      "loss":         "Loss",
+      "noRevenue":    "No revenue recorded",
+      "noExpense":    "No expenses recorded"
+    },
+    "balanceSheet": {
+      "title":          "Balance sheet",
+      "subtitle":       "Assets, liabilities and equity at a point in time",
+      "asOf":           "As of",
+      "assets":         "Assets",
+      "liabilities":    "Liabilities",
+      "equity":         "Equity",
+      "assetTotal":     "Total assets",
+      "liabilityTotal": "Total liabilities",
+      "equityTotal":    "Total equity",
+      "passivaTotal":   "Total liabilities + equity",
+      "ytdProfit":      "Year-to-date result",
+      "imbalanceHint":  "Assets do not equal liabilities + equity. Check recent postings."
+    },
+    "cashbook": {
+      "title":         "Cashbook",
+      "subtitle":      "Daily cash and bank movements",
+      "account":       "Account",
+      "selectAccount": "Select account…",
+      "opening":       "Opening balance",
+      "closing":       "Closing balance",
+      "cashIn":        "Cash in",
+      "cashOut":       "Cash out",
+      "empty":         "No movements in the selected period"
+    },
+    "bank": {
+      "title":          "Bank accounts",
+      "subtitle":       "Bank account registry mapped to the chart of accounts",
+      "add":            "Add bank account",
+      "createTitle":    "New bank account",
+      "editTitle":      "Edit bank account",
+      "empty":          "No bank accounts yet",
+      "accountNumber":  "Account number",
+      "coa":            "Linked CoA account",
+      "currentBalance": "Current balance",
+      "deleteConfirm":  "Delete bank account \"{name}\"?",
+      "fields": {
+        "name":           "Display name",
+        "bankName":       "Bank name",
+        "accountNumber":  "Account number",
+        "coa":            "Linked CoA account",
+        "openingBalance": "Opening balance",
+        "openingDate":    "Opening date"
       }
     }
   }

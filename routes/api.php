@@ -15,6 +15,11 @@ use App\Modules\Finance\Controllers\CashflowController;
 use App\Modules\Finance\Controllers\FinancialAlertController;
 use App\Modules\Finance\Controllers\FinancialCalendarController;
 use App\Modules\Finance\Controllers\FinancialDashboardController;
+use App\Modules\Accounting\Controllers\AccountingReportController;
+use App\Modules\Accounting\Controllers\BankAccountController;
+use App\Modules\Accounting\Controllers\CashbookController;
+use App\Modules\Accounting\Controllers\ChartOfAccountController;
+use App\Modules\Accounting\Controllers\JournalEntryController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -213,6 +218,44 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::get('finance/top-customers',            [FinancialDashboardController::class, 'topCustomers']);
         Route::get('finance/expense-breakdown',        [FinancialDashboardController::class, 'expenseBreakdown']);
         Route::get('finance/inventory-insights',       [FinancialDashboardController::class, 'inventoryInsights']);
+    });
+
+    // Accounting module (admin + manager). Read-only operations open to managers,
+    // write operations gated further in controllers where it matters.
+    Route::middleware('role:admin,manager')->prefix('accounting')->group(function () {
+        // Chart of accounts
+        Route::get('coa',                  [ChartOfAccountController::class, 'index']);
+        Route::post('coa',                 [ChartOfAccountController::class, 'store']);
+        Route::get('coa/{account}',        [ChartOfAccountController::class, 'show']);
+        Route::put('coa/{account}',        [ChartOfAccountController::class, 'update']);
+        Route::delete('coa/{account}',     [ChartOfAccountController::class, 'destroy']);
+
+        // Journal entries
+        Route::get('journal',              [JournalEntryController::class, 'index']);
+        Route::post('journal',             [JournalEntryController::class, 'store']);
+        Route::get('journal/{entry}',      [JournalEntryController::class, 'show']);
+        Route::post('journal/{entry}/reverse', [JournalEntryController::class, 'reverse']);
+        Route::delete('journal/{entry}',   [JournalEntryController::class, 'destroy']);
+
+        // Reports
+        Route::get('dashboard',                [AccountingReportController::class, 'dashboard']);
+        Route::get('ledger/{accountId}',       [AccountingReportController::class, 'ledger']);
+        Route::get('trial-balance',            [AccountingReportController::class, 'trialBalance']);
+        Route::get('profit-loss',              [AccountingReportController::class, 'profitLoss']);
+        Route::get('balance-sheet',            [AccountingReportController::class, 'balanceSheet']);
+        Route::get('cashbook/{accountId}',     [AccountingReportController::class, 'cashbook']);
+
+        // Bank accounts
+        Route::get('banks',                [BankAccountController::class, 'index']);
+        Route::post('banks',               [BankAccountController::class, 'store']);
+        Route::put('banks/{bank}',         [BankAccountController::class, 'update']);
+        Route::delete('banks/{bank}',      [BankAccountController::class, 'destroy']);
+
+        // Cashbook registry (per-branch cash registers)
+        Route::get('cashbooks',                  [CashbookController::class, 'index']);
+        Route::post('cashbooks',                 [CashbookController::class, 'store']);
+        Route::put('cashbooks/{cashbook}',       [CashbookController::class, 'update']);
+        Route::delete('cashbooks/{cashbook}',    [CashbookController::class, 'destroy']);
     });
 
     // ── Product Module ────────────────────────────────────────────────────

@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UnitSeeder::class,
             HrmSeeder::class,
+            ChartOfAccountsSeeder::class,
         ]);
 
         

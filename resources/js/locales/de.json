@@ -55,6 +55,16 @@
     "cashflow": "Cashflow",
     "financialDashboard": "Geschäftsübersicht",
     "financialCalendar": "Finanzkalender",
+    "accounting": "Buchhaltung",
+    "accountingDashboard": "Buchhaltungs-Übersicht",
+    "coa": "Kontenplan",
+    "journal": "Journalbuchungen",
+    "ledger": "Hauptbuch",
+    "trialBalance": "Saldenliste",
+    "profitLoss": "Gewinn & Verlust",
+    "balanceSheet": "Bilanz",
+    "cashbook": "Kassenbuch",
+    "banks": "Bankkonten",
     "reports": "Berichte",
     "ledgers": "Kontenblätter",
     "customerLedger": "Kundenkonto",
@@ -1891,6 +1901,186 @@
         "cashflow":       "Cashflow-Details",
         "calendar":       "Finanzkalender",
         "expenseReports": "Ausgaben-Berichte"
+      }
+    }
+  },
+  "accounting": {
+    "module": "Buchhaltung",
+    "nav": {
+      "dashboard":    "Übersicht",
+      "coa":          "Kontenplan",
+      "journal":      "Journalbuchungen",
+      "ledger":       "Hauptbuch",
+      "trialBalance": "Saldenliste",
+      "profitLoss":   "Gewinn & Verlust",
+      "balanceSheet": "Bilanz",
+      "cashbook":     "Kassenbuch",
+      "banks":        "Bankkonten"
+    },
+    "fields": {
+      "accountCode":     "Kontonr.",
+      "accountName":     "Kontobezeichnung",
+      "accountType":     "Kontoart",
+      "normalBalance":   "Normalsaldo",
+      "entryDate":       "Datum",
+      "entryNumber":     "Beleg",
+      "reference":       "Referenz",
+      "referenceNumber": "Beleg-Nr.",
+      "refType":         "Quelle",
+      "narration":       "Buchungstext",
+      "debit":           "Soll",
+      "credit":          "Haben",
+      "balance":         "Saldo",
+      "amount":          "Betrag",
+      "totals":          "Summen",
+      "account":         "Konto"
+    },
+    "types": {
+      "asset":     "Aktiva",
+      "liability": "Verbindlichkeit",
+      "equity":    "Eigenkapital",
+      "revenue":   "Erlös",
+      "expense":   "Aufwand"
+    },
+    "balance": {
+      "debit":  "Soll",
+      "credit": "Haben"
+    },
+    "status": {
+      "draft":    "Entwurf",
+      "posted":   "Gebucht",
+      "reversed": "Storniert"
+    },
+    "refType": {
+      "sale":             "Verkauf",
+      "purchase":         "Einkauf",
+      "expense":          "Ausgabe",
+      "payslip":          "Lohn",
+      "customer_payment": "Kundenzahlung",
+      "supplier_payment": "Lieferantenzahlung",
+      "manual":           "Manuell",
+      "reversal":         "Storno"
+    },
+    "dashboard": {
+      "title":          "Buchhaltungs-Übersicht",
+      "subtitle":       "Aktuelle Momentaufnahme Ihrer Bücher",
+      "asOf":           "Stichtag",
+      "refresh":        "Aktualisieren",
+      "cashBalance":    "Kassenbestand",
+      "bankBalance":    "Bankbestand",
+      "receivables":    "Forderungen",
+      "payables":       "Verbindlichkeiten",
+      "monthRevenue":   "Erlöse diesen Monat",
+      "monthExpense":   "Aufwand diesen Monat",
+      "ytdProfit":      "Jahresergebnis",
+      "ytdProfitHint":  "Erlöse abzüglich Aufwendungen seit 1. Januar",
+      "recentEntries":  "Letzte Buchungen",
+      "viewAll":        "Alle anzeigen",
+      "empty":          "Noch keine Buchungen im Zeitraum",
+      "quickActions":   "Schnellzugriff"
+    },
+    "coa": {
+      "title":          "Kontenplan",
+      "subtitle":       "Kontonummerierung und -typen verwalten",
+      "add":            "Neues Konto",
+      "createTitle":    "Neues Konto",
+      "editTitle":      "Konto bearbeiten",
+      "empty":          "Keine Konten passen zu den Filtern",
+      "systemBadge":    "System",
+      "searchPh":       "Nummer oder Bezeichnung…",
+      "deleteConfirm":  "Konto \"{name}\" löschen?"
+    },
+    "journal": {
+      "title":          "Journalbuchungen",
+      "subtitle":       "Alle Buchungen, automatisch und manuell",
+      "addManual":      "Manuelle Buchung",
+      "manualTitle":    "Neue manuelle Buchung",
+      "narrationPh":    "Buchungstext (z. B. Korrektur, Eröffnungsbilanz)",
+      "lines":          "Buchungszeilen",
+      "addLine":        "Zeile hinzufügen",
+      "selectAccount":  "Konto wählen…",
+      "notBalanced":    "Soll und Haben weichen um {diff} ab",
+      "balanceHint":    "Soll-Summe muss Haben-Summe entsprechen, bevor gebucht werden kann.",
+      "reverse":        "Stornieren",
+      "reverseConfirm": "Stornobuchung für {number} erstellen?",
+      "reversed":       "Buchung storniert",
+      "empty":          "Keine Journalbuchungen"
+    },
+    "ledger": {
+      "title":         "Hauptbuch",
+      "subtitle":      "Kontoverlauf mit laufendem Saldo",
+      "selectAccount": "Konto auswählen…",
+      "opening":       "Anfangsbestand",
+      "closing":       "Endsaldo",
+      "empty":         "Keine Bewegungen im gewählten Zeitraum"
+    },
+    "trialBalance": {
+      "title":            "Saldenliste",
+      "subtitle":         "Soll-Summe muss Haben-Summe entsprechen",
+      "asOf":             "Stichtag",
+      "opening":          "Anfang",
+      "balanced":         "ausgeglichen",
+      "imbalanced":       "nicht ausgeglichen",
+      "imbalanceTitle":   "Saldenliste stimmt nicht überein",
+      "imbalanceHint":    "Differenz von {diff}. Eine gebuchte Position ist möglicherweise inkonsistent — letzte Buchungen prüfen.",
+      "noData":           "Keine Daten zum gewählten Stichtag"
+    },
+    "pl": {
+      "title":        "Gewinn- und Verlustrechnung",
+      "subtitle":     "Erfolgsrechnung für den gewählten Zeitraum",
+      "revenue":      "Erlöse",
+      "expense":      "Aufwendungen",
+      "revenueTotal": "Erlöse gesamt",
+      "expenseTotal": "Aufwendungen gesamt",
+      "netResult":    "Jahresergebnis",
+      "profit":       "Gewinn",
+      "loss":         "Verlust",
+      "noRevenue":    "Keine Erlöse erfasst",
+      "noExpense":    "Keine Aufwendungen erfasst"
+    },
+    "balanceSheet": {
+      "title":          "Bilanz",
+      "subtitle":       "Aktiva, Passiva und Eigenkapital zum Stichtag",
+      "asOf":           "Stichtag",
+      "assets":         "Aktiva",
+      "liabilities":    "Verbindlichkeiten",
+      "equity":         "Eigenkapital",
+      "assetTotal":     "Aktiva gesamt",
+      "liabilityTotal": "Verbindlichkeiten gesamt",
+      "equityTotal":    "Eigenkapital gesamt",
+      "passivaTotal":   "Passiva gesamt",
+      "ytdProfit":      "Jahresergebnis",
+      "imbalanceHint":  "Aktiva und Passiva sind nicht ausgeglichen. Letzte Buchungen prüfen."
+    },
+    "cashbook": {
+      "title":         "Kassenbuch",
+      "subtitle":      "Tägliche Kassen- und Bankbewegungen",
+      "account":       "Konto",
+      "selectAccount": "Konto wählen…",
+      "opening":       "Anfangsbestand",
+      "closing":       "Endbestand",
+      "cashIn":        "Einnahme",
+      "cashOut":       "Ausgabe",
+      "empty":         "Keine Bewegungen im gewählten Zeitraum"
+    },
+    "bank": {
+      "title":          "Bankkonten",
+      "subtitle":       "Bankkonten-Register mit Zuordnung zum Kontenplan",
+      "add":            "Bankkonto hinzufügen",
+      "createTitle":    "Neues Bankkonto",
+      "editTitle":      "Bankkonto bearbeiten",
+      "empty":          "Noch keine Bankkonten erfasst",
+      "accountNumber":  "Kontonummer",
+      "coa":            "Zugeordnetes Konto (KP)",
+      "currentBalance": "Aktueller Saldo",
+      "deleteConfirm":  "Bankkonto \"{name}\" löschen?",
+      "fields": {
+        "name":           "Anzeigename",
+        "bankName":       "Bank",
+        "accountNumber":  "Kontonummer",
+        "coa":            "Zugeordnetes Konto (KP)",
+        "openingBalance": "Anfangsbestand",
+        "openingDate":    "Eröffnungsdatum"
       }
     }
   }

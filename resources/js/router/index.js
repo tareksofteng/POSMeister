@@ -383,6 +383,62 @@ const routes = [
                 component: () => import('@/views/finance/FinancialCalendarView.vue'),
                 meta: { titleKey: 'menu.financialCalendar', permission: 'finance' },
             },
+
+            // Accounting module
+            {
+                path: 'accounting',
+                name: 'accounting-dashboard',
+                component: () => import('@/views/accounting/AccountingDashboardView.vue'),
+                meta: { titleKey: 'accounting.dashboard.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/coa',
+                name: 'accounting-coa',
+                component: () => import('@/views/accounting/ChartOfAccountsView.vue'),
+                meta: { titleKey: 'accounting.coa.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/journal',
+                name: 'accounting-journal',
+                component: () => import('@/views/accounting/JournalEntryListView.vue'),
+                meta: { titleKey: 'accounting.journal.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/ledger',
+                name: 'accounting-ledger',
+                component: () => import('@/views/accounting/LedgerView.vue'),
+                meta: { titleKey: 'accounting.ledger.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/trial-balance',
+                name: 'accounting-trial-balance',
+                component: () => import('@/views/accounting/TrialBalanceView.vue'),
+                meta: { titleKey: 'accounting.trialBalance.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/profit-loss',
+                name: 'accounting-profit-loss',
+                component: () => import('@/views/accounting/ProfitLossView.vue'),
+                meta: { titleKey: 'accounting.pl.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/balance-sheet',
+                name: 'accounting-balance-sheet',
+                component: () => import('@/views/accounting/BalanceSheetView.vue'),
+                meta: { titleKey: 'accounting.balanceSheet.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/cashbook',
+                name: 'accounting-cashbook',
+                component: () => import('@/views/accounting/CashbookView.vue'),
+                meta: { titleKey: 'accounting.cashbook.title', permission: 'accounting' },
+            },
+            {
+                path: 'accounting/banks',
+                name: 'accounting-banks',
+                component: () => import('@/views/accounting/BankAccountView.vue'),
+                meta: { titleKey: 'accounting.bank.title', permission: 'accounting' },
+            },
         ],
     },
 
