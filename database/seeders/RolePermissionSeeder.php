@@ -20,6 +20,7 @@ class RolePermissionSeeder extends Seeder
             'finance',
             'accounting',
             'crm',
+            'oms',
         ]);
 
         // Cashier: front-desk only

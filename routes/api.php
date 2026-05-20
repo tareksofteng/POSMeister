@@ -29,6 +29,11 @@ use App\Modules\CRM\Controllers\CustomerIntelligenceController;
 use App\Modules\CRM\Controllers\LoyaltyController;
 use App\Modules\CRM\Controllers\LoyaltySettingsController;
 use App\Modules\CRM\Controllers\WalletController;
+use App\Modules\OMS\Controllers\AutomationController;
+use App\Modules\OMS\Controllers\CourierController;
+use App\Modules\OMS\Controllers\EcommerceController;
+use App\Modules\OMS\Controllers\NotificationController;
+use App\Modules\OMS\Controllers\OrderController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -337,6 +342,71 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
             Route::post('{campaign}/queue',       [CampaignController::class, 'queueDispatch']);
             Route::post('{campaign}/cancel',      [CampaignController::class, 'cancel']);
             Route::get('{campaign}/preview',      [CampaignController::class, 'preview']);
+        });
+    });
+
+    // OMS, couriers, notifications, automation, ecommerce sync
+    Route::middleware('role:admin,manager')->group(function () {
+
+        // Orders
+        Route::prefix('orders')->group(function () {
+            Route::get('dashboard',                [OrderController::class, 'dashboard']);
+            Route::get('/',                        [OrderController::class, 'index']);
+            Route::post('/',                       [OrderController::class, 'store']);
+            Route::get('{order}',                  [OrderController::class, 'show']);
+            Route::post('{order}/transition',      [OrderController::class, 'transition']);
+            Route::post('{order}/fulfil',          [OrderController::class, 'fulfilPartial']);
+            Route::post('{order}/payment',         [OrderController::class, 'markPaid']);
+        });
+
+        // Couriers + shipments
+        Route::prefix('couriers')->group(function () {
+            Route::get('/',                        [CourierController::class, 'index']);
+            Route::post('/',                       [CourierController::class, 'store']);
+            Route::put('{courier}',                [CourierController::class, 'update']);
+            Route::delete('{courier}',             [CourierController::class, 'destroy']);
+        });
+        Route::prefix('shipments')->group(function () {
+            Route::get('/',                                [CourierController::class, 'shipments']);
+            Route::post('orders/{order}/couriers/{courier}', [CourierController::class, 'ship']);
+            Route::post('{shipment}/refresh',              [CourierController::class, 'refresh']);
+            Route::post('{shipment}/cancel',               [CourierController::class, 'cancel']);
+        });
+
+        // Notifications
+        Route::prefix('notifications')->group(function () {
+            Route::get('/',                        [NotificationController::class, 'index']);
+            Route::post('/',                       [NotificationController::class, 'store']);
+            Route::post('{notification}/read',     [NotificationController::class, 'markRead']);
+            Route::get('unread-count',             [NotificationController::class, 'unreadCount']);
+        });
+        Route::prefix('notification-templates')->group(function () {
+            Route::get('/',                        [NotificationController::class, 'templates']);
+            Route::post('/',                       [NotificationController::class, 'saveTemplate']);
+            Route::put('{template}',               [NotificationController::class, 'saveTemplate']);
+            Route::delete('{template}',            [NotificationController::class, 'deleteTemplate']);
+        });
+
+        // Automation
+        Route::prefix('automation')->group(function () {
+            Route::get('rules',                    [AutomationController::class, 'index']);
+            Route::post('rules',                   [AutomationController::class, 'store']);
+            Route::get('rules/{rule}',             [AutomationController::class, 'show']);
+            Route::put('rules/{rule}',             [AutomationController::class, 'update']);
+            Route::delete('rules/{rule}',          [AutomationController::class, 'destroy']);
+            Route::post('rules/{rule}/run',        [AutomationController::class, 'run']);
+            Route::post('run-all',                 [AutomationController::class, 'runAll']);
+            Route::get('logs',                     [AutomationController::class, 'logs']);
+        });
+
+        // E-commerce sync
+        Route::prefix('ecommerce')->group(function () {
+            Route::get('connectors',                   [EcommerceController::class, 'connectors']);
+            Route::post('connectors',                  [EcommerceController::class, 'storeConnector']);
+            Route::put('connectors/{connector}',       [EcommerceController::class, 'updateConnector']);
+            Route::delete('connectors/{connector}',    [EcommerceController::class, 'destroyConnector']);
+            Route::post('connectors/{connector}/sync', [EcommerceController::class, 'startSync']);
+            Route::get('jobs',                         [EcommerceController::class, 'jobs']);
         });
     });
 

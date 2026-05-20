@@ -60,6 +60,12 @@
     "crmSegments":        "شرائح العملاء",
     "crmWallets":         "نشاط المحفظة",
     "crmLoyalty":         "برنامج الولاء",
+    "oms":                "متعدد القنوات",
+    "omsOrders":          "إدارة الطلبات",
+    "omsShipments":       "تتبع الشحنات",
+    "omsAutomation":      "مركز الأتمتة",
+    "omsNotifications":   "مركز الإشعارات",
+    "omsEcommerce":       "مزامنة المتجر",
     "stockOverview":         "نظرة على المخزون",
     "inventoryIntelligence": "ذكاء المخزون",
     "reorderSuggestions":    "اقتراحات إعادة الطلب",
@@ -2305,6 +2311,143 @@
         "deposit":  "إيداع",
         "adjust":   "تعديل"
       }
+    }
+  },
+  "oms": {
+    "module": "العمليات متعددة القنوات",
+    "fields": {
+      "orderNumber": "رقم الطلب",
+      "customer":    "العميل",
+      "source":      "المصدر",
+      "status":      "الحالة",
+      "total":       "الإجمالي",
+      "placedAt":    "تاريخ الطلب"
+    },
+    "status": {
+      "pending":   "قيد الانتظار",
+      "confirmed": "مؤكد",
+      "packed":    "معبأ",
+      "shipped":   "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ملغى",
+      "returned":  "مرتجع"
+    },
+    "kpi": {
+      "totalMonth":     "طلبات هذا الشهر",
+      "openOrders":     "طلبات مفتوحة",
+      "delivered":      "تم التسليم",
+      "cancelled":      "ملغى",
+      "delayed":        "متأخر",
+      "avgDelivery":    "متوسط مدة التسليم",
+      "fulfilmentRate": "نسبة التنفيذ",
+      "returnRate":     "نسبة الإرجاع"
+    },
+    "dashboard": {
+      "title":           "إدارة الطلبات",
+      "subtitle":        "صحة التنفيذ وأداء التسليم عبر كل القنوات",
+      "statusBreakdown": "توزيع الحالات",
+      "recent":          "أحدث الطلبات",
+      "empty":           "لا توجد طلبات بعد"
+    },
+    "shipment": {
+      "title":           "تتبع الشحنات",
+      "subtitle":        "كل الشحنات وحالاتها وأرقام التتبع",
+      "searchTracking":  "بحث برقم التتبع",
+      "trackingPh":      "رقم التتبع…",
+      "tracking":        "رقم التتبع",
+      "order":           "الطلب",
+      "courier":         "الناقل",
+      "cost":            "التكلفة",
+      "dispatched":      "تاريخ الشحن",
+      "empty":           "لا توجد شحنات بعد",
+      "poll":            "تحديث",
+      "refreshed":       "تم تحديث الحالة",
+      "cancelConfirm":   "إلغاء هذه الشحنة؟",
+      "cancelled":       "تم إلغاء الشحنة"
+    },
+    "shipmentStatus": {
+      "pending":          "قيد الانتظار",
+      "created":          "تم الإنشاء",
+      "in_transit":       "في الطريق",
+      "out_for_delivery": "خرجت للتسليم",
+      "delivered":        "تم التسليم",
+      "returned":         "مرتجع",
+      "cancelled":        "ملغى",
+      "failed":           "فشلت"
+    },
+    "automation": {
+      "title":            "مركز الأتمتة",
+      "subtitle":         "قواعد إذا-فإن، تعمل بجدول زمني أو يدوياً",
+      "newRule":          "قاعدة جديدة",
+      "editRule":         "تعديل القاعدة",
+      "runAll":           "تشغيل كل القواعد النشطة",
+      "runNow":           "تشغيل الآن",
+      "name":             "الاسم",
+      "trigger":          "المحفز",
+      "action":           "الإجراء",
+      "runs":             "تشغيلات",
+      "matches":          "تطابقات",
+      "lastRun":          "آخر تشغيل",
+      "empty":            "لا توجد قواعد",
+      "conditionHint":    "JSON الشرط (مثل {\"days\":90})",
+      "actionConfigHint": "JSON تكوين الإجراء",
+      "deleteConfirm":    "حذف القاعدة \"{name}\"؟",
+      "ran":              "تم تشغيل القاعدة",
+      "ranAll":           "تم تشغيل كل القواعد النشطة",
+      "recentLogs":       "أحدث التشغيلات",
+      "logStatus": {
+        "matched":       "تطابق",
+        "no_match":      "بدون تطابق",
+        "action_failed": "فشل الإجراء",
+        "error":         "خطأ"
+      }
+    },
+    "notify": {
+      "title":                "مركز الإشعارات",
+      "subtitle":             "الرسائل في قائمة الانتظار والمرسلة عبر كل القنوات",
+      "inbox":                "البريد الوارد",
+      "templates":            "القوالب",
+      "channel":              "القناة",
+      "recipient":            "المستلم",
+      "subject":              "الموضوع",
+      "queuedAt":             "في الانتظار",
+      "markRead":             "وضع علامة مقروء",
+      "empty":                "لا توجد إشعارات",
+      "newTemplate":          "قالب جديد",
+      "editTemplate":         "تعديل القالب",
+      "code":                 "الكود",
+      "name":                 "الاسم",
+      "body":                 "النص",
+      "varsHint":             "استخدم {{متغير}} كنائب. يُستبدل عند الإرسال.",
+      "noTemplates":          "لا توجد قوالب",
+      "deleteTemplateConfirm":"حذف القالب \"{name}\"؟",
+      "statuses": {
+        "queued":  "في الانتظار",
+        "sending": "جارٍ الإرسال",
+        "sent":    "تم الإرسال",
+        "failed":  "فشل",
+        "read":    "مقروء"
+      }
+    },
+    "sync": {
+      "title":          "مزامنة المتجر",
+      "subtitle":       "الموصلات ومهام المزامنة وتكامل المتاجر الخارجية",
+      "addConnector":   "موصل جديد",
+      "editConnector":  "تعديل الموصل",
+      "noConnectors":   "لا توجد موصلات",
+      "name":           "الاسم",
+      "type":           "المنصة",
+      "apiUrl":         "نقطة API",
+      "lastSync":       "آخر مزامنة",
+      "recentJobs":     "أحدث المهام",
+      "connector":      "الموصل",
+      "entity":         "الكيان",
+      "direction":      "الاتجاه",
+      "processed":      "تمت معالجته",
+      "startedAt":      "بدأ في",
+      "noJobs":         "لا توجد مهام بعد",
+      "queued":         "تم وضع المهمة في الطابور",
+      "deleteConfirm":  "حذف الموصل \"{name}\"؟"
     }
   }
 }

@@ -49,6 +49,12 @@
     "crmSegments":        "কাস্টমার সেগমেন্ট",
     "crmWallets":         "ওয়ালেট কার্যক্রম",
     "crmLoyalty":         "লয়্যালটি প্রোগ্রাম",
+    "oms":                "ওমনিচ্যানেল",
+    "omsOrders":          "অর্ডার ম্যানেজমেন্ট",
+    "omsShipments":       "শিপমেন্ট ট্র্যাকিং",
+    "omsAutomation":      "অটোমেশন সেন্টার",
+    "omsNotifications":   "নোটিফিকেশন সেন্টার",
+    "omsEcommerce":       "ই-কমার্স সিঙ্ক",
     "stockOverview":         "স্টক সারসংক্ষেপ",
     "inventoryIntelligence": "ইনভেন্টরি ইন্টেলিজেন্স",
     "reorderSuggestions":    "রি-অর্ডার সাজেশন",
@@ -2305,6 +2311,143 @@
         "deposit":  "জমা",
         "adjust":   "সংশোধন"
       }
+    }
+  },
+  "oms": {
+    "module": "ওমনিচ্যানেল অপারেশন",
+    "fields": {
+      "orderNumber": "অর্ডার নং",
+      "customer":    "ক্রেতা",
+      "source":      "উৎস",
+      "status":      "স্ট্যাটাস",
+      "total":       "মোট",
+      "placedAt":    "অর্ডার সময়"
+    },
+    "status": {
+      "pending":   "অপেক্ষমান",
+      "confirmed": "নিশ্চিত",
+      "packed":    "প্যাক করা",
+      "shipped":   "প্রেরিত",
+      "delivered": "ডেলিভারি হয়েছে",
+      "cancelled": "বাতিল",
+      "returned":  "ফেরত"
+    },
+    "kpi": {
+      "totalMonth":     "এই মাসের অর্ডার",
+      "openOrders":     "খোলা অর্ডার",
+      "delivered":      "ডেলিভারি হয়েছে",
+      "cancelled":      "বাতিল",
+      "delayed":        "বিলম্বিত",
+      "avgDelivery":    "গড় ডেলিভারি সময়",
+      "fulfilmentRate": "পূরণের হার",
+      "returnRate":     "ফেরতের হার"
+    },
+    "dashboard": {
+      "title":           "অর্ডার ম্যানেজমেন্ট",
+      "subtitle":        "সকল চ্যানেলে পূরণ ও ডেলিভারি পারফরম্যান্স",
+      "statusBreakdown": "স্ট্যাটাস বিভাজন",
+      "recent":          "সাম্প্রতিক অর্ডার",
+      "empty":           "এখনো কোনো অর্ডার নেই"
+    },
+    "shipment": {
+      "title":           "শিপমেন্ট ট্র্যাকিং",
+      "subtitle":        "সকল শিপমেন্ট, স্ট্যাটাস এবং ট্র্যাকিং নম্বর",
+      "searchTracking":  "ট্র্যাকিং খুঁজুন",
+      "trackingPh":      "ট্র্যাকিং নম্বর…",
+      "tracking":        "ট্র্যাকিং নং",
+      "order":           "অর্ডার",
+      "courier":         "কুরিয়ার",
+      "cost":            "খরচ",
+      "dispatched":      "পাঠানোর সময়",
+      "empty":           "এখনো কোনো শিপমেন্ট নেই",
+      "poll":            "রিফ্রেশ",
+      "refreshed":       "স্ট্যাটাস রিফ্রেশ হয়েছে",
+      "cancelConfirm":   "এই শিপমেন্ট বাতিল করবেন?",
+      "cancelled":       "শিপমেন্ট বাতিল হয়েছে"
+    },
+    "shipmentStatus": {
+      "pending":          "অপেক্ষমান",
+      "created":          "তৈরি হয়েছে",
+      "in_transit":       "পথে",
+      "out_for_delivery": "ডেলিভারির পথে",
+      "delivered":        "ডেলিভারি হয়েছে",
+      "returned":         "ফেরত",
+      "cancelled":        "বাতিল",
+      "failed":           "ব্যর্থ"
+    },
+    "automation": {
+      "title":            "অটোমেশন সেন্টার",
+      "subtitle":         "যদি-তবে নিয়ম, সময়সূচি বা ম্যানুয়াল ট্রিগার দ্বারা",
+      "newRule":          "নতুন নিয়ম",
+      "editRule":         "নিয়ম সম্পাদনা",
+      "runAll":           "সব সক্রিয় চালান",
+      "runNow":           "এখন চালান",
+      "name":             "নাম",
+      "trigger":          "ট্রিগার",
+      "action":           "অ্যাকশন",
+      "runs":             "চালানো হয়েছে",
+      "matches":          "ম্যাচ",
+      "lastRun":          "শেষ চালানো",
+      "empty":            "কোনো নিয়ম নেই",
+      "conditionHint":    "শর্ত JSON (যেমন {\"days\":90})",
+      "actionConfigHint": "অ্যাকশন কনফিগ JSON",
+      "deleteConfirm":    "নিয়ম \"{name}\" মুছবেন?",
+      "ran":              "নিয়ম চালানো হয়েছে",
+      "ranAll":           "সব সক্রিয় নিয়ম চালানো হয়েছে",
+      "recentLogs":       "সাম্প্রতিক রান",
+      "logStatus": {
+        "matched":       "ম্যাচ হয়েছে",
+        "no_match":      "ম্যাচ নেই",
+        "action_failed": "অ্যাকশন ব্যর্থ",
+        "error":         "ত্রুটি"
+      }
+    },
+    "notify": {
+      "title":                "নোটিফিকেশন সেন্টার",
+      "subtitle":             "সকল চ্যানেলে কিউতে এবং পাঠানো বার্তা",
+      "inbox":                "ইনবক্স",
+      "templates":            "টেমপ্লেট",
+      "channel":              "চ্যানেল",
+      "recipient":            "প্রাপক",
+      "subject":              "বিষয়",
+      "queuedAt":             "কিউতে",
+      "markRead":             "পঠিত হিসাবে চিহ্নিত করুন",
+      "empty":                "কোনো নোটিফিকেশন নেই",
+      "newTemplate":          "নতুন টেমপ্লেট",
+      "editTemplate":         "টেমপ্লেট সম্পাদনা",
+      "code":                 "কোড",
+      "name":                 "নাম",
+      "body":                 "বডি",
+      "varsHint":             "{{variable}} প্লেসহোল্ডার ব্যবহার করুন। প্রেরণের সময় প্রতিস্থাপিত হয়।",
+      "noTemplates":          "কোনো টেমপ্লেট নেই",
+      "deleteTemplateConfirm":"টেমপ্লেট \"{name}\" মুছবেন?",
+      "statuses": {
+        "queued":  "কিউতে",
+        "sending": "পাঠানো হচ্ছে",
+        "sent":    "পাঠানো হয়েছে",
+        "failed":  "ব্যর্থ",
+        "read":    "পঠিত"
+      }
+    },
+    "sync": {
+      "title":          "ই-কমার্স সিঙ্ক",
+      "subtitle":       "কানেক্টর, সিঙ্ক জব এবং বাহ্যিক স্টোর ইন্টিগ্রেশন",
+      "addConnector":   "নতুন কানেক্টর",
+      "editConnector":  "কানেক্টর সম্পাদনা",
+      "noConnectors":   "কোনো কানেক্টর নেই",
+      "name":           "নাম",
+      "type":           "প্ল্যাটফর্ম",
+      "apiUrl":         "API এন্ডপয়েন্ট",
+      "lastSync":       "শেষ সিঙ্ক",
+      "recentJobs":     "সাম্প্রতিক জব",
+      "connector":      "কানেক্টর",
+      "entity":         "এনটিটি",
+      "direction":      "দিক",
+      "processed":      "প্রক্রিয়াকৃত",
+      "startedAt":      "শুরুর সময়",
+      "noJobs":         "এখনো কোনো জব নেই",
+      "queued":         "সিঙ্ক জব কিউতে দেওয়া হয়েছে",
+      "deleteConfirm":  "কানেক্টর \"{name}\" মুছবেন?"
     }
   }
 }

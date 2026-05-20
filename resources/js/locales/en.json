@@ -60,6 +60,12 @@
     "crmSegments":        "Segments",
     "crmWallets":         "Wallet activity",
     "crmLoyalty":         "Loyalty programme",
+    "oms":                "Omnichannel",
+    "omsOrders":          "Order management",
+    "omsShipments":       "Shipment tracking",
+    "omsAutomation":      "Automation center",
+    "omsNotifications":   "Notification center",
+    "omsEcommerce":       "E-commerce sync",
     "stockOverview":         "Stock overview",
     "inventoryIntelligence": "Inventory intelligence",
     "reorderSuggestions":    "Reorder suggestions",
@@ -2307,6 +2313,143 @@
         "deposit":  "Deposit",
         "adjust":   "Adjustment"
       }
+    }
+  },
+  "oms": {
+    "module": "Omnichannel Operations",
+    "fields": {
+      "orderNumber": "Order no.",
+      "customer":    "Customer",
+      "source":      "Source",
+      "status":      "Status",
+      "total":       "Total",
+      "placedAt":    "Placed at"
+    },
+    "status": {
+      "pending":   "Pending",
+      "confirmed": "Confirmed",
+      "packed":    "Packed",
+      "shipped":   "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "returned":  "Returned"
+    },
+    "kpi": {
+      "totalMonth":     "Orders this month",
+      "openOrders":     "Open orders",
+      "delivered":      "Delivered",
+      "cancelled":      "Cancelled",
+      "delayed":        "Delayed",
+      "avgDelivery":    "Avg. delivery time",
+      "fulfilmentRate": "Fulfilment rate",
+      "returnRate":     "Return rate"
+    },
+    "dashboard": {
+      "title":           "Order management",
+      "subtitle":        "Fulfilment health and delivery performance across all sources",
+      "statusBreakdown": "Status breakdown",
+      "recent":          "Recent orders",
+      "empty":           "No orders yet"
+    },
+    "shipment": {
+      "title":           "Shipment tracking",
+      "subtitle":        "All carrier shipments, status and tracking numbers",
+      "searchTracking":  "Search tracking",
+      "trackingPh":      "Tracking number…",
+      "tracking":        "Tracking no.",
+      "order":           "Order",
+      "courier":         "Courier",
+      "cost":            "Cost",
+      "dispatched":      "Dispatched",
+      "empty":           "No shipments yet",
+      "poll":            "Refresh",
+      "refreshed":       "Status refreshed",
+      "cancelConfirm":   "Cancel this shipment?",
+      "cancelled":       "Shipment cancelled"
+    },
+    "shipmentStatus": {
+      "pending":          "Pending",
+      "created":          "Created",
+      "in_transit":       "In transit",
+      "out_for_delivery": "Out for delivery",
+      "delivered":        "Delivered",
+      "returned":         "Returned",
+      "cancelled":        "Cancelled",
+      "failed":           "Failed"
+    },
+    "automation": {
+      "title":            "Automation center",
+      "subtitle":         "IF-THEN rules that fire on schedule or on demand",
+      "newRule":          "New rule",
+      "editRule":         "Edit rule",
+      "runAll":           "Run all active",
+      "runNow":           "Run now",
+      "name":             "Name",
+      "trigger":          "Trigger",
+      "action":           "Action",
+      "runs":             "Runs",
+      "matches":          "Matches",
+      "lastRun":          "Last run",
+      "empty":            "No rules defined",
+      "conditionHint":    "Condition JSON (e.g. {\"days\":90})",
+      "actionConfigHint": "Action config JSON",
+      "deleteConfirm":    "Delete rule \"{name}\"?",
+      "ran":              "Rule executed",
+      "ranAll":           "All active rules executed",
+      "recentLogs":       "Recent runs",
+      "logStatus": {
+        "matched":       "Matched",
+        "no_match":      "No match",
+        "action_failed": "Action failed",
+        "error":         "Error"
+      }
+    },
+    "notify": {
+      "title":                "Notification center",
+      "subtitle":             "Queued and sent messages across all channels",
+      "inbox":                "Inbox",
+      "templates":            "Templates",
+      "channel":              "Channel",
+      "recipient":            "Recipient",
+      "subject":              "Subject",
+      "queuedAt":             "Queued",
+      "markRead":             "Mark read",
+      "empty":                "No notifications yet",
+      "newTemplate":          "New template",
+      "editTemplate":         "Edit template",
+      "code":                 "Code",
+      "name":                 "Name",
+      "body":                 "Body",
+      "varsHint":             "Use {{variable}} placeholders. Variables resolve at dispatch time.",
+      "noTemplates":          "No templates configured",
+      "deleteTemplateConfirm":"Delete template \"{name}\"?",
+      "statuses": {
+        "queued":  "Queued",
+        "sending": "Sending",
+        "sent":    "Sent",
+        "failed":  "Failed",
+        "read":    "Read"
+      }
+    },
+    "sync": {
+      "title":          "E-commerce sync",
+      "subtitle":       "Connectors, sync jobs and external store integration",
+      "addConnector":   "New connector",
+      "editConnector":  "Edit connector",
+      "noConnectors":   "No connectors configured",
+      "name":           "Display name",
+      "type":           "Platform",
+      "apiUrl":         "API endpoint",
+      "lastSync":       "Last sync",
+      "recentJobs":     "Recent sync jobs",
+      "connector":      "Connector",
+      "entity":         "Entity",
+      "direction":      "Direction",
+      "processed":      "Processed",
+      "startedAt":      "Started",
+      "noJobs":         "No sync jobs yet",
+      "queued":         "Sync job queued",
+      "deleteConfirm":  "Delete connector \"{name}\"?"
     }
   }
 }

@@ -301,6 +301,23 @@ const NAV_GROUPS = [
             },
             {
                 isGroup:     true,
+                permKey:     'oms',
+                labelKey:    'menu.oms',
+                icon:        ShoppingCartIcon,
+                childRoutes: [
+                    'oms-orders', 'oms-shipments', 'oms-automation',
+                    'oms-notifications', 'oms-ecommerce',
+                ],
+                children: [
+                    { labelKey: 'menu.omsOrders',        to: { name: 'oms-orders' },        implemented: true },
+                    { labelKey: 'menu.omsShipments',     to: { name: 'oms-shipments' },     implemented: true },
+                    { labelKey: 'menu.omsAutomation',    to: { name: 'oms-automation' },    implemented: true },
+                    { labelKey: 'menu.omsNotifications', to: { name: 'oms-notifications' }, implemented: true },
+                    { labelKey: 'menu.omsEcommerce',     to: { name: 'oms-ecommerce' },     implemented: true },
+                ],
+            },
+            {
+                isGroup:     true,
                 permKey:     'hrm',
                 labelKey:    'menu.hrm',
                 icon:        UserGroupIcon,

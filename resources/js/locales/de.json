@@ -60,6 +60,12 @@
     "crmSegments":        "Kundensegmente",
     "crmWallets":         "Wallet-Aktivitäten",
     "crmLoyalty":         "Treueprogramm",
+    "oms":                "Omnichannel",
+    "omsOrders":          "Auftragsverwaltung",
+    "omsShipments":       "Versandverfolgung",
+    "omsAutomation":      "Automatisierungs-Center",
+    "omsNotifications":   "Benachrichtigungs-Center",
+    "omsEcommerce":       "Shop-Synchronisation",
     "stockOverview":         "Lagerübersicht",
     "inventoryIntelligence": "Lagerintelligenz",
     "reorderSuggestions":    "Nachbestellung",
@@ -2307,6 +2313,143 @@
         "deposit":  "Einzahlung",
         "adjust":   "Korrektur"
       }
+    }
+  },
+  "oms": {
+    "module": "Omnichannel-Operations",
+    "fields": {
+      "orderNumber": "Auftragsnr.",
+      "customer":    "Kunde",
+      "source":      "Quelle",
+      "status":      "Status",
+      "total":       "Gesamt",
+      "placedAt":    "Eingang"
+    },
+    "status": {
+      "pending":   "Offen",
+      "confirmed": "Bestätigt",
+      "packed":    "Verpackt",
+      "shipped":   "Versendet",
+      "delivered": "Geliefert",
+      "cancelled": "Storniert",
+      "returned":  "Retour"
+    },
+    "kpi": {
+      "totalMonth":     "Aufträge diesen Monat",
+      "openOrders":     "Offene Aufträge",
+      "delivered":      "Geliefert",
+      "cancelled":      "Storniert",
+      "delayed":        "Verzögert",
+      "avgDelivery":    "Ø Lieferzeit",
+      "fulfilmentRate": "Erfüllungsquote",
+      "returnRate":     "Retourenquote"
+    },
+    "dashboard": {
+      "title":           "Auftragsverwaltung",
+      "subtitle":        "Erfüllung und Lieferleistung über alle Kanäle hinweg",
+      "statusBreakdown": "Status-Verteilung",
+      "recent":          "Letzte Aufträge",
+      "empty":           "Noch keine Aufträge"
+    },
+    "shipment": {
+      "title":           "Versandverfolgung",
+      "subtitle":        "Alle Sendungen, Status und Tracking-Nummern",
+      "searchTracking":  "Tracking suchen",
+      "trackingPh":      "Sendungsnummer…",
+      "tracking":        "Tracking-Nr.",
+      "order":           "Auftrag",
+      "courier":         "Lieferant",
+      "cost":            "Kosten",
+      "dispatched":      "Versendet am",
+      "empty":           "Noch keine Sendungen",
+      "poll":            "Aktualisieren",
+      "refreshed":       "Status aktualisiert",
+      "cancelConfirm":   "Diese Sendung stornieren?",
+      "cancelled":       "Sendung storniert"
+    },
+    "shipmentStatus": {
+      "pending":          "Offen",
+      "created":          "Erstellt",
+      "in_transit":       "Unterwegs",
+      "out_for_delivery": "In Zustellung",
+      "delivered":        "Geliefert",
+      "returned":         "Retour",
+      "cancelled":        "Storniert",
+      "failed":           "Fehlgeschlagen"
+    },
+    "automation": {
+      "title":            "Automatisierungs-Center",
+      "subtitle":         "WENN-DANN-Regeln, geplant oder manuell ausgelöst",
+      "newRule":          "Neue Regel",
+      "editRule":         "Regel bearbeiten",
+      "runAll":           "Alle aktiven ausführen",
+      "runNow":           "Jetzt ausführen",
+      "name":             "Name",
+      "trigger":          "Auslöser",
+      "action":           "Aktion",
+      "runs":             "Läufe",
+      "matches":          "Treffer",
+      "lastRun":          "Letzter Lauf",
+      "empty":            "Keine Regeln vorhanden",
+      "conditionHint":    "Bedingungs-JSON (z. B. {\"days\":90})",
+      "actionConfigHint": "Aktions-Konfiguration JSON",
+      "deleteConfirm":    "Regel \"{name}\" löschen?",
+      "ran":              "Regel ausgeführt",
+      "ranAll":           "Alle aktiven Regeln ausgeführt",
+      "recentLogs":       "Letzte Ausführungen",
+      "logStatus": {
+        "matched":       "Treffer",
+        "no_match":      "Kein Treffer",
+        "action_failed": "Aktion fehlgeschlagen",
+        "error":         "Fehler"
+      }
+    },
+    "notify": {
+      "title":                "Benachrichtigungs-Center",
+      "subtitle":             "Eingereihte und gesendete Nachrichten über alle Kanäle",
+      "inbox":                "Posteingang",
+      "templates":            "Vorlagen",
+      "channel":              "Kanal",
+      "recipient":            "Empfänger",
+      "subject":              "Betreff",
+      "queuedAt":             "Eingereiht",
+      "markRead":             "Als gelesen markieren",
+      "empty":                "Noch keine Nachrichten",
+      "newTemplate":          "Neue Vorlage",
+      "editTemplate":         "Vorlage bearbeiten",
+      "code":                 "Code",
+      "name":                 "Name",
+      "body":                 "Inhalt",
+      "varsHint":             "{{variable}} als Platzhalter verwenden. Werden bei Versand ersetzt.",
+      "noTemplates":          "Keine Vorlagen konfiguriert",
+      "deleteTemplateConfirm":"Vorlage \"{name}\" löschen?",
+      "statuses": {
+        "queued":  "Eingereiht",
+        "sending": "Wird gesendet",
+        "sent":    "Gesendet",
+        "failed":  "Fehlgeschlagen",
+        "read":    "Gelesen"
+      }
+    },
+    "sync": {
+      "title":          "Shop-Synchronisation",
+      "subtitle":       "Konnektoren, Sync-Jobs und externe Shop-Anbindung",
+      "addConnector":   "Neuer Konnektor",
+      "editConnector":  "Konnektor bearbeiten",
+      "noConnectors":   "Keine Konnektoren konfiguriert",
+      "name":           "Anzeigename",
+      "type":           "Plattform",
+      "apiUrl":         "API-Endpunkt",
+      "lastSync":       "Letzte Synchronisation",
+      "recentJobs":     "Letzte Sync-Jobs",
+      "connector":      "Konnektor",
+      "entity":         "Entität",
+      "direction":      "Richtung",
+      "processed":      "Verarbeitet",
+      "startedAt":      "Gestartet",
+      "noJobs":         "Noch keine Sync-Jobs",
+      "queued":         "Sync-Job eingereiht",
+      "deleteConfirm":  "Konnektor \"{name}\" löschen?"
     }
   }
 }

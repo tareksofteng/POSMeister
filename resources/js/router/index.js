@@ -495,6 +495,38 @@ const routes = [
                 component: () => import('@/views/crm/LoyaltySettingsView.vue'),
                 meta: { titleKey: 'crm.loyaltySettings.title', permission: 'crm' },
             },
+
+            // OMS / Omnichannel
+            {
+                path: 'orders',
+                name: 'oms-orders',
+                component: () => import('@/views/oms/OrderDashboardView.vue'),
+                meta: { titleKey: 'oms.dashboard.title', permission: 'oms' },
+            },
+            {
+                path: 'shipments',
+                name: 'oms-shipments',
+                component: () => import('@/views/oms/ShipmentTrackingView.vue'),
+                meta: { titleKey: 'oms.shipment.title', permission: 'oms' },
+            },
+            {
+                path: 'automation',
+                name: 'oms-automation',
+                component: () => import('@/views/oms/AutomationCenterView.vue'),
+                meta: { titleKey: 'oms.automation.title', permission: 'oms' },
+            },
+            {
+                path: 'notifications',
+                name: 'oms-notifications',
+                component: () => import('@/views/oms/NotificationCenterView.vue'),
+                meta: { titleKey: 'oms.notify.title', permission: 'oms' },
+            },
+            {
+                path: 'ecommerce',
+                name: 'oms-ecommerce',
+                component: () => import('@/views/oms/EcommerceSyncView.vue'),
+                meta: { titleKey: 'oms.sync.title', permission: 'oms' },
+            },
         ],
     },
 
