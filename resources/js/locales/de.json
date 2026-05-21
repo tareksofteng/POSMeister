@@ -156,7 +156,24 @@
     "dateTo": "Bis",
     "from": "Ab",
     "until": "Bis",
-    "allTime": "Gesamter Zeitraum"
+    "allTime": "Gesamter Zeitraum",
+    "all": "Alle",
+    "activeOnly": "Nur aktive",
+    "address": "Adresse",
+    "clear": "Leeren",
+    "close": "Schließen",
+    "created": "Erstellt",
+    "updated": "Aktualisiert",
+    "deleted": "Gelöscht",
+    "saved": "Gespeichert",
+    "savedSuccess": "Erfolgreich gespeichert.",
+    "days": "Tage",
+    "of": "von",
+    "page": "Seite",
+    "post": "Buchen",
+    "records": "Einträge",
+    "refresh": "Aktualisieren",
+    "showing": "Zeige"
   },
   "paymentMethod": {
     "cash": "Bar",
@@ -2068,6 +2085,17 @@
         "cashflow":       "Cashflow-Details",
         "calendar":       "Finanzkalender",
         "expenseReports": "Ausgaben-Berichte"
+      },
+      "insights": {
+        "profitable":       "Profitabel im Zeitraum: Nettogewinn {amount} (Marge {margin}%).",
+        "loss":             "Verlust im Zeitraum: {amount}. Ausgaben überprüfen.",
+        "growth":           "Umsatzwachstum +{percent}% gegenüber Vorperiode.",
+        "decline":          "Umsatzrückgang {percent}% gegenüber Vorperiode.",
+        "lowMargin":        "Bruttomarge nur {percent}% — Einkaufspreise prüfen.",
+        "highReceivables":  "Hohe Außenstände: {amount} ({percent}% des Umsatzes).",
+        "heavyPayroll":     "Personalkosten machen über 50% der Gesamtkosten aus.",
+        "outOfStock":       "{count} Artikel ohne Bestand — Nachbestellung erforderlich.",
+        "lowStock":         "{count} Artikel unter Meldebestand."
       }
     }
   },

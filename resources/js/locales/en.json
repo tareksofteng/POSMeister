@@ -156,7 +156,24 @@
     "dateTo": "To",
     "from": "From",
     "until": "Until",
-    "allTime": "All time"
+    "allTime": "All time",
+    "all": "All",
+    "activeOnly": "Active only",
+    "address": "Address",
+    "clear": "Clear",
+    "close": "Close",
+    "created": "Created",
+    "updated": "Updated",
+    "deleted": "Deleted",
+    "saved": "Saved",
+    "savedSuccess": "Saved successfully.",
+    "days": "days",
+    "of": "of",
+    "page": "Page",
+    "post": "Post",
+    "records": "records",
+    "refresh": "Refresh",
+    "showing": "Showing"
   },
   "paymentMethod": {
     "cash": "Cash",
@@ -2068,6 +2085,17 @@
         "cashflow":       "Cashflow detail",
         "calendar":       "Financial calendar",
         "expenseReports": "Expense reports"
+      },
+      "insights": {
+        "profitable":       "Profitable period: net profit {amount} ({margin}% margin).",
+        "loss":             "Loss in period: {amount}. Review expenses.",
+        "growth":           "Revenue growth +{percent}% vs. previous period.",
+        "decline":          "Revenue decline {percent}% vs. previous period.",
+        "lowMargin":        "Gross margin only {percent}% — review purchase prices.",
+        "highReceivables":  "High receivables: {amount} ({percent}% of revenue).",
+        "heavyPayroll":     "Payroll is over 50% of total costs.",
+        "outOfStock":       "{count} products with no stock — reorder required.",
+        "lowStock":         "{count} products below reorder level."
       }
     }
   },

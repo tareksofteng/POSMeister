@@ -417,76 +417,55 @@ class FinancialDashboardService
     // --- smart insights ------------------------------------------------------
 
     /**
-     * Plain-language observations derived from the current KPIs. Each insight
-     * has a tone (positive | warning | critical | info) so the UI can colour-code.
+     * Observations derived from the current KPIs. Returns i18n keys + vars so
+     * the frontend can render them in the user's selected locale rather than
+     * baking in a single language here.
      */
     private function insights(array $kpis, string $from, string $to, ?int $branchId): array
     {
         $out = [];
 
         if ($kpis['net_profit'] > 0) {
-            $out[] = [
-                'tone' => 'positive',
-                'text' => 'Profitabel im Zeitraum: Nettogewinn ' . $this->fmt($kpis['net_profit'])
-                    . ' (Marge ' . $kpis['net_margin_percent'] . '%).',
-            ];
+            $out[] = ['tone' => 'positive', 'key' => 'finance.dashboard.insights.profitable',
+                'vars' => ['amount' => $kpis['net_profit'], 'margin' => $kpis['net_margin_percent']]];
         } elseif ($kpis['net_profit'] < 0) {
-            $out[] = [
-                'tone' => 'critical',
-                'text' => 'Verlust im Zeitraum: ' . $this->fmt($kpis['net_profit'])
-                    . '. Ausgaben überprüfen.',
-            ];
+            $out[] = ['tone' => 'critical', 'key' => 'finance.dashboard.insights.loss',
+                'vars' => ['amount' => $kpis['net_profit']]];
         }
 
         if ($kpis['revenue_growth_percent'] >= 10) {
-            $out[] = [
-                'tone' => 'positive',
-                'text' => 'Umsatzwachstum +' . $kpis['revenue_growth_percent'] . '% gegenüber Vorperiode.',
-            ];
+            $out[] = ['tone' => 'positive', 'key' => 'finance.dashboard.insights.growth',
+                'vars' => ['percent' => $kpis['revenue_growth_percent']]];
         } elseif ($kpis['revenue_growth_percent'] <= -10) {
-            $out[] = [
-                'tone' => 'warning',
-                'text' => 'Umsatzrückgang ' . $kpis['revenue_growth_percent'] . '% gegenüber Vorperiode.',
-            ];
+            $out[] = ['tone' => 'warning', 'key' => 'finance.dashboard.insights.decline',
+                'vars' => ['percent' => $kpis['revenue_growth_percent']]];
         }
 
         if ($kpis['gross_margin_percent'] < 20 && $kpis['total_sales'] > 0) {
-            $out[] = [
-                'tone' => 'warning',
-                'text' => 'Bruttomarge nur ' . $kpis['gross_margin_percent'] . '% — Einkaufspreise prüfen.',
-            ];
+            $out[] = ['tone' => 'warning', 'key' => 'finance.dashboard.insights.lowMargin',
+                'vars' => ['percent' => $kpis['gross_margin_percent']]];
         }
 
         if ($kpis['outstanding_receivables'] > 0 && $kpis['total_sales'] > 0) {
             $ratio = $kpis['outstanding_receivables'] / $kpis['total_sales'] * 100;
             if ($ratio > 30) {
-                $out[] = [
-                    'tone' => 'warning',
-                    'text' => 'Hohe Außenstände: ' . $this->fmt($kpis['outstanding_receivables'])
-                        . ' (' . round($ratio, 0) . '% des Umsatzes).',
-                ];
+                $out[] = ['tone' => 'warning', 'key' => 'finance.dashboard.insights.highReceivables',
+                    'vars' => ['amount' => $kpis['outstanding_receivables'], 'percent' => round($ratio, 0)]];
             }
         }
 
         $totalCost = $kpis['cogs'] + $kpis['total_expenses'] + $kpis['payroll_expenses'];
         if ($totalCost > 0 && $kpis['payroll_expenses'] / $totalCost > 0.5) {
-            $out[] = [
-                'tone' => 'info',
-                'text' => 'Personalkosten machen über 50% der Gesamtkosten aus.',
-            ];
+            $out[] = ['tone' => 'info', 'key' => 'finance.dashboard.insights.heavyPayroll', 'vars' => []];
         }
 
         $inv = $this->inventoryInsights($branchId);
         if ($inv['out_of_stock_count'] > 0) {
-            $out[] = [
-                'tone' => 'critical',
-                'text' => $inv['out_of_stock_count'] . ' Artikel ohne Bestand — Nachbestellung erforderlich.',
-            ];
+            $out[] = ['tone' => 'critical', 'key' => 'finance.dashboard.insights.outOfStock',
+                'vars' => ['count' => $inv['out_of_stock_count']]];
         } elseif ($inv['low_stock_count'] >= 3) {
-            $out[] = [
-                'tone' => 'warning',
-                'text' => $inv['low_stock_count'] . ' Artikel unter Meldebestand.',
-            ];
+            $out[] = ['tone' => 'warning', 'key' => 'finance.dashboard.insights.lowStock',
+                'vars' => ['count' => $inv['low_stock_count']]];
         }
 
         return $out;

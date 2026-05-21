@@ -140,12 +140,17 @@ const rows    = ref([]);
 const meta    = ref(null);
 const loading = ref(false);
 const listError = ref('');
-const filters = ref({ search: '', status: '', date_from: '', date_to: '', page: 1, per_page: 20 });
+// Sensible defaults so a fresh load shows current-month activity instead
+// of an empty list.
+const _today      = new Date().toISOString().slice(0, 10);
+const _monthStart = (() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10); })();
+
+const filters = ref({ search: '', status: '', date_from: _monthStart, date_to: _today, page: 1, per_page: 20 });
 
 const searchQuery = ref('');
 const statusFilter = ref('');
-const dateFrom    = ref('');
-const dateTo      = ref('');
+const dateFrom    = ref(_monthStart);
+const dateTo      = ref(_today);
 const debouncedSearch = useDebounce(searchQuery, 350);
 
 watch(debouncedSearch, (val) => fetchList({ search: val, page: 1 }));

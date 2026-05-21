@@ -321,9 +321,12 @@ const todayTotal = computed(() => {
         .reduce((s, p) => s + parseFloat(p.amount ?? 0), 0);
 });
 
+// Default to current-month-to-date so the listing shows recent activity on first load.
+const _today      = new Date().toISOString().slice(0, 10);
+const _monthStart = (() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10); })();
 const filters = ref({
-    date_from:      '',
-    date_to:        '',
+    date_from:      _monthStart,
+    date_to:        _today,
     customer_id:    '',
     payment_method: '',
 });

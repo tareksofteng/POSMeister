@@ -127,7 +127,10 @@ const { toast, confirm } = useAlert();
 const rows = ref([]);
 const meta = ref(null);
 const loading = ref(false);
-const filters = reactive({ from: '', to: '', reference_type: '', status: '' });
+
+const today = new Date().toISOString().slice(0, 10);
+const monthStart = (() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10); })();
+const filters = reactive({ from: monthStart, to: today, reference_type: '', status: '' });
 
 const detail = ref(null);
 const manualOpen = ref(false);

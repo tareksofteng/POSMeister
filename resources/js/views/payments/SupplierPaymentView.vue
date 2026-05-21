@@ -64,15 +64,18 @@
                     </div>
                     <form @submit.prevent="submitPayment" class="p-5 space-y-4">
 
-                        <!-- Supplier select -->
+                        <!-- Supplier select (searchable) -->
                         <div>
                             <label class="form-label">{{ t('supplierPayments.supplier') }} <span class="text-red-400">*</span></label>
-                            <select v-model="form.supplier_id" @change="onSupplierChange" class="form-select" required>
-                                <option value="">{{ t('supplierPayments.selectSupplier') }}</option>
-                                <option v-for="s in suppliers" :key="s.id" :value="s.id">
-                                    {{ s.name }} <template v-if="s.code">({{ s.code }})</template>
-                                </option>
-                            </select>
+                            <SearchableSelect
+                                :model-value="form.supplier_id"
+                                @update:model-value="v => { form.supplier_id = v ?? ''; onSupplierChange(); }"
+                                :options="supplierOptions"
+                                :placeholder="t('supplierPayments.selectSupplier')"
+                                :search-placeholder="t('common.search') + '…'"
+                                :empty-text="t('common.noResults')"
+                                :clear-label="t('common.clear')"
+                            />
                         </div>
 
                         <!-- Supplier balance display -->
@@ -181,10 +184,15 @@
                         </div>
                         <div class="flex-1 min-w-40">
                             <label class="text-xs font-medium text-slate-500 block mb-1">{{ t('supplierPayments.supplier') }}</label>
-                            <select v-model="filters.supplier_id" class="form-select text-sm py-1.5">
-                                <option value="">{{ t('supplierPayments.allSuppliers') }}</option>
-                                <option v-for="s in suppliers" :key="s.id" :value="s.id">{{ s.name }}</option>
-                            </select>
+                            <SearchableSelect
+                                :model-value="filters.supplier_id"
+                                @update:model-value="v => filters.supplier_id = v ?? ''"
+                                :options="supplierOptions"
+                                :placeholder="t('supplierPayments.allSuppliers')"
+                                :search-placeholder="t('common.search') + '…'"
+                                :empty-text="t('common.noResults')"
+                                :clear-label="t('common.clear')"
+                            />
                         </div>
                         <div class="flex-1 min-w-36">
                             <label class="text-xs font-medium text-slate-500 block mb-1">{{ t('supplierPayments.method') }}</label>
@@ -284,6 +292,7 @@ import {
     CreditCardIcon, BuildingLibraryIcon, EllipsisHorizontalCircleIcon,
 } from '@heroicons/vue/24/outline';
 import { supplierService } from '@/services/supplierService';
+import SearchableSelect from '@/components/SearchableSelect.vue';
 
 const { t } = useI18n();
 
@@ -295,6 +304,11 @@ const paymentMethods = computed(() => [
 ]);
 
 const suppliers            = ref([]);
+const supplierOptions = computed(() => suppliers.value.map(s => ({
+    value: s.id,
+    label: s.name,
+    sub:   s.code ?? '',
+})));
 const payments             = ref([]);
 const summary              = ref({ count: 0, total_amount: 0 });
 const loading              = ref(false);
@@ -313,7 +327,10 @@ const todayTotal = computed(() =>
         .reduce((s, p) => s + parseFloat(p.amount ?? 0), 0)
 );
 
-const filters = ref({ date_from: '', date_to: '', supplier_id: '', payment_method: '' });
+// Default to current-month-to-date so the listing shows recent activity on first load.
+const _today      = new Date().toISOString().slice(0, 10);
+const _monthStart = (() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10); })();
+const filters = ref({ date_from: _monthStart, date_to: _today, supplier_id: '', payment_method: '' });
 const form = ref({
     supplier_id: '', amount: '', payment_method: 'cash',
     payment_date: todayISO, reference: '', note: '',

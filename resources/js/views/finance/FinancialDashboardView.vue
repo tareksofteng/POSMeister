@@ -488,9 +488,18 @@ const InsightCard = (props) => {
         info:     { wrap: 'border-indigo-200 bg-indigo-50',    text: 'text-indigo-800',   icon: 'text-indigo-600',  iconComp: InformationCircleIcon },
     }[it.tone] ?? { wrap: 'border-slate-200 bg-slate-50', text: 'text-slate-700', icon: 'text-slate-500', iconComp: InformationCircleIcon };
 
+    // Service returns { tone, key, vars } so the message renders in the
+    // user's locale. Falls back to a pre-rendered `text` for older payloads.
+    let label = it.text;
+    if (it.key) {
+        const vars = { ...(it.vars ?? {}) };
+        if (vars.amount !== undefined) vars.amount = fmtCurrency(vars.amount);
+        label = t(it.key, vars);
+    }
+
     return h('div', { class: `flex items-start gap-3 px-4 py-3 rounded-lg border ${palette.wrap}` }, [
         h(palette.iconComp, { class: `w-5 h-5 mt-0.5 flex-shrink-0 ${palette.icon}` }),
-        h('p', { class: `text-sm font-medium ${palette.text}` }, it.text),
+        h('p', { class: `text-sm font-medium ${palette.text}` }, label),
     ]);
 };
 InsightCard.props = ['item'];

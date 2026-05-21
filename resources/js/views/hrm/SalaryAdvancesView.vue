@@ -74,12 +74,15 @@
                 <div class="px-5 py-4 space-y-3">
                     <div>
                         <label class="lbl">{{ t('hrm.approval.employee') }}</label>
-                        <select v-model="form.employee_id" class="ctrl w-full">
-                            <option :value="null">—</option>
-                            <option v-for="e in employees" :key="e.id" :value="e.id">
-                                {{ e.first_name }} {{ e.last_name }} ({{ e.employee_id }})
-                            </option>
-                        </select>
+                        <SearchableSelect
+                            :model-value="form.employee_id"
+                            @update:model-value="v => form.employee_id = v"
+                            :options="employeeOptions"
+                            :placeholder="'— ' + t('common.search') + ' —'"
+                            :search-placeholder="t('common.search') + '…'"
+                            :empty-text="t('common.noResults')"
+                            :clear-label="t('common.clear')"
+                        />
                     </div>
                     <div>
                         <label class="lbl">{{ t('hrm.advance.amount') }}</label>
@@ -105,12 +108,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { salaryAdvanceService, employeeService } from '@/services/hrmService';
 import { useCurrency } from '@/composables/useCurrency';
 import { useAlert } from '@/composables/useAlert';
 import { PlusIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import SearchableSelect from '@/components/SearchableSelect.vue';
 
 const { t, locale } = useI18n();
 const { fmtCurrency } = useCurrency();
@@ -118,6 +122,11 @@ const { confirm, toast } = useAlert();
 
 const rows = ref([]);
 const employees = ref([]);
+const employeeOptions = computed(() => employees.value.map(e => ({
+    value: e.id,
+    label: `${e.first_name} ${e.last_name}`,
+    sub:   e.employee_id,
+})));
 const loading = ref(false);
 const statusFilter = ref('');
 

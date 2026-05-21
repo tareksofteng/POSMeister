@@ -1,14 +1,14 @@
 <template>
     <aside
         :class="[
-            'flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out bg-slate-900',
+            'sidebar-shell flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out',
             collapsed ? 'w-16' : 'w-64',
         ]"
     >
         <!-- Logo / Brand -->
-        <div class="flex h-16 items-center px-4 border-b border-slate-800">
+        <div class="brand-bar flex h-16 items-center px-4">
             <div class="flex items-center gap-3 min-w-0">
-                <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 shadow-lg overflow-hidden">
+                <div class="brand-mark flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden">
                     <img
                         v-if="settingsStore.settings?.logo_url"
                         :src="settingsStore.settings.logo_url"
@@ -24,13 +24,13 @@
                     <span class="block text-white font-bold text-sm tracking-tight truncate">
                         {{ settingsStore.settings?.company_name ?? 'POSmeister' }}
                     </span>
-                    <span class="block text-slate-500 text-xs tracking-wide">{{ t('app.management') }}</span>
+                    <span class="block text-slate-500 text-[11px] tracking-wide">{{ t('app.management') }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
+        <nav class="sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
 
             <!-- Dashboard — always visible -->
             <NavItem :collapsed="collapsed" :to="{ name: 'dashboard' }" :label="t('menu.dashboard')">
@@ -82,19 +82,19 @@
         </nav>
 
         <!-- Footer: user info + logout -->
-        <div class="border-t border-slate-800 px-3 py-3">
+        <div class="user-card px-3 py-3">
             <div class="flex items-center gap-3" :class="{ 'justify-center': collapsed }">
-                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow">
+                <div class="user-avatar flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold">
                     {{ userInitial }}
                 </div>
                 <div v-if="!collapsed" class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-slate-200 truncate">{{ auth.userName }}</p>
-                    <p class="text-xs text-slate-500 capitalize truncate">{{ auth.userRole }}</p>
+                    <p class="text-sm font-semibold text-slate-100 truncate">{{ auth.userName }}</p>
+                    <p class="text-[11px] text-slate-500 capitalize truncate">{{ auth.userRole }}</p>
                 </div>
                 <button
                     v-if="!collapsed"
                     @click="handleLogout"
-                    class="flex-shrink-0 p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
+                    class="logout-btn flex-shrink-0 p-1.5 rounded-lg transition-colors"
                     :title="t('auth.signOut')"
                 >
                     <ArrowRightStartOnRectangleIcon class="w-4 h-4" />
@@ -407,5 +407,69 @@ async function handleLogout() {
 
 <style scoped>
 @reference '../../../css/app.css';
+
 .nav-icon { @apply w-5 h-5 flex-shrink-0; }
+
+/* Sidebar shell — subtle vertical gradient on a near-black slate */
+.sidebar-shell {
+    background: linear-gradient(180deg, #0b1220 0%, #0f172a 60%, #0b1220 100%);
+    border-right: 1px solid rgb(30 41 59 / 0.7);
+    position: relative;
+}
+/* Soft inner glow on the right edge */
+.sidebar-shell::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgb(99 102 241 / 0.18), transparent);
+    pointer-events: none;
+}
+
+/* Brand bar — subtle divider, no harsh line */
+.brand-bar {
+    border-bottom: 1px solid rgb(30 41 59 / 0.6);
+    background: linear-gradient(180deg, rgb(15 23 42 / 0.4), transparent);
+}
+.brand-mark {
+    background: linear-gradient(135deg, rgb(99 102 241), rgb(79 70 229));
+    box-shadow: 0 6px 16px -4px rgb(79 70 229 / 0.4),
+                inset 0 0 0 1px rgb(165 180 252 / 0.3);
+}
+
+/* Custom thin scrollbar — only visible on hover */
+.sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 200ms ease;
+}
+.sidebar-nav:hover { scrollbar-color: rgb(51 65 85 / 0.7) transparent; }
+
+.sidebar-nav::-webkit-scrollbar { width: 6px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+    transition: background 200ms ease;
+}
+.sidebar-nav:hover::-webkit-scrollbar-thumb { background: rgb(51 65 85 / 0.7); }
+.sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgb(71 85 105 / 0.9); }
+
+/* Footer user card */
+.user-card {
+    border-top: 1px solid rgb(30 41 59 / 0.6);
+    background: linear-gradient(180deg, transparent, rgb(15 23 42 / 0.5));
+}
+.user-avatar {
+    background: linear-gradient(135deg, rgb(99 102 241), rgb(79 70 229));
+    box-shadow: 0 4px 12px -2px rgb(79 70 229 / 0.4),
+                inset 0 0 0 1px rgb(165 180 252 / 0.3);
+}
+.logout-btn {
+    @apply text-slate-500;
+}
+.logout-btn:hover {
+    background: rgb(220 38 38 / 0.1);
+    color: rgb(248 113 113);
+}
 </style>

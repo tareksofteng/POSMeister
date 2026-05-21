@@ -155,7 +155,24 @@
     "dateTo": "إلى",
     "from": "من",
     "until": "حتى",
-    "allTime": "كل الفترات"
+    "allTime": "كل الفترات",
+    "all": "الكل",
+    "activeOnly": "النشط فقط",
+    "address": "العنوان",
+    "clear": "مسح",
+    "close": "إغلاق",
+    "created": "تم الإنشاء",
+    "updated": "تم التحديث",
+    "deleted": "تم الحذف",
+    "saved": "تم الحفظ",
+    "savedSuccess": "تم الحفظ بنجاح.",
+    "days": "أيام",
+    "of": "من",
+    "page": "صفحة",
+    "post": "ترحيل",
+    "records": "سجلات",
+    "refresh": "تحديث",
+    "showing": "عرض"
   },
   "paymentMethod": {
     "cash": "نقدًا",
@@ -2066,6 +2083,17 @@
         "cashflow":       "تفاصيل التدفق النقدي",
         "calendar":       "التقويم المالي",
         "expenseReports": "تقارير المصروفات"
+      },
+      "insights": {
+        "profitable":       "فترة مربحة: صافي ربح {amount} (هامش {margin}%).",
+        "loss":             "خسارة في الفترة: {amount}. راجع المصروفات.",
+        "growth":           "نمو الإيرادات +{percent}% مقارنة بالفترة السابقة.",
+        "decline":          "تراجع الإيرادات {percent}% مقارنة بالفترة السابقة.",
+        "lowMargin":        "هامش إجمالي {percent}% فقط — راجع أسعار الشراء.",
+        "highReceivables":  "مديونيات عالية: {amount} ({percent}% من الإيرادات).",
+        "heavyPayroll":     "تكاليف الموظفين تتجاوز 50% من إجمالي التكاليف.",
+        "outOfStock":       "{count} منتجات بدون مخزون — إعادة طلب مطلوبة.",
+        "lowStock":         "{count} منتجات تحت حد إعادة الطلب."
       }
     }
   },
