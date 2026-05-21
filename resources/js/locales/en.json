@@ -46,6 +46,10 @@
     "attendance": "Attendance",
     "attendanceMonthly": "Monthly report",
     "payroll": "Payroll",
+    "payrollApprovals": "Payroll approvals",
+    "salaryAdvances":   "Salary advances",
+    "workforceIntel":   "Workforce intelligence",
+    "attendanceIntel":  "Attendance intelligence",
     "hrmReports": "HR Reports",
     "expenses": "Expenses",
     "expenseList": "All expenses",
@@ -197,7 +201,18 @@
       "customerDueSub": "{amount} outstanding",
       "customerNoDue": "No outstanding dues",
       "lowStockSub": "Below reorder level",
-      "stockOk": "All stock levels OK"
+      "stockOk": "All stock levels OK",
+      "todayRevenue":    "Today's Revenue",
+      "monthRevenue":    "This Month",
+      "netProfit":       "Net Profit (MTD)",
+      "cashAndBank":     "Cash + Bank",
+      "receivables":     "Outstanding",
+      "activeCustomers": "Active Customers",
+      "salesUnit":       "sales",
+      "grossMargin":     "gross margin",
+      "cashBankSub":     "live ledger balance",
+      "outstandingSub":  "unpaid invoices",
+      "newThisMonth":    "new this month"
     },
     "activeSub": "{active} active · {inactive} inactive",
     "branchOverview": {
@@ -215,7 +230,13 @@
       "manageProducts": "Products",
       "manageProductsDesc": "Add or edit products",
       "newPurchase": "New Purchase",
-      "newPurchaseDesc": "Record stock purchase"
+      "newPurchaseDesc": "Record stock purchase",
+      "newSale":        "New Invoice",
+      "newSaleDesc":    "Create a back-office sale",
+      "accounting":     "Accounting",
+      "accountingDesc": "Journal, ledger, balance sheet",
+      "reorder":        "Reorder",
+      "reorderDesc":    "Procurement suggestions"
     },
     "systemInfo": {
       "title": "System Information",
@@ -231,10 +252,18 @@
       "modules": {
         "auth": "Auth & Login",
         "products": "Products & Stock",
-        "pos": "Sales / POS",
+        "pos": "POS Terminal",
         "customers": "Customers",
         "purchases": "Purchases",
-        "reports": "Reports"
+        "reports": "Reports",
+        "sales":       "Sales & Invoicing",
+        "inventory":   "Inventory Intelligence",
+        "hrm":         "HR & Payroll",
+        "finance":     "Finance",
+        "accounting":  "Accounting",
+        "crm":         "CRM & Loyalty",
+        "oms":         "Omnichannel",
+        "expenses":    "Expenses"
       },
       "phases": {
         "phase4": "Phase 4"
@@ -248,6 +277,40 @@
       "startSale": "Open POS terminal →",
       "due": "Due",
       "paid": "Fully paid"
+    },
+    "heroSubtitle": "Live snapshot of your business across every module",
+    "refresh": "Refresh",
+    "viewAll": "View all",
+    "alerts": {
+      "low_stock":        "{count} products below reorder level",
+      "out_of_stock":     "{count} products out of stock",
+      "dead_stock":       "{count} products with no sales in 90 days",
+      "overdue_payments": "{count} sales overdue over 30 days",
+      "payroll_pending":  "{count} payslips awaiting approval"
+    },
+    "insights": {
+      "stockValue":  "Stock Value",
+      "openOrders":  "Open Orders",
+      "loyalty":     "Loyalty Liability",
+      "activeStaff": "Active Staff"
+    },
+    "trend": {
+      "title":    "Sales — Last 14 days",
+      "subtitle": "Daily revenue trend"
+    },
+    "topProducts": {
+      "title": "Top Products (MTD)",
+      "sold":  "sold",
+      "empty": "No sales this month yet"
+    },
+    "topCustomers": {
+      "title":  "Top Customers (MTD)",
+      "visits": "visits",
+      "empty":  "No registered customer sales yet"
+    },
+    "activity": {
+      "title": "Activity Feed",
+      "empty": "No activity yet"
     }
   },
   "branches": {
@@ -1601,6 +1664,94 @@
       "payrollSubtitle":   "Aggregate payslip totals for the selected period",
       "payrollTotals":     "Totals",
       "topEarners":        "Top net earners"
+    },
+    "approval": {
+      "title":    "Payroll approvals",
+      "subtitle": "Submit, approve and lock payslips before they post to accounting",
+      "payslip":  "Payslip",
+      "employee": "Employee",
+      "period":   "Period",
+      "net":      "Net salary",
+      "payment":  "Payment",
+      "locked":   "Locked",
+      "empty":    "Nothing in this queue",
+      "status": { "draft": "Draft", "submitted": "Submitted", "approved": "Approved", "rejected": "Rejected" },
+      "actions": {
+        "submit":       "Submit",
+        "approve":      "Approve",
+        "reject":       "Reject",
+        "reopen":       "Reopen",
+        "rejectReason": "Reason for rejection?"
+      },
+      "confirms": {
+        "submit":  "Submit payslip {number} for approval?",
+        "approve": "Approve payslip {number}? It will become locked.",
+        "reopen":  "Reopen payslip {number} to draft?"
+      }
+    },
+    "advance": {
+      "title":    "Salary advances",
+      "subtitle": "Money advanced against future salary, auto-deducted from next payslip",
+      "add":      "Grant advance",
+      "granted":  "Granted on",
+      "amount":   "Amount",
+      "deducted": "Deducted",
+      "outstanding": "Outstanding",
+      "grantedOn": "Granted on",
+      "reason":    "Reason",
+      "empty":     "No salary advances yet",
+      "cancelPrompt": "Reason for cancellation?",
+      "status": {
+        "outstanding":        "Outstanding",
+        "partially_deducted": "Partial",
+        "settled":            "Settled",
+        "cancelled":          "Cancelled"
+      }
+    },
+    "workforce": {
+      "module":   "Workforce",
+      "title":    "Workforce intelligence",
+      "subtitle": "Headcount, labour cost and per-cashier productivity",
+      "branch":   "Branch",
+      "headcount":"Headcount",
+      "revPerHead": "Revenue / head",
+      "topCashiers":     "Top cashiers",
+      "topPerformers":   "Top performers (composite score)",
+      "branchEfficiency":"Branch staffing efficiency",
+      "refundRiskTitle": "Refund-risk cashiers",
+      "sales":           "sales",
+      "refunds":         "refunds",
+      "refundRate":      "Refund %",
+      "attendancePct":   "Attendance %",
+      "hours":           "Hours",
+      "score":           "Score",
+      "empty":           "No cashier activity yet",
+      "refundEmpty":     "No refunds in this period",
+      "kpi": {
+        "headcount":     "Active employees",
+        "revenue":       "Revenue this month",
+        "labourCost":    "Labour cost this month",
+        "labourPct":     "Labour cost %",
+        "revenuePerHead":"Revenue / head"
+      }
+    },
+    "attIntel": {
+      "title":          "Attendance intelligence",
+      "subtitle":       "Scores, late-arrival heatmap, overtime trend, break analytics",
+      "avgWorked":      "Avg. worked",
+      "avgBreak":       "Avg. break",
+      "overtimeTotal":  "Total overtime",
+      "workforce":      "Workforce",
+      "heatmapTitle":   "Late arrivals by weekday × hour",
+      "heatmapHint":    "Each cell = late check-ins (darker = more)",
+      "overtimeTrend":  "Daily overtime (hours)",
+      "scores":         "Attendance scores",
+      "days":           "Days",
+      "present":        "Present",
+      "absent":         "Absent",
+      "late":           "Late",
+      "workedHours":    "Worked hours",
+      "score":          "Score"
     }
   },
   "expenses": {

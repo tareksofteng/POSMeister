@@ -35,6 +35,10 @@
     "attendance": "উপস্থিতি",
     "attendanceMonthly": "মাসিক রিপোর্ট",
     "payroll": "বেতন",
+    "payrollApprovals": "বেতন অনুমোদন",
+    "salaryAdvances":   "বেতন অগ্রিম",
+    "workforceIntel":   "কর্মী ইন্টেলিজেন্স",
+    "attendanceIntel":  "উপস্থিতি ইন্টেলিজেন্স",
     "hrmReports": "এইচআর রিপোর্ট",
     "expenses": "খরচ",
     "expenseList": "সব খরচ",
@@ -196,7 +200,18 @@
       "customerDueSub": "{amount} বকেয়া",
       "customerNoDue": "কোনো বকেয়া নেই",
       "lowStockSub": "পুনরায় অর্ডার স্তরের নিচে",
-      "stockOk": "সকল মজুদ স্তর ঠিক আছে"
+      "stockOk": "সকল মজুদ স্তর ঠিক আছে",
+      "todayRevenue":    "আজকের আয়",
+      "monthRevenue":    "এই মাস",
+      "netProfit":       "নিট মুনাফা (মাস)",
+      "cashAndBank":     "ক্যাশ + ব্যাংক",
+      "receivables":     "প্রাপ্য",
+      "activeCustomers": "সক্রিয় ক্রেতা",
+      "salesUnit":       "বিক্রয়",
+      "grossMargin":     "মোট মার্জিন",
+      "cashBankSub":     "লাইভ লেজার ব্যালেন্স",
+      "outstandingSub":  "বাকি চালান",
+      "newThisMonth":    "এই মাসে নতুন"
     },
     "activeSub": "{active} সক্রিয় · {inactive} নিষ্ক্রিয়",
     "branchOverview": {
@@ -214,7 +229,13 @@
       "manageProducts": "পণ্যসমূহ",
       "manageProductsDesc": "পণ্য যোগ বা সম্পাদনা করুন",
       "newPurchase": "নতুন ক্রয়",
-      "newPurchaseDesc": "স্টক ক্রয় রেকর্ড করুন"
+      "newPurchaseDesc": "স্টক ক্রয় রেকর্ড করুন",
+      "newSale":        "নতুন ইনভয়েস",
+      "newSaleDesc":    "ব্যাক-অফিস বিক্রয় তৈরি",
+      "accounting":     "হিসাবরক্ষণ",
+      "accountingDesc": "জার্নাল, লেজার, ব্যালান্স শিট",
+      "reorder":        "রি-অর্ডার",
+      "reorderDesc":    "সংগ্রহের সাজেশন"
     },
     "systemInfo": {
       "title": "সিস্টেম তথ্য",
@@ -230,10 +251,18 @@
       "modules": {
         "auth": "প্রমাণীকরণ ও লগইন",
         "products": "পণ্য ও স্টক",
-        "pos": "বিক্রয় / POS",
+        "pos": "POS টার্মিনাল",
         "customers": "গ্রাহক",
         "purchases": "ক্রয়",
-        "reports": "প্রতিবেদন"
+        "reports": "প্রতিবেদন",
+        "sales":       "বিক্রয় ও চালান",
+        "inventory":   "ইনভেন্টরি ইন্টেলিজেন্স",
+        "hrm":         "এইচআর ও বেতন",
+        "finance":     "অর্থ",
+        "accounting":  "হিসাবরক্ষণ",
+        "crm":         "CRM ও লয়্যালটি",
+        "oms":         "ওমনিচ্যানেল",
+        "expenses":    "খরচ"
       },
       "phases": {
         "phase4": "পর্যায় ৪"
@@ -247,6 +276,40 @@
       "startSale": "POS টার্মিনাল খুলুন →",
       "due": "বকেয়া",
       "paid": "সম্পূর্ণ পরিশোধিত"
+    },
+    "heroSubtitle": "সকল মডিউল জুড়ে আপনার ব্যবসার লাইভ সারসংক্ষেপ",
+    "refresh": "রিফ্রেশ",
+    "viewAll": "সব দেখুন",
+    "alerts": {
+      "low_stock":        "{count} পণ্য রি-অর্ডার লেভেলের নিচে",
+      "out_of_stock":     "{count} পণ্য স্টকে নেই",
+      "dead_stock":       "{count} পণ্য ৯০ দিনে বিক্রি হয়নি",
+      "overdue_payments": "{count} বিক্রয় ৩০ দিনের বেশি বকেয়া",
+      "payroll_pending":  "{count} পে-স্লিপ অনুমোদনের অপেক্ষায়"
+    },
+    "insights": {
+      "stockValue":  "স্টকের মূল্য",
+      "openOrders":  "খোলা অর্ডার",
+      "loyalty":     "লয়্যালটি দায়",
+      "activeStaff": "সক্রিয় কর্মী"
+    },
+    "trend": {
+      "title":    "বিক্রয় — গত ১৪ দিন",
+      "subtitle": "দৈনিক আয়ের প্রবণতা"
+    },
+    "topProducts": {
+      "title": "শীর্ষ পণ্য (এই মাস)",
+      "sold":  "বিক্রিত",
+      "empty": "এই মাসে কোনো বিক্রয় নেই"
+    },
+    "topCustomers": {
+      "title":  "শীর্ষ ক্রেতা (এই মাস)",
+      "visits": "ভিজিট",
+      "empty":  "এখনো নিবন্ধিত গ্রাহক বিক্রয় নেই"
+    },
+    "activity": {
+      "title": "কার্যকলাপ",
+      "empty": "এখনো কোনো কার্যকলাপ নেই"
     }
   },
   "branches": {
@@ -1599,6 +1662,94 @@
       "payrollSubtitle":   "নির্বাচিত সময়ের সকল পে-স্লিপের সমষ্টিগত মান",
       "payrollTotals":     "মোট",
       "topEarners":        "শীর্ষ নিট আয়কারী"
+    },
+    "approval": {
+      "title":    "বেতন অনুমোদন",
+      "subtitle": "হিসাবরক্ষণে পোস্ট করার আগে পে-স্লিপ জমা, অনুমোদন ও লক",
+      "payslip":  "পে-স্লিপ",
+      "employee": "কর্মী",
+      "period":   "সময়কাল",
+      "net":      "নিট বেতন",
+      "payment":  "পেমেন্ট",
+      "locked":   "লকড",
+      "empty":    "কিউতে কিছু নেই",
+      "status": { "draft": "খসড়া", "submitted": "জমা দেওয়া", "approved": "অনুমোদিত", "rejected": "প্রত্যাখ্যাত" },
+      "actions": {
+        "submit":       "জমা দিন",
+        "approve":      "অনুমোদন",
+        "reject":       "প্রত্যাখ্যান",
+        "reopen":       "পুনরায় খুলুন",
+        "rejectReason": "প্রত্যাখ্যানের কারণ?"
+      },
+      "confirms": {
+        "submit":  "{number} পে-স্লিপ অনুমোদনের জন্য জমা দেবেন?",
+        "approve": "{number} পে-স্লিপ অনুমোদন করবেন? এটি লক হয়ে যাবে।",
+        "reopen":  "{number} পে-স্লিপ খসড়া হিসাবে পুনরায় খুলবেন?"
+      }
+    },
+    "advance": {
+      "title":    "বেতন অগ্রিম",
+      "subtitle": "ভবিষ্যৎ বেতনের বিপরীতে অগ্রিম, পরের পে-স্লিপ থেকে স্বয়ংক্রিয় কর্তন",
+      "add":      "অগ্রিম দিন",
+      "granted":  "প্রদানের তারিখ",
+      "amount":   "পরিমাণ",
+      "deducted": "কর্তিত",
+      "outstanding": "বাকি",
+      "grantedOn": "প্রদানের তারিখ",
+      "reason":    "কারণ",
+      "empty":     "এখনো কোনো অগ্রিম নেই",
+      "cancelPrompt": "বাতিলের কারণ?",
+      "status": {
+        "outstanding":        "বাকি",
+        "partially_deducted": "আংশিক",
+        "settled":            "সমাপ্ত",
+        "cancelled":          "বাতিল"
+      }
+    },
+    "workforce": {
+      "module":   "কর্মী",
+      "title":    "কর্মী ইন্টেলিজেন্স",
+      "subtitle": "জনবল, শ্রম খরচ এবং প্রতি ক্যাশিয়ারের উৎপাদনশীলতা",
+      "branch":   "শাখা",
+      "headcount":"জনবল",
+      "revPerHead": "আয় / জন",
+      "topCashiers":     "শীর্ষ ক্যাশিয়ার",
+      "topPerformers":   "শীর্ষ পারফর্মার (সম্মিলিত স্কোর)",
+      "branchEfficiency":"শাখার দক্ষতা",
+      "refundRiskTitle": "ফেরত-ঝুঁকিপূর্ণ ক্যাশিয়ার",
+      "sales":           "বিক্রয়",
+      "refunds":         "ফেরত",
+      "refundRate":      "ফেরত %",
+      "attendancePct":   "উপস্থিতি %",
+      "hours":           "ঘন্টা",
+      "score":           "স্কোর",
+      "empty":           "এখনো কোনো কার্যকলাপ নেই",
+      "refundEmpty":     "এই সময়ে কোনো ফেরত নেই",
+      "kpi": {
+        "headcount":     "সক্রিয় কর্মী",
+        "revenue":       "এই মাসের আয়",
+        "labourCost":    "এই মাসের শ্রম খরচ",
+        "labourPct":     "শ্রম খরচ %",
+        "revenuePerHead":"প্রতি জনে আয়"
+      }
+    },
+    "attIntel": {
+      "title":          "উপস্থিতি ইন্টেলিজেন্স",
+      "subtitle":       "স্কোর, দেরি হিটম্যাপ, ওভারটাইম প্রবণতা, বিরতি বিশ্লেষণ",
+      "avgWorked":      "গড় কাজ",
+      "avgBreak":       "গড় বিরতি",
+      "overtimeTotal":  "মোট ওভারটাইম",
+      "workforce":      "কর্মী",
+      "heatmapTitle":   "সপ্তাহের দিন × ঘন্টা অনুসারে দেরি",
+      "heatmapHint":    "প্রতিটি কোষ = দেরিতে চেক-ইন (গাঢ় = বেশি)",
+      "overtimeTrend":  "দৈনিক ওভারটাইম (ঘন্টা)",
+      "scores":         "উপস্থিতি স্কোর",
+      "days":           "দিন",
+      "present":        "উপস্থিত",
+      "absent":         "অনুপস্থিত",
+      "late":           "দেরি",
+      "workedHours":    "কাজের ঘন্টা",
+      "score":          "স্কোর"
     }
   },
   "expenses": {

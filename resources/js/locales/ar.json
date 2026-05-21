@@ -46,6 +46,10 @@
     "attendance": "الحضور",
     "attendanceMonthly": "تقرير شهري",
     "payroll": "الرواتب",
+    "payrollApprovals": "اعتمادات الرواتب",
+    "salaryAdvances":   "سلف الراتب",
+    "workforceIntel":   "ذكاء القوى العاملة",
+    "attendanceIntel":  "ذكاء الحضور",
     "hrmReports": "تقارير الموارد البشرية",
     "expenses": "المصروفات",
     "expenseList": "كل المصروفات",
@@ -196,7 +200,18 @@
       "customerDueSub": "{amount} مستحق",
       "customerNoDue": "لا مستحقات معلقة",
       "lowStockSub": "تحت مستوى إعادة الطلب",
-      "stockOk": "جميع مستويات المخزون جيدة"
+      "stockOk": "جميع مستويات المخزون جيدة",
+      "todayRevenue":    "إيرادات اليوم",
+      "monthRevenue":    "هذا الشهر",
+      "netProfit":       "صافي الربح (الشهر)",
+      "cashAndBank":     "النقد + البنك",
+      "receivables":     "المستحقات",
+      "activeCustomers": "العملاء النشطون",
+      "salesUnit":       "مبيعات",
+      "grossMargin":     "هامش إجمالي",
+      "cashBankSub":     "رصيد حي من الدفتر",
+      "outstandingSub":  "فواتير غير مدفوعة",
+      "newThisMonth":    "جدد هذا الشهر"
     },
     "activeSub": "{active} نشط · {inactive} غير نشط",
     "branchOverview": {
@@ -214,7 +229,13 @@
       "manageProducts": "المنتجات",
       "manageProductsDesc": "إضافة أو تعديل المنتجات",
       "newPurchase": "مشتريات جديدة",
-      "newPurchaseDesc": "تسجيل استلام مخزون"
+      "newPurchaseDesc": "تسجيل استلام مخزون",
+      "newSale":        "فاتورة جديدة",
+      "newSaleDesc":    "إنشاء بيع من المكتب الخلفي",
+      "accounting":     "المحاسبة",
+      "accountingDesc": "اليومية، الأستاذ، الميزانية",
+      "reorder":        "إعادة الطلب",
+      "reorderDesc":    "اقتراحات الشراء"
     },
     "systemInfo": {
       "title": "معلومات النظام",
@@ -230,10 +251,18 @@
       "modules": {
         "auth": "المصادقة وتسجيل الدخول",
         "products": "المنتجات والمخزون",
-        "pos": "المبيعات / نقطة البيع",
+        "pos": "نقطة البيع",
         "customers": "العملاء",
         "purchases": "المشتريات",
-        "reports": "التقارير"
+        "reports": "التقارير",
+        "sales":       "المبيعات والفواتير",
+        "inventory":   "ذكاء المخزون",
+        "hrm":         "الموارد البشرية والرواتب",
+        "finance":     "المالية",
+        "accounting":  "المحاسبة",
+        "crm":         "إدارة العملاء والولاء",
+        "oms":         "متعدد القنوات",
+        "expenses":    "المصروفات"
       },
       "phases": {
         "phase4": "المرحلة 4"
@@ -247,6 +276,40 @@
       "startSale": "فتح نقطة البيع ←",
       "due": "مستحق",
       "paid": "مدفوع بالكامل"
+    },
+    "heroSubtitle": "لقطة حية لأعمالك عبر جميع الوحدات",
+    "refresh": "تحديث",
+    "viewAll": "عرض الكل",
+    "alerts": {
+      "low_stock":        "{count} منتجات تحت حد إعادة الطلب",
+      "out_of_stock":     "{count} منتجات نفد مخزونها",
+      "dead_stock":       "{count} منتجات بدون مبيعات منذ 90 يوماً",
+      "overdue_payments": "{count} مبيعات متأخرة أكثر من 30 يوماً",
+      "payroll_pending":  "{count} كشوف راتب بانتظار الاعتماد"
+    },
+    "insights": {
+      "stockValue":  "قيمة المخزون",
+      "openOrders":  "طلبات مفتوحة",
+      "loyalty":     "التزام الولاء",
+      "activeStaff": "الموظفون النشطون"
+    },
+    "trend": {
+      "title":    "المبيعات — آخر 14 يوماً",
+      "subtitle": "اتجاه الإيرادات اليومي"
+    },
+    "topProducts": {
+      "title": "أعلى المنتجات (الشهر)",
+      "sold":  "مباع",
+      "empty": "لا مبيعات هذا الشهر"
+    },
+    "topCustomers": {
+      "title":  "أعلى العملاء (الشهر)",
+      "visits": "زيارات",
+      "empty":  "لا مبيعات لعملاء مسجلين"
+    },
+    "activity": {
+      "title": "النشاط",
+      "empty": "لا نشاط بعد"
     }
   },
   "branches": {
@@ -1599,6 +1662,94 @@
       "payrollSubtitle":   "إجمالي قيم الكشوف للفترة المختارة",
       "payrollTotals":     "الإجماليات",
       "topEarners":        "الأعلى صافيًا"
+    },
+    "approval": {
+      "title":    "اعتمادات الرواتب",
+      "subtitle": "إرسال واعتماد وقفل كشوف الرواتب قبل ترحيلها للمحاسبة",
+      "payslip":  "كشف الراتب",
+      "employee": "الموظف",
+      "period":   "الفترة",
+      "net":      "صافي الراتب",
+      "payment":  "الدفع",
+      "locked":   "مقفل",
+      "empty":    "لا توجد عناصر",
+      "status": { "draft": "مسودة", "submitted": "مُرسل", "approved": "معتمد", "rejected": "مرفوض" },
+      "actions": {
+        "submit":       "إرسال",
+        "approve":      "اعتماد",
+        "reject":       "رفض",
+        "reopen":       "إعادة فتح",
+        "rejectReason": "سبب الرفض؟"
+      },
+      "confirms": {
+        "submit":  "إرسال كشف الراتب {number} للاعتماد؟",
+        "approve": "اعتماد كشف الراتب {number}؟ سيتم قفله.",
+        "reopen":  "إعادة فتح كشف الراتب {number} كمسودة؟"
+      }
+    },
+    "advance": {
+      "title":    "سلف الراتب",
+      "subtitle": "سلف على راتب مستقبلي تُخصم تلقائياً من الكشف التالي",
+      "add":      "منح سلفة",
+      "granted":  "تاريخ المنح",
+      "amount":   "المبلغ",
+      "deducted": "المخصوم",
+      "outstanding": "المتبقي",
+      "grantedOn": "تاريخ المنح",
+      "reason":    "السبب",
+      "empty":     "لا توجد سلف بعد",
+      "cancelPrompt": "سبب الإلغاء؟",
+      "status": {
+        "outstanding":        "متبقي",
+        "partially_deducted": "جزئي",
+        "settled":            "مسوى",
+        "cancelled":          "ملغى"
+      }
+    },
+    "workforce": {
+      "module":   "القوى العاملة",
+      "title":    "ذكاء القوى العاملة",
+      "subtitle": "العدد والتكلفة وإنتاجية كل أمين صندوق",
+      "branch":   "الفرع",
+      "headcount":"العدد",
+      "revPerHead": "إيراد / موظف",
+      "topCashiers":     "أفضل أمناء الصندوق",
+      "topPerformers":   "الأفضل أداءً (نتيجة مركبة)",
+      "branchEfficiency":"كفاءة الفروع",
+      "refundRiskTitle": "أمناء صندوق بمخاطر إرجاع",
+      "sales":           "مبيعات",
+      "refunds":         "مرتجعات",
+      "refundRate":      "نسبة الإرجاع",
+      "attendancePct":   "نسبة الحضور",
+      "hours":           "ساعات",
+      "score":           "النتيجة",
+      "empty":           "لا نشاط بعد",
+      "refundEmpty":     "لا مرتجعات في الفترة",
+      "kpi": {
+        "headcount":     "الموظفون النشطون",
+        "revenue":       "إيراد هذا الشهر",
+        "labourCost":    "تكلفة العمالة هذا الشهر",
+        "labourPct":     "نسبة تكلفة العمالة",
+        "revenuePerHead":"الإيراد لكل موظف"
+      }
+    },
+    "attIntel": {
+      "title":          "ذكاء الحضور",
+      "subtitle":       "نتائج، خريطة التأخير، اتجاه الإضافي، تحليل الاستراحات",
+      "avgWorked":      "متوسط العمل",
+      "avgBreak":       "متوسط الاستراحة",
+      "overtimeTotal":  "إجمالي الإضافي",
+      "workforce":      "القوى العاملة",
+      "heatmapTitle":   "التأخيرات حسب اليوم × الساعة",
+      "heatmapHint":    "كل خلية = عدد التأخيرات (الأغمق = أكثر)",
+      "overtimeTrend":  "ساعات إضافية يومية",
+      "scores":         "نتائج الحضور",
+      "days":           "أيام",
+      "present":        "حاضر",
+      "absent":         "غائب",
+      "late":           "متأخر",
+      "workedHours":    "ساعات العمل",
+      "score":          "النتيجة"
     }
   },
   "expenses": {

@@ -356,6 +356,32 @@ const routes = [
                 meta: { titleKey: 'menu.hrmReports', permission: 'hrm' },
             },
 
+            // Phase G — Workforce intelligence
+            {
+                path: 'hrm/payroll-approvals',
+                name: 'hrm-payroll-approvals',
+                component: () => import('@/views/hrm/PayrollApprovalsView.vue'),
+                meta: { titleKey: 'hrm.approval.title', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/salary-advances',
+                name: 'hrm-salary-advances',
+                component: () => import('@/views/hrm/SalaryAdvancesView.vue'),
+                meta: { titleKey: 'hrm.advance.title', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/workforce-intelligence',
+                name: 'hrm-workforce',
+                component: () => import('@/views/hrm/WorkforceIntelligenceView.vue'),
+                meta: { titleKey: 'hrm.workforce.title', permission: 'hrm' },
+            },
+            {
+                path: 'hrm/attendance-intelligence',
+                name: 'hrm-attendance-intel',
+                component: () => import('@/views/hrm/AttendanceIntelligenceView.vue'),
+                meta: { titleKey: 'hrm.attIntel.title', permission: 'hrm' },
+            },
+
             // Expense module
             {
                 path: 'expenses/categories',

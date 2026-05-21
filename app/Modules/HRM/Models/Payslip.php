@@ -25,6 +25,10 @@ class Payslip extends Model
         'gross_salary', 'net_salary',
         'paid_amount', 'payment_date', 'payment_method', 'payment_reference',
         'status', 'notes',
+        'approval_status', 'submitted_at', 'submitted_by',
+        'approved_at', 'approved_by',
+        'rejected_at', 'rejected_by', 'rejection_reason',
+        'is_locked', 'advance_deducted',
     ];
 
     protected $casts = [
@@ -40,7 +44,15 @@ class Payslip extends Model
         'gross_salary'     => 'decimal:2',
         'net_salary'       => 'decimal:2',
         'paid_amount'      => 'decimal:2',
+        'submitted_at'     => 'datetime',
+        'approved_at'      => 'datetime',
+        'rejected_at'      => 'datetime',
+        'is_locked'        => 'boolean',
+        'advance_deducted' => 'decimal:2',
     ];
+
+    public function isApproved(): bool { return $this->approval_status === 'approved'; }
+    public function isPayable(): bool  { return $this->isApproved() && !$this->is_locked; }
 
     public function period(): BelongsTo
     {

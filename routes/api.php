@@ -39,6 +39,11 @@ use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
 use App\Modules\HRM\Controllers\PayrollPeriodController as HrmPayrollPeriodController;
 use App\Modules\HRM\Controllers\PayslipController as HrmPayslipController;
+use App\Modules\HRM\Controllers\AttendanceIntelligenceController as HrmAttendanceIntelController;
+use App\Modules\HRM\Controllers\HrAuditController as HrmHrAuditController;
+use App\Modules\HRM\Controllers\PayrollApprovalController as HrmPayrollApprovalController;
+use App\Modules\HRM\Controllers\SalaryAdvanceController as HrmSalaryAdvanceController;
+use App\Modules\HRM\Controllers\WorkforceAnalyticsController as HrmWorkforceAnalyticsController;
 use App\Modules\HRM\Controllers\DesignationController as HrmDesignationController;
 use App\Modules\HRM\Controllers\EmployeeController as HrmEmployeeController;
 use App\Modules\HRM\Controllers\ShiftController as HrmShiftController;
@@ -139,6 +144,36 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::get('reports/dashboard',                     [HrmReportsController::class, 'dashboard']);
         Route::get('reports/attendance',                    [HrmReportsController::class, 'attendance']);
         Route::get('reports/payroll',                       [HrmReportsController::class, 'payroll']);
+
+        // Payroll approval workflow
+        Route::get('payroll-approvals/queue',               [HrmPayrollApprovalController::class, 'queue']);
+        Route::get('payroll-approvals/counts',              [HrmPayrollApprovalController::class, 'counts']);
+        Route::post('payslips/{payslip}/submit',            [HrmPayrollApprovalController::class, 'submit']);
+        Route::post('payslips/{payslip}/approve',           [HrmPayrollApprovalController::class, 'approve']);
+        Route::post('payslips/{payslip}/reject',            [HrmPayrollApprovalController::class, 'reject']);
+        Route::post('payslips/{payslip}/reopen',            [HrmPayrollApprovalController::class, 'reopen']);
+
+        // Salary advances
+        Route::get('salary-advances',                       [HrmSalaryAdvanceController::class, 'index']);
+        Route::post('salary-advances',                      [HrmSalaryAdvanceController::class, 'store']);
+        Route::post('salary-advances/{advance}/cancel',     [HrmSalaryAdvanceController::class, 'cancel']);
+        Route::get('employees/{employee}/outstanding-advance',
+            [HrmSalaryAdvanceController::class, 'outstandingForEmployee']);
+
+        // Workforce analytics
+        Route::get('workforce/dashboard',                   [HrmWorkforceAnalyticsController::class, 'dashboard']);
+        Route::get('workforce/branch-efficiency',           [HrmWorkforceAnalyticsController::class, 'branchEfficiency']);
+        Route::get('workforce/utilisation',                 [HrmWorkforceAnalyticsController::class, 'utilisation']);
+
+        // Attendance intelligence
+        Route::get('attendance-intelligence/scores',        [HrmAttendanceIntelController::class, 'scores']);
+        Route::get('attendance-intelligence/late-heatmap',  [HrmAttendanceIntelController::class, 'lateHeatmap']);
+        Route::get('attendance-intelligence/overtime',      [HrmAttendanceIntelController::class, 'overtimeTrend']);
+        Route::get('attendance-intelligence/breaks',        [HrmAttendanceIntelController::class, 'breaks']);
+        Route::post('attendance/{attendance}/correct',      [HrmAttendanceIntelController::class, 'correct']);
+
+        // HR audit log (read-only)
+        Route::get('hr-audit',                              [HrmHrAuditController::class, 'index']);
 
         Route::get('employees/stats',                 [HrmEmployeeController::class, 'stats']);
         Route::get('employees',                       [HrmEmployeeController::class, 'index']);

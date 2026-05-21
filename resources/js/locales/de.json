@@ -46,6 +46,10 @@
     "attendance": "Anwesenheit",
     "attendanceMonthly": "Monatsbericht",
     "payroll": "Lohnabrechnung",
+    "payrollApprovals": "Lohn-Freigaben",
+    "salaryAdvances":   "Gehaltsvorschüsse",
+    "workforceIntel":   "Personalintelligenz",
+    "attendanceIntel":  "Anwesenheits-Analyse",
     "hrmReports": "HR-Berichte",
     "expenses": "Ausgaben",
     "expenseList": "Alle Ausgaben",
@@ -197,7 +201,18 @@
       "customerDueSub": "{amount} ausstehend",
       "customerNoDue": "Keine offenen Forderungen",
       "lowStockSub": "Unter Mindestbestand",
-      "stockOk": "Alle Bestände OK"
+      "stockOk": "Alle Bestände OK",
+      "todayRevenue":    "Umsatz heute",
+      "monthRevenue":    "Diesen Monat",
+      "netProfit":       "Nettogewinn (Monat)",
+      "cashAndBank":     "Kasse + Bank",
+      "receivables":     "Forderungen",
+      "activeCustomers": "Aktive Kunden",
+      "salesUnit":       "Verkäufe",
+      "grossMargin":     "Bruttomarge",
+      "cashBankSub":     "Live-Saldo aus Hauptbuch",
+      "outstandingSub":  "offene Rechnungen",
+      "newThisMonth":    "neu diesen Monat"
     },
     "activeSub": "{active} aktiv · {inactive} inaktiv",
     "branchOverview": {
@@ -215,7 +230,13 @@
       "manageProducts": "Produkte",
       "manageProductsDesc": "Produkte hinzufügen oder bearbeiten",
       "newPurchase": "Neuer Einkauf",
-      "newPurchaseDesc": "Wareneingang erfassen"
+      "newPurchaseDesc": "Wareneingang erfassen",
+      "newSale":        "Neue Rechnung",
+      "newSaleDesc":    "Back-Office-Verkauf erfassen",
+      "accounting":     "Buchhaltung",
+      "accountingDesc": "Journal, Hauptbuch, Bilanz",
+      "reorder":        "Nachbestellung",
+      "reorderDesc":    "Beschaffungsvorschläge"
     },
     "systemInfo": {
       "title": "Systeminformation",
@@ -231,14 +252,56 @@
       "modules": {
         "auth": "Auth & Login",
         "products": "Produkte & Lager",
-        "pos": "Verkauf / POS",
+        "pos": "POS-Terminal",
         "customers": "Kunden",
         "purchases": "Einkauf",
-        "reports": "Berichte"
+        "reports": "Berichte",
+        "sales":       "Verkauf & Rechnungen",
+        "inventory":   "Lagerintelligenz",
+        "hrm":         "HR & Lohn",
+        "finance":     "Finanzen",
+        "accounting":  "Buchhaltung",
+        "crm":         "CRM & Treue",
+        "oms":         "Omnichannel",
+        "expenses":    "Ausgaben"
       },
       "phases": {
         "phase4": "Phase 4"
       }
+    },
+    "heroSubtitle": "Live-Überblick Ihres Unternehmens über alle Module",
+    "refresh": "Aktualisieren",
+    "viewAll": "Alle anzeigen",
+    "alerts": {
+      "low_stock":        "{count} Artikel unter Meldebestand",
+      "out_of_stock":     "{count} Artikel nicht verfügbar",
+      "dead_stock":       "{count} Artikel ohne Verkauf seit 90 Tagen",
+      "overdue_payments": "{count} Verkäufe über 30 Tage überfällig",
+      "payroll_pending":  "{count} Lohnzettel warten auf Freigabe"
+    },
+    "insights": {
+      "stockValue":  "Lagerwert",
+      "openOrders":  "Offene Aufträge",
+      "loyalty":     "Treueverbindlichkeit",
+      "activeStaff": "Aktive Mitarbeiter"
+    },
+    "trend": {
+      "title":    "Umsatz — Letzte 14 Tage",
+      "subtitle": "Tagesumsatz-Verlauf"
+    },
+    "topProducts": {
+      "title": "Top-Produkte (Monat)",
+      "sold":  "verkauft",
+      "empty": "Noch keine Verkäufe diesen Monat"
+    },
+    "topCustomers": {
+      "title":  "Top-Kunden (Monat)",
+      "visits": "Besuche",
+      "empty":  "Noch keine registrierten Kundenverkäufe"
+    },
+    "activity": {
+      "title": "Aktivitäten",
+      "empty": "Noch keine Aktivität"
     },
     "recentSales": {
       "title": "Letzte Verkäufe",
@@ -1601,6 +1664,94 @@
       "payrollSubtitle":   "Aggregierte Werte aller Abrechnungen der Periode",
       "payrollTotals":     "Summen",
       "topEarners":        "Top-Verdiener"
+    },
+    "approval": {
+      "title":    "Lohn-Freigaben",
+      "subtitle": "Abrechnungen einreichen, freigeben und vor der Buchung sperren",
+      "payslip":  "Lohnzettel",
+      "employee": "Mitarbeiter",
+      "period":   "Periode",
+      "net":      "Nettogehalt",
+      "payment":  "Zahlung",
+      "locked":   "Gesperrt",
+      "empty":    "Keine Einträge in dieser Warteschlange",
+      "status": { "draft": "Entwurf", "submitted": "Eingereicht", "approved": "Freigegeben", "rejected": "Abgelehnt" },
+      "actions": {
+        "submit":       "Einreichen",
+        "approve":      "Freigeben",
+        "reject":       "Ablehnen",
+        "reopen":       "Wieder öffnen",
+        "rejectReason": "Begründung für die Ablehnung?"
+      },
+      "confirms": {
+        "submit":  "Lohnzettel {number} zur Freigabe einreichen?",
+        "approve": "Lohnzettel {number} freigeben? Wird danach gesperrt.",
+        "reopen":  "Lohnzettel {number} als Entwurf wieder öffnen?"
+      }
+    },
+    "advance": {
+      "title":    "Gehaltsvorschüsse",
+      "subtitle": "Vorschüsse auf zukünftiges Gehalt, automatisch von der nächsten Abrechnung abgezogen",
+      "add":      "Vorschuss gewähren",
+      "granted":  "Gewährt am",
+      "amount":   "Betrag",
+      "deducted": "Abgezogen",
+      "outstanding": "Offen",
+      "grantedOn": "Gewährungsdatum",
+      "reason":    "Grund",
+      "empty":     "Noch keine Gehaltsvorschüsse",
+      "cancelPrompt": "Grund für die Stornierung?",
+      "status": {
+        "outstanding":        "Offen",
+        "partially_deducted": "Teilweise",
+        "settled":            "Beglichen",
+        "cancelled":          "Storniert"
+      }
+    },
+    "workforce": {
+      "module":   "Personal",
+      "title":    "Personalintelligenz",
+      "subtitle": "Mitarbeiterstand, Personalkosten und Kassierer-Produktivität",
+      "branch":   "Filiale",
+      "headcount":"Personalstand",
+      "revPerHead": "Umsatz / Kopf",
+      "topCashiers":     "Top-Kassierer",
+      "topPerformers":   "Top-Performer (Gesamtscore)",
+      "branchEfficiency":"Filial-Personaleffizienz",
+      "refundRiskTitle": "Kassierer mit Rückgaberisiko",
+      "sales":           "Verkäufe",
+      "refunds":         "Rückgaben",
+      "refundRate":      "Rückgabe %",
+      "attendancePct":   "Anwesenheit %",
+      "hours":           "Stunden",
+      "score":           "Score",
+      "empty":           "Noch keine Kassierer-Aktivität",
+      "refundEmpty":     "Keine Rückgaben im Zeitraum",
+      "kpi": {
+        "headcount":     "Aktive Mitarbeiter",
+        "revenue":       "Umsatz diesen Monat",
+        "labourCost":    "Personalkosten diesen Monat",
+        "labourPct":     "Personalkosten-Anteil",
+        "revenuePerHead":"Umsatz pro Kopf"
+      }
+    },
+    "attIntel": {
+      "title":          "Anwesenheits-Intelligenz",
+      "subtitle":       "Scores, Verspätungs-Heatmap, Überstunden-Trend, Pausen-Analyse",
+      "avgWorked":      "Ø Arbeitszeit",
+      "avgBreak":       "Ø Pause",
+      "overtimeTotal":  "Überstunden gesamt",
+      "workforce":      "Mitarbeiter",
+      "heatmapTitle":   "Verspätungen nach Wochentag × Stunde",
+      "heatmapHint":    "Zelle = Anzahl verspäteter Einstempelungen (dunkler = häufiger)",
+      "overtimeTrend":  "Tägliche Überstunden (Std.)",
+      "scores":         "Anwesenheits-Scores",
+      "days":           "Tage",
+      "present":        "Anwesend",
+      "absent":         "Abwesend",
+      "late":           "Verspätet",
+      "workedHours":    "Arbeitsstunden",
+      "score":          "Score"
     }
   },
   "expenses": {

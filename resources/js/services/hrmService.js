@@ -79,3 +79,39 @@ export const shiftService = {
 function multipart() {
     return { headers: { 'Content-Type': 'multipart/form-data' } };
 }
+
+// --- Workforce Intelligence layer (Phase G) ----------------------------------
+
+export const payrollApprovalService = {
+    queue:   (params = {}) => api.get('/hrm/payroll-approvals/queue',  { params }),
+    counts:  ()            => api.get('/hrm/payroll-approvals/counts'),
+    submit:  (id, data = {}) => api.post(`/hrm/payslips/${id}/submit`,  data),
+    approve: (id, data = {}) => api.post(`/hrm/payslips/${id}/approve`, data),
+    reject:  (id, data)      => api.post(`/hrm/payslips/${id}/reject`,  data),
+    reopen:  (id)            => api.post(`/hrm/payslips/${id}/reopen`),
+};
+
+export const salaryAdvanceService = {
+    index:        (params = {}) => api.get('/hrm/salary-advances', { params }),
+    store:        (data)        => api.post('/hrm/salary-advances', data),
+    cancel:       (id, data)    => api.post(`/hrm/salary-advances/${id}/cancel`, data),
+    forEmployee:  (employeeId)  => api.get(`/hrm/employees/${employeeId}/outstanding-advance`),
+};
+
+export const workforceAnalyticsService = {
+    dashboard:        (params = {}) => api.get('/hrm/workforce/dashboard',          { params }),
+    branchEfficiency: (params = {}) => api.get('/hrm/workforce/branch-efficiency',  { params }),
+    utilisation:      (params)      => api.get('/hrm/workforce/utilisation',        { params }),
+};
+
+export const attendanceIntelligenceService = {
+    scores:        (params) => api.get('/hrm/attendance-intelligence/scores',        { params }),
+    lateHeatmap:   (params) => api.get('/hrm/attendance-intelligence/late-heatmap',  { params }),
+    overtimeTrend: (params) => api.get('/hrm/attendance-intelligence/overtime',      { params }),
+    breaks:        (params) => api.get('/hrm/attendance-intelligence/breaks',        { params }),
+    correct:       (id, data) => api.post(`/hrm/attendance/${id}/correct`, data),
+};
+
+export const hrAuditService = {
+    index: (params = {}) => api.get('/hrm/hr-audit', { params }),
+};

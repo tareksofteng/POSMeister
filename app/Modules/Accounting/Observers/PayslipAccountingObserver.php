@@ -13,16 +13,29 @@ class PayslipAccountingObserver
 
     public function created(Payslip $payslip): void
     {
-        if ($payslip->status === 'paid') {
+        if ($this->isPostable($payslip)) {
             $this->tryPost($payslip);
         }
     }
 
     public function updated(Payslip $payslip): void
     {
-        if ($payslip->wasChanged('status') && $payslip->status === 'paid') {
+        // Post on payment flip OR on the approval flip that follows a paid status.
+        $statusChanged   = $payslip->wasChanged('status') && $payslip->status === 'paid';
+        $approvalChanged = $payslip->wasChanged('approval_status') && $payslip->approval_status === 'approved';
+        if (($statusChanged || $approvalChanged) && $this->isPostable($payslip)) {
             $this->tryPost($payslip);
         }
+    }
+
+    /**
+     * Payroll only hits Accounting after HR has explicitly approved it.
+     * This blocks accidental drafts from ever touching the ledger.
+     */
+    private function isPostable(Payslip $payslip): bool
+    {
+        return $payslip->status === 'paid'
+            && $payslip->approval_status === 'approved';
     }
 
     private function tryPost(Payslip $payslip): void

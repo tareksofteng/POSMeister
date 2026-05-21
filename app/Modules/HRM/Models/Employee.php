@@ -15,7 +15,7 @@ class Employee extends Model
     use SoftDeletes, HasAuditFields;
 
     protected $fillable = [
-        'employee_id',
+        'employee_id', 'user_id',
         'first_name', 'last_name', 'email', 'phone', 'emergency_contact',
         'gender', 'date_of_birth', 'blood_group', 'marital_status',
         'nationality', 'religion',
@@ -63,6 +63,21 @@ class Employee extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function salaryHistory(): HasMany
+    {
+        return $this->hasMany(EmployeeSalaryHistory::class)->orderByDesc('effective_date');
+    }
+
+    public function advances(): HasMany
+    {
+        return $this->hasMany(SalaryAdvance::class);
     }
 
     public function attendance(): HasMany
