@@ -280,7 +280,8 @@
         "accounting":  "Buchhaltung",
         "crm":         "CRM & Treue",
         "oms":         "Omnichannel",
-        "expenses":    "Ausgaben"
+        "expenses":    "Ausgaben",
+        "platform":    "Plattform & SaaS"
       },
       "phases": {
         "phase4": "Phase 4"
@@ -2629,6 +2630,49 @@
       "noJobs":         "Noch keine Sync-Jobs",
       "queued":         "Sync-Job eingereiht",
       "deleteConfirm":  "Konnektor \"{name}\" löschen?"
+    }
+  },
+  "palette": {
+    "placeholder":  "Bildschirm, Aktion oder Bericht suchen…",
+    "empty":        "Keine Treffer",
+    "navigate":     "Navigieren",
+    "select":       "Auswählen",
+    "close":        "Schließen",
+    "openLabel":    "Suchen",
+    "openHint":     "Strg K",
+    "sections": {
+      "navigation": "Navigation",
+      "actions":    "Aktionen",
+      "system":     "System"
+    },
+    "actions": {
+      "newSale":      "Neuer Verkauf",
+      "newPurchase":  "Neuer Einkauf",
+      "reorder":      "Nachbestellvorschläge",
+      "toggleTheme":  "Design umschalten",
+      "toLight":      "Zum hellen Modus",
+      "toDark":       "Zum dunklen Modus",
+      "health":       "Systemstatus"
+    }
+  },
+  "system": {
+    "module": "System",
+    "health": {
+      "title":       "Systemstatus",
+      "subtitle":    "Betriebszustand der Plattform, Infrastruktur und Geschäftsprüfungen.",
+      "database":    "Datenbank",
+      "cache":       "Cache",
+      "queue":       "Warteschlange",
+      "app":         "Anwendung",
+      "readiness":   "Bereitschaftsprüfungen",
+      "modules":     "Module",
+      "storage":     "Speicherpfade",
+      "writable":    "Beschreibbar",
+      "notWritable": "Nicht beschreibbar",
+      "missing":     "Fehlt"
+    },
+    "audit": {
+      "title": "Letzte Audit-Ereignisse"
     }
   }
 }

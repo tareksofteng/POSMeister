@@ -412,7 +412,7 @@ const quickLinks = computed(() => [
 ]);
 
 const systemInfo = computed(() => [
-    { label: t('dashboard.systemInfo.version'),     value: 'v1.7.0 — Phase G' },
+    { label: t('dashboard.systemInfo.version'),     value: 'v2.0.0 — Phase X' },
     { label: t('dashboard.systemInfo.framework'),   value: 'Laravel 13 + Vue 3' },
     { label: t('dashboard.systemInfo.auth'),        value: 'Sanctum (Token)' },
     { label: t('dashboard.systemInfo.environment'), value: import.meta.env.MODE === 'production' ? 'Production' : 'Development' },
@@ -428,7 +428,7 @@ const moduleStatusList = computed(() => [
     { key: 'crm',         label: t('dashboard.moduleStatus.modules.crm'),         phase: 'E' },
     { key: 'oms',         label: t('dashboard.moduleStatus.modules.oms'),         phase: 'F' },
     { key: 'expenses',    label: t('dashboard.moduleStatus.modules.expenses'),    phase: 'A' },
-    { key: 'reports',     label: t('dashboard.moduleStatus.modules.reports'),     phase: 'A' },
+    { key: 'platform',    label: t('dashboard.moduleStatus.modules.platform'),    phase: 'X' },
 ]);
 
 async function load() {

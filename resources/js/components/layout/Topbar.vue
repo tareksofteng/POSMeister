@@ -1,5 +1,5 @@
 <template>
-    <header class="flex h-16 flex-shrink-0 items-center gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">
+    <header class="flex h-16 flex-shrink-0 items-center gap-4 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 sm:px-6">
 
         <!-- Sidebar toggle -->
         <button
@@ -24,12 +24,33 @@
         <!-- Right actions -->
         <div class="flex items-center gap-1">
 
+            <!-- Quick search (opens command palette) -->
+            <button
+                @click="openPalette"
+                class="hidden md:inline-flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
+                :title="t('palette.openHint')"
+            >
+                <MagnifyingGlassIcon class="w-4 h-4" />
+                <span>{{ t('palette.openLabel') }}</span>
+                <kbd class="text-[10px] font-mono font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded px-1.5 py-0.5">⌘K</kbd>
+            </button>
+
             <!-- Language switcher -->
             <LanguageSwitcher />
 
+            <!-- Theme toggle -->
+            <button
+                @click="theme.toggle()"
+                class="p-2 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                :title="theme.mode === 'dark' ? t('palette.actions.toLight') : t('palette.actions.toDark')"
+            >
+                <SunIcon v-if="theme.mode === 'dark'" class="w-5 h-5" />
+                <MoonIcon v-else class="w-5 h-5" />
+            </button>
+
             <!-- Notifications (placeholder) -->
             <button
-                class="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                class="relative p-2 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 aria-label="Notifications"
             >
                 <BellIcon class="w-5 h-5" />
@@ -96,7 +117,19 @@ import {
     BellIcon,
     ChevronDownIcon,
     ArrowRightStartOnRectangleIcon,
+    MagnifyingGlassIcon,
+    SunIcon,
+    MoonIcon,
 } from '@heroicons/vue/24/outline';
+import { useThemeStore } from '@/stores/theme';
+
+const theme = useThemeStore();
+
+function openPalette() {
+    // CommandPalette listens for a custom event so we don't depend on the
+    // exact key combination handler being mounted.
+    window.dispatchEvent(new CustomEvent('posmeister:palette:open'));
+}
 
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
 

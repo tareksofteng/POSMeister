@@ -280,7 +280,8 @@
         "accounting":  "Accounting",
         "crm":         "CRM & Loyalty",
         "oms":         "Omnichannel",
-        "expenses":    "Expenses"
+        "expenses":    "Expenses",
+        "platform":    "Platform & SaaS"
       },
       "phases": {
         "phase4": "Phase 4"
@@ -2629,6 +2630,49 @@
       "noJobs":         "No sync jobs yet",
       "queued":         "Sync job queued",
       "deleteConfirm":  "Delete connector \"{name}\"?"
+    }
+  },
+  "palette": {
+    "placeholder":  "Search for a screen, action or report…",
+    "empty":        "No results found",
+    "navigate":     "Navigate",
+    "select":       "Select",
+    "close":        "Close",
+    "openLabel":    "Search",
+    "openHint":     "Ctrl K",
+    "sections": {
+      "navigation": "Navigation",
+      "actions":    "Actions",
+      "system":     "System"
+    },
+    "actions": {
+      "newSale":      "New Sale",
+      "newPurchase":  "New Purchase",
+      "reorder":      "Reorder Suggestions",
+      "toggleTheme":  "Toggle Theme",
+      "toLight":      "Switch to Light Mode",
+      "toDark":       "Switch to Dark Mode",
+      "health":       "System Health"
+    }
+  },
+  "system": {
+    "module": "System",
+    "health": {
+      "title":       "System Health",
+      "subtitle":    "Operational status of the platform, infrastructure and business checks.",
+      "database":    "Database",
+      "cache":       "Cache",
+      "queue":       "Queue",
+      "app":         "Application",
+      "readiness":   "Readiness Checks",
+      "modules":     "Modules",
+      "storage":     "Storage Paths",
+      "writable":    "Writable",
+      "notWritable": "Not writable",
+      "missing":     "Missing"
+    },
+    "audit": {
+      "title": "Recent Audit Events"
     }
   }
 }

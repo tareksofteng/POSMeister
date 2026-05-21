@@ -52,6 +52,14 @@ const routes = [
                 meta: { titleKey: 'menu.settings', adminOnly: true },
             },
 
+            // ── Platform: system health (admin-only) ───────────────────────
+            {
+                path: 'system/health',
+                name: 'system-health',
+                component: () => import('@/views/system/SystemHealthView.vue'),
+                meta: { titleKey: 'system.health.title', adminOnly: true },
+            },
+
             // ── Role permissions ───────────────────────────────────────────
             {
                 path: 'settings/roles',

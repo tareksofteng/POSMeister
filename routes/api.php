@@ -34,6 +34,7 @@ use App\Modules\OMS\Controllers\CourierController;
 use App\Modules\OMS\Controllers\EcommerceController;
 use App\Modules\OMS\Controllers\NotificationController;
 use App\Modules\OMS\Controllers\OrderController;
+use App\Modules\Platform\Controllers\SystemHealthController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -74,8 +75,11 @@ use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────────────────────
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 });
+
+// Public liveness probe for load balancers / uptime monitors.
+Route::get('system/ping', [SystemHealthController::class, 'ping'])->middleware('throttle:60,1');
 
 // ── Protected ─────────────────────────────────────────────────────────────
 Route::middleware(['auth:sanctum', 'branch'])->group(function () {
@@ -209,6 +213,11 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::put('settings',              [SettingsController::class, 'update']);
         Route::post('settings/logo',        [SettingsController::class, 'uploadLogo']);
         Route::delete('settings/logo',      [SettingsController::class, 'deleteLogo']);
+
+        // Platform health + audit (admin-only operations)
+        Route::get('system/health',  [SystemHealthController::class, 'health']);
+        Route::get('system/info',    [SystemHealthController::class, 'info']);
+        Route::get('system/audit',   [SystemHealthController::class, 'audit']);
     });
 
     // Expense module (admin + manager)
