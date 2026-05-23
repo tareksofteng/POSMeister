@@ -31,6 +31,7 @@
 
         <!-- Content area -->
         <div class="flex flex-1 flex-col min-w-0 overflow-hidden">
+            <OfflineBanner />
             <Topbar @toggle-sidebar="toggleSidebar" />
 
             <main class="flex-1 overflow-y-auto overscroll-contain pb-safe">
@@ -49,6 +50,7 @@ import { useRoute } from 'vue-router';
 import Sidebar from './Sidebar.vue';
 import Topbar  from './Topbar.vue';
 import CommandPalette from '../CommandPalette.vue';
+import OfflineBanner  from '../OfflineBanner.vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useThemeStore } from '@/stores/theme';
 

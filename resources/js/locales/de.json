@@ -776,6 +776,7 @@
     "outOfStockAlert": "{name} ist nicht vorrätig",
     "stockLimitAlert": "Max. Bestand für {name} erreicht",
     "saleSuccess": "Verkauf erfolgreich abgeschlossen!",
+    "saleSavedOffline": "Offline gespeichert als {ref} — wird synchronisiert sobald online.",
     "printPromptTitle": "Beleg drucken?",
     "printPromptText": "Möchten Sie den Kassenbeleg jetzt drucken?",
     "printNow": "Jetzt drucken",
@@ -2682,6 +2683,13 @@
     "updateAvailable": "Eine neue Version ist verfügbar — zum Anwenden klicken.",
     "online":          "Online",
     "offline":         "Offline"
+  },
+  "offline": {
+    "offline":          "Offline-Betrieb — Verkäufe werden lokal gespeichert und später synchronisiert.",
+    "offlineWithQueue": "Offline · {n} Verkauf/Verkäufe lokal in Warteschlange.",
+    "queue":            "{n} Verkauf/Verkäufe warten auf Synchronisierung.",
+    "retry":            "Jetzt synchronisieren",
+    "syncing":          "Synchronisiert…"
   },
   "systemOps": {
     "module": "Betrieb",

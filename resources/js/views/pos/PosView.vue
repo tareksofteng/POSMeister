@@ -638,30 +638,40 @@ async function confirmSale() {
     }
 
     saving.value = true;
+    const payload = {
+        sale_date:        form.sale_date,
+        sale_type:        form.sale_type,
+        discount_amount:  form.discount,
+        freight_amount:   form.freight,
+        note:             form.note || null,
+        cash_paid:        payment.cash,
+        card_paid:        payment.card,
+        total_paid:       totalPaid.value,
+        customer_type:    customer.type,
+        customer_id:      customer.type === 'registered' ? customer.id : null,
+        customer_name:    customer.name  || null,
+        customer_phone:   customer.phone || null,
+        customer_address: customer.address || null,
+        items: cart.value.map(l => ({
+            product_id:  l.product_id,
+            quantity:    l.quantity,
+            unit_price:  l.unit_price,
+            cost_price:  l.cost_price,
+            tax_rate:    l.tax_rate,
+            is_service:  l.is_service,
+        })),
+    };
     try {
-        const payload = {
-            sale_date:        form.sale_date,
-            sale_type:        form.sale_type,
-            discount_amount:  form.discount,
-            freight_amount:   form.freight,
-            note:             form.note || null,
-            cash_paid:        payment.cash,
-            card_paid:        payment.card,
-            total_paid:       totalPaid.value,
-            customer_type:    customer.type,
-            customer_id:      customer.type === 'registered' ? customer.id : null,
-            customer_name:    customer.name  || null,
-            customer_phone:   customer.phone || null,
-            customer_address: customer.address || null,
-            items: cart.value.map(l => ({
-                product_id:  l.product_id,
-                quantity:    l.quantity,
-                unit_price:  l.unit_price,
-                cost_price:  l.cost_price,
-                tax_rate:    l.tax_rate,
-                is_service:  l.is_service,
-            })),
-        };
+        // Phase Ω — if offline, write to local IndexedDB queue + return early.
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            const { createOfflineSale } = await import('@/offline/offlineSales');
+            const { syncNow } = await import('@/offline/syncEngine');
+            const row = await createOfflineSale(payload);
+            toast('success', t('pos.saleSavedOffline', { ref: row.tempInvoiceNumber }));
+            syncNow().catch(() => {});  // optimistic retry in case we're already back online
+            resetSale();
+            return;
+        }
 
         const { data } = await saleService.store(payload);
         const saleId   = (data.data ?? data).id;
@@ -681,6 +691,19 @@ async function confirmSale() {
             resetSale();
         }
     } catch (err) {
+        // Network failure (e.g. server unreachable mid-request) — degrade to offline path.
+        const isNetwork = !err.response;
+        if (isNetwork) {
+            try {
+                const { createOfflineSale } = await import('@/offline/offlineSales');
+                const { syncNow } = await import('@/offline/syncEngine');
+                const row = await createOfflineSale(payload);
+                toast('success', t('pos.saleSavedOffline', { ref: row.tempInvoiceNumber }));
+                syncNow().catch(() => {});
+                resetSale();
+                return;
+            } catch { /* fall through to error display */ }
+        }
         saleError.value = err.response?.data?.message ?? t('common.unexpectedError');
     } finally {
         saving.value = false;

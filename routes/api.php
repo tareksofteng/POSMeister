@@ -38,6 +38,7 @@ use App\Modules\Platform\Controllers\SystemHealthController;
 use App\Modules\SystemOps\Controllers\SystemOpsController;
 use App\Modules\SystemOps\Controllers\BackupController;
 use App\Modules\SystemOps\Controllers\SyncController;
+use App\Modules\SystemOps\Controllers\OfflineSyncController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -95,6 +96,18 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
     // Dashboard stats
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+
+    // ── Phase Ω — Offline-first POS ─────────────────────────────────────
+    //   /snapshot     bulk download of products+customers+settings (any auth user)
+    //   /sync/sales   batch import of offline sales (any auth user)
+    //   /devices      admin monitoring of registered terminals
+    //   /sync/conflicts admin: open conflicts inspector
+    Route::get ('system/snapshot',         [OfflineSyncController::class, 'snapshot']);
+    Route::post('system/sync/sales',       [OfflineSyncController::class, 'syncSales'])->middleware('throttle:30,1');
+    Route::middleware('role:admin')->group(function () {
+        Route::get('system/devices',          [OfflineSyncController::class, 'devices']);
+        Route::get('system/sync/conflicts',   [OfflineSyncController::class, 'conflicts']);
+    });
 
     // Ledger reports
     Route::get('reports/customer-ledger', [LedgerController::class, 'customer']);

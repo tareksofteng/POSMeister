@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { authService } from '@/services/authService';
+import { saveAuthSnapshot, loadAuthSnapshot, clearAuthSnapshot } from '@/offline/authCache';
 
 export const useAuthStore = defineStore('auth', () => {
 
@@ -66,9 +67,33 @@ export const useAuthStore = defineStore('auth', () => {
                 permissions.value = data.permissions;
                 localStorage.setItem('pos_permissions', JSON.stringify(data.permissions));
             }
-        } catch {
-            _clear();
+
+            // Phase Ω — persist a verified snapshot for offline recovery.
+            saveAuthSnapshot({
+                token: token.value,
+                user: user.value,
+                permissions: permissions.value,
+            }).catch(() => {});
+        } catch (err) {
+            // If the request failed because the user is offline (or the
+            // server is briefly unreachable) keep the existing session
+            // so the cashier can continue working. Only a confirmed 401
+            // from the server actually means "log out".
+            const status = err?.response?.status;
+            if (status === 401 || status === 419) {
+                _clear();
+            }
+            // Otherwise swallow — offline grace window handles the rest.
         }
+    }
+
+    /** Restore session from the IndexedDB snapshot when localStorage is empty. */
+    async function restoreFromOfflineSnapshot() {
+        if (token.value && user.value) return true;
+        const snap = await loadAuthSnapshot().catch(() => null);
+        if (!snap?.token || !snap?.user) return false;
+        _persist(snap.token, snap.user, snap.permissions || []);
+        return true;
     }
 
     // ── Private helpers ────────────────────────────────────────────────────
@@ -80,6 +105,14 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('pos_token',       newToken);
         localStorage.setItem('pos_user',        JSON.stringify(newUser));
         localStorage.setItem('pos_permissions', JSON.stringify(newPermissions));
+
+        // Phase Ω — mirror into IndexedDB so a reload while offline can
+        // still rehydrate the session without hitting the server.
+        saveAuthSnapshot({
+            token: newToken,
+            user: newUser,
+            permissions: newPermissions,
+        }).catch(() => {});
     }
 
     function _clear() {
@@ -89,6 +122,7 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('pos_token');
         localStorage.removeItem('pos_user');
         localStorage.removeItem('pos_permissions');
+        clearAuthSnapshot().catch(() => {});
     }
 
     function _extractError(err) {
@@ -101,6 +135,6 @@ export const useAuthStore = defineStore('auth', () => {
         token, user, permissions, loading, error,
         isAuthenticated, userName, userRole, branchId, isAdmin,
         hasPermission,
-        login, logout, fetchMe,
+        login, logout, fetchMe, restoreFromOfflineSnapshot,
     };
 });

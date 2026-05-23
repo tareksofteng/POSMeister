@@ -688,8 +688,15 @@ const router = createRouter({
 });
 
 // ── Global navigation guard ───────────────────────────────────────────────
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
     const auth = useAuthStore();
+
+    // Phase Ω — if the in-memory session is empty but we have an offline
+    // snapshot, rehydrate from IndexedDB so a reload while offline does
+    // not log the cashier out.
+    if (to.meta.requiresAuth && !auth.isAuthenticated) {
+        try { await auth.restoreFromOfflineSnapshot(); } catch { /* no snapshot */ }
+    }
 
     // Not logged in — redirect to login
     if (to.meta.requiresAuth && !auth.isAuthenticated) {

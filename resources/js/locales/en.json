@@ -776,6 +776,7 @@
     "outOfStockAlert": "{name} is out of stock",
     "stockLimitAlert": "Stock limit reached for {name}",
     "saleSuccess": "Sale completed successfully!",
+    "saleSavedOffline": "Saved offline as {ref} — will sync when online.",
     "printPromptTitle": "Print Receipt?",
     "printPromptText": "Would you like to print the receipt now?",
     "printNow": "Print Now",
@@ -2682,6 +2683,13 @@
     "updateAvailable": "A new version is available — click to apply.",
     "online":          "Online",
     "offline":         "Offline"
+  },
+  "offline": {
+    "offline":          "Working offline — sales will queue locally and sync when online.",
+    "offlineWithQueue": "Offline · {n} sale(s) queued locally.",
+    "queue":            "{n} sale(s) waiting to sync.",
+    "retry":            "Sync now",
+    "syncing":          "Syncing…"
   },
   "systemOps": {
     "module": "Operations",
