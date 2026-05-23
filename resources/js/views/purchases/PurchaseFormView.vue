@@ -84,9 +84,82 @@
                 </button>
             </div>
 
-            <!-- Items table -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+            <!-- ── Mobile (< lg): stacked card per line item ─────────────── -->
+            <div class="lg:hidden divide-y divide-gray-100">
+                <div v-for="(line, idx) in form.items" :key="`m-${idx}`" class="p-4 space-y-3">
+                    <!-- Product selector + delete -->
+                    <div class="flex items-start gap-2">
+                        <div class="flex-1 min-w-0">
+                            <label class="block text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">{{ t('purchases.product') }}</label>
+                            <ProductSearchInput
+                                v-model="line.product_id"
+                                :product="line._product"
+                                :disabled="isLocked"
+                                :placeholder="t('purchases.selectProduct')"
+                                @select="onProductSelect(line, $event)"
+                            />
+                        </div>
+                        <button v-if="!isLocked" @click="removeLine(idx)" class="mt-5 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0">
+                            <XMarkIcon class="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <!-- Numeric grid: 2×2 — big touch-friendly inputs -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">{{ t('purchases.qty') }}</label>
+                            <input
+                                v-model.number="line.quantity"
+                                @input="recalc(line)"
+                                type="number" min="0.01" step="0.01" inputmode="decimal"
+                                class="w-full px-3 py-2.5 text-base text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                :disabled="isLocked"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">{{ t('purchases.unitCost') }}</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{{ currencySymbol }}</span>
+                                <input
+                                    v-model.number="line.unit_cost"
+                                    @input="recalc(line)"
+                                    type="number" min="0" step="0.01" inputmode="decimal"
+                                    class="w-full pl-8 pr-3 py-2.5 text-base text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    :disabled="isLocked"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">{{ t('purchases.vatRate') }}</label>
+                            <select v-model.number="line.vat_rate" @change="recalc(line)" class="w-full px-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" :disabled="isLocked">
+                                <option :value="0">0 %</option>
+                                <option :value="7">7 %</option>
+                                <option :value="19">19 %</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">{{ t('purchases.vatAmount') }}</label>
+                            <div class="w-full px-3 py-2.5 text-base text-right font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg">
+                                {{ fmt(line._vat_amount) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Line total — big -->
+                    <div class="flex items-center justify-between px-3 py-3 bg-indigo-50/50 rounded-lg border border-indigo-100">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-700">{{ t('purchases.lineTotal') }}</span>
+                        <span class="text-base font-bold font-mono text-indigo-900 tabular-nums">{{ fmt(line._line_total) }}</span>
+                    </div>
+                </div>
+
+                <div v-if="form.items.length === 0" class="px-6 py-10 text-center text-sm text-gray-400">
+                    {{ t('purchases.noItems') }}
+                </div>
+            </div>
+
+            <!-- ── Desktop (lg+): classic table layout ───────────────────── -->
+            <div class="hidden lg:block overflow-x-auto responsive-table">
+                <table class="w-full text-sm min-w-[820px]">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide w-[320px]">{{ t('purchases.product') }}</th>

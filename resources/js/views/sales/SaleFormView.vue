@@ -94,8 +94,64 @@
                     </button>
                 </header>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                <!-- ── Mobile (< lg): stacked card per line item ─────────── -->
+                <div class="lg:hidden divide-y divide-slate-100">
+                    <div v-for="(line, idx) in form.items" :key="`m-${idx}`" class="p-4 space-y-3">
+                        <div class="flex items-start gap-2">
+                            <div class="flex-1 min-w-0">
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('sales.product') }} #{{ idx + 1 }}</label>
+                                <ProductSearchInput v-model="line.product_id" :product="line._product"
+                                    :placeholder="t('sales.searchProduct')" @select="onProductPick(line, $event)" />
+                                <p v-if="line._product?.stock != null" class="mt-1 text-[11px] text-slate-400">
+                                    {{ t('sales.stock') }}: {{ line._product.stock }} {{ line._product.unit_symbol }}
+                                </p>
+                            </div>
+                            <button @click="removeLine(idx)" type="button" class="mt-5 p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg flex-shrink-0">
+                                <XMarkIcon class="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('sales.qty') }}</label>
+                                <input v-model.number="line.quantity" @input="recalcLine(line)" type="number"
+                                    min="0.01" step="0.01" inputmode="decimal"
+                                    class="w-full px-3 py-2.5 text-base text-right border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('sales.unitPrice') }}</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">{{ currencySymbol }}</span>
+                                    <input v-model.number="line.unit_price" @input="recalcLine(line)" type="number"
+                                        min="0" step="0.01" inputmode="decimal"
+                                        class="w-full pl-8 pr-3 py-2.5 text-base text-right border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('sales.vatRate') }}</label>
+                                <select v-model.number="line.tax_rate" @change="recalcLine(line)" class="w-full px-3 py-2.5 text-base border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <option :value="0">0 %</option>
+                                    <option :value="7">7 %</option>
+                                    <option :value="19">19 %</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('sales.lineTotal') }}</label>
+                                <div class="w-full px-3 py-2.5 text-base text-right font-mono font-semibold text-slate-900 bg-emerald-50/60 border border-emerald-100 rounded-lg tabular-nums">
+                                    {{ fmtCurrency(line._line_total) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="form.items.length === 0" class="px-6 py-10 text-center text-sm text-slate-400">
+                        {{ t('sales.noItems') }}
+                    </div>
+                </div>
+
+                <!-- ── Desktop (lg+): table layout ───────────────────────── -->
+                <div class="hidden lg:block overflow-x-auto responsive-table">
+                    <table class="w-full text-sm min-w-[820px]">
                         <thead class="bg-slate-50 border-y border-slate-100">
                             <tr>
                                 <th class="th w-10">#</th>

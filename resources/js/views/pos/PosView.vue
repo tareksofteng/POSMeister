@@ -178,8 +178,24 @@
                 </div>
             </div>
 
-            <!-- RIGHT: customer + totals + payment ───────────────────────── -->
-            <div class="w-80 xl:w-96 flex flex-col bg-white border-l border-gray-200 overflow-y-auto flex-shrink-0 shadow-xl">
+            <!-- RIGHT: customer + totals + payment ─────────────────────────
+                 Desktop (lg+): in-flow side panel
+                 Mobile: full-screen slide-in opened by the bottom cart bar
+            -->
+            <div
+                :class="[
+                    'flex flex-col bg-white border-l border-gray-200 overflow-y-auto shadow-xl',
+                    'lg:relative lg:flex-shrink-0 lg:w-80 xl:w-96 lg:translate-x-0',
+                    'fixed inset-y-0 right-0 z-40 w-full max-w-md transition-transform duration-300',
+                    mobileCheckoutOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+                ]"
+            >
+                <!-- Mobile close button — hidden on desktop -->
+                <button
+                    @click="mobileCheckoutOpen = false"
+                    class="lg:hidden absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    aria-label="Close"
+                >✕</button>
 
                 <!-- Kunde section -->
                 <div class="p-4 border-b border-gray-100">
@@ -353,6 +369,23 @@
             </div>
         </div>
 
+        <!-- Mobile sticky cart bar — opens the checkout panel on tap. Hidden on lg+ -->
+        <div class="lg:hidden fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur pb-safe" v-if="!mobileCheckoutOpen">
+            <div class="px-3 py-2.5 flex items-center gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-500">{{ t('pos.cart') }} · {{ cart.length }}</p>
+                    <p class="font-bold text-slate-900 tabular-nums">{{ formatCurrency(grandTotal) }}</p>
+                </div>
+                <button
+                    @click="mobileCheckoutOpen = true"
+                    :disabled="!cart.length"
+                    class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-bold text-sm shadow"
+                >
+                    {{ t('pos.checkout') }}
+                </button>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -420,6 +453,10 @@ const form = reactive({
 const payment = reactive({ cash: 0, card: 0 });
 const saving    = ref(false);
 const saleError = ref('');
+
+// Mobile checkout drawer — desktop ignores this flag, mobile uses it to slide
+// the right panel in/out without a separate component.
+const mobileCheckoutOpen = ref(false);
 
 // ── Computed ───────────────────────────────────────────────────────────────
 const subtotal  = computed(() => cart.value.reduce((s, l) => s + l.line_total, 0));
@@ -568,6 +605,7 @@ function clearCart() {
     cart.value = [];
     payment.cash = 0;
     payment.card = 0;
+    mobileCheckoutOpen.value = false;
 }
 
 // When sale type changes, re-calculate prices

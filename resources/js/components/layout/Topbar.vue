@@ -1,28 +1,26 @@
 <template>
-    <header class="flex h-16 flex-shrink-0 items-center gap-4 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 sm:px-6">
+    <header class="topbar sticky top-0 z-20 flex h-14 sm:h-16 flex-shrink-0 items-center gap-2 sm:gap-4 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 sm:px-6 pt-safe">
 
-        <!-- Sidebar toggle -->
+        <!-- Sidebar toggle — hamburger on mobile, collapse-rail on desktop -->
         <button
             @click="$emit('toggle-sidebar')"
-            class="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            class="touch-target -ml-1.5 flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
             :aria-label="t('menu.dashboard')"
         >
             <Bars3Icon class="w-5 h-5" />
         </button>
 
-        <!-- Breadcrumb -->
+        <!-- Breadcrumb — current title only on mobile to save space -->
         <nav class="flex-1 min-w-0">
             <ol class="flex items-center gap-1.5 text-sm">
-                <li class="text-gray-400 truncate">POSmeister</li>
-                <template v-if="routeTitle">
-                    <li class="text-gray-300">/</li>
-                    <li class="font-medium text-gray-700 truncate">{{ routeTitle }}</li>
-                </template>
+                <li class="hidden sm:block text-gray-400 truncate">POSmeister</li>
+                <li class="hidden sm:block text-gray-300" v-if="routeTitle">/</li>
+                <li v-if="routeTitle" class="font-medium text-gray-800 dark:text-slate-200 truncate">{{ routeTitle }}</li>
             </ol>
         </nav>
 
         <!-- Right actions -->
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-0.5 sm:gap-1">
 
             <!-- Quick search (opens command palette) -->
             <button
@@ -34,6 +32,9 @@
                 <span>{{ t('palette.openLabel') }}</span>
                 <kbd class="text-[10px] font-mono font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded px-1.5 py-0.5">⌘K</kbd>
             </button>
+
+            <!-- PWA / connectivity status -->
+            <PwaStatusPill />
 
             <!-- Language switcher -->
             <LanguageSwitcher />
@@ -48,9 +49,9 @@
                 <MoonIcon v-else class="w-5 h-5" />
             </button>
 
-            <!-- Notifications (placeholder) -->
+            <!-- Notifications (placeholder) — hidden on small mobile to keep header tidy -->
             <button
-                class="relative p-2 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                class="hidden xs:inline-flex relative touch-target items-center justify-center text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 aria-label="Notifications"
             >
                 <BellIcon class="w-5 h-5" />
@@ -60,7 +61,7 @@
             <div class="relative" ref="userMenuRef">
                 <button
                     @click="userMenuOpen = !userMenuOpen"
-                    class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                    class="flex items-center gap-2 sm:gap-2.5 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                 >
                     <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
                         {{ userInitial }}
@@ -132,6 +133,7 @@ function openPalette() {
 }
 
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
+import PwaStatusPill from '@/components/PwaStatusPill.vue';
 
 defineEmits(['toggle-sidebar']);
 

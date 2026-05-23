@@ -35,6 +35,9 @@ use App\Modules\OMS\Controllers\EcommerceController;
 use App\Modules\OMS\Controllers\NotificationController;
 use App\Modules\OMS\Controllers\OrderController;
 use App\Modules\Platform\Controllers\SystemHealthController;
+use App\Modules\SystemOps\Controllers\SystemOpsController;
+use App\Modules\SystemOps\Controllers\BackupController;
+use App\Modules\SystemOps\Controllers\SyncController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -218,6 +221,22 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::get('system/health',  [SystemHealthController::class, 'health']);
         Route::get('system/info',    [SystemHealthController::class, 'info']);
         Route::get('system/audit',   [SystemHealthController::class, 'audit']);
+
+        // Phase Z — SystemOps: production diagnostics, backup, sync.
+        Route::get ('system/dashboard',         [SystemOpsController::class, 'dashboard']);
+        Route::get ('system/environment-check', [SystemOpsController::class, 'environment']);
+        Route::get ('system/queue-status',      [SystemOpsController::class, 'queue']);
+        Route::get ('system/scheduler-status',  [SystemOpsController::class, 'scheduler']);
+        Route::get ('system/deployment',        [SystemOpsController::class, 'deployment']);
+        Route::get ('system/version',           [SystemOpsController::class, 'version']);
+        Route::get ('system/pwa/status',        [SystemOpsController::class, 'pwa']);
+
+        Route::get ('system/backup/status',     [BackupController::class, 'status']);
+        Route::post('system/backup/run',        [BackupController::class, 'run'])->middleware('throttle:6,1');
+        Route::post('system/backup/prune',      [BackupController::class, 'prune']);
+
+        Route::get ('system/sync/pending',      [SyncController::class, 'pending']);
+        Route::post('system/sync/prune',        [SyncController::class, 'prune']);
     });
 
     // Expense module (admin + manager)

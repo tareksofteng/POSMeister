@@ -3,33 +3,33 @@
 
         <!-- ── Action bar (hidden when printing) ────────────────────────── -->
         <div class="no-print sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
-            <div class="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
-                <RouterLink :to="{ name: 'sales' }" class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group">
-                    <ArrowLeftIcon class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                    {{ t('sales.backToList') }}
+            <div class="max-w-4xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
+                <RouterLink :to="{ name: 'sales' }" class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group min-w-0">
+                    <ArrowLeftIcon class="w-4 h-4 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" />
+                    <span class="truncate">{{ t('sales.backToList') }}</span>
                 </RouterLink>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     <span v-if="sale" class="hidden sm:block text-sm font-mono font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
                         {{ sale.sale_number }}
                     </span>
                     <span v-if="sale && sale.status === 'cancelled'"
-                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                        class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-red-100 text-red-700">
                         <XCircleIcon class="w-3.5 h-3.5" />
-                        {{ t('sales.statusCancelled') }}
+                        <span class="hidden xs:inline">{{ t('sales.statusCancelled') }}</span>
                     </span>
                     <button
                         @click="printInvoice"
-                        class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                        class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
                     >
                         <PrinterIcon class="w-4 h-4" />
-                        {{ t('sales.printInvoice') }}
+                        <span class="hidden xs:inline">{{ t('sales.printInvoice') }}</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- ── Page content ─────────────────────────────────────────────── -->
-        <div class="max-w-4xl mx-auto px-4 py-8 print:p-0 print:max-w-none">
+        <div class="max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-8 print:p-0 print:max-w-none">
 
             <!-- Loading -->
             <div v-if="loading" class="text-center py-24 text-gray-400">
@@ -42,49 +42,49 @@
 
                 <!-- CANCELLED watermark -->
                 <div v-if="sale.status === 'cancelled'"
-                    class="no-print bg-red-50 border-b border-red-200 px-10 py-2 text-center">
+                    class="no-print bg-red-50 border-b border-red-200 px-4 sm:px-10 py-2 text-center">
                     <p class="text-sm font-bold text-red-600 uppercase tracking-widest">
                         {{ t('sales.statusCancelled') }}
                     </p>
                 </div>
 
                 <!-- ══ LETTERHEAD ══════════════════════════════════════════ -->
-                <div class="px-10 pt-8 pb-6">
-                    <div class="flex items-start justify-between gap-6">
+                <div class="px-4 sm:px-10 pt-5 sm:pt-8 pb-5 sm:pb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
                         <!-- Company identity -->
-                        <div class="flex items-start gap-4">
+                        <div class="flex items-start gap-3 sm:gap-4 min-w-0">
                             <img
                                 v-if="settings?.logo_url"
                                 :src="settings.logo_url"
                                 alt="Logo"
-                                class="h-16 w-auto object-contain flex-shrink-0"
+                                class="h-12 sm:h-16 w-auto object-contain flex-shrink-0"
                             />
-                            <div v-else class="h-14 w-14 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <BuildingOffice2Icon class="w-8 h-8 text-indigo-600" />
+                            <div v-else class="h-12 w-12 sm:h-14 sm:w-14 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <BuildingOffice2Icon class="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600" />
                             </div>
-                            <div>
-                                <h1 class="text-xl font-bold text-gray-900 leading-tight">
+                            <div class="min-w-0 flex-1">
+                                <h1 class="text-lg sm:text-xl font-bold text-gray-900 leading-tight truncate">
                                     {{ settings?.company_name ?? 'POSmeister' }}
                                 </h1>
-                                <p v-if="settings?.address" class="text-xs text-gray-500 mt-0.5 whitespace-pre-line leading-relaxed">
+                                <p v-if="settings?.address" class="text-xs text-gray-500 mt-0.5 whitespace-pre-line leading-relaxed break-words">
                                     {{ settings.address }}
                                 </p>
-                                <div class="flex items-center gap-3 mt-1">
-                                    <span v-if="settings?.phone" class="text-xs text-gray-400 flex items-center gap-1">
-                                        <PhoneIcon class="w-3 h-3" /> {{ settings.phone }}
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                                    <span v-if="settings?.phone" class="text-xs text-gray-400 flex items-center gap-1 min-w-0">
+                                        <PhoneIcon class="w-3 h-3 flex-shrink-0" /> <span class="truncate">{{ settings.phone }}</span>
                                     </span>
-                                    <span v-if="settings?.email" class="text-xs text-gray-400 flex items-center gap-1">
-                                        <EnvelopeIcon class="w-3 h-3" /> {{ settings.email }}
+                                    <span v-if="settings?.email" class="text-xs text-gray-400 flex items-center gap-1 min-w-0">
+                                        <EnvelopeIcon class="w-3 h-3 flex-shrink-0" /> <span class="truncate">{{ settings.email }}</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Document title block -->
-                        <div class="text-right flex-shrink-0">
-                            <div :class="['text-white px-5 py-2 rounded-lg inline-block mb-3',
+                        <div class="text-left sm:text-right flex-shrink-0">
+                            <div :class="['text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg inline-block mb-2 sm:mb-3',
                                 sale.status === 'cancelled' ? 'bg-red-500' : 'bg-emerald-600']">
-                                <p class="text-xs font-bold tracking-[0.2em] uppercase">{{ t('sales.invoiceTitle') }}</p>
+                                <p class="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase">{{ t('sales.invoiceTitle') }}</p>
                             </div>
                             <div class="space-y-0.5">
                                 <p class="font-mono font-bold text-gray-900 text-lg">{{ sale.sale_number }}</p>
@@ -98,10 +98,10 @@
                 </div>
 
                 <!-- Separator line -->
-                <div :class="['mx-10 border-t-4 mb-0', sale.status === 'cancelled' ? 'border-red-500' : 'border-emerald-600']" />
+                <div :class="['mx-4 sm:mx-10 border-t-4 mb-0', sale.status === 'cancelled' ? 'border-red-500' : 'border-emerald-600']" />
 
                 <!-- ══ CUSTOMER + SALE INFO ════════════════════════════════ -->
-                <div class="px-10 py-6 grid grid-cols-2 gap-10 bg-gray-50/50 print:bg-white border-b border-gray-100">
+                <div class="px-4 sm:px-10 py-5 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10 bg-gray-50/50 print:bg-white border-b border-gray-100">
 
                     <!-- Customer details -->
                     <div>
@@ -155,8 +155,44 @@
                     </div>
                 </div>
 
-                <!-- ══ LINE ITEMS TABLE ════════════════════════════════════ -->
-                <div class="px-10 py-6">
+                <!-- ══ LINE ITEMS — MOBILE STACKED CARDS (< sm) ══════════ -->
+                <div class="sm:hidden px-4 py-4 space-y-2 print:hidden">
+                    <div v-for="(item, idx) in sale.items" :key="`m-${idx}`" class="rounded-lg border border-gray-200 p-3 bg-white">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="flex items-start gap-2.5 min-w-0">
+                                <div class="w-9 h-9 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                                    <img v-if="item.image_url" :src="item.image_url" :alt="item.name" class="w-full h-full object-cover" />
+                                    <div v-else class="w-full h-full flex items-center justify-center">
+                                        <PhotoIcon class="w-4 h-4 text-gray-300" />
+                                    </div>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[10px] uppercase font-bold text-gray-400">#{{ idx + 1 }}</p>
+                                    <p class="font-semibold text-gray-900 truncate">{{ item.name }}</p>
+                                    <p v-if="item.sku" class="text-[10px] text-gray-400 font-mono">{{ item.sku }}</p>
+                                </div>
+                            </div>
+                            <span class="text-base font-mono font-bold text-emerald-700 tabular-nums flex-shrink-0">{{ fmt(item.line_total) }}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <p class="text-[10px] uppercase text-gray-400">{{ t('sales.qty') }}</p>
+                                <p class="font-mono text-gray-700">{{ item.quantity }} {{ item.unit_name || '' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase text-gray-400">{{ t('sales.unitPrice') }}</p>
+                                <p class="font-mono text-gray-700">{{ fmt(item.unit_price) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase text-gray-400">{{ t('sales.vatRate') }}</p>
+                                <p class="font-mono text-gray-700">{{ item.tax_rate }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ LINE ITEMS TABLE (sm+ and print) ════════════════════ -->
+                <div class="hidden sm:block px-4 sm:px-10 py-6 print:block">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b-2 border-gray-200">
@@ -215,7 +251,7 @@
                 </div>
 
                 <!-- ══ TOTALS + PAYMENT ═══════════════════════════════════ -->
-                <div class="px-10 pb-6 flex flex-col sm:flex-row justify-end gap-8 border-b border-gray-100">
+                <div class="px-4 sm:px-10 pb-6 flex flex-col sm:flex-row justify-stretch sm:justify-end gap-6 sm:gap-8 border-b border-gray-100">
 
                     <!-- Totals column -->
                     <div class="w-full sm:w-72">
@@ -283,7 +319,7 @@
                 </div>
 
                 <!-- ══ AMOUNT IN WORDS + NOTES ════════════════════════════ -->
-                <div class="px-10 py-5 bg-slate-50/80 print:bg-white border-b border-gray-100">
+                <div class="px-4 sm:px-10 py-4 sm:py-5 bg-slate-50/80 print:bg-white border-b border-gray-100">
                     <p class="text-sm text-gray-700 leading-relaxed">
                         <span class="font-semibold text-gray-900">{{ t('sales.inWords') }}:</span>
                         {{ amountInWords }}
@@ -295,8 +331,8 @@
                 </div>
 
                 <!-- ══ SIGNATURE LINES ════════════════════════════════════ -->
-                <div class="px-10 py-8 border-b border-gray-100">
-                    <div class="grid grid-cols-2 gap-16">
+                <div class="px-4 sm:px-10 py-6 sm:py-8 border-b border-gray-100">
+                    <div class="grid grid-cols-2 gap-6 sm:gap-16">
                         <div>
                             <div class="h-14"></div>
                             <div class="border-t border-gray-400 pt-2">
@@ -313,10 +349,10 @@
                 </div>
 
                 <!-- ══ DOCUMENT FOOTER ════════════════════════════════════ -->
-                <div class="px-10 py-4 bg-gray-50 print:bg-white">
-                    <div class="flex items-center justify-between text-xs text-gray-400">
+                <div class="px-4 sm:px-10 py-3 sm:py-4 bg-gray-50 print:bg-white">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[10px] sm:text-xs text-gray-400">
                         <span>{{ t('sales.printDate') }}: {{ nowFormatted }}</span>
-                        <span class="font-medium">{{ settings?.company_name ?? 'POSmeister' }} · POSmeister</span>
+                        <span class="font-medium truncate">{{ settings?.company_name ?? 'POSmeister' }} · POSmeister</span>
                     </div>
                 </div>
 

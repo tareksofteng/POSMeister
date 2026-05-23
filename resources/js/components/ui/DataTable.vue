@@ -1,9 +1,10 @@
 <template>
-    <div class="flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden">
 
-        <!-- Table wrapper (horizontal scroll on small screens) -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
+        <!-- Table wrapper — at sm+ this scrolls horizontally if needed.
+             On phones the .table-stack rules linearise rows into cards. -->
+        <div class="responsive-table">
+            <table :class="['min-w-full divide-y divide-gray-200 dark:divide-slate-800', stackOnMobile && 'table-stack']">
 
                 <!-- Header -->
                 <thead class="bg-gray-50">
@@ -84,6 +85,7 @@
                             <td
                                 v-for="col in columns"
                                 :key="col.key"
+                                :data-label="col.label"
                                 :class="[
                                     'px-4 py-3 text-sm',
                                     col.align === 'right'  ? 'text-right'  : '',
@@ -217,6 +219,8 @@ const props = defineProps({
     skeletonRows: { type: Number,  default: 6 },
     emptyTitle:   { type: String,  default: 'No records found' },
     emptyMessage: { type: String,  default: 'Try adjusting your search or filters.' },
+    /** When true (default), rows linearise into stacked cards below 640px. */
+    stackOnMobile:{ type: Boolean, default: true },
 });
 
 defineEmits(['page-change', 'sort']);

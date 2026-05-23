@@ -127,8 +127,76 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                <!-- ── Mobile (< lg): stacked card per line item ─────────── -->
+                <div class="lg:hidden divide-y divide-slate-100">
+                    <div v-for="(line, idx) in form.items" :key="`m-${idx}`" class="p-4 space-y-3">
+                        <div class="flex items-start gap-2">
+                            <div class="flex-1 min-w-0">
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('quotations.product') }} #{{ idx + 1 }}</label>
+                                <ProductSearchInput
+                                    v-if="!line.is_service"
+                                    v-model="line.product_id"
+                                    :product="line._product"
+                                    :placeholder="t('quotations.selectProduct')"
+                                    @select="onProductSelect(line, $event)"
+                                />
+                                <input
+                                    v-else
+                                    v-model="line.description"
+                                    type="text"
+                                    class="w-full px-3 py-2.5 text-base border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                    :placeholder="t('quotations.serviceDescription')"
+                                />
+                            </div>
+                            <button @click="removeLine(idx)" class="mt-5 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg flex-shrink-0">
+                                <XMarkIcon class="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('quotations.qty') }}</label>
+                                <input v-model.number="line.quantity" @input="recalc(line)" type="number" min="0.01" step="0.01" inputmode="decimal"
+                                    class="w-full px-3 py-2.5 text-base text-right border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('quotations.unitPrice') }}</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">{{ currencySymbol }}</span>
+                                    <input v-model.number="line.unit_price" @input="recalc(line)" type="number" min="0" step="0.01" inputmode="decimal"
+                                        class="w-full pl-8 pr-3 py-2.5 text-base text-right border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('quotations.vatRate') }}</label>
+                                <select v-model.number="line.tax_rate" @change="recalc(line)" class="w-full px-3 py-2.5 text-base bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500">
+                                    <option :value="0">0 %</option>
+                                    <option :value="7">7 %</option>
+                                    <option :value="19">19 %</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('quotations.vatAmount') }}</label>
+                                <div class="w-full px-3 py-2.5 text-base text-right font-mono text-slate-600 bg-slate-50 border border-slate-200 rounded-lg tabular-nums">
+                                    {{ fmtCurrency(line._vat_amount) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between px-3 py-3 bg-violet-50 rounded-lg border border-violet-100">
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-violet-700">{{ t('quotations.lineTotal') }}</span>
+                            <span class="text-base font-bold font-mono text-violet-900 tabular-nums">{{ fmtCurrency(line._line_total) }}</span>
+                        </div>
+                    </div>
+
+                    <div v-if="form.items.length === 0" class="px-6 py-12 text-center text-sm text-slate-400">
+                        {{ t('quotations.noItems') }}
+                    </div>
+                </div>
+
+                <!-- ── Desktop (lg+): table layout ───────────────────────── -->
+                <div class="hidden lg:block overflow-x-auto responsive-table">
+                    <table class="w-full text-sm min-w-[820px]">
                         <thead class="bg-slate-50 border-b border-slate-100">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide w-10">#</th>

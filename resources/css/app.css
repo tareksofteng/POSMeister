@@ -18,9 +18,108 @@
     --color-brand-100: #e0e7ff;
     --color-brand-600: #4f46e5;
     --color-brand-700: #4338ca;
+
+    /* Extra breakpoint for tiny phones (320–375px). xs: prefix lights up below. */
+    --breakpoint-xs: 30rem;     /* 480px */
 }
 
-
-
 /* ── Base ────────────────────────────────────────────────────────────────── */
-html { -webkit-font-smoothing: antialiased; }
+html {
+    -webkit-font-smoothing: antialiased;
+    /* Prevent the bounce/pull-to-refresh on PWA standalone mode */
+    overscroll-behavior-y: contain;
+}
+
+/* ── PWA + iOS safe-area helpers ─────────────────────────────────────────── */
+.pt-safe { padding-top:    env(safe-area-inset-top, 0); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0); }
+.pl-safe { padding-left:   env(safe-area-inset-left, 0); }
+.pr-safe { padding-right:  env(safe-area-inset-right, 0); }
+
+/* When the app is installed (standalone), tighten the safe-area to actual
+   notches. On the browser, env(...) returns 0 so this is a no-op. */
+@media (display-mode: standalone) {
+    body { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* ── Touch targets — 44×44 minimum per Apple HIG / WCAG 2.5.5 ─────────────── */
+.touch-target {
+    min-width:  44px;
+    min-height: 44px;
+}
+
+/* ── Responsive table utility ─────────────────────────────────────────────── */
+/* Wrap any <table> in <div class="responsive-table"> to get horizontal scroll
+   on small screens with a soft fade indicator on the right edge. */
+.responsive-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    scrollbar-width: thin;
+}
+.responsive-table table { min-width: 100%; }
+
+/* ── Stacked-card mode for tables on phones ──────────────────────────────── */
+/* Apply by adding class="table-stack" to a table inside .responsive-table.
+   Below 640px the table linearises: every row becomes a card, every cell
+   shows its header as a small left-floated label. */
+@media (max-width: 639px) {
+    table.table-stack thead { display: none; }
+    table.table-stack, table.table-stack tbody { display: block; }
+    table.table-stack tr {
+        display: block;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgb(226 232 240);
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        background: white;
+    }
+    .dark table.table-stack tr {
+        border-color: rgb(30 41 59);
+        background: rgb(15 23 42);
+    }
+    table.table-stack td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.375rem 0;
+        border: none !important;
+        text-align: right;
+    }
+    table.table-stack td::before {
+        content: attr(data-label);
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        color: rgb(100 116 139);
+        text-align: left;
+    }
+}
+
+/* ── Form density on mobile ──────────────────────────────────────────────── */
+/* Bigger taps; larger text inputs prevent iOS auto-zoom (font-size >= 16px) */
+@media (max-width: 639px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "name": "POSmeister — Retail & ERP",
+    "short_name": "POSmeister",
+    "id": "/?source=pwa",
+    "description": "Point of sale, inventory, accounting and HR for retail, hospitality and small enterprise.",
+    "start_url": "/?source=pwa",
+    "scope": "/",
+    "display": "standalone",
+    "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
+    "orientation": "any",
+    "background_color": "#0f172a",
+    "theme_color": "#4f46e5",
+    "lang": "en",
+    "dir": "ltr",
+    "categories": ["business", "productivity", "finance"],
+    "prefer_related_applications": false,
+    "launch_handler": { "client_mode": "auto" },
+    "icons": [
+        { "src": "/icons/icon-192.png",          "type": "image/png", "sizes": "192x192", "purpose": "any" },
+        { "src": "/icons/icon-512.png",          "type": "image/png", "sizes": "512x512", "purpose": "any" },
+        { "src": "/icons/icon-192-maskable.png", "type": "image/png", "sizes": "192x192", "purpose": "maskable" },
+        { "src": "/icons/icon-512-maskable.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+    ],
+    "shortcuts": [
+        { "name": "Open POS",         "short_name": "POS",      "url": "/pos",             "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+        { "name": "New Sale",         "short_name": "Sale",     "url": "/sales/new",       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+        { "name": "New Purchase",     "short_name": "Purchase", "url": "/purchases/new",   "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+        { "name": "System Dashboard", "short_name": "Ops",      "url": "/system/dashboard","icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+    ]
+}

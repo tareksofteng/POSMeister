@@ -2,8 +2,14 @@
     <aside
         :class="[
             'sidebar-shell flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out',
-            collapsed ? 'w-16' : 'w-64',
+            // Desktop sizing — in-flow column (relative for the ::after glow)
+            'lg:relative lg:translate-x-0 lg:z-auto lg:shadow-none',
+            collapsed ? 'lg:w-16' : 'lg:w-64',
+            // Mobile sizing — off-canvas drawer with width 17rem
+            'fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] shadow-2xl',
+            mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         ]"
+        :aria-hidden="!mobileOpen && isSmall"
     >
         <!-- Logo / Brand -->
         <div class="brand-bar flex h-16 items-center px-4">
@@ -106,7 +112,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useAuthStore }     from '@/stores/auth';
@@ -125,10 +131,19 @@ import NavGroup            from './NavGroup.vue';
 import SidebarSectionLabel from './SidebarSectionLabel.vue';
 
 defineProps({
-    collapsed: { type: Boolean, default: false },
+    collapsed:  { type: Boolean, default: false },
+    mobileOpen: { type: Boolean, default: false },
 });
 
+defineEmits(['close-mobile']);
+
 const { t }         = useI18n();
+
+// Track viewport bucket so aria-hidden behaves correctly on mobile
+const isSmall = ref(false);
+const updateBucket = () => { isSmall.value = typeof window !== 'undefined' && window.innerWidth < 1024; };
+onMounted(() => { updateBucket(); window.addEventListener('resize', updateBucket); });
+onUnmounted(() => window.removeEventListener('resize', updateBucket));
 const auth          = useAuthStore();
 const settingsStore = useSettingsStore();
 const router        = useRouter();
@@ -410,11 +425,14 @@ async function handleLogout() {
 
 .nav-icon { @apply w-5 h-5 flex-shrink-0; }
 
-/* Sidebar shell — subtle vertical gradient on a near-black slate */
+/* Sidebar shell — subtle vertical gradient on a near-black slate.
+   IMPORTANT: do NOT set position here. Tailwind handles it via the
+   template (fixed on mobile, lg:relative on desktop). Vue scoped
+   styles win over Tailwind utilities, so hardcoding position here
+   used to break the off-canvas drawer on phones. */
 .sidebar-shell {
     background: linear-gradient(180deg, #0b1220 0%, #0f172a 60%, #0b1220 100%);
     border-right: 1px solid rgb(30 41 59 / 0.7);
-    position: relative;
 }
 /* Soft inner glow on the right edge */
 .sidebar-shell::after {

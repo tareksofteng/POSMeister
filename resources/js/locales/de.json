@@ -771,6 +771,7 @@
     "change": "Wechselgeld",
     "due": "Ausstehend",
     "processing": "Wird verarbeitet...",
+    "checkout": "Kasse",
     "confirmSale": "VERKAUFEN",
     "outOfStockAlert": "{name} ist nicht vorrätig",
     "stockLimitAlert": "Max. Bestand für {name} erreicht",
@@ -2673,6 +2674,133 @@
     },
     "audit": {
       "title": "Letzte Audit-Ereignisse"
+    }
+  },
+  "pwa": {
+    "install":         "Installieren",
+    "update":          "Aktualisieren",
+    "updateAvailable": "Eine neue Version ist verfügbar — zum Anwenden klicken.",
+    "online":          "Online",
+    "offline":         "Offline"
+  },
+  "systemOps": {
+    "module": "Betrieb",
+    "dashboard": {
+      "title":        "Systemüberwachung",
+      "subtitle":     "Echtzeit-Betriebsstatus: Bereitstellung, Warteschlange, Sicherung, Synchronisierung.",
+      "score":        "Punkte",
+      "deployment":   "Bereitstellung",
+      "allGood":      "Alle Betriebsprüfungen sind erfolgreich.",
+      "storage":      "Speichernutzung",
+      "releaseNotes": "Versionshinweise",
+      "grade": {
+        "excellent": "Hervorragend",
+        "good":      "Gut",
+        "attention": "Aufmerksamkeit erforderlich",
+        "critical":  "Kritisch"
+      }
+    },
+    "monitor": {
+      "title":       "Gesundheitsüberwachung",
+      "subtitle":    "Kontinuierliche Überwachung mit optionaler automatischer Aktualisierung.",
+      "autoRefresh": "Automatisch aktualisieren",
+      "database":    "Datenbank",
+      "cache":       "Cache",
+      "queue":       "Warteschlange",
+      "scheduler":   "Planer",
+      "storage":     "Speicher",
+      "security":    "Sicherheit",
+      "deployment":  "Bereitstellungsdetails",
+      "version":     "Version",
+      "release":     "Release",
+      "commit":      "Commit",
+      "builtAt":     "Gebaut am",
+      "php":         "PHP",
+      "laravel":     "Laravel",
+      "environment": "Umgebung",
+      "maintenance": "Wartung"
+    },
+    "queue": {
+      "title":         "Warteschlangen-Diagnose",
+      "subtitle":      "Hintergrund-Worker, Wiederholungsstatus und Fehlerübersicht.",
+      "driver":        "Treiber",
+      "pending":       "Ausstehend",
+      "failed":        "Fehlgeschlagen",
+      "oldestPending": "Ältester Eintrag",
+      "pendingFailed": "ausstehend / fehlgeschlagen",
+      "failedJobs":    "Fehlgeschlagene Jobs",
+      "pendingJobs":   "Ausstehende Jobs",
+      "connection":    "Verbindung",
+      "queueName":     "Warteschlange",
+      "failedAt":      "Fehlgeschlagen am",
+      "attempts":      "Versuche",
+      "availableAt":   "Verfügbar ab",
+      "empty":         "Keine Einträge."
+    },
+    "scheduler": {
+      "title":             "Planer",
+      "ago":               "her",
+      "noHeartbeat":       "Noch kein Heartbeat registriert.",
+      "cronNotConfigured": "Cron scheint nicht zu laufen."
+    },
+    "environment": {
+      "title":         "Umgebungsprüfung",
+      "subtitle":      "Tiefenprüfung von PHP, Infrastruktur und Sicherheitseinstellungen.",
+      "ok":            "OK",
+      "fail":          "Fehler",
+      "checksPassing": "Prüfungen bestanden",
+      "groups": {
+        "php":        "PHP-Laufzeit",
+        "extensions": "PHP-Erweiterungen",
+        "database":   "Datenbank",
+        "cache":      "Cache",
+        "queue":      "Warteschlange",
+        "mail":       "Mail",
+        "storage":    "Speicherpfade",
+        "security":   "Sicherheit",
+        "scheduler":  "Planer"
+      }
+    },
+    "backup": {
+      "title":       "Sicherungsverwaltung",
+      "subtitle":    "Datenbanksicherungen auf lokalem Datenträger. Wiederherstellung ist eine überwachte Operation.",
+      "runNow":      "Sicherung starten",
+      "runningNow":  "Läuft…",
+      "prune":       "Alte löschen",
+      "totalRuns":   "Gesamt",
+      "lastSuccess": "Zuletzt erfolgreich",
+      "lastSize":    "Letzte Größe",
+      "diskUsed":    "Belegt",
+      "history":     "Sicherungsverlauf",
+      "startedAt":   "Gestartet",
+      "type":        "Typ",
+      "size":        "Größe",
+      "checksum":    "Prüfsumme",
+      "file":        "Datei / Fehler",
+      "empty":       "Noch keine Sicherungen.",
+      "never":       "nie",
+      "restoreNote": "Wiederherstellung ist manuell: Datei auf eine sichere DB kopieren und mysql < backup.sql ausführen."
+    },
+    "sync": {
+      "title":             "Synchronisierungs-Wiederherstellung",
+      "subtitle":          "Offline-Kassenwarteschlange, serverseitige Idempotenz, Wiederherstellungstools.",
+      "retryNow":          "Jetzt erneut versuchen",
+      "localQueue":        "Lokale Warteschlange (dieses Gerät)",
+      "serverKeys24h":     "Server-Schlüssel (24h)",
+      "offlineTotal":      "Offline-Verkäufe gesamt",
+      "syncedToday":       "Heute synchronisiert",
+      "localQueueDetail":  "Inhalt der lokalen Warteschlange",
+      "idempotencyKey":    "Idempotenz-Schlüssel",
+      "url":               "URL",
+      "attempts":          "Versuche",
+      "createdAt":         "Eingereiht",
+      "lastError":         "Letzter Fehler",
+      "recentServerSide":  "Letzte offline erstellte Verkäufe",
+      "saleNumber":        "Verkauf #",
+      "offlineReference":  "Referenz",
+      "syncedAt":          "Synchronisiert am",
+      "amount":            "Betrag",
+      "empty":             "Noch keine offline erstellten Verkäufe."
     }
   }
 }

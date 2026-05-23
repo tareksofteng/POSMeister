@@ -60,6 +60,44 @@ const routes = [
                 meta: { titleKey: 'system.health.title', adminOnly: true },
             },
 
+            // ── Phase Z: SystemOps (admin-only) ───────────────────────────
+            {
+                path: 'system/dashboard',
+                name: 'system-dashboard',
+                component: () => import('@/views/system/SystemDashboardView.vue'),
+                meta: { titleKey: 'systemOps.dashboard.title', adminOnly: true },
+            },
+            {
+                path: 'system/monitor',
+                name: 'system-monitor',
+                component: () => import('@/views/system/HealthMonitorView.vue'),
+                meta: { titleKey: 'systemOps.monitor.title', adminOnly: true },
+            },
+            {
+                path: 'system/queue',
+                name: 'system-queue',
+                component: () => import('@/views/system/QueueDiagnosticsView.vue'),
+                meta: { titleKey: 'systemOps.queue.title', adminOnly: true },
+            },
+            {
+                path: 'system/backup',
+                name: 'system-backup',
+                component: () => import('@/views/system/BackupManagerView.vue'),
+                meta: { titleKey: 'systemOps.backup.title', adminOnly: true },
+            },
+            {
+                path: 'system/environment',
+                name: 'system-environment',
+                component: () => import('@/views/system/EnvironmentCheckView.vue'),
+                meta: { titleKey: 'systemOps.environment.title', adminOnly: true },
+            },
+            {
+                path: 'system/sync',
+                name: 'system-sync',
+                component: () => import('@/views/system/SyncRecoveryView.vue'),
+                meta: { titleKey: 'systemOps.sync.title', adminOnly: true },
+            },
+
             // ── Role permissions ───────────────────────────────────────────
             {
                 path: 'settings/roles',

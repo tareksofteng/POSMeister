@@ -771,6 +771,7 @@
     "change": "Change",
     "due": "Due",
     "processing": "Processing...",
+    "checkout": "Checkout",
     "confirmSale": "COMPLETE SALE",
     "outOfStockAlert": "{name} is out of stock",
     "stockLimitAlert": "Stock limit reached for {name}",
@@ -2673,6 +2674,133 @@
     },
     "audit": {
       "title": "Recent Audit Events"
+    }
+  },
+  "pwa": {
+    "install":         "Install",
+    "update":          "Update",
+    "updateAvailable": "A new version is available — click to apply.",
+    "online":          "Online",
+    "offline":         "Offline"
+  },
+  "systemOps": {
+    "module": "Operations",
+    "dashboard": {
+      "title":        "System Dashboard",
+      "subtitle":     "Live operational status: deployment, queue, backup, sync.",
+      "score":        "Score",
+      "deployment":   "Deployment",
+      "allGood":      "All operational checks are passing.",
+      "storage":      "Disk usage",
+      "releaseNotes": "Release notes",
+      "grade": {
+        "excellent": "Excellent",
+        "good":      "Good",
+        "attention": "Needs attention",
+        "critical":  "Critical"
+      }
+    },
+    "monitor": {
+      "title":       "Health Monitor",
+      "subtitle":    "Continuous monitoring with optional auto-refresh.",
+      "autoRefresh": "Auto-refresh",
+      "database":    "Database",
+      "cache":       "Cache",
+      "queue":       "Queue",
+      "scheduler":   "Scheduler",
+      "storage":     "Storage",
+      "security":    "Security",
+      "deployment":  "Deployment metadata",
+      "version":     "Version",
+      "release":     "Release",
+      "commit":      "Commit",
+      "builtAt":     "Built at",
+      "php":         "PHP",
+      "laravel":     "Laravel",
+      "environment": "Environment",
+      "maintenance": "Maintenance"
+    },
+    "queue": {
+      "title":         "Queue Diagnostics",
+      "subtitle":      "Background workers, retry status and dead-letter view.",
+      "driver":        "Driver",
+      "pending":       "Pending",
+      "failed":        "Failed",
+      "oldestPending": "Oldest pending",
+      "pendingFailed": "pending / failed",
+      "failedJobs":    "Failed jobs",
+      "pendingJobs":   "Pending jobs",
+      "connection":    "Connection",
+      "queueName":     "Queue",
+      "failedAt":      "Failed at",
+      "attempts":      "Attempts",
+      "availableAt":   "Available at",
+      "empty":         "Nothing to show."
+    },
+    "scheduler": {
+      "title":             "Scheduler",
+      "ago":               "ago",
+      "noHeartbeat":       "No heartbeat recorded yet.",
+      "cronNotConfigured": "Cron does not appear to be running."
+    },
+    "environment": {
+      "title":          "Environment Check",
+      "subtitle":       "Deep validation of PHP, infrastructure and security settings.",
+      "ok":             "OK",
+      "fail":           "Fail",
+      "checksPassing":  "checks passing",
+      "groups": {
+        "php":        "PHP runtime",
+        "extensions": "PHP extensions",
+        "database":   "Database",
+        "cache":      "Cache",
+        "queue":      "Queue",
+        "mail":       "Mail",
+        "storage":    "Storage paths",
+        "security":   "Security",
+        "scheduler":  "Scheduler"
+      }
+    },
+    "backup": {
+      "title":       "Backup Manager",
+      "subtitle":    "Database backups stored on local disk. Restore is a supervised operation.",
+      "runNow":      "Run backup",
+      "runningNow":  "Running…",
+      "prune":       "Prune old",
+      "totalRuns":   "Total runs",
+      "lastSuccess": "Last success",
+      "lastSize":    "Last size",
+      "diskUsed":    "Disk used",
+      "history":     "Backup history",
+      "startedAt":   "Started",
+      "type":        "Type",
+      "size":        "Size",
+      "checksum":    "Checksum",
+      "file":        "File / error",
+      "empty":       "No backups yet.",
+      "never":       "never",
+      "restoreNote": "Restoring is a manual operation: copy the file to a safe DB and run mysql < backup.sql."
+    },
+    "sync": {
+      "title":             "Sync Recovery",
+      "subtitle":          "Offline POS queue, server-side idempotency, recovery tools.",
+      "retryNow":          "Retry now",
+      "localQueue":        "Local queue (this device)",
+      "serverKeys24h":     "Server keys (24h)",
+      "offlineTotal":      "Offline sales total",
+      "syncedToday":       "Synced today",
+      "localQueueDetail":  "Local queue contents",
+      "idempotencyKey":    "Idempotency-Key",
+      "url":               "URL",
+      "attempts":          "Attempts",
+      "createdAt":         "Queued",
+      "lastError":         "Last error",
+      "recentServerSide":  "Recent offline-originated sales",
+      "saleNumber":        "Sale #",
+      "offlineReference":  "Reference",
+      "syncedAt":          "Synced at",
+      "amount":            "Amount",
+      "empty":             "No offline-originated sales recorded yet."
     }
   }
 }

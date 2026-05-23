@@ -769,6 +769,7 @@
     "change": "المبلغ المرتجع",
     "due": "المتبقي",
     "processing": "جارٍ المعالجة...",
+    "checkout": "الدفع",
     "confirmSale": "إتمام البيع",
     "outOfStockAlert": "{name} غير متوفر في المخزون",
     "stockLimitAlert": "تم الوصول إلى الحد الأقصى للمخزون لـ {name}",
@@ -2671,6 +2672,133 @@
     },
     "audit": {
       "title": "أحداث التدقيق الأخيرة"
+    }
+  },
+  "pwa": {
+    "install":         "تثبيت",
+    "update":          "تحديث",
+    "updateAvailable": "إصدار جديد متاح — انقر للتطبيق.",
+    "online":          "متصل",
+    "offline":         "غير متصل"
+  },
+  "systemOps": {
+    "module": "العمليات",
+    "dashboard": {
+      "title":        "لوحة النظام",
+      "subtitle":     "حالة التشغيل المباشرة: النشر، الطابور، النسخ الاحتياطي، المزامنة.",
+      "score":        "النقاط",
+      "deployment":   "النشر",
+      "allGood":      "جميع فحوصات التشغيل ناجحة.",
+      "storage":      "استخدام القرص",
+      "releaseNotes": "ملاحظات الإصدار",
+      "grade": {
+        "excellent": "ممتاز",
+        "good":      "جيد",
+        "attention": "يحتاج اهتمام",
+        "critical":  "حرج"
+      }
+    },
+    "monitor": {
+      "title":       "مراقبة الحالة",
+      "subtitle":    "مراقبة مستمرة مع تحديث تلقائي اختياري.",
+      "autoRefresh": "تحديث تلقائي",
+      "database":    "قاعدة البيانات",
+      "cache":       "الذاكرة المؤقتة",
+      "queue":       "الطابور",
+      "scheduler":   "المجدول",
+      "storage":     "التخزين",
+      "security":    "الأمان",
+      "deployment":  "بيانات النشر",
+      "version":     "الإصدار",
+      "release":     "الإصدار",
+      "commit":      "الكوميت",
+      "builtAt":     "تم البناء في",
+      "php":         "PHP",
+      "laravel":     "Laravel",
+      "environment": "البيئة",
+      "maintenance": "الصيانة"
+    },
+    "queue": {
+      "title":         "تشخيص الطابور",
+      "subtitle":      "عمال الخلفية، حالة إعادة المحاولة، عرض الفشل.",
+      "driver":        "المحرك",
+      "pending":       "معلق",
+      "failed":        "فشل",
+      "oldestPending": "أقدم معلق",
+      "pendingFailed": "معلق / فشل",
+      "failedJobs":    "المهام الفاشلة",
+      "pendingJobs":   "المهام المعلقة",
+      "connection":    "الاتصال",
+      "queueName":     "الطابور",
+      "failedAt":      "فشل في",
+      "attempts":      "المحاولات",
+      "availableAt":   "متاح في",
+      "empty":         "لا توجد عناصر."
+    },
+    "scheduler": {
+      "title":             "المجدول",
+      "ago":               "مضت",
+      "noHeartbeat":       "لم يتم تسجيل نبضات بعد.",
+      "cronNotConfigured": "لا يبدو أن cron يعمل."
+    },
+    "environment": {
+      "title":         "فحص البيئة",
+      "subtitle":      "تحقق عميق من PHP والبنية التحتية وإعدادات الأمان.",
+      "ok":            "موافق",
+      "fail":          "فشل",
+      "checksPassing": "الفحوصات الناجحة",
+      "groups": {
+        "php":        "وقت تشغيل PHP",
+        "extensions": "إضافات PHP",
+        "database":   "قاعدة البيانات",
+        "cache":      "الذاكرة المؤقتة",
+        "queue":      "الطابور",
+        "mail":       "البريد",
+        "storage":    "مسارات التخزين",
+        "security":   "الأمان",
+        "scheduler":  "المجدول"
+      }
+    },
+    "backup": {
+      "title":       "إدارة النسخ الاحتياطي",
+      "subtitle":    "نسخ احتياطية لقاعدة البيانات على القرص المحلي.",
+      "runNow":      "تشغيل النسخ",
+      "runningNow":  "جاري التشغيل…",
+      "prune":       "حذف القديم",
+      "totalRuns":   "المجموع",
+      "lastSuccess": "آخر نجاح",
+      "lastSize":    "الحجم الأخير",
+      "diskUsed":    "المستخدم",
+      "history":     "السجل",
+      "startedAt":   "بدأ",
+      "type":        "النوع",
+      "size":        "الحجم",
+      "checksum":    "بصمة",
+      "file":        "الملف / الخطأ",
+      "empty":       "لا توجد نسخ بعد.",
+      "never":       "أبدا",
+      "restoreNote": "الاستعادة عملية يدوية: انسخ الملف وشغل mysql < backup.sql."
+    },
+    "sync": {
+      "title":             "استرداد المزامنة",
+      "subtitle":          "طابور نقطة البيع دون اتصال، التحقق من التكرار، أدوات الاسترداد.",
+      "retryNow":          "إعادة المحاولة الآن",
+      "localQueue":        "الطابور المحلي (هذا الجهاز)",
+      "serverKeys24h":     "مفاتيح الخادم (24س)",
+      "offlineTotal":      "إجمالي المبيعات دون اتصال",
+      "syncedToday":       "تمت المزامنة اليوم",
+      "localQueueDetail":  "محتوى الطابور المحلي",
+      "idempotencyKey":    "مفتاح التكرار",
+      "url":               "URL",
+      "attempts":          "المحاولات",
+      "createdAt":         "في الطابور",
+      "lastError":         "آخر خطأ",
+      "recentServerSide":  "أحدث المبيعات دون اتصال",
+      "saleNumber":        "رقم البيع",
+      "offlineReference":  "مرجع",
+      "syncedAt":          "تمت المزامنة",
+      "amount":            "المبلغ",
+      "empty":             "لا توجد مبيعات دون اتصال بعد."
     }
   }
 }

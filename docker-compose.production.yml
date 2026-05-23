@@ -1,0 +1,99 @@
+# POSmeister production stack
+# ---------------------------
+# Five services:
+#   nginx     — public-facing HTTP entrypoint (port 80/443)
+#   app       — php-fpm running Laravel
+#   worker    — same image as app but runs queue + scheduler via supervisor
+#   db        — MariaDB
+#   redis     — cache + session + queue backend
+#
+# Bring it up with:
+#   docker compose -f docker-compose.production.yml up -d --build
+#
+# All persistent state lives in named volumes so the application image
+# stays stateless and replaceable.
+
+services:
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      app: { condition: service_healthy }
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/posmeister.conf:/etc/nginx/conf.d/default.conf:ro
+      - app_public:/var/www/html/public:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/api/system/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: posmeister/app:latest
+    env_file: .env
+    environment:
+      RUN_MIGRATIONS: "1"
+      LARAVEL_CACHE: "1"
+    depends_on:
+      db:    { condition: service_healthy }
+      redis: { condition: service_healthy }
+    volumes:
+      - app_storage:/var/www/html/storage
+      - app_public:/var/www/html/public
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t || exit 1"]
+      interval: 30s
+      timeout: 4s
+      retries: 3
+
+  worker:
+    image: posmeister/app:latest
+    env_file: .env
+    depends_on:
+      app:   { condition: service_healthy }
+      redis: { condition: service_healthy }
+    volumes:
+      - app_storage:/var/www/html/storage
+    command: ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+    restart: unless-stopped
+
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+      MARIADB_DATABASE:      ${DB_DATABASE:-posmeister}
+      MARIADB_USER:          ${DB_USERNAME:-posmeister}
+      MARIADB_PASSWORD:      ${DB_PASSWORD:-posmeister}
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  app_storage: {}
+  app_public:  {}
+  db_data:     {}
+  redis_data:  {}

@@ -769,6 +769,7 @@
     "change": "ফেরত",
     "due": "বাকি",
     "processing": "প্রক্রিয়া হচ্ছে...",
+    "checkout": "চেকআউট",
     "confirmSale": "বিক্রয় সম্পন্ন করুন",
     "outOfStockAlert": "{name} স্টকে নেই",
     "stockLimitAlert": "{name} এর স্টক সীমা পৌঁছে গেছে",
@@ -2671,6 +2672,133 @@
     },
     "audit": {
       "title": "সাম্প্রতিক অডিট ইভেন্ট"
+    }
+  },
+  "pwa": {
+    "install":         "ইনস্টল",
+    "update":          "আপডেট",
+    "updateAvailable": "নতুন সংস্করণ পাওয়া যাচ্ছে — প্রয়োগ করতে ক্লিক করুন।",
+    "online":          "অনলাইন",
+    "offline":         "অফলাইন"
+  },
+  "systemOps": {
+    "module": "অপারেশন",
+    "dashboard": {
+      "title":        "সিস্টেম ড্যাশবোর্ড",
+      "subtitle":     "লাইভ অপারেশন স্ট্যাটাস: ডিপ্লয়মেন্ট, কিউ, ব্যাকআপ, সিঙ্ক।",
+      "score":        "স্কোর",
+      "deployment":   "ডিপ্লয়মেন্ট",
+      "allGood":      "সব অপারেশন চেক ঠিক আছে।",
+      "storage":      "ডিস্ক ব্যবহার",
+      "releaseNotes": "রিলিজ নোট",
+      "grade": {
+        "excellent": "চমৎকার",
+        "good":      "ভালো",
+        "attention": "মনোযোগ প্রয়োজন",
+        "critical":  "সংকটজনক"
+      }
+    },
+    "monitor": {
+      "title":       "হেলথ মনিটর",
+      "subtitle":    "ক্রমাগত পর্যবেক্ষণ, ঐচ্ছিক অটো-রিফ্রেশসহ।",
+      "autoRefresh": "অটো-রিফ্রেশ",
+      "database":    "ডেটাবেস",
+      "cache":       "ক্যাশ",
+      "queue":       "কিউ",
+      "scheduler":   "শিডিউলার",
+      "storage":     "স্টোরেজ",
+      "security":    "নিরাপত্তা",
+      "deployment":  "ডিপ্লয়মেন্ট তথ্য",
+      "version":     "সংস্করণ",
+      "release":     "রিলিজ",
+      "commit":      "কমিট",
+      "builtAt":     "বিল্ড হয়েছে",
+      "php":         "PHP",
+      "laravel":     "Laravel",
+      "environment": "এনভায়রনমেন্ট",
+      "maintenance": "মেইন্টেন্যান্স"
+    },
+    "queue": {
+      "title":         "কিউ ডায়াগনস্টিকস",
+      "subtitle":      "ব্যাকগ্রাউন্ড ওয়ার্কার, রিট্রাই স্ট্যাটাস, ব্যর্থ জব।",
+      "driver":        "ড্রাইভার",
+      "pending":       "অপেক্ষমাণ",
+      "failed":        "ব্যর্থ",
+      "oldestPending": "প্রাচীনতম অপেক্ষমাণ",
+      "pendingFailed": "অপেক্ষমাণ / ব্যর্থ",
+      "failedJobs":    "ব্যর্থ জব",
+      "pendingJobs":   "অপেক্ষমাণ জব",
+      "connection":    "সংযোগ",
+      "queueName":     "কিউ",
+      "failedAt":      "ব্যর্থ হয়েছে",
+      "attempts":      "চেষ্টা",
+      "availableAt":   "উপলব্ধ",
+      "empty":         "কোনো এন্ট্রি নেই।"
+    },
+    "scheduler": {
+      "title":             "শিডিউলার",
+      "ago":               "আগে",
+      "noHeartbeat":       "এখনো কোনো হার্টবিট নেই।",
+      "cronNotConfigured": "Cron চালু আছে বলে মনে হচ্ছে না।"
+    },
+    "environment": {
+      "title":         "এনভায়রনমেন্ট চেক",
+      "subtitle":      "PHP, অবকাঠামো এবং নিরাপত্তা সেটিংসের গভীর যাচাই।",
+      "ok":            "ঠিক",
+      "fail":          "ব্যর্থ",
+      "checksPassing": "চেক পাস হয়েছে",
+      "groups": {
+        "php":        "PHP রানটাইম",
+        "extensions": "PHP এক্সটেনশন",
+        "database":   "ডেটাবেস",
+        "cache":      "ক্যাশ",
+        "queue":      "কিউ",
+        "mail":       "মেইল",
+        "storage":    "স্টোরেজ পাথ",
+        "security":   "নিরাপত্তা",
+        "scheduler":  "শিডিউলার"
+      }
+    },
+    "backup": {
+      "title":       "ব্যাকআপ ম্যানেজার",
+      "subtitle":    "ডেটাবেস ব্যাকআপ লোকাল ডিস্কে সংরক্ষণ করা হয়।",
+      "runNow":      "ব্যাকআপ চালান",
+      "runningNow":  "চলছে…",
+      "prune":       "পুরাতন মুছুন",
+      "totalRuns":   "মোট",
+      "lastSuccess": "শেষ সফল",
+      "lastSize":    "শেষ আকার",
+      "diskUsed":    "ব্যবহৃত",
+      "history":     "ইতিহাস",
+      "startedAt":   "শুরু",
+      "type":        "ধরন",
+      "size":        "আকার",
+      "checksum":    "চেকসাম",
+      "file":        "ফাইল / ত্রুটি",
+      "empty":       "এখনো কোনো ব্যাকআপ নেই।",
+      "never":       "কখনো না",
+      "restoreNote": "পুনরুদ্ধার একটি ম্যানুয়াল অপারেশন: ফাইল কপি করে mysql < backup.sql চালান।"
+    },
+    "sync": {
+      "title":             "সিঙ্ক রিকভারি",
+      "subtitle":          "অফলাইন POS কিউ, সার্ভার-সাইড ইডেমপোটেন্সি, রিকভারি টুল।",
+      "retryNow":          "এখনই পুনরায় চেষ্টা",
+      "localQueue":        "লোকাল কিউ (এই ডিভাইস)",
+      "serverKeys24h":     "সার্ভার কী (২৪ ঘ.)",
+      "offlineTotal":      "অফলাইন বিক্রয় মোট",
+      "syncedToday":       "আজ সিঙ্ক হয়েছে",
+      "localQueueDetail":  "লোকাল কিউয়ের বিষয়বস্তু",
+      "idempotencyKey":    "ইডেমপোটেন্সি কী",
+      "url":               "URL",
+      "attempts":          "চেষ্টা",
+      "createdAt":         "কিউতে",
+      "lastError":         "শেষ ত্রুটি",
+      "recentServerSide":  "সাম্প্রতিক অফলাইন বিক্রয়",
+      "saleNumber":        "বিক্রয় #",
+      "offlineReference":  "রেফারেন্স",
+      "syncedAt":          "সিঙ্ক হয়েছে",
+      "amount":            "পরিমাণ",
+      "empty":             "এখনো কোনো অফলাইন বিক্রয় নেই।"
     }
   }
 }

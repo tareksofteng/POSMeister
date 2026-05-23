@@ -3,28 +3,28 @@
 
         <!-- ── Action bar (hidden when printing) ─────────────────────── -->
         <div class="no-print sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
-            <div class="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
-                <RouterLink :to="{ name: 'purchases' }" class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group">
-                    <ArrowLeftIcon class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                    {{ t('purchases.backToList') }}
+            <div class="max-w-4xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
+                <RouterLink :to="{ name: 'purchases' }" class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors group min-w-0">
+                    <ArrowLeftIcon class="w-4 h-4 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" />
+                    <span class="truncate">{{ t('purchases.backToList') }}</span>
                 </RouterLink>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     <span v-if="purchase" class="hidden sm:block text-sm font-mono font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
                         {{ purchase.purchase_number }}
                     </span>
                     <button
                         @click="printInvoice"
-                        class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                        class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
                     >
                         <PrinterIcon class="w-4 h-4" />
-                        {{ t('purchases.printInvoice') }}
+                        <span class="hidden xs:inline">{{ t('purchases.printInvoice') }}</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- ── Page content ──────────────────────────────────────────── -->
-        <div class="max-w-4xl mx-auto px-4 py-8 print:p-0 print:max-w-none">
+        <div class="max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-8 print:p-0 print:max-w-none">
 
             <!-- Loading -->
             <div v-if="loading" class="text-center py-24 text-gray-400">
@@ -36,45 +36,45 @@
             <div v-else-if="purchase" id="invoice-paper" class="bg-white shadow-2xl rounded-xl overflow-hidden print:shadow-none print:rounded-none">
 
                 <!-- ══ LETTERHEAD ════════════════════════════════════════ -->
-                <div class="px-10 pt-8 pb-6">
-                    <div class="flex items-start justify-between gap-6">
+                <div class="px-4 sm:px-10 pt-5 sm:pt-8 pb-5 sm:pb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
                         <!-- Company identity -->
-                        <div class="flex items-start gap-4">
+                        <div class="flex items-start gap-3 sm:gap-4 min-w-0">
                             <img
                                 v-if="settings?.logo_url"
                                 :src="settings.logo_url"
                                 alt="Logo"
-                                class="h-16 w-auto object-contain flex-shrink-0"
+                                class="h-12 sm:h-16 w-auto object-contain flex-shrink-0"
                             />
-                            <div v-else class="h-14 w-14 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <BuildingOffice2Icon class="w-8 h-8 text-indigo-600" />
+                            <div v-else class="h-12 w-12 sm:h-14 sm:w-14 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <BuildingOffice2Icon class="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600" />
                             </div>
-                            <div>
-                                <h1 class="text-xl font-bold text-gray-900 leading-tight">
+                            <div class="min-w-0 flex-1">
+                                <h1 class="text-lg sm:text-xl font-bold text-gray-900 leading-tight truncate">
                                     {{ settings?.company_name ?? 'POSmeister' }}
                                 </h1>
-                                <p v-if="settings?.address" class="text-xs text-gray-500 mt-0.5 whitespace-pre-line leading-relaxed">
+                                <p v-if="settings?.address" class="text-xs text-gray-500 mt-0.5 whitespace-pre-line leading-relaxed break-words">
                                     {{ settings.address }}
                                 </p>
-                                <div class="flex items-center gap-3 mt-1">
-                                    <span v-if="settings?.phone" class="text-xs text-gray-400 flex items-center gap-1">
-                                        <PhoneIcon class="w-3 h-3" /> {{ settings.phone }}
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                                    <span v-if="settings?.phone" class="text-xs text-gray-400 flex items-center gap-1 min-w-0">
+                                        <PhoneIcon class="w-3 h-3 flex-shrink-0" /> <span class="truncate">{{ settings.phone }}</span>
                                     </span>
-                                    <span v-if="settings?.email" class="text-xs text-gray-400 flex items-center gap-1">
-                                        <EnvelopeIcon class="w-3 h-3" /> {{ settings.email }}
+                                    <span v-if="settings?.email" class="text-xs text-gray-400 flex items-center gap-1 min-w-0">
+                                        <EnvelopeIcon class="w-3 h-3 flex-shrink-0" /> <span class="truncate">{{ settings.email }}</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Document title block -->
-                        <div class="text-right flex-shrink-0">
-                            <div class="bg-indigo-600 text-white px-5 py-2 rounded-lg inline-block mb-3">
-                                <p class="text-xs font-bold tracking-[0.2em] uppercase">{{ t('purchases.invoiceTitle') }}</p>
+                        <div class="text-left sm:text-right flex-shrink-0">
+                            <div class="bg-indigo-600 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg inline-block mb-2 sm:mb-3">
+                                <p class="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase">{{ t('purchases.invoiceTitle') }}</p>
                             </div>
                             <div class="space-y-0.5">
-                                <p class="font-mono font-bold text-gray-900 text-lg">{{ purchase.purchase_number }}</p>
-                                <p class="text-sm text-gray-500">{{ formatDate(purchase.purchase_date) }}</p>
+                                <p class="font-mono font-bold text-gray-900 text-base sm:text-lg">{{ purchase.purchase_number }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500">{{ formatDate(purchase.purchase_date) }}</p>
                                 <p v-if="purchase.reference" class="text-xs text-gray-400 font-mono">Ref: {{ purchase.reference }}</p>
                             </div>
                         </div>
@@ -82,10 +82,10 @@
                 </div>
 
                 <!-- Separator line -->
-                <div class="mx-10 border-t-4 border-indigo-600 mb-0" />
+                <div class="mx-4 sm:mx-10 border-t-4 border-indigo-600 mb-0" />
 
                 <!-- ══ SUPPLIER + ORDER INFO ═══════════════════════════════ -->
-                <div class="px-10 py-6 grid grid-cols-2 gap-10 bg-gray-50/50 print:bg-white border-b border-gray-100">
+                <div class="px-4 sm:px-10 py-5 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10 bg-gray-50/50 print:bg-white border-b border-gray-100">
 
                     <!-- Supplier details -->
                     <div>
@@ -153,8 +153,36 @@
                     </div>
                 </div>
 
-                <!-- ══ LINE ITEMS TABLE ═══════════════════════════════════ -->
-                <div class="px-10 py-6">
+                <!-- ══ LINE ITEMS — MOBILE STACKED CARDS (< sm) ══════════ -->
+                <div class="sm:hidden px-4 py-4 space-y-2 print:hidden">
+                    <div v-for="(item, idx) in purchase.items" :key="`m-${idx}`" class="rounded-lg border border-gray-200 p-3 bg-white">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="min-w-0">
+                                <p class="text-[10px] uppercase font-bold text-gray-400">#{{ idx + 1 }} {{ t('purchases.product') }}</p>
+                                <p class="font-semibold text-gray-900 truncate">{{ item.product_name }}</p>
+                                <p v-if="item.product_sku" class="text-[10px] text-gray-400 font-mono">{{ item.product_sku }}</p>
+                            </div>
+                            <span class="text-base font-mono font-bold text-indigo-900 tabular-nums flex-shrink-0">{{ fmt(item.line_total) }}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <p class="text-[10px] uppercase text-gray-400">{{ t('purchases.qty') }}</p>
+                                <p class="font-mono text-gray-700">{{ item.quantity }} {{ item.unit_name || '' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase text-gray-400">{{ t('purchases.unitCost') }}</p>
+                                <p class="font-mono text-gray-700">{{ fmt(item.unit_cost) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase text-gray-400">{{ t('purchases.vatRate') }}</p>
+                                <p class="font-mono text-gray-700">{{ item.vat_rate }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ LINE ITEMS TABLE (sm+ and print) ═════════════════════ -->
+                <div class="hidden sm:block px-4 sm:px-10 py-6 print:block">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b-2 border-gray-200">
@@ -203,8 +231,8 @@
                 </div>
 
                 <!-- ══ TOTALS ════════════════════════════════════════════ -->
-                <div class="px-10 pb-6 flex justify-end border-b border-gray-100">
-                    <div class="w-72">
+                <div class="px-4 sm:px-10 pb-6 flex justify-stretch sm:justify-end border-b border-gray-100">
+                    <div class="w-full sm:w-72">
                         <dl class="space-y-1.5 text-sm">
                             <div class="flex justify-between text-gray-600">
                                 <dt>{{ t('purchases.subtotal') }}</dt>
@@ -232,7 +260,7 @@
                 </div>
 
                 <!-- ══ AMOUNT IN WORDS + NOTES ══════════════════════════ -->
-                <div class="px-10 py-5 bg-slate-50/80 print:bg-white border-b border-gray-100">
+                <div class="px-4 sm:px-10 py-4 sm:py-5 bg-slate-50/80 print:bg-white border-b border-gray-100">
                     <p class="text-sm text-gray-700 leading-relaxed">
                         <span class="font-semibold text-gray-900">{{ t('purchases.inWords') }}:</span>
                         {{ amountInWords }}
@@ -244,8 +272,8 @@
                 </div>
 
                 <!-- ══ SIGNATURE LINES ══════════════════════════════════ -->
-                <div class="px-10 py-8 border-b border-gray-100">
-                    <div class="grid grid-cols-2 gap-16">
+                <div class="px-4 sm:px-10 py-6 sm:py-8 border-b border-gray-100">
+                    <div class="grid grid-cols-2 gap-6 sm:gap-16">
                         <div>
                             <div class="h-14"></div>
                             <div class="border-t border-gray-400 pt-2">
@@ -262,10 +290,10 @@
                 </div>
 
                 <!-- ══ DOCUMENT FOOTER ═══════════════════════════════════ -->
-                <div class="px-10 py-4 bg-gray-50 print:bg-white">
-                    <div class="flex items-center justify-between text-xs text-gray-400">
+                <div class="px-4 sm:px-10 py-3 sm:py-4 bg-gray-50 print:bg-white">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[10px] sm:text-xs text-gray-400">
                         <span>{{ t('purchases.printDate') }}: {{ nowFormatted }}</span>
-                        <span class="font-medium">{{ settings?.company_name ?? 'POSmeister' }} · POSmeister</span>
+                        <span class="font-medium truncate">{{ settings?.company_name ?? 'POSmeister' }} · POSmeister</span>
                     </div>
                 </div>
 
