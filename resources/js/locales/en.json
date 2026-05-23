@@ -2691,6 +2691,43 @@
     "retry":            "Sync now",
     "syncing":          "Syncing…"
   },
+  "notifications": {
+    "module":               "Alerts",
+    "title":                "Notifications",
+    "centerTitle":          "Notification Center",
+    "centerSubtitle":       "Proactive business alerts, prioritised by urgency.",
+    "unread":               "{n} unread",
+    "empty":                "All caught up — no alerts.",
+    "markAllRead":          "Mark all read",
+    "ack":                  "Acknowledge",
+    "archive":              "Archive",
+    "viewAll":              "View all",
+    "preferences":          "Notification preferences",
+    "preferencesSubtitle":  "Mute categories, set quiet hours and your minimum severity threshold.",
+    "muteCategories":       "Mute categories",
+    "minSeverity":          "Minimum severity",
+    "minSeverityHint":      "Alerts below this level will be hidden.",
+    "quietHours":           "Quiet hours",
+    "quietHoursHint":       "Critical alerts always bypass quiet hours.",
+    "dailyDigest":          "Send me a daily morning summary",
+    "category": {
+      "inventory":  "Inventory",
+      "sales":      "Sales",
+      "finance":    "Finance",
+      "hrm":        "HR",
+      "system":     "System",
+      "crm":        "CRM",
+      "oms":        "Orders",
+      "accounting": "Accounting"
+    },
+    "severity": {
+      "info":     "Info",
+      "success":  "Success",
+      "warning":  "Warning",
+      "danger":   "Danger",
+      "critical": "Critical"
+    }
+  },
   "systemOps": {
     "module": "Operations",
     "dashboard": {

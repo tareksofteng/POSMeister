@@ -39,6 +39,7 @@ use App\Modules\SystemOps\Controllers\SystemOpsController;
 use App\Modules\SystemOps\Controllers\BackupController;
 use App\Modules\SystemOps\Controllers\SyncController;
 use App\Modules\SystemOps\Controllers\OfflineSyncController;
+use App\Modules\NotificationCenter\Controllers\NotificationCenterController;
 use App\Modules\HRM\Controllers\AttendanceController as HrmAttendanceController;
 use App\Modules\HRM\Controllers\DepartmentController as HrmDepartmentController;
 use App\Modules\HRM\Controllers\HrmReportsController;
@@ -96,6 +97,21 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
 
     // Dashboard stats
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+
+    // ── Phase Ω+ — Smart Notification Center (any auth user) ────────────
+    Route::get ('notifications',                   [NotificationCenterController::class, 'index']);
+    Route::get ('notifications/digest',            [NotificationCenterController::class, 'digest']);
+    Route::get ('notifications/preferences',       [NotificationCenterController::class, 'preferences']);
+    Route::put ('notifications/preferences',       [NotificationCenterController::class, 'savePreferences']);
+    Route::post('notifications/mark-all-read',     [NotificationCenterController::class, 'markAllRead']);
+    Route::post('notifications/{notification}/read',    [NotificationCenterController::class, 'markRead']);
+    Route::post('notifications/{notification}/ack',     [NotificationCenterController::class, 'ack']);
+    Route::post('notifications/{notification}/archive', [NotificationCenterController::class, 'archive']);
+    Route::middleware('role:admin')->group(function () {
+        Route::get ('notifications/analytics',         [NotificationCenterController::class, 'analytics']);
+        Route::post('notifications/detect',            [NotificationCenterController::class, 'runDetectors']);
+        Route::post('notifications/build-digest',      [NotificationCenterController::class, 'buildDigest']);
+    });
 
     // ── Phase Ω — Offline-first POS ─────────────────────────────────────
     //   /snapshot     bulk download of products+customers+settings (any auth user)

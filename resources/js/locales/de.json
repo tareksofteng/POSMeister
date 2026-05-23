@@ -2691,6 +2691,43 @@
     "retry":            "Jetzt synchronisieren",
     "syncing":          "Synchronisiert…"
   },
+  "notifications": {
+    "module":               "Hinweise",
+    "title":                "Benachrichtigungen",
+    "centerTitle":          "Benachrichtigungszentrum",
+    "centerSubtitle":       "Proaktive Geschäftsmeldungen, nach Dringlichkeit priorisiert.",
+    "unread":               "{n} ungelesen",
+    "empty":                "Alles im Griff — keine Meldungen.",
+    "markAllRead":          "Alle als gelesen markieren",
+    "ack":                  "Bestätigen",
+    "archive":              "Archivieren",
+    "viewAll":              "Alle anzeigen",
+    "preferences":          "Benachrichtigungseinstellungen",
+    "preferencesSubtitle":  "Kategorien stummschalten, Ruhezeiten und Mindeststufe festlegen.",
+    "muteCategories":       "Kategorien stummschalten",
+    "minSeverity":          "Mindeststufe",
+    "minSeverityHint":      "Meldungen unter dieser Stufe werden ausgeblendet.",
+    "quietHours":           "Ruhezeiten",
+    "quietHoursHint":       "Kritische Meldungen umgehen Ruhezeiten immer.",
+    "dailyDigest":          "Tägliche Zusammenfassung am Morgen senden",
+    "category": {
+      "inventory":  "Lager",
+      "sales":      "Verkauf",
+      "finance":    "Finanzen",
+      "hrm":        "Personal",
+      "system":     "System",
+      "crm":        "CRM",
+      "oms":        "Bestellungen",
+      "accounting": "Buchhaltung"
+    },
+    "severity": {
+      "info":     "Info",
+      "success":  "Erfolg",
+      "warning":  "Warnung",
+      "danger":   "Gefahr",
+      "critical": "Kritisch"
+    }
+  },
   "systemOps": {
     "module": "Betrieb",
     "dashboard": {

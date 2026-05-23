@@ -2689,6 +2689,43 @@
     "retry":            "এখন সিঙ্ক",
     "syncing":          "সিঙ্ক হচ্ছে…"
   },
+  "notifications": {
+    "module":               "অ্যালার্ট",
+    "title":                "নোটিফিকেশন",
+    "centerTitle":          "নোটিফিকেশন সেন্টার",
+    "centerSubtitle":       "জরুরিতা অনুযায়ী সাজানো প্রোঅ্যাক্টিভ ব্যবসায়িক অ্যালার্ট।",
+    "unread":               "{n} অপঠিত",
+    "empty":                "সব ঠিক আছে — কোনো অ্যালার্ট নেই।",
+    "markAllRead":          "সব পঠিত হিসাবে চিহ্নিত",
+    "ack":                  "স্বীকার",
+    "archive":              "আর্কাইভ",
+    "viewAll":              "সব দেখুন",
+    "preferences":          "নোটিফিকেশন পছন্দ",
+    "preferencesSubtitle":  "ক্যাটেগরি মিউট, নীরব ঘণ্টা এবং সর্বনিম্ন তীব্রতা সেট করুন।",
+    "muteCategories":       "ক্যাটেগরি মিউট",
+    "minSeverity":          "সর্বনিম্ন তীব্রতা",
+    "minSeverityHint":      "এর নিচের অ্যালার্ট লুকানো থাকবে।",
+    "quietHours":           "নীরব ঘণ্টা",
+    "quietHoursHint":       "ক্রিটিক্যাল অ্যালার্ট সবসময় নীরব ঘণ্টা বাইপাস করে।",
+    "dailyDigest":          "প্রতিদিন সকালে সারাংশ পাঠান",
+    "category": {
+      "inventory":  "ইনভেন্টরি",
+      "sales":      "বিক্রয়",
+      "finance":    "অর্থ",
+      "hrm":        "এইচআর",
+      "system":     "সিস্টেম",
+      "crm":        "CRM",
+      "oms":        "অর্ডার",
+      "accounting": "হিসাবরক্ষণ"
+    },
+    "severity": {
+      "info":     "তথ্য",
+      "success":  "সফল",
+      "warning":  "সতর্কতা",
+      "danger":   "বিপদ",
+      "critical": "ক্রিটিক্যাল"
+    }
+  },
   "systemOps": {
     "module": "অপারেশন",
     "dashboard": {

@@ -49,13 +49,8 @@
                 <MoonIcon v-else class="w-5 h-5" />
             </button>
 
-            <!-- Notifications (placeholder) — hidden on small mobile to keep header tidy -->
-            <button
-                class="hidden xs:inline-flex relative touch-target items-center justify-center text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                aria-label="Notifications"
-            >
-                <BellIcon class="w-5 h-5" />
-            </button>
+            <!-- Smart notification center (Phase Ω+) -->
+            <NotificationDropdown class="hidden xs:block" />
 
             <!-- User menu -->
             <div class="relative" ref="userMenuRef">
@@ -115,13 +110,13 @@ import { useAuthStore } from '@/stores/auth';
 
 import {
     Bars3Icon,
-    BellIcon,
     ChevronDownIcon,
     ArrowRightStartOnRectangleIcon,
     MagnifyingGlassIcon,
     SunIcon,
     MoonIcon,
 } from '@heroicons/vue/24/outline';
+import NotificationDropdown from '@/components/NotificationDropdown.vue';
 import { useThemeStore } from '@/stores/theme';
 
 const theme = useThemeStore();

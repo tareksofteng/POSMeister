@@ -2689,6 +2689,43 @@
     "retry":            "مزامنة الآن",
     "syncing":          "جارٍ المزامنة…"
   },
+  "notifications": {
+    "module":               "التنبيهات",
+    "title":                "الإشعارات",
+    "centerTitle":          "مركز الإشعارات",
+    "centerSubtitle":       "تنبيهات أعمال استباقية مرتبة حسب الأهمية.",
+    "unread":               "{n} غير مقروء",
+    "empty":                "كل شيء على ما يرام — لا تنبيهات.",
+    "markAllRead":          "وضع علامة مقروء على الكل",
+    "ack":                  "تأكيد",
+    "archive":              "أرشفة",
+    "viewAll":              "عرض الكل",
+    "preferences":          "تفضيلات الإشعارات",
+    "preferencesSubtitle":  "كتم الفئات، تحديد ساعات الهدوء والحد الأدنى للخطورة.",
+    "muteCategories":       "كتم الفئات",
+    "minSeverity":          "الحد الأدنى للخطورة",
+    "minSeverityHint":      "ستُخفى التنبيهات الأقل من هذا المستوى.",
+    "quietHours":           "ساعات الهدوء",
+    "quietHoursHint":       "التنبيهات الحرجة دائماً تتجاوز ساعات الهدوء.",
+    "dailyDigest":          "أرسل لي ملخصاً صباحياً يومياً",
+    "category": {
+      "inventory":  "المخزون",
+      "sales":      "المبيعات",
+      "finance":    "المالية",
+      "hrm":        "الموارد البشرية",
+      "system":     "النظام",
+      "crm":        "العملاء",
+      "oms":        "الطلبات",
+      "accounting": "المحاسبة"
+    },
+    "severity": {
+      "info":     "معلومات",
+      "success":  "نجاح",
+      "warning":  "تحذير",
+      "danger":   "خطر",
+      "critical": "حرج"
+    }
+  },
   "systemOps": {
     "module": "العمليات",
     "dashboard": {

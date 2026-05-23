@@ -60,6 +60,20 @@ const routes = [
                 meta: { titleKey: 'system.health.title', adminOnly: true },
             },
 
+            // ── Phase Ω+ Notification Center ──────────────────────────────
+            {
+                path: 'notifications',
+                name: 'notifications',
+                component: () => import('@/views/notifications/NotificationCenterView.vue'),
+                meta: { titleKey: 'notifications.centerTitle' },
+            },
+            {
+                path: 'notifications/preferences',
+                name: 'notification-preferences',
+                component: () => import('@/views/notifications/NotificationPreferencesView.vue'),
+                meta: { titleKey: 'notifications.preferences' },
+            },
+
             // ── Phase Z: SystemOps (admin-only) ───────────────────────────
             {
                 path: 'system/dashboard',
