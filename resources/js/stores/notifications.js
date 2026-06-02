@@ -45,6 +45,14 @@ export const useNotificationsStore = defineStore('notifications', () => {
         await notificationService.markAllRead().catch(() => {});
         await fetch();
     }
+    async function clearRead() {
+        await notificationService.clearRead().catch(() => {});
+        await fetch();
+    }
+    async function clearAll() {
+        await notificationService.clearAll().catch(() => {});
+        await fetch();
+    }
 
     function startPolling() {
         if (timer) return;
@@ -57,5 +65,5 @@ export const useNotificationsStore = defineStore('notifications', () => {
         window.removeEventListener('focus', fetch);
     }
 
-    return { items, unread, loading, top5, fetch, markRead, ack, archive, markAllRead, startPolling, stopPolling };
+    return { items, unread, loading, top5, fetch, markRead, ack, archive, markAllRead, clearRead, clearAll, startPolling, stopPolling };
 });

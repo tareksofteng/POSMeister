@@ -172,7 +172,7 @@ const PayslipStatusBadge = (props) => {
 PayslipStatusBadge.props = ['status'];
 
 function formatDate(s) {
-    return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    return s ? new Date(s + 'T00:00:00').toLocaleDateString('en-US') : '';
 }
 
 async function fetchPeriod() {

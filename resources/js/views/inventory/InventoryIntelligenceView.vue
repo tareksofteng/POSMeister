@@ -1,5 +1,5 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto pb-safe">
 
         <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
@@ -32,7 +32,7 @@
             <KpiCard :label="t('inventory.kpi.value')"        :value="d ? fmtCurrency(d.inventory_value) : '—'" tone="indigo" :icon="ArchiveBoxIcon" />
             <KpiCard :label="t('inventory.kpi.products')"     :value="d ? d.distinct_products : '—'" tone="slate" :icon="CubeIcon" />
             <KpiCard :label="t('inventory.kpi.turnover')"     :value="d ? d.turnover_ratio + 'x' : '—'" :sub="t('inventory.kpi.turnoverSub')" tone="emerald" :icon="ArrowPathIcon" />
-            <KpiCard :label="t('inventory.kpi.coverage')"     :value="d?.avg_coverage_days !== null ? (d.avg_coverage_days + ' ' + t('common.days')) : '—'" tone="indigo" :icon="ClockIcon" />
+            <KpiCard :label="t('inventory.kpi.coverage')"     :value="(d && d.avg_coverage_days != null) ? (d.avg_coverage_days + ' ' + t('common.days')) : '—'" tone="indigo" :icon="ClockIcon" />
             <KpiCard :label="t('inventory.kpi.lowStock')"     :value="d ? d.low_stock_count : '—'"  tone="amber" :icon="ExclamationTriangleIcon" />
             <KpiCard :label="t('inventory.kpi.overstock')"    :value="d ? d.overstock_count : '—'" tone="amber" :icon="ArchiveBoxArrowDownIcon" />
             <KpiCard :label="t('inventory.kpi.dead')"         :value="d ? d.dead_stock_count : '—'" tone="rose"  :icon="ExclamationCircleIcon" />
@@ -197,12 +197,18 @@ function healthBar(score) {
 async function load() {
     loading.value = true;
     try {
-        const [{ data: dash }, { data: bh }] = await Promise.all([
+        const [dashRes, bhRes] = await Promise.allSettled([
             inventoryIntelligenceService.dashboard({ lookback_days: lookback.value }),
             inventoryIntelligenceService.branchHealth(),
         ]);
-        d.value = dash.data;
-        branchHealth.value = bh.data ?? [];
+        // When offline, the service worker returns a 503 envelope. Treat
+        // either rejection as "no fresh data" instead of crashing the view.
+        if (dashRes.status === 'fulfilled') {
+            d.value = dashRes.value?.data?.data ?? null;
+        }
+        if (bhRes.status === 'fulfilled') {
+            branchHealth.value = bhRes.value?.data?.data ?? [];
+        }
     } finally {
         loading.value = false;
     }

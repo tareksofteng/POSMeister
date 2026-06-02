@@ -181,13 +181,13 @@ function monthAgo() {
     return d.toISOString().slice(0, 10);
 }
 
-const printedAt = computed(() => new Date().toLocaleString('de-DE', {
+const printedAt = computed(() => new Date().toLocaleString('en-US', {
     day: '2-digit', month: '2-digit', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
 }));
 
 function formatDate(s) {
-    return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    return s ? new Date(s + 'T00:00:00').toLocaleDateString('en-US') : '';
 }
 
 function formatPeriod({ from, to }) {

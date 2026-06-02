@@ -99,7 +99,7 @@ class QuotationService
     public function update(Quotation $quotation, array $data): Quotation
     {
         if (!$quotation->isEditable()) {
-            throw new \RuntimeException('Dieses Angebot kann nicht mehr bearbeitet werden.');
+            throw new \RuntimeException(__('errors.quotations.not_editable'));
         }
 
         return DB::transaction(function () use ($quotation, $data) {
@@ -143,7 +143,7 @@ class QuotationService
             throw new \RuntimeException('Ungültiger Status.');
         }
         if ($quotation->status === 'converted') {
-            throw new \RuntimeException('Dieses Angebot wurde bereits in einen Verkauf umgewandelt.');
+            throw new \RuntimeException(__('errors.quotations.already_converted'));
         }
 
         $quotation->update(['status' => $status]);

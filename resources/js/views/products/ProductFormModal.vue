@@ -220,8 +220,10 @@ import FormField from '@/components/ui/FormField.vue';
 import { PhotoIcon } from '@heroicons/vue/24/outline';
 import { productService } from '@/services/productService';
 import { useSettingsStore } from '@/stores/settings';
+import { useAlert } from '@/composables/useAlert';
 
 const { t } = useI18n();
+const { toast } = useAlert();
 const settingsStore  = useSettingsStore();
 const currencySymbol = computed(() => settingsStore.settings?.currency_symbol ?? '€');
 const defaultVat     = computed(() => settingsStore.settings?.vat_default ?? 19);
@@ -356,7 +358,59 @@ async function handleSubmit() {
     submitting.value = true;
     const payload = buildPayload();
 
+    // ── Offline path: queue the create/update for the sync worker to drain
+    //    once connectivity returns. The image is dropped from the offline
+    //    queue because multipart uploads don't survive JSON-only queuing;
+    //    the user can re-attach the photo after the next sync.
+    async function queueOffline() {
+        const { enqueue } = await import('@/pwa/offlineQueue');
+        const { syncNow } = await import('@/pwa/syncWorker');
+        const url    = isEdit.value ? `/api/products/${props.product.id}` : '/api/products';
+        const method = isEdit.value ? 'PUT' : 'POST';
+        await enqueue({ url, method, payload });
+
+        // Mirror the new product into the local IndexedDB cache so it shows
+        // up in POS search immediately, before the queue drains. Edits to an
+        // existing product also update the cache row in place.
+        if (!isEdit.value) {
+            try {
+                const { bulkPut } = await import('@/offline/db');
+                const tempId = -(Date.now() % 1_000_000_000);  // negative id avoids collision
+                await bulkPut('products', [{
+                    id: tempId,
+                    sku: payload.sku || null,
+                    barcode: payload.barcode || null,
+                    name: payload.name,
+                    name_lc: (payload.name || '').toLowerCase(),
+                    unit: null,
+                    unit_id: payload.unit_id,
+                    selling_price: payload.selling_price,
+                    cost_price: payload.cost_price,
+                    tax_rate: payload.tax_rate,
+                    stock: 0,
+                    image: null,
+                    category_id: payload.category_id,
+                    brand_id: payload.brand_id,
+                    _pendingSync: true,
+                }]);
+            } catch { /* cache mirror is best-effort */ }
+        }
+
+        toast('success', t('products.savedOffline') || 'Saved offline — will sync when online.');
+        if (selectedImage.value) {
+            toast('info', t('products.imageDeferred') || 'Image will need to be re-attached after the next sync.');
+        }
+        syncNow().catch(() => {});
+        emit('saved', isEdit.value);
+        if (!isEdit.value) resetForm();
+    }
+
     try {
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            await queueOffline();
+            return;
+        }
+
         let saved;
         if (isEdit.value) {
             saved = await productService.update(props.product.id, payload);
@@ -376,6 +430,13 @@ async function handleSubmit() {
         emit('saved', isEdit.value);
         if (!isEdit.value) resetForm();
     } catch (err) {
+        // Network blip mid-flight (no response, or SW returned its 503
+        // offline envelope) — degrade to the queue so the data isn't lost.
+        const noResponse = !err.response;
+        const swOffline  = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (noResponse || swOffline) {
+            try { await queueOffline(); return; } catch { /* fall through */ }
+        }
         const { status, data } = err.response ?? {};
         if (status === 422 && data?.errors) {
             Object.entries(data.errors).forEach(([field, msgs]) => {

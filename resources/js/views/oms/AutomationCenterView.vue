@@ -152,7 +152,7 @@ const actionConfigJson = ref('{}');
 
 function formatDate(d) {
     if (!d) return '—';
-    return new Intl.DateTimeFormat(locale.value || 'de-DE',
+    return new Intl.DateTimeFormat(locale.value || 'en-US',
         { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }
     ).format(new Date(d));
 }

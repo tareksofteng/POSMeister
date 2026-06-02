@@ -41,13 +41,17 @@ class ProductService
 
     public function search(string $term): Collection
     {
-        $base = Product::with('unit')->active();
+        // Stock is included as a denormalised subquery so cashiers see
+        // live on-hand quantity in the search dropdown without an extra
+        // round-trip. Branch-scope respected via the active user's branch.
+        $base = Product::with('unit')
+            ->active()
+            ->withSum(['inventory as stock' => fn ($q) => $this->branchScopedInventory($q)], 'quantity');
+
+        $cols = ['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate', 'unit_id', 'image', 'reorder_level'];
 
         if ($term === '') {
-            return $base
-                ->latest()
-                ->limit(100)
-                ->get(['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate', 'unit_id', 'image']);
+            return $base->latest()->limit(100)->get($cols);
         }
 
         return $base
@@ -58,7 +62,13 @@ class ProductService
                     ->orWhere('barcode', $term)
             )
             ->limit(50)
-            ->get(['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate', 'unit_id', 'image']);
+            ->get($cols);
+    }
+
+    private function branchScopedInventory($q)
+    {
+        $branchId = auth()->user()?->branch_id;
+        return $branchId ? $q->where('branch_id', $branchId) : $q;
     }
 
     public function store(array $data): Product

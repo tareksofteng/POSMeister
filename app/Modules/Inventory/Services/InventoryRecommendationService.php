@@ -41,7 +41,7 @@ class InventoryRecommendationService
         $from = Carbon::today()->subDays($velocityDays)->toDateString();
 
         $rows = DB::table('products as p')
-            ->leftJoin('inventory as i', function ($j) use ($effectiveBranch) {
+            ->join('inventory as i', function ($j) use ($effectiveBranch) {
                 $j->on('i.product_id', '=', 'p.id');
                 if ($effectiveBranch) {
                     $j->where('i.branch_id', '=', $effectiveBranch);

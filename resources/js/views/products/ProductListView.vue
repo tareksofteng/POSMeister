@@ -160,14 +160,40 @@ async function fetchProducts(overrides = {}) {
     loading.value   = true;
     listError.value = '';
     try {
+        if (navigator.onLine === false) {
+            await loadFromCache();
+            return;
+        }
         const { data } = await productService.index(filters.value);
         rows.value = data.data;
         meta.value = data.meta;
     } catch (err) {
+        const swOffline = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (!err.response || swOffline) {
+            try { await loadFromCache(); return; } catch { /* fall through */ }
+        }
         listError.value = err.response?.data?.message ?? t('common.unexpectedError');
     } finally {
         loading.value = false;
     }
+}
+
+async function loadFromCache() {
+    const { getAll } = await import('@/offline/db');
+    const all = await getAll('products');
+    const f = filters.value;
+    const q = (f.search || '').toLowerCase();
+    const filtered = all.filter((p) => {
+        if (q && !((p.name_lc || (p.name || '').toLowerCase()).includes(q) ||
+                   (p.sku || '').toLowerCase().includes(q) ||
+                   (p.barcode || '').toLowerCase().includes(q))) return false;
+        if (f.category_id && p.category_id != f.category_id) return false;
+        if (f.brand_id    && p.brand_id    != f.brand_id)    return false;
+        if (f.is_active === false && p._pendingSync !== true) return false;
+        return true;
+    });
+    rows.value = filtered;
+    meta.value = { total: filtered.length, per_page: filtered.length, current_page: 1, last_page: 1 };
 }
 
 function fetchPage(page) { fetchProducts({ page }); }
@@ -179,15 +205,40 @@ const unitOptions     = ref([]);
 
 onMounted(async () => {
     fetchProducts();
-    const [cats, brnds, unts] = await Promise.all([
-        categoryService.all(),
-        brandService.all(),
-        unitService.all(),
-    ]);
-    categoryOptions.value = cats.data;
-    brandOptions.value    = brnds.data;
-    unitOptions.value     = unts.data;
+    await loadDropdowns();
 });
+
+async function loadDropdowns() {
+    // Try the network first when we have it, but always fall back to the
+    // IndexedDB snapshot so opening Products offline still shows category /
+    // brand / unit options in the create-product modal.
+    if (navigator.onLine === false) {
+        await loadDropdownsFromCache();
+        return;
+    }
+    try {
+        const [cats, brnds, unts] = await Promise.all([
+            categoryService.all(),
+            brandService.all(),
+            unitService.all(),
+        ]);
+        categoryOptions.value = cats.data;
+        brandOptions.value    = brnds.data;
+        unitOptions.value     = unts.data;
+    } catch {
+        await loadDropdownsFromCache();
+    }
+}
+
+async function loadDropdownsFromCache() {
+    try {
+        const { loadCategories, loadBrands, loadUnits } = await import('@/offline/settingsCache');
+        const [cats, brnds, unts] = await Promise.all([loadCategories(), loadBrands(), loadUnits()]);
+        categoryOptions.value = cats;
+        brandOptions.value    = brnds;
+        unitOptions.value     = unts;
+    } catch { /* leave dropdowns empty */ }
+}
 
 // ── Create / Edit ─────────────────────────────────────────────────────────
 const formOpen   = ref(false);

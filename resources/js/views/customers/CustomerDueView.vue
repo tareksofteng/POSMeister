@@ -202,7 +202,7 @@ const filters = ref({
     onlyWithDue: true,
 });
 
-const printDate = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const printDate = new Date().toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
 // ── Computed rows (apply onlyWithDue filter client-side) ─────────────────────
 const displayRows = computed(() =>

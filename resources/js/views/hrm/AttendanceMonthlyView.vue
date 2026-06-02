@@ -128,7 +128,7 @@ const yearRange = computed(() => {
 
 const monthNames = computed(() => {
     // Use the current i18n locale's month names via Intl
-    const fmt = new Intl.DateTimeFormat(locale.value || 'de-DE', { month: 'long' });
+    const fmt = new Intl.DateTimeFormat(locale.value || 'en-US', { month: 'long' });
     return Array.from({ length: 12 }, (_, i) => fmt.format(new Date(2025, i, 1)));
 });
 

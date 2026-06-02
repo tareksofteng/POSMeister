@@ -338,6 +338,7 @@ import { saleService } from '@/services/saleService';
 import { customerService } from '@/services/customerService';
 import { useAlert } from '@/composables/useAlert';
 import { useCurrency } from '@/composables/useCurrency';
+import { getAll } from '@/offline/db';
 import ProductSearchInput from '@/components/ui/ProductSearchInput.vue';
 import {
     ArrowLeftIcon, PlusIcon, XMarkIcon, CheckIcon, ArrowPathIcon,
@@ -461,10 +462,14 @@ function autoFillCash() {
 
 async function loadCustomers() {
     try {
+        if (navigator.onLine === false) {
+            customers.value = await getAll('customers');
+            return;
+        }
         const { data } = await customerService.all();
         customers.value = data.data ?? [];
     } catch {
-        customers.value = [];
+        customers.value = await getAll('customers').catch(() => []);
     }
 }
 
@@ -516,7 +521,23 @@ async function save() {
         })),
     };
 
+    // ── Offline path: queue the sale locally and let the sync engine drain
+    //    it once connectivity returns. Mirrors PosView.confirmSale().
+    async function queueOffline() {
+        const { createOfflineSale } = await import('@/offline/offlineSales');
+        const { syncNow } = await import('@/offline/syncEngine');
+        const row = await createOfflineSale(payload);
+        toast('success', t('pos.saleSavedOffline', { ref: row.tempInvoiceNumber }));
+        syncNow().catch(() => {});
+        router.push({ name: 'sales' });
+    }
+
     try {
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            await queueOffline();
+            return;
+        }
+
         const { data } = await saleService.store(payload);
         const id = (data.data ?? data).id;
         toast('success', t('common.createdSuccess'));
@@ -530,6 +551,13 @@ async function save() {
             ? { name: 'sale-invoice', params: { id } }
             : { name: 'sales' });
     } catch (err) {
+        // Network failure mid-flight (timeout, SW 503 envelope, dropped Wi-Fi)
+        // — degrade to the offline queue so the cashier never loses a sale.
+        const noResponse = !err.response;
+        const swOffline  = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (noResponse || swOffline) {
+            try { await queueOffline(); return; } catch { /* fall through */ }
+        }
         const data = err.response?.data;
         if (data?.errors) {
             Object.entries(data.errors).forEach(([k, v]) => {

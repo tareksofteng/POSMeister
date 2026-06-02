@@ -1,31 +1,92 @@
 /*
- * POSmeister Service Worker
- * --------------------------
- * Keeps the Vue shell installable and snappy. Two cache buckets:
+ * POSmeister Service Worker (v3 — offline-resilient)
+ * --------------------------------------------------
+ * Three cache buckets:
  *
- *   - app-shell  : the small set of HTML/CSS/JS needed to boot offline
- *   - assets     : everything fetched from /build (Vite hashed files)
+ *   - shell   : HTML for navigations (root + last-visited URL)
+ *   - assets  : Vite-hashed JS/CSS/fonts from /build/*
+ *   - pages   : cached navigation responses (fallback when offline)
  *
- * API calls (/api/*) are network-first with a short timeout; if the
- * network is down we fall through to a JSON envelope that tells the
- * frontend "you are offline" so it can show the right UI.
+ * Boot flow:
+ *   1. install   → pre-cache "/" and ALL hashed bundles listed in
+ *                  /build/manifest.json so the app boots offline
+ *                  even on the very first PWA install.
+ *   2. activate  → drop old cache versions, take control. Trigger a
+ *                  background re-precache so chunks that 404'd during
+ *                  install get a second chance.
+ *   3. fetch     → /build/*    cache-first (ignore query strings)
+ *                  /api/*      network-first w/ offline JSON fallback
+ *                  navigation  network-first; on failure return ANY
+ *                              cached HTML (current URL, then "/",
+ *                              then most recent navigation).
+ *   4. message   → 'PRECACHE_ASSETS' from client re-pulls the manifest
+ *                  and tops up the asset cache. Client posts this on
+ *                  every boot so chunks added between deploys land in
+ *                  the cache as soon as the user is briefly online.
  *
- * Bumping the CACHE_VERSION below busts every cache on the next load.
+ * Bumping CACHE_VERSION forces every client to reload on next visit.
  */
-const CACHE_VERSION = 'posmeister-v1';
+const CACHE_VERSION = 'posmeister-v3';
 const SHELL_CACHE   = `${CACHE_VERSION}-shell`;
 const ASSETS_CACHE  = `${CACHE_VERSION}-assets`;
+const PAGES_CACHE   = `${CACHE_VERSION}-pages`;
 const API_TIMEOUT   = 6000;
 
-const SHELL_URLS = ['/', '/manifest.webmanifest'];
-
+// ── INSTALL ──────────────────────────────────────────────────────────────
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL_URLS).catch(() => null))
-    );
-    self.skipWaiting();
+    event.waitUntil((async () => {
+        await precacheEverything();
+        self.skipWaiting();
+    })());
 });
 
+async function precacheEverything() {
+    const shell = await caches.open(SHELL_CACHE);
+    await safeAdd(shell, ['/', '/manifest.webmanifest']);
+
+    try {
+        const res = await fetch('/build/manifest.json', { cache: 'no-cache' });
+        if (!res.ok) return;
+        const manifest = await res.json();
+        const urls = collectAssetUrls(manifest);
+        if (!urls.length) return;
+        const assets = await caches.open(ASSETS_CACHE);
+        await safeAdd(assets, urls);
+    } catch {
+        // Manifest missing or network blip — assets get cached on demand.
+    }
+}
+
+function collectAssetUrls(manifest) {
+    const out = new Set();
+    for (const entry of Object.values(manifest || {})) {
+        if (entry.file) out.add('/build/' + entry.file);
+        for (const c of entry.css || []) out.add('/build/' + c);
+        for (const a of entry.assets || []) out.add('/build/' + a);
+        for (const i of entry.imports || []) {
+            const dep = manifest[i];
+            if (dep?.file) out.add('/build/' + dep.file);
+            for (const c of dep?.css || []) out.add('/build/' + c);
+        }
+        for (const i of entry.dynamicImports || []) {
+            const dep = manifest[i];
+            if (dep?.file) out.add('/build/' + dep.file);
+            for (const c of dep?.css || []) out.add('/build/' + c);
+        }
+    }
+    return [...out];
+}
+
+async function safeAdd(cache, urls) {
+    // Add each url individually so one 404 doesn't abort the whole batch.
+    return Promise.all(urls.map((u) =>
+        fetch(u, { cache: 'no-cache' })
+            .then((r) => r.ok && cache.put(u, r.clone()))
+            .catch(() => null)
+    ));
+}
+
+// ── ACTIVATE ─────────────────────────────────────────────────────────────
 self.addEventListener('activate', (event) => {
     event.waitUntil((async () => {
         const keys = await caches.keys();
@@ -33,22 +94,28 @@ self.addEventListener('activate', (event) => {
             .filter((k) => !k.startsWith(CACHE_VERSION))
             .map((k) => caches.delete(k)));
         await self.clients.claim();
+        // Second-chance pre-cache: catches chunks that 404'd or were
+        // unreachable during install (slow CDN, race with deploy, etc.).
+        precacheEverything().catch(() => {});
     })());
 });
 
 self.addEventListener('message', (event) => {
-    if (event.data === 'SKIP_WAITING') self.skipWaiting();
-    if (event.data === 'PING')         event.source?.postMessage({ type: 'PONG', at: Date.now() });
+    if (event.data === 'SKIP_WAITING')      self.skipWaiting();
+    if (event.data === 'PING')              event.source?.postMessage({ type: 'PONG', at: Date.now() });
+    if (event.data === 'PRECACHE_ASSETS')   precacheEverything().catch(() => {});
 });
 
+// ── FETCH ────────────────────────────────────────────────────────────────
 self.addEventListener('fetch', (event) => {
     const req = event.request;
     if (req.method !== 'GET') return;
+
     const url = new URL(req.url);
     if (url.origin !== self.location.origin) return;
 
     if (url.pathname.startsWith('/build/')) {
-        event.respondWith(cacheFirst(req, ASSETS_CACHE));
+        event.respondWith(buildAssetHandler(req));
         return;
     }
 
@@ -61,7 +128,36 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(navigationHandler(req));
         return;
     }
+
+    // Default: try cache, then network. Safe for icons, manifest, etc.
+    event.respondWith(cacheFirst(req, SHELL_CACHE));
 });
+
+async function buildAssetHandler(req) {
+    // Vite occasionally appends query strings (?import, ?t=…). Match
+    // ignoring the query so a cached entry still serves the request.
+    const cache = await caches.open(ASSETS_CACHE);
+    let hit = await cache.match(req, { ignoreSearch: true });
+    if (hit) return hit;
+
+    try {
+        const fresh = await fetch(req);
+        if (fresh.ok) {
+            // Cache under the canonical (query-less) URL so future requests
+            // with or without query strings all land on the same entry.
+            const url = new URL(req.url);
+            url.search = '';
+            cache.put(url.toString(), fresh.clone());
+        }
+        return fresh;
+    } catch {
+        // Last-ditch: check shell cache too (in case install dropped it there).
+        const shell = await caches.open(SHELL_CACHE);
+        hit = await shell.match(req, { ignoreSearch: true });
+        if (hit) return hit;
+        return Response.error();
+    }
+}
 
 async function cacheFirst(req, cacheName) {
     const cache = await caches.open(cacheName);
@@ -83,10 +179,11 @@ async function networkFirstApi(req) {
         const fresh = await fetch(req, { signal: controller.signal });
         clearTimeout(timer);
         return fresh;
-    } catch (err) {
+    } catch {
         clearTimeout(timer);
         return new Response(JSON.stringify({
             offline: true,
+            data: null,
             message: 'Offline — request will be retried when connectivity returns.',
         }), {
             status: 503,
@@ -98,12 +195,29 @@ async function networkFirstApi(req) {
 async function navigationHandler(req) {
     try {
         const fresh = await fetch(req);
-        const cache = await caches.open(SHELL_CACHE);
-        cache.put('/', fresh.clone());
+        if (fresh.ok) {
+            const pages = await caches.open(PAGES_CACHE);
+            pages.put(req, fresh.clone());
+            const shell = await caches.open(SHELL_CACHE);
+            shell.put('/', fresh.clone());      // keep root mirror up-to-date
+        }
         return fresh;
     } catch {
-        const cache = await caches.open(SHELL_CACHE);
-        const cached = await cache.match('/');
-        return cached || Response.error();
+        // Offline: try cached current URL → cached root → any cached navigation
+        const pages = await caches.open(PAGES_CACHE);
+        const exact = await pages.match(req);
+        if (exact) return exact;
+
+        const shell = await caches.open(SHELL_CACHE);
+        const root  = await shell.match('/');
+        if (root) return root;
+
+        // Last-ditch fallback — return whatever HTML we have
+        const keys = await pages.keys();
+        for (const k of keys) {
+            const cached = await pages.match(k);
+            if (cached) return cached;
+        }
+        return Response.error();
     }
 }

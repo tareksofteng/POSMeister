@@ -399,6 +399,9 @@ import { useAlert }         from '@/composables/useAlert';
 import { saleService }      from '@/services/saleService';
 import { customerService }  from '@/services/customerService';
 import { useDebounce }      from '@vueuse/core';
+import { searchProducts }   from '@/offline/productsCache';
+import { searchCustomers }  from '@/offline/customersCache';
+import { getAll }           from '@/offline/db';
 
 import {
     ShoppingCartIcon, MagnifyingGlassIcon, PlusIcon, ListBulletIcon,
@@ -412,14 +415,14 @@ const settingsStore  = useSettingsStore();
 const authStore      = useAuthStore();
 const router         = useRouter();
 
-const todayFormatted = new Date().toLocaleDateString('de-DE', {
+const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
 });
 
 function formatCurrency(value) {
     if (value == null) return '—';
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -483,10 +486,16 @@ watch(debouncedSearch, async (q) => {
     if (!q.trim()) { searchResults.value = []; return; }
     searchLoading.value = true;
     try {
-        const { data } = await saleService.posSearch(q, authStore.branchId);
-        searchResults.value = data;
+        if (navigator.onLine === false) {
+            searchResults.value = await searchProducts(q);
+        } else {
+            const { data } = await saleService.posSearch(q, authStore.branchId);
+            searchResults.value = Array.isArray(data) ? data : (data?.data ?? []);
+        }
     } catch {
-        searchResults.value = [];
+        // Network error while supposedly online — fall back to the local
+        // snapshot so the cashier never sees an empty results dropdown.
+        searchResults.value = await searchProducts(q).catch(() => []);
     } finally {
         searchLoading.value = false;
     }
@@ -508,13 +517,21 @@ async function handleSearchEnter() {
     // have fired yet.
     searchLoading.value = true;
     try {
-        const { data } = await saleService.posSearch(q, authStore.branchId);
-        searchResults.value = data;
-        if (data.length === 1) {
-            addToCart(data[0]);
+        let results;
+        if (navigator.onLine === false) {
+            results = await searchProducts(q);
+        } else {
+            const { data } = await saleService.posSearch(q, authStore.branchId);
+            results = Array.isArray(data) ? data : (data?.data ?? []);
+        }
+        searchResults.value = results;
+        if (results.length === 1) {
+            addToCart(results[0]);
         }
     } catch {
-        searchResults.value = [];
+        const local = await searchProducts(q).catch(() => []);
+        searchResults.value = local;
+        if (local.length === 1) addToCart(local[0]);
     } finally {
         searchLoading.value = false;
     }
@@ -731,9 +748,17 @@ function resetSale() {
 
 async function loadCustomers() {
     try {
+        if (navigator.onLine === false) {
+            allCustomers.value = await getAll('customers');
+            return;
+        }
         const { data } = await customerService.all();
         allCustomers.value = data.data ?? data;
-    } catch { /* non-critical */ }
+    } catch {
+        // Network blip while online — fall back to the cached snapshot
+        // so the customer dropdown isn't empty.
+        allCustomers.value = await getAll('customers').catch(() => []);
+    }
 }
 
 onMounted(() => {

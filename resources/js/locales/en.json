@@ -173,7 +173,8 @@
     "post": "Post",
     "records": "records",
     "refresh": "Refresh",
-    "showing": "Showing"
+    "showing": "Showing",
+    "stock": "Stock"
   },
   "paymentMethod": {
     "cash": "Cash",
@@ -229,7 +230,14 @@
       "grossMargin":     "gross margin",
       "cashBankSub":     "live ledger balance",
       "outstandingSub":  "unpaid invoices",
-      "newThisMonth":    "new this month"
+      "newThisMonth":    "new this month",
+      "todayPurchase":   "Today's Purchase",
+      "monthPurchase":   "Month Purchase",
+      "customerPayments":"Customer Payments",
+      "supplierPayments":"Supplier Payments",
+      "reorderAlerts":   "Reorder Alerts",
+      "deadStock":       "Dead Stock",
+      "vsYesterday":     "vs yesterday"
     },
     "activeSub": "{active} active · {inactive} inactive",
     "branchOverview": {
@@ -328,7 +336,17 @@
     },
     "activity": {
       "title": "Activity Feed",
-      "empty": "No activity yet"
+      "empty": "No activity yet",
+      "types": {
+        "sale":        "Sale",
+        "purchase":    "Purchase",
+        "payment_in":  "Payment received",
+        "payment_out": "Payment sent",
+        "customer":    "New customer",
+        "loyalty":     "Loyalty",
+        "delivery":    "Delivery",
+        "return":      "Return"
+      }
     }
   },
   "branches": {
@@ -838,7 +856,7 @@
     "registered": "Registered",
     "selectCustomer": "Select customer",
     "customerName": "Customer name",
-    "customerNamePh": "e.g. Müller GmbH",
+    "customerNamePh": "e.g. ABC Trading Ltd.",
     "customerPhone": "Phone",
     "customerAddress": "Address",
     "customerAddressPh": "Street, ZIP, City",
@@ -2699,6 +2717,10 @@
     "unread":               "{n} unread",
     "empty":                "All caught up — no alerts.",
     "markAllRead":          "Mark all read",
+    "clearRead":            "Clear read",
+    "clearAll":             "Clear all",
+    "confirmClearRead":     "Archive all alerts you've already read?",
+    "confirmClearAll":      "Archive ALL alerts including unread? Critical warnings may be hidden.",
     "ack":                  "Acknowledge",
     "archive":              "Archive",
     "viewAll":              "View all",

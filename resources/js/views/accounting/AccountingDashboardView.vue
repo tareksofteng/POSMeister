@@ -128,7 +128,7 @@ function fmt(v) {
 
 function formatDate(d) {
     if (!d) return '';
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
+    return new Intl.DateTimeFormat(locale.value || 'en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
 }
 
 function refClass(type) {

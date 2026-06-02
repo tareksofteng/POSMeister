@@ -11,7 +11,11 @@
 import api from '@/services/api';
 import { replaceProducts }  from './productsCache';
 import { replaceCustomers } from './customersCache';
-import { saveSettings, saveBranches, saveTaxRules } from './settingsCache';
+import {
+    saveSettings, saveBranches, saveTaxRules,
+    saveSuppliers, saveCategories, saveBrands, saveUnits,
+    saveRecentSales, saveRecentPurchases,
+} from './settingsCache';
 import { put } from './db';
 
 const SNAPSHOT_REFRESH_MS = 15 * 60_000;   // 15 min while logged in
@@ -29,11 +33,19 @@ export async function downloadSnapshot() {
             if (!snap) return null;
 
             const counts = {};
-            if (Array.isArray(snap.products))  counts.products  = await replaceProducts(snap.products);
-            if (Array.isArray(snap.customers)) counts.customers = await replaceCustomers(snap.customers);
-            if (Array.isArray(snap.branches))  await saveBranches(snap.branches);
-            if (Array.isArray(snap.tax_rules)) await saveTaxRules(snap.tax_rules);
-            if (snap.settings)                 await saveSettings(snap.settings);
+            if (Array.isArray(snap.products))   counts.products  = await replaceProducts(snap.products);
+            if (Array.isArray(snap.customers))  counts.customers = await replaceCustomers(snap.customers);
+            if (Array.isArray(snap.branches))   await saveBranches(snap.branches);
+            if (Array.isArray(snap.tax_rules))  await saveTaxRules(snap.tax_rules);
+            if (snap.settings)                  await saveSettings(snap.settings);
+            // Lookup tables for offline product + purchase creation
+            if (Array.isArray(snap.suppliers))         await saveSuppliers(snap.suppliers);
+            if (Array.isArray(snap.categories))        await saveCategories(snap.categories);
+            if (Array.isArray(snap.brands))            await saveBrands(snap.brands);
+            if (Array.isArray(snap.units))             await saveUnits(snap.units);
+            // Recent transactional history (browseable offline)
+            if (Array.isArray(snap.recent_sales))      await saveRecentSales(snap.recent_sales);
+            if (Array.isArray(snap.recent_purchases))  await saveRecentPurchases(snap.recent_purchases);
 
             await put('meta', { k: 'snapshot.last_at', v: new Date().toISOString() });
             window.dispatchEvent(new CustomEvent('posmeister:snapshot:ready', { detail: counts }));

@@ -37,4 +37,16 @@ class AlertEscalationService
         }
         return $changed;
     }
+
+    /**
+     * Hard-delete archived notifications older than $keepDays.
+     * Keeps the table compact without losing recent history.
+     */
+    public function pruneArchived(int $keepDays = 30): int
+    {
+        return SmartNotification::query()
+            ->whereNotNull('archived_at')
+            ->where('archived_at', '<', now()->subDays($keepDays))
+            ->delete();
+    }
 }

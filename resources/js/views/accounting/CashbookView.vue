@@ -100,7 +100,7 @@ const totalOut = computed(() => (report.value?.days ?? []).reduce((s, d) => s + 
 
 function fmt(v) { return v === null || v === undefined ? '' : fmtCurrency(v); }
 function formatDate(d) {
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
+    return new Intl.DateTimeFormat(locale.value || 'en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
 }
 
 async function load() {

@@ -421,7 +421,7 @@ function recalc(line) {
 
 function fmt(value) {
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value ?? 0);
 }
 
 // ── Line management ───────────────────────────────────────────────────────
@@ -453,16 +453,32 @@ function onProductSelect(line, product) {
 
 async function loadSuppliers() {
     try {
+        if (navigator.onLine === false) {
+            const { loadSuppliers: cachedSuppliers } = await import('@/offline/settingsCache');
+            suppliers.value = await cachedSuppliers();
+            return;
+        }
         const { data } = await supplierService.all();
         suppliers.value = data.data ?? data;
-    } catch { /* silent */ }
+    } catch {
+        const { loadSuppliers: cachedSuppliers } = await import('@/offline/settingsCache');
+        suppliers.value = await cachedSuppliers().catch(() => []);
+    }
 }
 
 async function loadBranches() {
     try {
+        if (navigator.onLine === false) {
+            const { loadBranches: cachedBranches } = await import('@/offline/settingsCache');
+            branches.value = await cachedBranches();
+            return;
+        }
         const { data } = await api.get('/branches/all');
         branches.value = data.data ?? data;
-    } catch { /* silent */ }
+    } catch {
+        const { loadBranches: cachedBranches } = await import('@/offline/settingsCache');
+        branches.value = await cachedBranches().catch(() => []);
+    }
 }
 
 async function loadPurchase() {
@@ -551,7 +567,25 @@ async function save(receive) {
         })),
     };
 
+    // ── Offline path: queue the create/update so the sync worker can drain
+    //    it once we're online. Mirrors the sale + product offline patterns.
+    async function queueOffline() {
+        const { enqueue } = await import('@/pwa/offlineQueue');
+        const { syncNow } = await import('@/pwa/syncWorker');
+        const url    = isEdit.value ? `/api/purchases/${route.params.id}` : '/api/purchases';
+        const method = isEdit.value ? 'PUT' : 'POST';
+        await enqueue({ url, method, payload });
+        toast('success', t('purchases.savedOffline') || 'Saved offline — will sync when online.');
+        syncNow().catch(() => {});
+        router.push({ name: 'purchases' });
+    }
+
     try {
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            await queueOffline();
+            return;
+        }
+
         let savedId;
         if (isEdit.value) {
             savedId = parseInt(route.params.id);
@@ -576,6 +610,13 @@ async function save(receive) {
             router.push({ name: 'purchases' });
         }
     } catch (err) {
+        // Network blip mid-flight (no response, or SW 503 envelope) — drop
+        // into the queue so the cashier never loses a captured purchase.
+        const noResponse = !err.response;
+        const swOffline  = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (noResponse || swOffline) {
+            try { await queueOffline(); return; } catch { /* fall through */ }
+        }
         const errData = err.response?.data;
         if (errData?.errors) {
             Object.entries(errData.errors).forEach(([k, v]) => {

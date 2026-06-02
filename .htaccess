@@ -1,0 +1,31 @@
+####################################################################
+#  POSmeister — root .htaccess
+#  ----------------------------------------------------------------
+#  Use this file ONLY if the cPanel domain document root points at
+#  the project ROOT (not at /public). It does two things:
+#
+#    1. Forwards every request to /public so Laravel's front
+#       controller (public/index.php) handles routing.
+#    2. Blocks browsers from poking around Laravel internals like
+#       /app/, /config/, /vendor/, /.env etc.
+#
+#  NOTE on /storage/: it is INTENTIONALLY NOT blocked here. Public
+#  user uploads (logos, product photos, attachments) live behind
+#  public/storage → storage/app/public via `php artisan storage:link`.
+#  Blocking /storage/ here breaks every uploaded image.
+#
+#  If you ever change the document root to /public directly, this
+#  file becomes a no-op and can be removed.
+####################################################################
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Block direct access to Laravel internals — `storage` deliberately
+# omitted so the public symlink can serve user uploads.
+RedirectMatch 403 ^/(app|bootstrap|config|database|resources|routes|tests|vendor)(/|$)
+RedirectMatch 403 ^/(\.env|composer\.(json|lock)|package(-lock)?\.json|artisan)$

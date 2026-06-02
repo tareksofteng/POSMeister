@@ -371,11 +371,11 @@ watch(showAllDetails, (val) => {
 function fmt(value) {
     if (value == null) return '—';
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 function fmtDate(dateStr) {
     if (!dateStr) return '—';
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('de-DE', {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
         day: '2-digit', month: '2-digit', year: 'numeric',
     });
 }

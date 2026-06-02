@@ -173,7 +173,8 @@
     "post": "Buchen",
     "records": "Einträge",
     "refresh": "Aktualisieren",
-    "showing": "Zeige"
+    "showing": "Zeige",
+    "stock": "Bestand"
   },
   "paymentMethod": {
     "cash": "Bar",
@@ -229,7 +230,14 @@
       "grossMargin":     "Bruttomarge",
       "cashBankSub":     "Live-Saldo aus Hauptbuch",
       "outstandingSub":  "offene Rechnungen",
-      "newThisMonth":    "neu diesen Monat"
+      "newThisMonth":    "neu diesen Monat",
+      "todayPurchase":   "Heutiger Einkauf",
+      "monthPurchase":   "Monatlicher Einkauf",
+      "customerPayments":"Kundenzahlungen",
+      "supplierPayments":"Lieferantenzahlungen",
+      "reorderAlerts":   "Nachbestell-Warnungen",
+      "deadStock":       "Ladenhüter",
+      "vsYesterday":     "vs. gestern"
     },
     "activeSub": "{active} aktiv · {inactive} inaktiv",
     "branchOverview": {
@@ -319,7 +327,17 @@
     },
     "activity": {
       "title": "Aktivitäten",
-      "empty": "Noch keine Aktivität"
+      "empty": "Noch keine Aktivität",
+      "types": {
+        "sale":        "Verkauf",
+        "purchase":    "Einkauf",
+        "payment_in":  "Zahlung erhalten",
+        "payment_out": "Zahlung gesendet",
+        "customer":    "Neuer Kunde",
+        "loyalty":     "Treue",
+        "delivery":    "Lieferung",
+        "return":      "Retoure"
+      }
     },
     "recentSales": {
       "title": "Letzte Verkäufe",
@@ -2699,6 +2717,10 @@
     "unread":               "{n} ungelesen",
     "empty":                "Alles im Griff — keine Meldungen.",
     "markAllRead":          "Alle als gelesen markieren",
+    "clearRead":            "Gelesene löschen",
+    "clearAll":             "Alle löschen",
+    "confirmClearRead":     "Alle bereits gelesenen Meldungen archivieren?",
+    "confirmClearAll":      "ALLE Meldungen einschließlich ungelesener archivieren? Kritische Warnungen könnten ausgeblendet werden.",
     "ack":                  "Bestätigen",
     "archive":              "Archivieren",
     "viewAll":              "Alle anzeigen",

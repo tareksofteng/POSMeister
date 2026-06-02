@@ -124,7 +124,7 @@ const settingsStore   = useSettingsStore();
 
 function formatCurrency(value) {
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value ?? 0);
 }
 
 const columns = computed(() => [

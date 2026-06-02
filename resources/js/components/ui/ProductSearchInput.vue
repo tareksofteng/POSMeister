@@ -72,6 +72,22 @@
                             </div>
                         </div>
 
+                        <!-- Stock badge — live on-hand quantity so cashiers
+                             see availability before adding to cart. -->
+                        <div v-if="item.stock != null" class="flex flex-col items-end text-right flex-shrink-0 mr-1">
+                            <span :class="[
+                                'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tabular-nums',
+                                Number(item.stock) <= 0
+                                    ? 'bg-rose-100 text-rose-700'
+                                    : (item.reorder_level > 0 && Number(item.stock) <= Number(item.reorder_level))
+                                        ? 'bg-amber-100 text-amber-700'
+                                        : 'bg-emerald-100 text-emerald-700'
+                            ]">
+                                {{ Number(item.stock).toLocaleString() }} {{ item.unit_symbol || '' }}
+                            </span>
+                            <p class="text-[9px] text-gray-400 uppercase tracking-wider font-semibold mt-0.5">{{ t('common.stock') }}</p>
+                        </div>
+
                         <!-- Price -->
                         <div class="text-right flex-shrink-0">
                             <p class="text-xs font-semibold text-indigo-700">{{ fmtPrice(item.cost_price) }}</p>
@@ -105,6 +121,8 @@ import { useI18n } from 'vue-i18n';
 import { useDebounce } from '@vueuse/core';
 import { useSettingsStore } from '@/stores/settings';
 import api from '@/services/api';
+import { searchProducts } from '@/offline/productsCache';
+import { getAll } from '@/offline/db';
 import { PhotoIcon, MagnifyingGlassIcon, XMarkIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 
 // ── Props / emits ─────────────────────────────────────────────────────────
@@ -122,7 +140,7 @@ const settingsStore = useSettingsStore();
 
 function fmtPrice(value) {
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value ?? 0);
 }
 
 // ── State ─────────────────────────────────────────────────────────────────
@@ -170,12 +188,17 @@ async function loadDefaults() {
     }
     isLoading.value = true;
     try {
-        const { data } = await api.get('/products/search', { params: { q: '' } });
-        defaultResults.value = Array.isArray(data) ? data : [];
+        if (navigator.onLine === false) {
+            defaultResults.value = (await getAll('products').catch(() => [])).slice(0, 25);
+        } else {
+            const { data } = await api.get('/products/search', { params: { q: '' } });
+            defaultResults.value = Array.isArray(data) ? data : [];
+        }
         results.value = defaultResults.value;
         highlighted.value = 0;
     } catch {
-        results.value = [];
+        defaultResults.value = (await getAll('products').catch(() => [])).slice(0, 25);
+        results.value = defaultResults.value;
     } finally {
         isLoading.value = false;
     }
@@ -189,11 +212,15 @@ watch(debouncedQuery, async (val) => {
     }
     isLoading.value = true;
     try {
-        const { data } = await api.get('/products/search', { params: { q: val } });
-        results.value = Array.isArray(data) ? data : [];
+        if (navigator.onLine === false) {
+            results.value = await searchProducts(val);
+        } else {
+            const { data } = await api.get('/products/search', { params: { q: val } });
+            results.value = Array.isArray(data) ? data : [];
+        }
         highlighted.value = 0;
     } catch {
-        results.value = [];
+        results.value = await searchProducts(val).catch(() => []);
     } finally {
         isLoading.value = false;
     }

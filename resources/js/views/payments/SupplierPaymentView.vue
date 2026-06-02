@@ -319,7 +319,7 @@ const supplierLoading      = ref(false);
 const selectedSupplierBalance = ref(0);
 const selectedSupplier     = ref(null);
 
-const todayDate = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const todayDate = new Date().toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const todayISO  = new Date().toISOString().split('T')[0];
 const todayTotal = computed(() =>
     payments.value
@@ -337,11 +337,11 @@ const form = ref({
 });
 
 function fmtCurrency(val) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
 }
 function fmtDate(val) {
     if (!val) return '—';
-    return new Date(val).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return new Date(val).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 function methodLabel(method) {
     return paymentMethods.value.find(m => m.value === method)?.label ?? method ?? '—';

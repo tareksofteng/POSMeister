@@ -1,15 +1,15 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-5 max-w-7xl mx-auto">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-5 max-w-7xl mx-auto pb-safe">
 
-        <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('inventory.deadStock.title') }}</h1>
-                <p class="mt-1 text-sm text-slate-500">{{ t('inventory.deadStock.subtitle') }}</p>
+                <h1 class="text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{{ t('inventory.deadStock.title') }}</h1>
+                <p class="mt-0.5 text-xs sm:text-sm text-slate-500">{{ t('inventory.deadStock.subtitle') }}</p>
             </div>
             <div class="flex items-end gap-2">
-                <div>
-                    <label class="lbl">{{ t('inventory.deadStock.threshold') }}</label>
-                    <select v-model.number="deadDays" @change="load" class="ctrl w-40">
+                <div class="flex-1 sm:flex-initial">
+                    <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('inventory.deadStock.threshold') }}</label>
+                    <select v-model.number="deadDays" @change="load" class="w-full sm:w-40 px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white">
                         <option :value="30">30 {{ t('common.days') }}</option>
                         <option :value="60">60 {{ t('common.days') }}</option>
                         <option :value="90">90 {{ t('common.days') }}</option>
@@ -20,7 +20,7 @@
             </div>
         </header>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
             <SumBox :label="t('inventory.deadStock.affectedProducts')" :value="String(rows.length)" tone="rose" />
             <SumBox :label="t('inventory.deadStock.totalUnits')"       :value="String(Math.round(totalUnits))" tone="amber" />
             <SumBox :label="t('inventory.deadStock.capitalTied')"      :value="fmtCurrency(totalValue)" tone="rose" />
@@ -43,7 +43,45 @@
             </div>
         </section>
 
-        <div class="card overflow-hidden p-0">
+        <!-- ── MOBILE STACKED CARDS (< sm) ─────────────────────────── -->
+        <div class="sm:hidden space-y-2">
+            <div v-for="r in rows" :key="`m-${r.product_id}`" class="bg-white rounded-xl border border-rose-200/60 p-3 shadow-sm">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                        <p class="font-semibold text-slate-900 truncate">{{ r.name }}</p>
+                        <p class="text-[10px] text-slate-500 font-mono">{{ r.sku }}</p>
+                    </div>
+                    <span :class="idleBadge(r.days_since_sale)" class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md font-bold flex-shrink-0">
+                        {{ r.days_since_sale !== null ? r.days_since_sale + 'd' : '∞' }}
+                    </span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-rose-100 text-xs">
+                    <div>
+                        <p class="text-[9px] uppercase tracking-wider text-slate-400">{{ t('inventory.fields.stock') }}</p>
+                        <p class="font-bold font-mono text-slate-800">{{ r.stock_qty }}</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] uppercase tracking-wider text-slate-400">{{ t('inventory.fields.costPrice') }}</p>
+                        <p class="font-mono text-slate-700">{{ fmtCurrency(r.cost_price) }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] uppercase tracking-wider text-slate-400">{{ t('inventory.fields.tiedCapital') }}</p>
+                        <p class="font-bold font-mono text-rose-700">{{ fmtCurrency(r.stock_value) }}</p>
+                    </div>
+                </div>
+                <p class="mt-2 text-[10px] text-slate-500">
+                    <span class="font-semibold">{{ t('inventory.fields.lastSale') }}:</span>
+                    <span v-if="r.last_sale_date" class="ml-1">{{ formatDate(r.last_sale_date) }}</span>
+                    <span v-else class="ml-1 text-rose-700 font-medium">{{ t('inventory.deadStock.neverSold') }}</span>
+                </p>
+            </div>
+            <p v-if="!loading && rows.length === 0" class="py-10 text-center text-sm text-slate-400">
+                {{ t('inventory.deadStock.empty') }}
+            </p>
+        </div>
+
+        <!-- ── DESKTOP TABLE (sm+) ─────────────────────────────────── -->
+        <div class="hidden sm:block card overflow-hidden p-0">
             <table class="w-full text-sm">
                 <thead class="bg-slate-50/70">
                     <tr class="text-left text-[11px] text-slate-500 uppercase tracking-wide border-b border-slate-100">
@@ -104,7 +142,7 @@ const totalUnits = computed(() => rows.value.reduce((s, r) => s + (r.stock_qty |
 const totalValue = computed(() => rows.value.reduce((s, r) => s + (r.stock_value || 0), 0));
 
 function formatDate(d) {
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
+    return new Intl.DateTimeFormat(locale.value || 'en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
 }
 
 function idleBadge(days) {

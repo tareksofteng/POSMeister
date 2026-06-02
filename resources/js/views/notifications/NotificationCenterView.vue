@@ -7,9 +7,15 @@
                 <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ t('notifications.centerTitle') }}</h1>
                 <p class="mt-1 text-sm text-slate-500">{{ t('notifications.centerSubtitle') }}</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
                 <button @click="store.markAllRead()" :disabled="store.unread === 0" class="btn-soft">
                     {{ t('notifications.markAllRead') }}
+                </button>
+                <button @click="onClearRead" :disabled="!hasRead" class="btn-soft">
+                    {{ t('notifications.clearRead') }}
+                </button>
+                <button @click="onClearAll" :disabled="store.items.length === 0" class="btn-soft text-rose-700 border-rose-200 hover:bg-rose-50">
+                    {{ t('notifications.clearAll') }}
                 </button>
                 <RouterLink :to="{ name: 'notification-preferences' }" class="btn-soft">
                     <CogIcon class="w-4 h-4" /> {{ t('notifications.preferences') }}
@@ -155,7 +161,18 @@ function sevBg(s) {
 }
 function formatDate(iso) {
     if (!iso) return '';
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+    return new Intl.DateTimeFormat(locale.value || 'en-US', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+}
+
+const hasRead = computed(() => store.items.some(n => n.read_at));
+
+async function onClearRead() {
+    if (!window.confirm(t('notifications.confirmClearRead'))) return;
+    await store.clearRead();
+}
+async function onClearAll() {
+    if (!window.confirm(t('notifications.confirmClearAll'))) return;
+    await store.clearAll();
 }
 
 onMounted(() => store.fetch());

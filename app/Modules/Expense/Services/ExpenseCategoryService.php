@@ -42,7 +42,7 @@ class ExpenseCategoryService
     public function delete(ExpenseCategory $category): void
     {
         if (Expense::where('expense_category_id', $category->id)->exists()) {
-            throw new \RuntimeException('Kategorie kann nicht gelöscht werden, da ihr Ausgaben zugeordnet sind.');
+            throw new \RuntimeException(__('errors.expense_categories.has_expenses'));
         }
         $category->delete();
     }

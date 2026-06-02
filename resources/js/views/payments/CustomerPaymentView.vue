@@ -313,7 +313,7 @@ const customerLoading      = ref(false);
 const selectedCustomerDue  = ref(0);
 const selectedCustomer     = ref(null);
 
-const todayDate  = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const todayDate  = new Date().toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const todayISO   = new Date().toISOString().split('T')[0];
 const todayTotal = computed(() => {
     return payments.value
@@ -342,12 +342,12 @@ const form = ref({
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function fmtCurrency(val) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
 }
 function fmtDate(val) {
     if (!val) return '—';
     const d = new Date(val);
-    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 function methodLabel(method) {
     const found = paymentMethods.value.find(m => m.value === method);

@@ -21,7 +21,11 @@ function emit(state) {
 }
 
 async function postOne(item) {
-    const token = localStorage.getItem('posmeister_auth_token');
+    // App-wide token key is `pos_token` (set by stores/auth.js _persist()).
+    // The old `posmeister_auth_token` was a stale name from an earlier
+    // prototype and would silently skip the Authorization header, making
+    // every queued write fail with 401 once the cashier was back online.
+    const token = localStorage.getItem('pos_token');
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

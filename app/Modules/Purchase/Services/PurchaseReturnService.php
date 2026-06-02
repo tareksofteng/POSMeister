@@ -128,7 +128,7 @@ class PurchaseReturnService
             );
 
             if (empty($returnItems)) {
-                throw new \RuntimeException('Bitte mindestens eine Rückgabemenge eingeben.');
+                throw new \RuntimeException(__('errors.purchase_returns.min_one_quantity'));
             }
 
             $purchase = Purchase::with('items')->findOrFail($data['purchase_id']);

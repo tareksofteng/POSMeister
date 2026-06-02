@@ -309,7 +309,7 @@ const DayBox = (props) => h('div', { class: `rounded-lg p-2 bg-${props.color}-50
 DayBox.props = ['label', 'value', 'color'];
 
 function formatDate(s) {
-    return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    return s ? new Date(s + 'T00:00:00').toLocaleDateString('en-US') : '';
 }
 
 function openAddItem(type) {

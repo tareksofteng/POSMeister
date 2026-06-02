@@ -1,5 +1,5 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-5 max-w-7xl mx-auto">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-5 max-w-7xl mx-auto pb-safe">
 
         <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
@@ -40,8 +40,8 @@
                 <SumBox :label="t('inventory.analytics.retailValue')"   :value="fmtCurrency(valuation.total_retail_value)" tone="indigo" />
                 <SumBox :label="t('inventory.analytics.unrealisedMargin')" :value="fmtCurrency(valuation.unrealised_margin)" tone="emerald" />
             </div>
-            <div class="card overflow-hidden p-0">
-                <table class="w-full text-sm">
+            <div class="card overflow-hidden p-0 overflow-x-auto">
+                <table class="w-full text-sm min-w-[600px]">
                     <thead class="bg-slate-50/70">
                         <tr class="text-left text-[11px] text-slate-500 uppercase tracking-wide border-b border-slate-100">
                             <th class="px-4 py-2.5">{{ t('inventory.fields.product') }}</th>
@@ -68,8 +68,8 @@
         </section>
 
         <!-- Profitability -->
-        <section v-if="tab === 'profitability'" class="card overflow-hidden p-0">
-            <table class="w-full text-sm">
+        <section v-if="tab === 'profitability'" class="card overflow-hidden p-0 overflow-x-auto">
+            <table class="w-full text-sm min-w-[600px]">
                 <thead class="bg-slate-50/70">
                     <tr class="text-left text-[11px] text-slate-500 uppercase tracking-wide border-b border-slate-100">
                         <th class="px-4 py-2.5">{{ t('inventory.fields.product') }}</th>
@@ -110,8 +110,8 @@
         </section>
 
         <!-- Movement -->
-        <section v-if="tab === 'movement' && movement" class="card overflow-hidden p-0">
-            <table class="w-full text-sm">
+        <section v-if="tab === 'movement' && movement" class="card overflow-hidden p-0 overflow-x-auto">
+            <table class="w-full text-sm min-w-[600px]">
                 <thead class="bg-slate-50/70">
                     <tr class="text-left text-[11px] text-slate-500 uppercase tracking-wide border-b border-slate-100">
                         <th class="px-4 py-2.5">{{ t('inventory.fields.product') }}</th>
@@ -138,8 +138,8 @@
         </section>
 
         <!-- Suppliers -->
-        <section v-if="tab === 'suppliers' && suppliers.length" class="card overflow-hidden p-0">
-            <table class="w-full text-sm">
+        <section v-if="tab === 'suppliers' && suppliers.length" class="card overflow-hidden p-0 overflow-x-auto">
+            <table class="w-full text-sm min-w-[600px]">
                 <thead class="bg-slate-50/70">
                     <tr class="text-left text-[11px] text-slate-500 uppercase tracking-wide border-b border-slate-100">
                         <th class="px-4 py-2.5">{{ t('inventory.fields.supplier') }}</th>
@@ -196,7 +196,7 @@ const from = ref(new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0,
 const to   = ref(new Date().toISOString().slice(0, 10));
 
 function formatDate(d) {
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
+    return new Intl.DateTimeFormat(locale.value || 'en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
 }
 
 const SumBox = (props) => {

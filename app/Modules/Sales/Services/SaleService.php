@@ -92,17 +92,26 @@ class SaleService
                 ?? auth()->user()->branch_id
                 ?? Branch::where('is_active', true)->value('id');
 
-            // Stock validation before writing anything
-            foreach ($items as $item) {
-                if ($item['is_service'] ?? false) {
-                    continue;
-                }
-                $inv = Inventory::where(['product_id' => $item['product_id'], 'branch_id' => $branchId])
-                    ->first();
-                $available = $inv ? (float) $inv->quantity : 0;
-                if ($available < (float) $item['quantity']) {
-                    $name = Product::find($item['product_id'])?->name ?? "Produkt #{$item['product_id']}";
-                    throw new \RuntimeException("Unzureichender Bestand für: {$name}");
+            // Stock validation before writing anything.
+            //
+            // Offline-originated sales (replayed by SaleSyncService) bypass
+            // this check because the cashier has already physically handed
+            // the goods to the customer; rejecting the sale at sync time
+            // would leave their books out of sync forever. Inventory may go
+            // briefly negative, which a future stock-take corrects.
+            $skipStock = !empty($data['_skip_stock_check']);
+            if (!$skipStock) {
+                foreach ($items as $item) {
+                    if ($item['is_service'] ?? false) {
+                        continue;
+                    }
+                    $inv = Inventory::where(['product_id' => $item['product_id'], 'branch_id' => $branchId])
+                        ->first();
+                    $available = $inv ? (float) $inv->quantity : 0;
+                    if ($available < (float) $item['quantity']) {
+                        $name = Product::find($item['product_id'])?->name ?? "Produkt #{$item['product_id']}";
+                        throw new \RuntimeException(__('errors.sales.insufficient_stock', ['name' => $name]));
+                    }
                 }
             }
 
@@ -151,10 +160,17 @@ class SaleService
                     'is_service' => $item['is_service'] ?? false,
                 ]);
 
-                // Deduct from inventory
+                // Deduct from inventory. For offline-originated sales we may
+                // be hitting a (product, branch) combo that doesn't have an
+                // inventory row yet — create it at 0 first so the decrement
+                // has something to act on. The negative quantity that may
+                // result is intentional (see stock-validation note above).
                 if (!($item['is_service'] ?? false)) {
-                    Inventory::where(['product_id' => $item['product_id'], 'branch_id' => $branchId])
-                        ->decrement('quantity', (float) $item['quantity']);
+                    $inv = Inventory::firstOrCreate(
+                        ['product_id' => $item['product_id'], 'branch_id' => $branchId],
+                        ['quantity' => 0]
+                    );
+                    $inv->decrement('quantity', (float) $item['quantity']);
                 }
             }
 
@@ -167,7 +183,7 @@ class SaleService
     public function cancel(Sale $sale): Sale
     {
         if (!$sale->isActive()) {
-            throw new \RuntimeException('Dieser Verkauf ist bereits storniert.');
+            throw new \RuntimeException(__('errors.sales.already_cancelled'));
         }
 
         return DB::transaction(function () use ($sale) {

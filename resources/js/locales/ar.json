@@ -172,7 +172,8 @@
     "post": "ترحيل",
     "records": "سجلات",
     "refresh": "تحديث",
-    "showing": "عرض"
+    "showing": "عرض",
+    "stock": "المخزون"
   },
   "paymentMethod": {
     "cash": "نقدًا",
@@ -228,7 +229,14 @@
       "grossMargin":     "هامش إجمالي",
       "cashBankSub":     "رصيد حي من الدفتر",
       "outstandingSub":  "فواتير غير مدفوعة",
-      "newThisMonth":    "جدد هذا الشهر"
+      "newThisMonth":    "جدد هذا الشهر",
+      "todayPurchase":   "مشتريات اليوم",
+      "monthPurchase":   "مشتريات الشهر",
+      "customerPayments":"مدفوعات العملاء",
+      "supplierPayments":"مدفوعات الموردين",
+      "reorderAlerts":   "تنبيهات إعادة الطلب",
+      "deadStock":       "مخزون راكد",
+      "vsYesterday":     "مقارنة بالأمس"
     },
     "activeSub": "{active} نشط · {inactive} غير نشط",
     "branchOverview": {
@@ -327,7 +335,17 @@
     },
     "activity": {
       "title": "النشاط",
-      "empty": "لا نشاط بعد"
+      "empty": "لا نشاط بعد",
+      "types": {
+        "sale":        "بيع",
+        "purchase":    "شراء",
+        "payment_in":  "دفعة واردة",
+        "payment_out": "دفعة صادرة",
+        "customer":    "عميل جديد",
+        "loyalty":     "ولاء",
+        "delivery":    "تسليم",
+        "return":      "إرجاع"
+      }
     }
   },
   "branches": {
@@ -2697,6 +2715,10 @@
     "unread":               "{n} غير مقروء",
     "empty":                "كل شيء على ما يرام — لا تنبيهات.",
     "markAllRead":          "وضع علامة مقروء على الكل",
+    "clearRead":            "مسح المقروءة",
+    "clearAll":             "مسح الكل",
+    "confirmClearRead":     "أرشفة جميع التنبيهات التي قمت بقراءتها؟",
+    "confirmClearAll":      "أرشفة جميع التنبيهات بما في ذلك غير المقروءة؟ قد تختفي تحذيرات حرجة.",
     "ack":                  "تأكيد",
     "archive":              "أرشفة",
     "viewAll":              "عرض الكل",

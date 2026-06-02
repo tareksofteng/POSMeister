@@ -108,12 +108,12 @@ Card.props = ['label', 'value', 'tone'];
 
 function formatDate(iso) {
     if (!iso) return '–';
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', {
+    return new Intl.DateTimeFormat(locale.value || 'en-US', {
         day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
     }).format(new Date(iso));
 }
 function formatMoney(v) {
-    return new Intl.NumberFormat(locale.value || 'de-DE', { style: 'currency', currency: 'EUR' }).format(v || 0);
+    return new Intl.NumberFormat(locale.value || 'en-US', { style: 'currency', currency: 'EUR' }).format(v || 0);
 }
 
 async function refreshLocal() {

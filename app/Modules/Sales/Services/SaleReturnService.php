@@ -73,7 +73,7 @@ class SaleReturnService
             ->findOrFail($saleId);
 
         if ($sale->status !== 'active') {
-            throw new \RuntimeException('Nur aktive Verkäufe können zurückgegeben werden.');
+            throw new \RuntimeException(__('errors.sale_returns.only_active'));
         }
 
         $items = $sale->items->map(function (SaleItem $item) {
@@ -128,13 +128,13 @@ class SaleReturnService
             );
 
             if (empty($returnItems)) {
-                throw new \RuntimeException('Bitte mindestens eine Rückgabemenge eingeben.');
+                throw new \RuntimeException(__('errors.sale_returns.min_one_quantity'));
             }
 
             $sale = Sale::with('items')->findOrFail($data['sale_id']);
 
             if ($sale->status !== 'active') {
-                throw new \RuntimeException('Nur aktive Verkäufe können zurückgegeben werden.');
+                throw new \RuntimeException(__('errors.sale_returns.only_active'));
             }
 
             // Validate each line

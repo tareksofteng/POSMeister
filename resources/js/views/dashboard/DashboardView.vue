@@ -24,6 +24,9 @@
             </div>
         </header>
 
+        <!-- ── EXECUTIVE KPI MARQUEE ──────────────────────────────────── -->
+        <KpiMarquee v-if="d" :items="marqueeItems" />
+
         <!-- Smart alerts banner -->
         <section v-if="alerts.length" class="flex flex-wrap gap-2">
             <div v-for="(a, i) in alerts" :key="i"
@@ -34,34 +37,58 @@
             </div>
         </section>
 
-        <!-- KPI strip -->
-        <section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-            <KpiCard :label="t('dashboard.kpi.todayRevenue')"
-                     :value="fmt(d?.sales?.today_revenue)"
-                     :sub="(d?.sales?.today_sales_count ?? 0) + ' ' + t('dashboard.kpi.salesUnit')"
-                     :delta="d?.sales?.delta_vs_yesterday"
-                     tone="indigo" :icon="BanknotesIcon" />
-            <KpiCard :label="t('dashboard.kpi.monthRevenue')"
-                     :value="fmt(d?.sales?.month_revenue)"
-                     :sub="(d?.sales?.month_sales_count ?? 0) + ' ' + t('dashboard.kpi.salesUnit')"
-                     tone="emerald" :icon="ChartBarIcon" />
-            <KpiCard :label="t('dashboard.kpi.netProfit')"
-                     :value="fmt(d?.finance?.net_profit_month)"
-                     :sub="(d?.finance?.gross_margin_pct ?? 0) + '% ' + t('dashboard.kpi.grossMargin')"
-                     :tone="(d?.finance?.net_profit_month ?? 0) >= 0 ? 'emerald' : 'rose'"
-                     :icon="ArrowTrendingUpIcon" />
-            <KpiCard :label="t('dashboard.kpi.cashAndBank')"
-                     :value="fmt((d?.finance?.cash_balance ?? 0) + (d?.finance?.bank_balance ?? 0))"
-                     :sub="t('dashboard.kpi.cashBankSub')"
-                     tone="indigo" :icon="BuildingLibraryIcon" />
-            <KpiCard :label="t('dashboard.kpi.receivables')"
-                     :value="fmt(d?.sales?.month_outstanding)"
-                     :sub="t('dashboard.kpi.outstandingSub')"
-                     tone="amber" :icon="DocumentTextIcon" />
-            <KpiCard :label="t('dashboard.kpi.activeCustomers')"
-                     :value="d?.customers?.active_count ?? '—'"
-                     :sub="(d?.customers?.new_this_month ?? 0) + ' ' + t('dashboard.kpi.newThisMonth')"
-                     tone="indigo" :icon="UsersIcon" />
+        <!-- ── EXECUTIVE SNAPSHOT (premium KPI cards with sparklines) ─── -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
+            <SparklineCard
+                :label="t('dashboard.kpi.todayRevenue')"
+                :value="+d?.sales?.today_revenue || 0"
+                :prefix="currencyPrefix"
+                :delta="d?.sales?.delta_vs_yesterday"
+                :deltaLabel="t('dashboard.kpi.vsYesterday')"
+                :sub="(d?.sales?.today_sales_count ?? 0) + ' ' + t('dashboard.kpi.salesUnit')"
+                :sparkline="trendValues"
+                tone="indigo"
+            ><template #icon><BanknotesIcon class="w-5 h-5" /></template></SparklineCard>
+
+            <SparklineCard
+                :label="t('dashboard.kpi.monthRevenue')"
+                :value="+d?.sales?.month_revenue || 0"
+                :prefix="currencyPrefix"
+                :sub="(d?.sales?.month_sales_count ?? 0) + ' ' + t('dashboard.kpi.salesUnit')"
+                :sparkline="trendValues"
+                tone="emerald"
+            ><template #icon><ChartBarIcon class="w-5 h-5" /></template></SparklineCard>
+
+            <SparklineCard
+                :label="t('dashboard.kpi.netProfit')"
+                :value="+d?.finance?.net_profit_month || 0"
+                :prefix="currencyPrefix"
+                :sub="(d?.finance?.gross_margin_pct ?? 0) + '% ' + t('dashboard.kpi.grossMargin')"
+                :tone="(d?.finance?.net_profit_month ?? 0) >= 0 ? 'emerald' : 'rose'"
+            ><template #icon><ArrowTrendingUpIcon class="w-5 h-5" /></template></SparklineCard>
+
+            <SparklineCard
+                :label="t('dashboard.kpi.cashAndBank')"
+                :value="(+d?.finance?.cash_balance || 0) + (+d?.finance?.bank_balance || 0)"
+                :prefix="currencyPrefix"
+                :sub="t('dashboard.kpi.cashBankSub')"
+                tone="indigo"
+            ><template #icon><BuildingLibraryIcon class="w-5 h-5" /></template></SparklineCard>
+
+            <SparklineCard
+                :label="t('dashboard.kpi.receivables')"
+                :value="+d?.sales?.month_outstanding || 0"
+                :prefix="currencyPrefix"
+                :sub="t('dashboard.kpi.outstandingSub')"
+                tone="amber"
+            ><template #icon><DocumentTextIcon class="w-5 h-5" /></template></SparklineCard>
+
+            <SparklineCard
+                :label="t('dashboard.kpi.activeCustomers')"
+                :value="+d?.customers?.active_count || 0"
+                :sub="(d?.customers?.new_this_month ?? 0) + ' ' + t('dashboard.kpi.newThisMonth')"
+                tone="violet"
+            ><template #icon><UsersIcon class="w-5 h-5" /></template></SparklineCard>
         </section>
 
         <!-- Secondary insights -->
@@ -198,24 +225,13 @@
                 </div>
             </section>
 
-            <section class="bg-white border border-slate-200 rounded-xl shadow-sm">
-                <div class="px-5 py-3 border-b border-slate-100">
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
+                <div class="px-5 py-3 border-b border-slate-100 dark:border-slate-800">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.activity.title') }}</h3>
                 </div>
-                <ol class="px-5 py-3 space-y-2 max-h-96 overflow-y-auto">
-                    <li v-for="(a, i) in d?.activity ?? []" :key="i"
-                        class="flex items-start gap-3 py-1.5 border-b border-slate-50 last:border-0">
-                        <span :class="['mt-1.5 w-2 h-2 rounded-full flex-shrink-0', kindDot(a.kind)]"></span>
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs font-medium text-slate-800 truncate">{{ a.title }}</p>
-                            <p class="text-[10px] text-slate-400">{{ relativeTime(a.at) }}</p>
-                        </div>
-                        <p class="text-xs font-mono text-slate-700 whitespace-nowrap">{{ fmt(a.amount) }}</p>
-                    </li>
-                    <li v-if="(d?.activity ?? []).length === 0" class="text-center text-sm text-slate-400 py-6">
-                        {{ t('dashboard.activity.empty') }}
-                    </li>
-                </ol>
+                <div class="px-2 py-2 max-h-96 overflow-y-auto">
+                    <BusinessActivityFeed :items="feedItems" :limit="10" />
+                </div>
             </section>
         </div>
 
@@ -266,7 +282,13 @@ import {
     UserGroupIcon, ShoppingCartIcon, ChevronRightIcon, ArrowPathIcon,
     ExclamationTriangleIcon, InformationCircleIcon,
     TagIcon, TruckIcon, BookOpenIcon, ClipboardDocumentListIcon,
+    CubeIcon, ReceiptPercentIcon, CurrencyDollarIcon, FireIcon,
 } from '@heroicons/vue/24/outline';
+
+// Executive dashboard upgrade
+import KpiMarquee     from '@/components/dashboard/KpiMarquee.vue';
+import SparklineCard  from '@/components/dashboard/SparklineCard.vue';
+import BusinessActivityFeed from '@/components/dashboard/BusinessActivityFeed.vue';
 
 const { t } = useI18n();
 const { intlLocale } = useLocale();
@@ -279,7 +301,7 @@ const loading = ref(false);
 function fmt(value) {
     if (value === null || value === undefined) return '—';
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat(intlLocale.value || 'de-DE',
+    return new Intl.NumberFormat(intlLocale.value || 'en-US',
         { style: 'currency', currency: code, maximumFractionDigits: 2 }
     ).format(Number(value) || 0);
 }
@@ -291,12 +313,12 @@ const greeting = computed(() => {
     return t(`dashboard.greeting.${key}`);
 });
 const dateString = computed(() =>
-    new Intl.DateTimeFormat(intlLocale.value || 'de-DE',
+    new Intl.DateTimeFormat(intlLocale.value || 'en-US',
         { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
     ).format(now)
 );
 function formatDay(d) {
-    return new Intl.DateTimeFormat(intlLocale.value || 'de-DE', { day: '2-digit', month: '2-digit' }).format(new Date(d));
+    return new Intl.DateTimeFormat(intlLocale.value || 'en-US', { day: '2-digit', month: '2-digit' }).format(new Date(d));
 }
 function relativeTime(input) {
     if (!input) return '';
@@ -342,6 +364,44 @@ function kindDot(kind) {
         journal: 'bg-indigo-500',
     }[kind] ?? 'bg-slate-400';
 }
+
+// ── Executive marquee KPIs ────────────────────────────────────────────────
+// Compact, glance-friendly metrics that scroll across the top of the dash.
+const trendValues = computed(() => (d.value?.sales_trend ?? []).map(p => p.revenue || 0));
+
+const marqueeItems = computed(() => {
+    const s   = d.value?.sales     || {};
+    const p   = d.value?.purchases || {};
+    const f   = d.value?.finance   || {};
+    const inv = d.value?.inventory || {};
+    const o   = d.value?.orders    || {};
+    return [
+        { key: 'sales-today',  label: t('dashboard.kpi.todayRevenue'),    value: +s.today_revenue || 0,    prefix: currencyPrefix.value, icon: BanknotesIcon,         tone: 'indigo',  delta: s.delta_vs_yesterday },
+        { key: 'sales-month',  label: t('dashboard.kpi.monthRevenue'),    value: +s.month_revenue || 0,    prefix: currencyPrefix.value, icon: ChartBarIcon,          tone: 'emerald' },
+        { key: 'purch-today',  label: t('dashboard.kpi.todayPurchase'),   value: +p.today || 0,            prefix: currencyPrefix.value, icon: TruckIcon,             tone: 'sky' },
+        { key: 'purch-month',  label: t('dashboard.kpi.monthPurchase'),   value: +p.month || 0,            prefix: currencyPrefix.value, icon: TruckIcon,             tone: 'sky' },
+        { key: 'cust-pay',     label: t('dashboard.kpi.customerPayments'),value: +p.customer_paid_month || 0, prefix: currencyPrefix.value, icon: CurrencyDollarIcon, tone: 'emerald' },
+        { key: 'sup-pay',      label: t('dashboard.kpi.supplierPayments'),value: +p.supplier_paid_month || 0, prefix: currencyPrefix.value, icon: CurrencyDollarIcon, tone: 'violet' },
+        { key: 'profit',       label: t('dashboard.kpi.netProfit'),       value: +f.net_profit_month || 0, prefix: currencyPrefix.value, icon: ArrowTrendingUpIcon,   tone: (+f.net_profit_month || 0) >= 0 ? 'emerald' : 'rose' },
+        { key: 'cash',         label: t('dashboard.kpi.cashAndBank'),     value: (+f.cash_balance || 0) + (+f.bank_balance || 0), prefix: currencyPrefix.value, icon: BuildingLibraryIcon, tone: 'indigo' },
+        { key: 'receivables',  label: t('dashboard.kpi.receivables'),     value: +s.month_outstanding || 0,prefix: currencyPrefix.value, icon: DocumentTextIcon,      tone: 'amber',  urgent: (+s.month_outstanding || 0) > 0 },
+        { key: 'stock-value',  label: t('dashboard.insights.stockValue'), value: +inv.stock_value || 0,    prefix: currencyPrefix.value, icon: CubeIcon,              tone: 'slate' },
+        { key: 'open-orders',  label: t('dashboard.insights.openOrders'), value: +o.open || 0,                                          icon: ShoppingBagIcon,       tone: 'amber',  urgent: (+o.open || 0) > 0 },
+        { key: 'reorder',      label: t('dashboard.kpi.reorderAlerts'),   value: +inv.low_stock_count || 0,                             icon: FireIcon,              tone: 'rose',   urgent: (+inv.low_stock_count || 0) > 0 },
+        { key: 'dead-stock',   label: t('dashboard.kpi.deadStock'),       value: +inv.dead_stock_count || 0,                            icon: ArchiveBoxIcon,        tone: 'slate' },
+    ];
+});
+
+const currencyPrefix = computed(() => settingsStore.settings?.currency_symbol ? (settingsStore.settings.currency_symbol + ' ') : '');
+
+// Activity feed mapping — translate backend kinds → semantic types for the timeline.
+const feedItems = computed(() => (d.value?.activity ?? []).map(a => ({
+    id:       a.id,
+    type:     ({ sale: 'sale', journal: 'payment_in' })[a.kind] || 'sale',
+    title:    a.title,
+    subtitle: a.amount ? (currencyPrefix.value + Number(a.amount).toFixed(2)) : '',
+    at:       a.at,
+})));
 
 const KpiCard = (props) => {
     const palette = {
@@ -434,11 +494,34 @@ const moduleStatusList = computed(() => [
 async function load() {
     loading.value = true;
     try {
+        if (navigator.onLine === false) {
+            await loadFromCache();
+            return;
+        }
         const { data } = await dashboardService.stats();
         d.value = data;
+        // Mirror the fresh stats into IndexedDB so the next offline boot
+        // already has yesterday's numbers in front of the cashier.
+        try {
+            const { put } = await import('@/offline/db');
+            await put('settings', { k: 'dashboard_stats', v: data });
+        } catch { /* best-effort */ }
+    } catch (err) {
+        const swOffline = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (!err.response || swOffline) {
+            await loadFromCache();
+        }
     } finally {
         loading.value = false;
     }
+}
+
+async function loadFromCache() {
+    try {
+        const { get } = await import('@/offline/db');
+        const row = await get('settings', 'dashboard_stats');
+        if (row?.v) d.value = row.v;
+    } catch { /* nothing cached yet */ }
 }
 
 onMounted(load);

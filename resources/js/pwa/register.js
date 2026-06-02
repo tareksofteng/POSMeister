@@ -43,8 +43,20 @@ export function registerPwa() {
                     }
                 });
             });
+            nudgePrecache();
         }).catch(() => {});
     });
+
+    // Re-nudge whenever the network flips back online: a freshly online
+    // user is the perfect moment to top up any chunks the SW missed
+    // during a flaky install or after a deploy.
+    window.addEventListener('online', () => nudgePrecache());
+}
+
+function nudgePrecache() {
+    if (!navigator.serviceWorker?.controller) return;
+    try { navigator.serviceWorker.controller.postMessage('PRECACHE_ASSETS'); }
+    catch { /* SW may still be activating — next boot will retry */ }
 }
 
 export function applyUpdateNow() {

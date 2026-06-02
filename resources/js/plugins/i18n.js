@@ -6,7 +6,11 @@ import ar from '@/locales/ar.json';
 
 export const SUPPORTED_LOCALES = {
     en: { label: 'English', flag: '🇬🇧', dir: 'ltr', intl: 'en-US' },
-    de: { label: 'Deutsch', flag: '🇩🇪', dir: 'ltr', intl: 'de-DE' },
+    // ⏸ Temporarily hidden from the language switcher dropdown.
+    //   The de.json translations + lang/de/errors.php stay loaded so any
+    //   existing user with pos_locale='de' in localStorage still works.
+    //   Uncomment the next line to re-expose German in the picker.
+    // de: { label: 'Deutsch', flag: '🇩🇪', dir: 'ltr', intl: 'de-DE' },
     bn: { label: 'বাংলা',   flag: '🇧🇩', dir: 'ltr', intl: 'bn-BD' },
     ar: { label: 'العربية', flag: '🇸🇦', dir: 'rtl', intl: 'ar-SA' },
 };

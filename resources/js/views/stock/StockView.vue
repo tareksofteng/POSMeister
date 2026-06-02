@@ -1,24 +1,24 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 pb-safe">
 
-        <!-- Page header -->
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 no-print">
-            <div class="flex items-start gap-3">
-                <div class="flex items-center justify-center w-11 h-11 rounded-xl bg-emerald-100 flex-shrink-0">
-                    <ArchiveBoxIcon class="w-6 h-6 text-emerald-600" />
+        <!-- Page header — compact on mobile -->
+        <div class="flex items-start justify-between gap-3 no-print">
+            <div class="flex items-start gap-3 min-w-0">
+                <div class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-100 flex-shrink-0">
+                    <ArchiveBoxIcon class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('stock.title') }}</h1>
-                    <p class="mt-0.5 text-sm text-gray-500">{{ t('stock.subtitle') }}</p>
+                <div class="min-w-0">
+                    <h1 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight truncate">{{ t('stock.title') }}</h1>
+                    <p class="mt-0.5 text-xs sm:text-sm text-gray-500 line-clamp-2 sm:line-clamp-none">{{ t('stock.subtitle') }}</p>
                 </div>
             </div>
             <button
                 v-if="rows.length"
                 @click="printReport"
-                class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm self-start"
+                class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm flex-shrink-0"
             >
                 <PrinterIcon class="w-4 h-4" />
-                {{ t('stock.printReport') }}
+                <span class="hidden xs:inline">{{ t('stock.printReport') }}</span>
             </button>
         </div>
 
@@ -36,20 +36,20 @@
             </div>
         </div>
 
-        <!-- Filter type tabs -->
-        <div class="flex flex-wrap items-center gap-2 no-print">
+        <!-- Filter type tabs — horizontal scroll on phones, no wrap-overflow -->
+        <div class="flex items-center gap-2 no-print overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap">
             <button
                 v-for="ft in filterTypes"
                 :key="ft.value"
                 @click="setFilterType(ft.value)"
                 :class="[
-                    'px-4 py-2 text-sm font-medium rounded-lg border transition-colors',
+                    'flex-shrink-0 inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg border transition-colors whitespace-nowrap',
                     filterType === ft.value
                         ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50',
                 ]"
             >
-                <component :is="ft.icon" class="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                <component :is="ft.icon" class="w-4 h-4" />
                 {{ t(ft.labelKey) }}
             </button>
         </div>
@@ -101,46 +101,46 @@
         <!-- Error -->
         <div v-if="error" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 no-print">{{ error }}</div>
 
-        <!-- Summary cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+        <!-- Summary cards — 2 cols mobile / 4 cols desktop -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 no-print">
             <!-- Total products -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-3 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                    <CubeIcon class="w-5 h-5 text-indigo-600" />
+            <div class="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 flex items-start gap-2 sm:gap-3 shadow-sm">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                    <CubeIcon class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 truncate">{{ t('stock.cardProducts') }}</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-0.5 tabular-nums">{{ summary.total_products }}</p>
+                    <p class="text-[10px] sm:text-xs font-medium text-gray-500 truncate uppercase tracking-wider">{{ t('stock.cardProducts') }}</p>
+                    <p class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5 tabular-nums">{{ summary.total_products }}</p>
                 </div>
             </div>
             <!-- Stock value -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-3 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                    <BanknotesIcon class="w-5 h-5 text-emerald-600" />
+            <div class="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 flex items-start gap-2 sm:gap-3 shadow-sm">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <BanknotesIcon class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 truncate">{{ t('stock.cardValue') }}</p>
-                    <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">{{ formatCurrency(summary.total_value) }}</p>
+                    <p class="text-[10px] sm:text-xs font-medium text-gray-500 truncate uppercase tracking-wider">{{ t('stock.cardValue') }}</p>
+                    <p class="text-sm sm:text-xl font-bold text-gray-900 mt-0.5 tabular-nums truncate">{{ formatCurrency(summary.total_value) }}</p>
                 </div>
             </div>
             <!-- Low stock -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-3 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                    <ExclamationTriangleIcon class="w-5 h-5 text-amber-600" />
+            <div class="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 flex items-start gap-2 sm:gap-3 shadow-sm">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                    <ExclamationTriangleIcon class="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 truncate">{{ t('stock.cardLow') }}</p>
-                    <p class="text-2xl font-bold text-amber-600 mt-0.5 tabular-nums">{{ summary.low_stock_count }}</p>
+                    <p class="text-[10px] sm:text-xs font-medium text-gray-500 truncate uppercase tracking-wider">{{ t('stock.cardLow') }}</p>
+                    <p class="text-xl sm:text-2xl font-bold text-amber-600 mt-0.5 tabular-nums">{{ summary.low_stock_count }}</p>
                 </div>
             </div>
             <!-- Out of stock -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-3 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <XCircleIcon class="w-5 h-5 text-red-600" />
+            <div class="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 flex items-start gap-2 sm:gap-3 shadow-sm">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <XCircleIcon class="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 truncate">{{ t('stock.cardOut') }}</p>
-                    <p class="text-2xl font-bold text-red-600 mt-0.5 tabular-nums">{{ summary.out_of_stock }}</p>
+                    <p class="text-[10px] sm:text-xs font-medium text-gray-500 truncate uppercase tracking-wider">{{ t('stock.cardOut') }}</p>
+                    <p class="text-xl sm:text-2xl font-bold text-red-600 mt-0.5 tabular-nums">{{ summary.out_of_stock }}</p>
                 </div>
             </div>
         </div>
@@ -163,8 +163,79 @@
                 <p class="text-xs text-gray-400 mt-1">{{ t('stock.emptyMessage') }}</p>
             </div>
 
-            <!-- Data table -->
-            <div v-else class="overflow-x-auto">
+            <!-- ── MOBILE STACKED CARDS (< sm) ─────────────────────────── -->
+            <div v-if="filteredRows.length" class="sm:hidden divide-y divide-gray-100 no-print">
+                <div
+                    v-for="row in filteredRows"
+                    :key="`m-${row.id}`"
+                    :class="[
+                        'p-3 transition-colors',
+                        row.out_of_stock ? 'bg-red-50/40' : row.low_stock ? 'bg-amber-50/40' : '',
+                    ]"
+                >
+                    <div class="flex items-start gap-3">
+                        <!-- Image -->
+                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
+                            <img v-if="row.image_url" :src="row.image_url" :alt="row.name" class="w-full h-full object-cover" />
+                            <div v-else class="w-full h-full flex items-center justify-center">
+                                <PhotoIcon class="w-5 h-5 text-gray-300" />
+                            </div>
+                        </div>
+                        <!-- Top row -->
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-gray-900 truncate">{{ row.name }}</p>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="font-mono text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">{{ row.sku }}</span>
+                                <span v-if="row.category_name" class="text-[10px] text-gray-400 truncate">{{ row.category_name }}</span>
+                            </div>
+                        </div>
+                        <!-- Status badge -->
+                        <span :class="[
+                            'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0',
+                            row.out_of_stock ? 'bg-red-100 text-red-700'
+                                : row.low_stock ? 'bg-amber-100 text-amber-700'
+                                : 'bg-emerald-100 text-emerald-700',
+                        ]">
+                            <span :class="[
+                                'w-1.5 h-1.5 rounded-full mr-1',
+                                row.out_of_stock ? 'bg-red-500' : row.low_stock ? 'bg-amber-500' : 'bg-emerald-500',
+                            ]" />
+                            {{ row.out_of_stock ? t('stock.badgeOut') : row.low_stock ? t('stock.badgeLow') : t('stock.badgeNormal') }}
+                        </span>
+                    </div>
+                    <!-- Metrics grid -->
+                    <div class="grid grid-cols-3 gap-2 mt-3 pt-2 border-t border-gray-100">
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ t('stock.colQty') }}</p>
+                            <p class="text-sm font-bold text-gray-900 tabular-nums">
+                                {{ row.quantity % 1 === 0 ? row.quantity : row.quantity.toFixed(2) }}
+                                <span class="text-[10px] font-normal text-gray-400">{{ row.unit_symbol || row.unit_name }}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ t('stock.colReorder') }}</p>
+                            <p class="text-sm font-bold tabular-nums" :class="row.reorder_level > 0 ? 'text-amber-600' : 'text-gray-300'">
+                                {{ row.reorder_level > 0 ? (row.reorder_level % 1 === 0 ? row.reorder_level : row.reorder_level.toFixed(2)) : '—' }}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ t('stock.colStockValue') }}</p>
+                            <p class="text-sm font-bold text-indigo-700 tabular-nums truncate">{{ formatCurrency(row.stock_value) }}</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mobile totals bar -->
+                <div class="p-3 bg-indigo-50/60 flex items-center justify-between border-t-2 border-indigo-200">
+                    <div class="text-xs">
+                        <span class="font-bold text-gray-700">{{ t('stock.totalRow') }}</span>
+                        <span class="text-gray-400 ml-1">({{ filteredRows.length }} {{ t('stock.items') }})</span>
+                    </div>
+                    <p class="text-base font-bold text-indigo-700 tabular-nums">{{ formatCurrency(totalValue) }}</p>
+                </div>
+            </div>
+
+            <!-- ── DESKTOP TABLE (sm+) ──────────────────────────────────── -->
+            <div v-if="filteredRows.length" class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-gray-100 bg-gray-50/80">
@@ -317,10 +388,10 @@ const settingsStore = useSettingsStore();
 function formatCurrency(value) {
     if (value == null) return '—';
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 
-const todayFormatted = new Date().toLocaleDateString('de-DE', {
+const todayFormatted = new Date().toLocaleDateString('en-US', {
     day: '2-digit', month: '2-digit', year: 'numeric',
 });
 
@@ -400,25 +471,83 @@ async function fetchStock() {
     loading.value = true;
     error.value   = '';
     try {
+        if (navigator.onLine === false) {
+            await loadStockFromCache(params);
+            return;
+        }
         const { data } = await stockService.current(params);
         rows.value    = data.data;
         summary.value = data.summary;
     } catch (err) {
+        const swOffline = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (!err.response || swOffline) {
+            try { await loadStockFromCache(params); return; } catch { /* fall through */ }
+        }
         error.value = err.response?.data?.message ?? t('common.unexpectedError');
     } finally {
         loading.value = false;
     }
 }
 
+// Build the offline inventory snapshot straight from the local products
+// cache. Stock numbers come from the snapshot's `stock` column, which is
+// already populated for the current branch by the preloader.
+async function loadStockFromCache(params) {
+    const { getAll } = await import('@/offline/db');
+    const all = await getAll('products');
+    const filtered = all.filter((p) => {
+        if (params.category_id && p.category_id != params.category_id) return false;
+        if (params.brand_id    && p.brand_id    != params.brand_id)    return false;
+        if (params.product_id  && p.id          != params.product_id)  return false;
+        return true;
+    });
+    rows.value = filtered.map((p) => ({
+        product_id:      p.id,
+        sku:             p.sku,
+        name:            p.name,
+        category_id:     p.category_id,
+        brand_id:        p.brand_id,
+        unit:            p.unit,
+        cost_price:      p.cost_price,
+        selling_price:   p.selling_price,
+        quantity:        p.stock || 0,
+        stock_value:     (p.stock || 0) * (p.cost_price || 0),
+    }));
+    summary.value = {
+        total_products: filtered.length,
+        total_quantity: filtered.reduce((s, p) => s + (p.stock || 0), 0),
+        stock_value:    filtered.reduce((s, p) => s + (p.stock || 0) * (p.cost_price || 0), 0),
+        low_stock:      filtered.filter((p) => (p.stock || 0) > 0 && (p.stock || 0) <= 5).length,
+        out_of_stock:   filtered.filter((p) => (p.stock || 0) <= 0).length,
+    };
+}
+
 async function loadFilterOptions() {
     try {
+        if (navigator.onLine === false) {
+            await loadFilterOptionsFromCache();
+            return;
+        }
         const { data } = await stockService.filterOptions();
         categories.value = data.categories;
         brands.value     = data.brands;
         products.value   = data.products;
     } catch {
-        // non-critical — filters just won't populate
+        await loadFilterOptionsFromCache().catch(() => {});
     }
+}
+
+async function loadFilterOptionsFromCache() {
+    const [{ loadCategories, loadBrands }, { getAll }] = await Promise.all([
+        import('@/offline/settingsCache'),
+        import('@/offline/db'),
+    ]);
+    const [cats, brnds, prods] = await Promise.all([
+        loadCategories(), loadBrands(), getAll('products'),
+    ]);
+    categories.value = cats;
+    brands.value     = brnds;
+    products.value   = prods.map((p) => ({ id: p.id, name: p.name, sku: p.sku }));
 }
 
 function printReport() {

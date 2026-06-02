@@ -289,7 +289,7 @@ const vClickOutside = {
 };
 
 function formatDate(s) {
-    return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    return s ? new Date(s + 'T00:00:00').toLocaleDateString('en-US') : '';
 }
 
 function paymentLabel(method) {

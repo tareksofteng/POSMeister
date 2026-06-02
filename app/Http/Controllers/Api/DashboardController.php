@@ -30,6 +30,7 @@ class DashboardController extends Controller
         return response()->json([
             'as_of'          => $today->toIso8601String(),
             'sales'          => $this->salesBlock($branchId, $today, $monthStart, $yesterday),
+            'purchases'      => $this->purchasesBlock($branchId, $today, $monthStart),
             'finance'        => $this->financeBlock($branchId, $monthStart),
             'inventory'      => $this->inventoryBlock($branchId),
             'customers'      => $this->customersBlock($branchId),
@@ -42,6 +43,50 @@ class DashboardController extends Controller
             'alerts'         => $this->alerts($branchId),
             'activity'       => $this->recentActivity($branchId, 10),
         ]);
+    }
+
+    /**
+     * Phase: Executive dashboard upgrade — purchase totals today + MTD,
+     * plus a small payments rollup. Mirrors salesBlock so the marquee
+     * has matching shapes for both flows.
+     */
+    private function purchasesBlock(?int $branchId, Carbon $today, string $monthStart): array
+    {
+        if (!$this->tableExists('purchases')) {
+            return ['today' => 0, 'month' => 0, 'supplier_paid_month' => 0, 'customer_paid_month' => 0];
+        }
+
+        $todayAmt = (float) DB::table('purchases')
+            ->whereDate('purchase_date', $today)
+            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+            ->sum('total_amount');
+
+        $monthAmt = (float) DB::table('purchases')
+            ->whereDate('purchase_date', '>=', $monthStart)
+            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+            ->sum('total_amount');
+
+        $supplierPaid = 0.0;
+        $customerPaid = 0.0;
+        if ($this->tableExists('supplier_payments')) {
+            $supplierPaid = (float) DB::table('supplier_payments')
+                ->whereDate('payment_date', '>=', $monthStart)
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->sum('amount');
+        }
+        if ($this->tableExists('customer_payments')) {
+            $customerPaid = (float) DB::table('customer_payments')
+                ->whereDate('payment_date', '>=', $monthStart)
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->sum('amount');
+        }
+
+        return [
+            'today'               => round($todayAmt, 2),
+            'month'               => round($monthAmt, 2),
+            'supplier_paid_month' => round($supplierPaid, 2),
+            'customer_paid_month' => round($customerPaid, 2),
+        ];
     }
 
     // ---- KPI blocks ---------------------------------------------------------
@@ -448,9 +493,12 @@ class DashboardController extends Controller
             ->limit($limit)
             ->get(['id', 'sale_number', 'sale_date', 'grand_total', 'created_at'])
             ->each(function ($s) use (&$items) {
+                // Title is just the document number — the activity feed
+                // categorises by "kind" so the frontend renders the
+                // localised label (Sale / Verkauf / মূল্য / بيع).
                 $items[] = [
                     'kind'   => 'sale',
-                    'title'  => 'Verkauf ' . $s->sale_number,
+                    'title'  => $s->sale_number,
                     'amount' => (float) $s->grand_total,
                     'at'     => (string) $s->created_at,
                 ];

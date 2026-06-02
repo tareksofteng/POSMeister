@@ -44,3 +44,7 @@ Schedule::call(function () {
 Schedule::call(function () {
     app(NotificationDigestService::class)->buildDaily();
 })->dailyAt('07:30')->name('notif:digest')->withoutOverlapping();
+
+Schedule::call(function () {
+    app(AlertEscalationService::class)->pruneArchived(30);
+})->dailyAt('03:00')->name('notif:prune')->withoutOverlapping();

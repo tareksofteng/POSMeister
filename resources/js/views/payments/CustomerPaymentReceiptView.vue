@@ -125,7 +125,7 @@ const settingsStore = useSettingsStore();
 const payment       = ref(null);
 const loading       = ref(true);
 
-const printDate = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const printDate = new Date().toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
 const METHODS = {
     cash:          'Bar',
@@ -136,11 +136,11 @@ const METHODS = {
 function methodLabel(m) { return METHODS[m] ?? m ?? '—'; }
 
 function fmtCurrency(val) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
 }
 function fmtDate(val) {
     if (!val) return '—';
-    return new Date(val).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return new Date(val).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function toWordsDE(amount) {

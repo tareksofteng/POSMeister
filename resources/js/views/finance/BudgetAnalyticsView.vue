@@ -127,7 +127,7 @@ const analysis = ref(null);
 const loading = ref(true);
 
 function formatDate(s) {
-    return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    return s ? new Date(s + 'T00:00:00').toLocaleDateString('en-US') : '';
 }
 
 function healthTone(health) {

@@ -88,12 +88,12 @@ const eventsByDate = ref({});
 const loading = ref(false);
 
 const monthLabel = computed(() => {
-    const fmt = new Intl.DateTimeFormat(locale.value || 'de-DE', { month: 'long', year: 'numeric' });
+    const fmt = new Intl.DateTimeFormat(locale.value || 'en-US', { month: 'long', year: 'numeric' });
     return fmt.format(new Date(year.value, month.value - 1, 1));
 });
 
 const weekDayNames = computed(() => {
-    const fmt = new Intl.DateTimeFormat(locale.value || 'de-DE', { weekday: 'short' });
+    const fmt = new Intl.DateTimeFormat(locale.value || 'en-US', { weekday: 'short' });
     // Monday-first
     return [1, 2, 3, 4, 5, 6, 0].map(i => fmt.format(new Date(2026, 0, 4 + i)));
 });

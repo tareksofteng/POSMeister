@@ -14,11 +14,18 @@ const api = axios.create({
     },
 });
 
-// ── Request interceptor — inject auth token ───────────────────────────────
+// ── Request interceptor — inject auth token + app locale ──────────────────
+// Sending the app's i18n locale as Accept-Language lets the backend
+// localise validation errors and business-rule exceptions (e.g. "Insufficient
+// stock") via Laravel's __() helper instead of returning hardcoded German.
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('pos_token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    }
+    const locale = localStorage.getItem('pos_locale');
+    if (locale) {
+        config.headers['Accept-Language'] = locale;
     }
     return config;
 });

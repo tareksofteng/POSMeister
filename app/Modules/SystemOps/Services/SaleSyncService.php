@@ -63,9 +63,12 @@ class SaleSyncService
 
             try {
                 $sale = DB::transaction(function () use ($data, $key, $ref, $userId) {
-                    $data['idempotency_key']  = $key;
+                    $data['idempotency_key']   = $key;
                     $data['offline_reference'] = $ref;
                     if (!isset($data['sale_date'])) $data['sale_date'] = now()->toDateString();
+                    // Offline sale: the cashier already handed the goods over,
+                    // so the server replays without re-validating stock.
+                    $data['_skip_stock_check'] = true;
 
                     $sale = $this->sales->store($data);
                     if (Schema::hasColumn('sales', 'idempotency_key')) {

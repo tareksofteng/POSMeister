@@ -53,7 +53,7 @@ class PayrollService
     public function updatePeriod(PayrollPeriod $period, array $data): PayrollPeriod
     {
         if (!$period->isEditable()) {
-            throw new \RuntimeException('Diese Lohnperiode kann nicht mehr bearbeitet werden.');
+            throw new \RuntimeException(__('errors.payroll.period_locked'));
         }
         $period->update($data);
         return $period->fresh();
@@ -216,7 +216,7 @@ class PayrollService
     public function destroyPayslip(Payslip $payslip): void
     {
         if (in_array($payslip->status, ['paid', 'partially_paid'])) {
-            throw new \RuntimeException('Bezahlte Abrechnungen können nicht gelöscht werden.');
+            throw new \RuntimeException(__('errors.payroll.paid_not_deletable'));
         }
         $payslip->delete();
     }

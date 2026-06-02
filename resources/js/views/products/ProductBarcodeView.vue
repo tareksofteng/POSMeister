@@ -269,10 +269,10 @@ const config = ref({
 const currency = computed(() => settingsStore.settings?.currency_symbol ?? '€');
 
 function fmtCurrency(val) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(val ?? 0);
 }
 function fmtPrice(val) {
-    return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val ?? 0);
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val ?? 0);
 }
 
 // ── Load product ─────────────────────────────────────────────────────────────

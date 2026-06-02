@@ -137,7 +137,7 @@ class BudgetService
     public function destroy(Budget $budget): void
     {
         if ($budget->status === 'active') {
-            throw new \RuntimeException('Aktive Budgets können nicht gelöscht werden. Bitte zuerst archivieren.');
+            throw new \RuntimeException(__('errors.budgets.active_not_deletable'));
         }
         $budget->delete();
     }

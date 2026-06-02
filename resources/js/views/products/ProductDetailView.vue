@@ -225,7 +225,7 @@ const taxLabels = { 0: 'Steuerfrei', 7: 'Ermäßigt', 19: 'Regelsteuersatz' };
 function taxLabel(rate) { return taxLabels[parseInt(rate)] ?? ''; }
 
 function formatDate(iso) {
-    return new Intl.DateTimeFormat(locale.value === 'de' ? 'de-DE' : 'en-GB', {
+    return new Intl.DateTimeFormat(locale.value === 'de' ? 'en-US' : 'en-GB', {
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit',
     }).format(new Date(iso));

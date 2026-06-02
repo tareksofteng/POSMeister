@@ -708,7 +708,18 @@ router.beforeEach(async (to) => {
     // Phase Ω — if the in-memory session is empty but we have an offline
     // snapshot, rehydrate from IndexedDB so a reload while offline does
     // not log the cashier out.
+    //
+    // We try the snapshot for EVERY auth-required route, including the
+    // first navigation after a cold PWA boot — that's the only moment
+    // the production tab is empty AND offline, and missing this restore
+    // is what was kicking users to /login on production reloads.
     if (to.meta.requiresAuth && !auth.isAuthenticated) {
+        try { await auth.restoreFromOfflineSnapshot(); } catch { /* no snapshot */ }
+    }
+
+    // Guest-only routes (login, register) — if we have a valid offline
+    // snapshot, restore it so a reload doesn't dump the user back here.
+    if (to.meta.requiresGuest && !auth.isAuthenticated) {
         try { await auth.restoreFromOfflineSnapshot(); } catch { /* no snapshot */ }
     }
 
@@ -738,6 +749,25 @@ router.afterEach((to) => {
     const key   = to.meta?.titleKey;
     const label = key ? i18n.global.t(key) : null;
     document.title = label ? `${label} — POSmeister` : 'POSmeister';
+});
+
+// ── Lazy-chunk failure recovery ───────────────────────────────────────────
+// "Failed to fetch dynamically imported module" fires when:
+//   (a) the user is offline AND the SW doesn't have that chunk cached, or
+//   (b) a deploy bumped chunk hashes between page-load and navigation.
+// In case (b) a hard reload picks up the new HTML+chunks. In case (a)
+// the SW serves the cached shell so the user sees the dashboard instead
+// of a frozen blank screen. We guard against reload loops with a flag.
+let chunkReloadAttempted = false;
+router.onError((err, to) => {
+    const msg = String(err?.message || '');
+    const isChunkError =
+        msg.includes('Failed to fetch dynamically imported module') ||
+        msg.includes('Importing a module script failed') ||
+        msg.includes('Unable to preload CSS');
+    if (!isChunkError || chunkReloadAttempted) return;
+    chunkReloadAttempted = true;
+    window.location.replace(to?.fullPath || window.location.pathname);
 });
 
 export default router;

@@ -159,7 +159,7 @@ const shiftLabel = computed(() => {
 
 function formatDate(s) {
     if (!s) return '';
-    return new Date(s + 'T00:00:00').toLocaleDateString('de-DE');
+    return new Date(s + 'T00:00:00').toLocaleDateString('en-US');
 }
 
 function formatSalary(amount) {

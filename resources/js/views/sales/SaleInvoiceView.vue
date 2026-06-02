@@ -405,19 +405,19 @@ const due = computed(() => {
 // ── Formatting ─────────────────────────────────────────────────────────────
 
 function fmt(value) {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: currencyCode.value })
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: currencyCode.value })
         .format(value ?? 0);
 }
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('de-DE', {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
         day: '2-digit', month: 'long', year: 'numeric',
     });
 }
 
 const nowFormatted = computed(() =>
-    new Date().toLocaleString('de-DE', {
+    new Date().toLocaleString('en-US', {
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit',
     }) + ' Uhr'
@@ -446,7 +446,7 @@ function toWordsDE(amount) {
         if (n < 100) { const t2 = Math.floor(n / 10), o = n % 10; return o === 0 ? tW[t2] : oW[o] + 'und' + tW[t2]; }
         if (n < 1000) { const h = Math.floor(n / 100), r = n % 100; return (h === 1 ? 'ein' : oW[h]) + 'hundert' + (r ? conv(r) : ''); }
         if (n < 1e6)  { const th = Math.floor(n / 1000), r = n % 1000; return (th === 1 ? 'ein' : conv(th)) + 'tausend' + (r ? conv(r) : ''); }
-        return n.toLocaleString('de-DE');
+        return n.toLocaleString('en-US');
     }
 
     const euroWord = conv(euros).charAt(0).toUpperCase() + conv(euros).slice(1);

@@ -91,14 +91,14 @@ class LoyaltyService
             throw new RuntimeException('Loyalty programme is disabled.');
         }
         if ($points < $settings->min_redeem_points) {
-            throw new RuntimeException("Mindesteinlösung sind {$settings->min_redeem_points} Punkte.");
+            throw new RuntimeException(__('errors.loyalty.min_redeem', ['min' => $settings->min_redeem_points]));
         }
 
         return DB::transaction(function () use ($customerId, $points, $note, $branchId, $saleId, $saleNumber, $settings) {
             $profile = $this->profile($customerId, lock: true);
 
             if ($profile->current_points < $points) {
-                throw new RuntimeException('Nicht genügend Punkte.');
+                throw new RuntimeException(__('errors.loyalty.not_enough'));
             }
 
             $txn = $this->post(

@@ -155,7 +155,7 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { notificationService } from '@/services/omsService';
+import { omsNotificationService } from '@/services/omsService';
 import { useAlert } from '@/composables/useAlert';
 import { PlusIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 
@@ -176,7 +176,7 @@ const tplForm = reactive({ code: '', name: '', channel: 'in_app', subject: '', b
 
 function formatDate(d) {
     if (!d) return '';
-    return new Intl.DateTimeFormat(locale.value || 'de-DE',
+    return new Intl.DateTimeFormat(locale.value || 'en-US',
         { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }
     ).format(new Date(d));
 }
@@ -201,7 +201,7 @@ function statusBadge(s) {
 async function load() {
     loading.value = true;
     try {
-        const { data } = await notificationService.index({ per_page: 50 });
+        const { data } = await omsNotificationService.index({ per_page: 50 });
         rows.value = data.data ?? [];
     } finally {
         loading.value = false;
@@ -211,7 +211,7 @@ async function load() {
 async function loadTemplates() {
     templatesLoading.value = true;
     try {
-        const { data } = await notificationService.templates();
+        const { data } = await omsNotificationService.templates();
         templates.value = data.data ?? [];
     } finally {
         templatesLoading.value = false;
@@ -219,7 +219,7 @@ async function loadTemplates() {
 }
 
 async function markRead(n) {
-    await notificationService.markRead(n.id);
+    await omsNotificationService.markRead(n.id);
     load();
 }
 
@@ -240,10 +240,10 @@ async function saveTemplate() {
     tplSaving.value = true;
     try {
         if (tplEditing.value) {
-            await notificationService.updateTemplate(tplEditing.value.id, tplForm);
+            await omsNotificationService.updateTemplate(tplEditing.value.id, tplForm);
             toast.success(t('common.updated'));
         } else {
-            await notificationService.saveTemplate(tplForm);
+            await omsNotificationService.saveTemplate(tplForm);
             toast.success(t('common.created'));
         }
         tplFormOpen.value = false;
@@ -254,7 +254,7 @@ async function saveTemplate() {
 }
 async function destroyTemplate(tpl) {
     if (!(await confirm(t('oms.notify.deleteTemplateConfirm', { name: tpl.name })))) return;
-    await notificationService.deleteTemplate(tpl.id);
+    await omsNotificationService.deleteTemplate(tpl.id);
     toast.success(t('common.deleted'));
     loadTemplates();
 }

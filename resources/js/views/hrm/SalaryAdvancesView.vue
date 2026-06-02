@@ -135,7 +135,7 @@ const saving = ref(false);
 const form = reactive({ employee_id: null, amount: 0, granted_on: new Date().toISOString().slice(0, 10), reason: '' });
 
 function formatDate(d) {
-    return new Intl.DateTimeFormat(locale.value || 'de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
+    return new Intl.DateTimeFormat(locale.value || 'en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d));
 }
 function badge(s) {
     return {

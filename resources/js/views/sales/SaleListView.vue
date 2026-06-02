@@ -95,7 +95,7 @@ const settingsStore = useSettingsStore();
 function formatCurrency(value) {
     if (value == null) return '—';
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 
 const columns = computed(() => [
@@ -137,14 +137,40 @@ async function fetchList(overrides = {}) {
     loading.value = true;
     listError.value = '';
     try {
+        if (navigator.onLine === false) {
+            await loadFromCache();
+            return;
+        }
         const { data } = await saleService.index(filters.value);
         rows.value = data.data;
         meta.value = data.meta;
     } catch (err) {
+        // SW returns its 503 offline envelope on a flaky connection — degrade
+        // to the cached snapshot so the cashier still sees their recent sales.
+        const swOffline = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (!err.response || swOffline) {
+            try { await loadFromCache(); return; } catch { /* fall through */ }
+        }
         listError.value = err.response?.data?.message ?? 'Failed to load sales.';
     } finally {
         loading.value = false;
     }
+}
+
+async function loadFromCache() {
+    const { loadRecentSales } = await import('@/offline/settingsCache');
+    const all = await loadRecentSales();
+    const f = filters.value;
+    const q = (f.search || '').toLowerCase();
+    const filtered = all.filter((s) => {
+        if (q && !(`${s.sale_number} ${s.customer_name || ''}`).toLowerCase().includes(q)) return false;
+        if (f.status && s.status !== f.status) return false;
+        if (f.date_from && s.sale_date < f.date_from) return false;
+        if (f.date_to   && s.sale_date > f.date_to)   return false;
+        return true;
+    });
+    rows.value = filtered;
+    meta.value = { total: filtered.length, per_page: filtered.length, current_page: 1, last_page: 1 };
 }
 
 function fetchPage(page) { fetchList({ page }); }

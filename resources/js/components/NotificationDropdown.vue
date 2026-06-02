@@ -25,14 +25,19 @@
             <div v-if="open"
                 class="absolute right-0 top-full mt-1.5 w-[22rem] max-w-[92vw] origin-top-right rounded-xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5 z-50 overflow-hidden"
             >
-                <div class="px-3 py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <div>
+                <div class="px-3 py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
                         <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ t('notifications.title') }}</p>
                         <p class="text-[11px] text-slate-500">{{ t('notifications.unread', { n: store.unread }) }}</p>
                     </div>
-                    <button v-if="store.unread > 0" @click="store.markAllRead()" class="text-[11px] font-semibold text-indigo-600 hover:underline">
-                        {{ t('notifications.markAllRead') }}
-                    </button>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button v-if="store.unread > 0" @click="store.markAllRead()" class="text-[11px] font-semibold text-indigo-600 hover:underline">
+                            {{ t('notifications.markAllRead') }}
+                        </button>
+                        <button v-if="store.items.length > 0" @click="onClearRead" class="text-[11px] font-semibold text-slate-500 hover:underline">
+                            {{ t('notifications.clearRead') }}
+                        </button>
+                    </div>
                 </div>
 
                 <div class="max-h-[60vh] overflow-y-auto overscroll-contain">
@@ -106,6 +111,11 @@ const containerRef = ref(null);
 
 function toggle() { open.value = !open.value; if (open.value) store.fetch(); }
 onClickOutside(containerRef, () => { open.value = false; });
+
+async function onClearRead() {
+    if (!window.confirm(t('notifications.confirmClearRead'))) return;
+    await store.clearRead();
+}
 
 onMounted(() => store.startPolling());
 onUnmounted(() => store.stopPolling());

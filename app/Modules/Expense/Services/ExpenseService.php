@@ -93,7 +93,7 @@ class ExpenseService
     public function update(Expense $expense, array $data, ?UploadedFile $attachment = null): Expense
     {
         if ($expense->isPaid()) {
-            throw new \RuntimeException('Bezahlte Ausgaben können nicht mehr bearbeitet werden.');
+            throw new \RuntimeException(__('errors.expenses.paid_not_editable'));
         }
 
         unset($data['expense_number'], $data['status']);
@@ -118,7 +118,7 @@ class ExpenseService
     public function destroy(Expense $expense): void
     {
         if ($expense->isPaid()) {
-            throw new \RuntimeException('Bezahlte Ausgaben können nicht gelöscht werden.');
+            throw new \RuntimeException(__('errors.expenses.paid_not_deletable'));
         }
         if ($expense->attachment) {
             Storage::disk('public')->delete($expense->attachment);
@@ -132,7 +132,7 @@ class ExpenseService
     public function approve(Expense $expense, ?string $notes = null): Expense
     {
         if (!$expense->isPending()) {
-            throw new \RuntimeException('Nur offene Ausgaben können genehmigt werden.');
+            throw new \RuntimeException(__('errors.expenses.only_open_approvable'));
         }
 
         $expense->update([
@@ -151,7 +151,7 @@ class ExpenseService
     public function reject(Expense $expense, string $reason): Expense
     {
         if ($expense->isPaid()) {
-            throw new \RuntimeException('Bezahlte Ausgaben können nicht abgelehnt werden.');
+            throw new \RuntimeException(__('errors.expenses.paid_not_rejectable'));
         }
 
         $expense->update([
@@ -170,10 +170,10 @@ class ExpenseService
     public function markPaid(Expense $expense, array $data = []): Expense
     {
         if ($expense->isRejected()) {
-            throw new \RuntimeException('Abgelehnte Ausgaben können nicht als bezahlt markiert werden.');
+            throw new \RuntimeException(__('errors.expenses.rejected_not_payable'));
         }
         if ($expense->isPaid()) {
-            throw new \RuntimeException('Diese Ausgabe ist bereits als bezahlt markiert.');
+            throw new \RuntimeException(__('errors.expenses.already_paid'));
         }
 
         $expense->update([
@@ -191,7 +191,7 @@ class ExpenseService
     public function reopen(Expense $expense, ?string $notes = null): Expense
     {
         if ($expense->isPaid()) {
-            throw new \RuntimeException('Bezahlte Ausgaben können nicht erneut geöffnet werden.');
+            throw new \RuntimeException(__('errors.expenses.paid_not_reopenable'));
         }
 
         $expense->update([

@@ -46,15 +46,18 @@ class ProductController extends Controller
         if (strlen($term) === 1) return response()->json([]);
 
         $results = $this->service->search($term)->map(fn($p) => [
-            'id'           => $p->id,
-            'sku'          => $p->sku,
-            'name'         => $p->name,
-            'cost_price'   => (float) $p->cost_price,
-            'selling_price'=> (float) $p->selling_price,
-            'tax_rate'     => (float) $p->tax_rate,
-            'unit_name'    => $p->unit?->name ?? '',
-            'unit_symbol'  => $p->unit?->symbol ?? '',
-            'image_url'    => $p->image ? Storage::url($p->image) : null,
+            'id'             => $p->id,
+            'sku'            => $p->sku,
+            'name'           => $p->name,
+            'cost_price'     => (float) $p->cost_price,
+            'selling_price'  => (float) $p->selling_price,
+            'tax_rate'       => (float) $p->tax_rate,
+            'unit_name'      => $p->unit?->name ?? '',
+            'unit_symbol'    => $p->unit?->symbol ?? '',
+            'image_url'      => $p->image ? Storage::url($p->image) : null,
+            // Live stock — used by SaleForm + POS dropdowns to surface availability
+            'stock'          => (float) ($p->stock ?? 0),
+            'reorder_level'  => (float) ($p->reorder_level ?? 0),
         ]);
 
         return response()->json($results);

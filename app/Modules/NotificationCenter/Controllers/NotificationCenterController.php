@@ -73,6 +73,41 @@ class NotificationCenterController extends Controller
         return response()->json(['data' => $notification]);
     }
 
+    /**
+     * POST /api/notifications/clear-read
+     *
+     * Bulk-archives every alert the current user has already marked read.
+     * Safer than a blanket "Clear all" — unread (= potentially unseen)
+     * alerts stay visible so a cashier can't accidentally wipe a critical
+     * warning. Returns how many rows were archived.
+     */
+    public function clearRead(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $affected = SmartNotification::query()
+            ->active()
+            ->forUser($user->id, $user->role ?? null)
+            ->whereNotNull('read_at')
+            ->update(['archived_at' => now()]);
+        return response()->json(['data' => ['archived' => $affected]]);
+    }
+
+    /**
+     * POST /api/notifications/clear-all
+     *
+     * Nuclear option — archives EVERYTHING in the user's active list,
+     * including unread alerts. Use with confirmation in the UI.
+     */
+    public function clearAll(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $affected = SmartNotification::query()
+            ->active()
+            ->forUser($user->id, $user->role ?? null)
+            ->update(['archived_at' => now(), 'read_at' => now()]);
+        return response()->json(['data' => ['archived' => $affected]]);
+    }
+
     /** GET /api/notifications/digest */
     public function digest(Request $request): JsonResponse
     {

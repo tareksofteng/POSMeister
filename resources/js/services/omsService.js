@@ -24,16 +24,21 @@ export const shipmentService = {
     cancel:       (id, data = {})      => api.post(`/shipments/${id}/cancel`, data),
 };
 
-export const notificationService = {
-    index:        (params = {}) => api.get('/notifications', { params }),
-    store:        (data)        => api.post('/notifications', data),
-    markRead:     (id)          => api.post(`/notifications/${id}/read`),
-    unreadCount:  ()            => api.get('/notifications/unread-count'),
+/**
+ * Outbound customer notifications (SMS / Email / WhatsApp queue).
+ * Renamed from `notificationService` to avoid colliding with the
+ * Phase Ω+ in-app smart alert service (resources/js/services/notificationService.js).
+ */
+export const omsNotificationService = {
+    index:        (params = {}) => api.get('/oms/notifications', { params }),
+    store:        (data)        => api.post('/oms/notifications', data),
+    markRead:     (id)          => api.post(`/oms/notifications/${id}/read`),
+    unreadCount:  ()            => api.get('/oms/notifications/unread-count'),
 
-    templates:        ()              => api.get('/notification-templates'),
-    saveTemplate:     (data)          => api.post('/notification-templates', data),
-    updateTemplate:   (id, data)      => api.put(`/notification-templates/${id}`, data),
-    deleteTemplate:   (id)            => api.delete(`/notification-templates/${id}`),
+    templates:        ()              => api.get('/oms/notification-templates'),
+    saveTemplate:     (data)          => api.post('/oms/notification-templates', data),
+    updateTemplate:   (id, data)      => api.put(`/oms/notification-templates/${id}`, data),
+    deleteTemplate:   (id)            => api.delete(`/oms/notification-templates/${id}`),
 };
 
 export const automationService = {

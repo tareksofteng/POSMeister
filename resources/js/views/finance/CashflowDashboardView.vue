@@ -192,7 +192,7 @@ const monthStart = (() => { const d = new Date(); return new Date(d.getFullYear(
 const filters    = ref({ from: monthStart, to: today });
 
 const monthNames = computed(() => {
-    const fmt = new Intl.DateTimeFormat(locale.value || 'de-DE', { month: 'short' });
+    const fmt = new Intl.DateTimeFormat(locale.value || 'en-US', { month: 'short' });
     return Array.from({ length: 12 }, (_, i) => fmt.format(new Date(2025, i, 1)));
 });
 

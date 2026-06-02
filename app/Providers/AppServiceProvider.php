@@ -37,5 +37,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Loyalty engine — awards points on completed sales.
         Sale::observe(SaleLoyaltyObserver::class);
+
+        // Phase Ω+ — fire low-stock detection immediately after each sale
+        // so cashiers see reorder alerts in real time, not on a 10-min lag.
+        Sale::observe(\App\Modules\NotificationCenter\Observers\SaleNotificationObserver::class);
     }
 }

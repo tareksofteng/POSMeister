@@ -384,13 +384,13 @@ function statusBadge(status) {
 
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('de-DE', {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
         day: '2-digit', month: 'long', year: 'numeric',
     });
 }
 
 const nowFormatted = computed(() =>
-    new Date().toLocaleString('de-DE', {
+    new Date().toLocaleString('en-US', {
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit',
     }) + ' Uhr'
@@ -418,7 +418,7 @@ function toWordsDE(amount) {
         if (num < 100) { const t2 = Math.floor(num / 10), o = num % 10; return o === 0 ? tW[t2] : oW[o] + 'und' + tW[t2]; }
         if (num < 1000) { const h = Math.floor(num / 100), r = num % 100; return (h === 1 ? 'ein' : oW[h]) + 'hundert' + (r ? conv(r) : ''); }
         if (num < 1e6)  { const th = Math.floor(num / 1000), r = num % 1000; return (th === 1 ? 'ein' : conv(th)) + 'tausend' + (r ? conv(r) : ''); }
-        return num.toLocaleString('de-DE');
+        return num.toLocaleString('en-US');
     }
 
     const euroWord = conv(euros).charAt(0).toUpperCase() + conv(euros).slice(1);

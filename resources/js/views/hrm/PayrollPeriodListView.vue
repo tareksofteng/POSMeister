@@ -152,13 +152,13 @@ const StatusBadge = (props) => {
 StatusBadge.props = ['status'];
 
 function formatDate(s) {
-    return s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    return s ? new Date(s + 'T00:00:00').toLocaleDateString('en-US') : '';
 }
 
 function autofillLabel() {
     if (form.value.label || !form.value.period_start) return;
     const d = new Date(form.value.period_start);
-    form.value.label = d.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+    form.value.label = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     // also default the end to end-of-month if empty
     if (!form.value.period_end) {
         const eom = new Date(d.getFullYear(), d.getMonth() + 1, 0);

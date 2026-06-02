@@ -104,6 +104,8 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
     Route::get ('notifications/preferences',       [NotificationCenterController::class, 'preferences']);
     Route::put ('notifications/preferences',       [NotificationCenterController::class, 'savePreferences']);
     Route::post('notifications/mark-all-read',     [NotificationCenterController::class, 'markAllRead']);
+    Route::post('notifications/clear-read',        [NotificationCenterController::class, 'clearRead']);
+    Route::post('notifications/clear-all',         [NotificationCenterController::class, 'clearAll']);
     Route::post('notifications/{notification}/read',    [NotificationCenterController::class, 'markRead']);
     Route::post('notifications/{notification}/ack',     [NotificationCenterController::class, 'ack']);
     Route::post('notifications/{notification}/archive', [NotificationCenterController::class, 'archive']);
@@ -465,14 +467,16 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
             Route::post('{shipment}/cancel',               [CourierController::class, 'cancel']);
         });
 
-        // Notifications
-        Route::prefix('notifications')->group(function () {
+        // OMS outbound notifications (customer SMS/Email/WhatsApp queue).
+        // Moved under /oms/notifications to avoid colliding with the
+        // Phase Ω+ internal smart-alert center at /notifications.
+        Route::prefix('oms/notifications')->group(function () {
             Route::get('/',                        [NotificationController::class, 'index']);
             Route::post('/',                       [NotificationController::class, 'store']);
             Route::post('{notification}/read',     [NotificationController::class, 'markRead']);
             Route::get('unread-count',             [NotificationController::class, 'unreadCount']);
         });
-        Route::prefix('notification-templates')->group(function () {
+        Route::prefix('oms/notification-templates')->group(function () {
             Route::get('/',                        [NotificationController::class, 'templates']);
             Route::post('/',                       [NotificationController::class, 'saveTemplate']);
             Route::put('{template}',               [NotificationController::class, 'saveTemplate']);

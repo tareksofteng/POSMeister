@@ -122,7 +122,7 @@ const router = useRouter();
 function formatCurrency(value) {
     if (value == null) return '—';
     const code = settingsStore.settings?.currency_code ?? 'EUR';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(value);
 }
 
 const columns = computed(() => [
@@ -163,14 +163,38 @@ async function fetchList(overrides = {}) {
     loading.value   = true;
     listError.value = '';
     try {
+        if (navigator.onLine === false) {
+            await loadFromCache();
+            return;
+        }
         const { data } = await purchaseService.index(filters.value);
         rows.value = data.data;
         meta.value = data.meta;
     } catch (err) {
+        const swOffline = err.response?.headers?.['x-posmeister-offline'] === '1';
+        if (!err.response || swOffline) {
+            try { await loadFromCache(); return; } catch { /* fall through */ }
+        }
         listError.value = err.response?.data?.message ?? 'Failed to load purchases.';
     } finally {
         loading.value = false;
     }
+}
+
+async function loadFromCache() {
+    const { loadRecentPurchases } = await import('@/offline/settingsCache');
+    const all = await loadRecentPurchases();
+    const f = filters.value;
+    const q = (f.search || '').toLowerCase();
+    const filtered = all.filter((p) => {
+        if (q && !(`${p.purchase_number} ${p.supplier_name || ''} ${p.reference || ''}`).toLowerCase().includes(q)) return false;
+        if (f.status && p.status !== f.status) return false;
+        if (f.date_from && p.purchase_date < f.date_from) return false;
+        if (f.date_to   && p.purchase_date > f.date_to)   return false;
+        return true;
+    });
+    rows.value = filtered;
+    meta.value = { total: filtered.length, per_page: filtered.length, current_page: 1, last_page: 1 };
 }
 
 function fetchPage(page) { fetchList({ page }); }
