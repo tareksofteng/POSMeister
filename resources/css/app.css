@@ -30,6 +30,39 @@ html {
     overscroll-behavior-y: contain;
 }
 
+html, body {
+    /* Kill horizontal swipe-into-empty-area on phones. Any child component
+       that accidentally exceeds viewport width gets clipped instead of
+       pushing the whole document sideways. */
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;  /* iOS doesn't bump font size on rotate */
+}
+
+/* ── Native-app feel on touch devices ────────────────────────────────────── */
+/* Remove the grey flash that Android Chrome paints on every tap. */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Disable the 300ms double-tap zoom on tap targets — clicks feel instant. */
+button, a, [role="button"], input, select, textarea, label {
+    touch-action: manipulation;
+}
+
+/* iOS Safari auto-zooms the page whenever an <input> with font-size < 16px
+   gets focus. Force 16px on every form control under tablet width so the
+   keyboard slides in without ever zooming the layout. */
+@media (max-width: 768px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    /* Phones: bump tap targets so buttons and links feel app-grade. */
+    button, .btn, [role="button"] {
+        min-height: 40px;
+    }
+}
+
+/* Momentum scrolling for every scroll container on iOS Safari. */
+.scroll-smooth-mobile { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+
 /* ── PWA + iOS safe-area helpers ─────────────────────────────────────────── */
 .pt-safe { padding-top:    env(safe-area-inset-top, 0); }
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0); }

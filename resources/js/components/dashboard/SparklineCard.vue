@@ -13,20 +13,23 @@
             </div>
         </div>
 
-        <div class="mt-3 flex items-end justify-between gap-2">
+        <div class="mt-2 sm:mt-3 flex items-end justify-between gap-2">
             <div v-if="delta != null" :class="['trend-pill', delta >= 0 ? 'trend-up' : 'trend-down']">
                 <span class="text-[10px]">{{ delta >= 0 ? '▲' : '▼' }}</span>
                 {{ Math.abs(delta).toFixed(1) }}%
-                <span class="ml-0.5 opacity-70">{{ deltaLabel }}</span>
+                <span class="ml-0.5 opacity-70 hidden sm:inline">{{ deltaLabel }}</span>
             </div>
             <div v-else><!-- spacer --></div>
 
+            <!-- Sparkline takes precious horizontal space; phones already see
+                 the bigger trend numbers, so hide it under sm. -->
             <Sparkline
                 v-if="sparkline?.length"
                 :values="sparkline"
                 :color="sparkColor"
                 :width="84"
                 :height="28"
+                class="hidden sm:block"
             />
         </div>
     </div>
@@ -65,8 +68,8 @@ const sparkColor = computed(() => ({
 @reference '../../../css/app.css';
 
 .sparkline-card {
-    @apply relative rounded-2xl border border-slate-200/70 dark:border-slate-800
-           bg-white dark:bg-slate-900 px-5 py-4 transition-all duration-200;
+    @apply relative rounded-xl sm:rounded-2xl border border-slate-200/70 dark:border-slate-800
+           bg-white dark:bg-slate-900 px-3 py-3 sm:px-5 sm:py-4 transition-all duration-200;
     box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -16px rgba(15,23,42,0.08);
 }
 .sparkline-card:hover {
@@ -96,18 +99,18 @@ const sparkColor = computed(() => ({
 .slate   { color: rgb(100 116 139); }
 
 .card-label {
-    @apply text-[11px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400;
+    @apply text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400 leading-tight;
 }
 .card-value {
-    @apply text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums leading-tight mt-1;
+    @apply text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums leading-tight mt-1 truncate;
     font-feature-settings: 'tnum' on;
 }
 .card-sub {
-    @apply text-xs text-slate-500 dark:text-slate-400 mt-0.5;
+    @apply text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate;
 }
 
 .card-icon {
-    @apply w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0;
+    @apply w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0;
 }
 .indigo-bg  { @apply bg-indigo-50  text-indigo-600  dark:bg-indigo-900/40  dark:text-indigo-300; }
 .emerald-bg { @apply bg-emerald-50 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300; }

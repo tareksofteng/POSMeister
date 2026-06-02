@@ -1,25 +1,27 @@
 <template>
     <div class="flex items-center gap-1">
-        <!-- Install button -->
+        <!-- Install button — icon-only on phones, icon+label from sm up -->
         <button
             v-if="installable"
             @click="install"
-            class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 rounded-lg transition-colors"
+            class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 rounded-lg transition-colors"
             :title="t('pwa.install')"
+            :aria-label="t('pwa.install')"
         >
             <ArrowDownTrayIcon class="w-4 h-4" />
-            <span>{{ t('pwa.install') }}</span>
+            <span class="hidden sm:inline">{{ t('pwa.install') }}</span>
         </button>
 
-        <!-- Update available -->
+        <!-- Update available — same compact-on-phone pattern -->
         <button
             v-if="updateReady"
             @click="applyUpdate"
-            class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/40 hover:bg-amber-100 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors"
+            class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/40 hover:bg-amber-100 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors"
             :title="t('pwa.updateAvailable')"
+            :aria-label="t('pwa.updateAvailable')"
         >
             <ArrowPathIcon class="w-4 h-4" />
-            <span>{{ t('pwa.update') }}</span>
+            <span class="hidden sm:inline">{{ t('pwa.update') }}</span>
         </button>
 
         <!-- Connection status -->

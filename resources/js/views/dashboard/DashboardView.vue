@@ -1,18 +1,18 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
 
         <!-- Hero -->
-        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 sm:gap-4">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-1">{{ dateString }}</p>
-                <h1 class="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
+                <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-1">{{ dateString }}</p>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
                     {{ greeting }}, <span class="text-indigo-600">{{ auth.userName }}</span>
                 </h1>
-                <p class="mt-1 text-sm text-slate-500">{{ t('dashboard.heroSubtitle') }}</p>
+                <p class="mt-1 text-xs sm:text-sm text-slate-500">{{ t('dashboard.heroSubtitle') }}</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <span :class="roleBadgeClass">{{ roleBadgeLabel }}</span>
-                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+                <span class="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     {{ t('dashboard.systemActive') }}
                 </span>
@@ -24,8 +24,10 @@
             </div>
         </header>
 
-        <!-- ── EXECUTIVE KPI MARQUEE ──────────────────────────────────── -->
-        <KpiMarquee v-if="d" :items="marqueeItems" />
+        <!-- ── EXECUTIVE KPI MARQUEE — phones already see the same numbers in
+             the 2-col snapshot grid below, and the auto-scrolling strip eats
+             vertical real estate they don't have. Show it from md up only. -->
+        <KpiMarquee v-if="d" :items="marqueeItems" class="hidden md:block" />
 
         <!-- Smart alerts banner -->
         <section v-if="alerts.length" class="flex flex-wrap gap-2">
@@ -38,7 +40,7 @@
         </section>
 
         <!-- ── EXECUTIVE SNAPSHOT (premium KPI cards with sparklines) ─── -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
+        <section class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-2.5 sm:gap-4">
             <SparklineCard
                 :label="t('dashboard.kpi.todayRevenue')"
                 :value="+d?.sales?.today_revenue || 0"
