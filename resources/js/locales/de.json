@@ -2704,11 +2704,63 @@
     }
   },
   "pwa": {
-    "install":         "Installieren",
-    "update":          "Aktualisieren",
-    "updateAvailable": "Eine neue Version ist verfügbar — zum Anwenden klicken.",
-    "online":          "Online",
-    "offline":         "Offline"
+    "install":             "Installieren",
+    "installing":          "Wird installiert…",
+    "installingTitle":     "Installation läuft — bitte ggf. im System-Dialog bestätigen.",
+    "installed":           "Installiert",
+    "installedTitle":      "POSmeister ist auf diesem Gerät installiert.",
+    "howToInstall":        "Installation anzeigen",
+    "howToInstallTitle":   "Schritt-für-Schritt-Anleitung für diesen Browser.",
+    "update":              "Aktualisieren",
+    "updateAvailable":     "Eine neue Version ist verfügbar — zum Anwenden klicken.",
+    "online":              "Online",
+    "offline":             "Offline",
+    "instructions": {
+      "title":    "POSmeister installieren",
+      "subtitle": "Legen Sie POSmeister auf den Startbildschirm, damit es wie eine native App startet.",
+      "gotIt":    "Verstanden",
+      "hint":     "Nach der Installation starten Sie POSmeister vom Startbildschirm — mit Offline-Zugriff und Vollbild.",
+      "browser": {
+        "chrome":      "Google Chrome (Android)",
+        "samsung":     "Samsung Internet",
+        "firefox":     "Firefox",
+        "edge":        "Microsoft Edge",
+        "safari-ios":  "Safari (iPhone / iPad)",
+        "chrome-ios":  "Chrome (iPhone / iPad)"
+      },
+      "steps": {
+        "chrome": {
+          "0": "Tippen Sie auf das <strong>Drei-Punkte-Menü (⋮)</strong> oben rechts in Chrome.",
+          "1": "Wählen Sie <strong>App installieren</strong> oder <strong>Zum Startbildschirm hinzufügen</strong>.",
+          "2": "Bestätigen Sie im Dialog. POSmeister erscheint als App-Symbol auf dem Startbildschirm."
+        },
+        "samsung": {
+          "0": "Tippen Sie auf das <strong>Menü (≡)</strong> in der unteren Leiste.",
+          "1": "Tippen Sie auf <strong>Seite hinzufügen zu</strong>.",
+          "2": "Wählen Sie <strong>Startbildschirm</strong> und bestätigen Sie."
+        },
+        "firefox": {
+          "0": "Tippen Sie auf das <strong>Drei-Punkte-Menü (⋮)</strong>.",
+          "1": "Wählen Sie <strong>Installieren</strong> oder <strong>Zum Startbildschirm</strong>.",
+          "2": "Bestätigen Sie — die App erscheint auf Ihrem Startbildschirm."
+        },
+        "edge": {
+          "0": "Tippen Sie auf das <strong>Menü (⋯)</strong> am unteren Rand.",
+          "1": "Wählen Sie <strong>Zum Telefon hinzufügen</strong> bzw. <strong>App installieren</strong>.",
+          "2": "Bestätigen Sie im System-Dialog."
+        },
+        "safari-ios": {
+          "0": "Tippen Sie unten auf die <strong>Teilen-Schaltfläche</strong> (Quadrat mit Pfeil).",
+          "1": "Wählen Sie <strong>Zum Home-Bildschirm</strong>.",
+          "2": "Tippen Sie oben rechts auf <strong>Hinzufügen</strong>."
+        },
+        "chrome-ios": {
+          "0": "Tippen Sie in Chrome auf <strong>Teilen</strong>.",
+          "1": "Wählen Sie <strong>Zum Home-Bildschirm</strong>.",
+          "2": "Bestätigen Sie — das App-Symbol erscheint auf dem Startbildschirm."
+        }
+      }
+    }
   },
   "offline": {
     "offline":          "Offline-Betrieb — Verkäufe werden lokal gespeichert und später synchronisiert.",

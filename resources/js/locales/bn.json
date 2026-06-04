@@ -2702,11 +2702,63 @@
     }
   },
   "pwa": {
-    "install":         "ইনস্টল",
-    "update":          "আপডেট",
-    "updateAvailable": "নতুন সংস্করণ পাওয়া যাচ্ছে — প্রয়োগ করতে ক্লিক করুন।",
-    "online":          "অনলাইন",
-    "offline":         "অফলাইন"
+    "install":             "ইনস্টল",
+    "installing":          "ইনস্টল হচ্ছে…",
+    "installingTitle":     "ইনস্টল চলছে — দরকার হলে সিস্টেম ডায়ালগে কনফার্ম করুন।",
+    "installed":           "ইনস্টলড",
+    "installedTitle":      "POSmeister এই ডিভাইসে ইনস্টল করা আছে।",
+    "howToInstall":        "কীভাবে ইনস্টল করব",
+    "howToInstallTitle":   "এই ব্রাউজারে ইনস্টল করার ধাপ দেখুন।",
+    "update":              "আপডেট",
+    "updateAvailable":     "নতুন সংস্করণ পাওয়া যাচ্ছে — প্রয়োগ করতে ক্লিক করুন।",
+    "online":              "অনলাইন",
+    "offline":             "অফলাইন",
+    "instructions": {
+      "title":    "POSmeister ইনস্টল করুন",
+      "subtitle": "হোম স্ক্রিনে যোগ করলে নেটিভ অ্যাপের মত খুলবে।",
+      "gotIt":    "বুঝেছি",
+      "hint":     "ইনস্টল হওয়ার পর হোম স্ক্রিন থেকে খুললে অফলাইন এক্সেস + ফুল-স্ক্রিন সুবিধা পাবেন।",
+      "browser": {
+        "chrome":      "Google Chrome (Android)",
+        "samsung":     "Samsung Internet",
+        "firefox":     "Firefox",
+        "edge":        "Microsoft Edge",
+        "safari-ios":  "Safari (iPhone / iPad)",
+        "chrome-ios":  "Chrome (iPhone / iPad)"
+      },
+      "steps": {
+        "chrome": {
+          "0": "Chrome এর উপরে ডানে <strong>তিন-ডট মেনু (⋮)</strong> এ ট্যাপ করুন।",
+          "1": "<strong>Install app</strong> অথবা <strong>Add to Home screen</strong> বেছে নিন।",
+          "2": "ডায়ালগে কনফার্ম করুন — হোম স্ক্রিনে আইকন আসবে।"
+        },
+        "samsung": {
+          "0": "Samsung Internet এর নিচের বার এ <strong>মেনু (≡)</strong> ট্যাপ করুন।",
+          "1": "<strong>Add page to</strong> বেছে নিন।",
+          "2": "<strong>Home screen</strong> সিলেক্ট করে কনফার্ম করুন।"
+        },
+        "firefox": {
+          "0": "Firefox এ <strong>তিন-ডট মেনু (⋮)</strong> ট্যাপ করুন।",
+          "1": "<strong>Install</strong> বা <strong>Add to Home screen</strong> বেছে নিন।",
+          "2": "কনফার্ম করুন।"
+        },
+        "edge": {
+          "0": "Edge এর নিচে <strong>মেনু (⋯)</strong> ট্যাপ করুন।",
+          "1": "<strong>Add to phone</strong> বা <strong>Install app</strong> বেছে নিন।",
+          "2": "সিস্টেম ডায়ালগে কনফার্ম করুন।"
+        },
+        "safari-ios": {
+          "0": "Safari এর নিচে <strong>Share</strong> বাটনে ট্যাপ করুন।",
+          "1": "<strong>Add to Home Screen</strong> বেছে নিন।",
+          "2": "উপরে ডানে <strong>Add</strong> ট্যাপ করুন।"
+        },
+        "chrome-ios": {
+          "0": "Chrome এ <strong>Share</strong> বাটনে ট্যাপ করুন।",
+          "1": "<strong>Add to Home Screen</strong> বেছে নিন।",
+          "2": "কনফার্ম করুন।"
+        }
+      }
+    }
   },
   "offline": {
     "offline":          "অফলাইন কাজ চলছে — বিক্রয় লোকালি জমা থাকবে, অনলাইনে এলে সিঙ্ক হবে।",

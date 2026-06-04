@@ -1,27 +1,22 @@
 /*
- * Registers the service worker and exposes a tiny event channel for
- * the rest of the app:
+ * Registers the service worker and bootstraps the install state machine.
  *
- *   window.dispatchEvent('posmeister:pwa:installable', { e: BeforeInstallPromptEvent })
- *   window.dispatchEvent('posmeister:pwa:installed')
- *   window.dispatchEvent('posmeister:pwa:update-ready')
+ * Install-related events flow through the singleton in `./install.js`
+ * (see that file for the full state diagram). This file only owns the
+ * service-worker lifecycle and the update-available signal.
  *
- * Components listen, store the event, and call .prompt() when the user
- * clicks an "Install" button.
+ * Update-related events still travel through window.dispatch:
+ *   posmeister:pwa:update-ready
  */
+import { setupInstallStateMachine } from './install';
+
 export function registerPwa() {
     if (typeof window === 'undefined') return;
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        window.__posmeisterInstallEvent = e;
-        window.dispatchEvent(new CustomEvent('posmeister:pwa:installable', { detail: { event: e } }));
-    });
-
-    window.addEventListener('appinstalled', () => {
-        window.__posmeisterInstallEvent = null;
-        window.dispatchEvent(new CustomEvent('posmeister:pwa:installed'));
-    });
+    // Bootstrap the install state machine — captures beforeinstallprompt
+    // and appinstalled exactly once, exposes reactive state to any
+    // component that imports installState.
+    setupInstallStateMachine();
 
     if (!('serviceWorker' in navigator)) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {

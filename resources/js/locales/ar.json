@@ -2702,11 +2702,63 @@
     }
   },
   "pwa": {
-    "install":         "تثبيت",
-    "update":          "تحديث",
-    "updateAvailable": "إصدار جديد متاح — انقر للتطبيق.",
-    "online":          "متصل",
-    "offline":         "غير متصل"
+    "install":             "تثبيت",
+    "installing":          "جاري التثبيت…",
+    "installingTitle":     "جاري التثبيت — يرجى التأكيد في نافذة النظام إذا ظهرت.",
+    "installed":           "مُثبَّت",
+    "installedTitle":      "POSmeister مُثبَّت على هذا الجهاز.",
+    "howToInstall":        "كيفية التثبيت",
+    "howToInstallTitle":   "اعرض خطوات التثبيت لهذا المتصفح.",
+    "update":              "تحديث",
+    "updateAvailable":     "إصدار جديد متاح — انقر للتطبيق.",
+    "online":              "متصل",
+    "offline":             "غير متصل",
+    "instructions": {
+      "title":    "تثبيت POSmeister",
+      "subtitle": "أضف POSmeister إلى الشاشة الرئيسية ليعمل كتطبيق أصلي.",
+      "gotIt":    "حسناً",
+      "hint":     "بعد التثبيت، شغّل POSmeister من الشاشة الرئيسية للحصول على الوضع غير المتصل وعرض ملء الشاشة.",
+      "browser": {
+        "chrome":      "Google Chrome (أندرويد)",
+        "samsung":     "متصفح سامسونج",
+        "firefox":     "Firefox",
+        "edge":        "Microsoft Edge",
+        "safari-ios":  "Safari (iPhone / iPad)",
+        "chrome-ios":  "Chrome (iPhone / iPad)"
+      },
+      "steps": {
+        "chrome": {
+          "0": "اضغط على <strong>قائمة النقاط الثلاث (⋮)</strong> أعلى يمين Chrome.",
+          "1": "اختر <strong>تثبيت التطبيق</strong> أو <strong>إضافة إلى الشاشة الرئيسية</strong>.",
+          "2": "أكّد في النافذة. يظهر POSmeister كأيقونة على الشاشة الرئيسية."
+        },
+        "samsung": {
+          "0": "اضغط على <strong>القائمة (≡)</strong> في الشريط السفلي.",
+          "1": "اضغط على <strong>إضافة الصفحة إلى</strong>.",
+          "2": "اختر <strong>الشاشة الرئيسية</strong> وأكّد."
+        },
+        "firefox": {
+          "0": "اضغط على <strong>قائمة النقاط الثلاث (⋮)</strong>.",
+          "1": "اختر <strong>تثبيت</strong> أو <strong>إضافة إلى الشاشة الرئيسية</strong>.",
+          "2": "أكّد لإضافة الأيقونة."
+        },
+        "edge": {
+          "0": "اضغط على <strong>القائمة (⋯)</strong> في الأسفل.",
+          "1": "اختر <strong>إضافة إلى الهاتف</strong> أو <strong>تثبيت التطبيق</strong>.",
+          "2": "أكّد في نافذة النظام."
+        },
+        "safari-ios": {
+          "0": "اضغط على زر <strong>المشاركة</strong> أسفل Safari.",
+          "1": "اختر <strong>إضافة إلى الشاشة الرئيسية</strong>.",
+          "2": "اضغط <strong>إضافة</strong> في الأعلى."
+        },
+        "chrome-ios": {
+          "0": "اضغط على زر <strong>المشاركة</strong> في Chrome.",
+          "1": "اختر <strong>إضافة إلى الشاشة الرئيسية</strong>.",
+          "2": "أكّد — تظهر الأيقونة على الشاشة الرئيسية."
+        }
+      }
+    }
   },
   "offline": {
     "offline":          "العمل دون اتصال — تُخزَّن المبيعات محلياً وتُزامَن عند العودة للاتصال.",

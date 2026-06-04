@@ -2704,11 +2704,63 @@
     }
   },
   "pwa": {
-    "install":         "Install",
-    "update":          "Update",
-    "updateAvailable": "A new version is available — click to apply.",
-    "online":          "Online",
-    "offline":         "Offline"
+    "install":             "Install",
+    "installing":          "Installing…",
+    "installingTitle":     "Installing — please confirm in the system dialog if asked.",
+    "installed":           "Installed",
+    "installedTitle":      "POSmeister is installed on this device.",
+    "howToInstall":        "How to install",
+    "howToInstallTitle":   "Show step-by-step installation instructions for this browser.",
+    "update":              "Update",
+    "updateAvailable":     "A new version is available — click to apply.",
+    "online":              "Online",
+    "offline":             "Offline",
+    "instructions": {
+      "title":    "Install POSmeister",
+      "subtitle": "Add POSmeister to your home screen so it opens like a native app.",
+      "gotIt":    "Got it",
+      "hint":     "Once installed, launch POSmeister from your home screen for offline access and a full-screen experience.",
+      "browser": {
+        "chrome":      "Google Chrome (Android)",
+        "samsung":     "Samsung Internet",
+        "firefox":     "Firefox",
+        "edge":        "Microsoft Edge",
+        "safari-ios":  "Safari (iPhone / iPad)",
+        "chrome-ios":  "Chrome (iPhone / iPad)"
+      },
+      "steps": {
+        "chrome": {
+          "0": "Tap the <strong>three-dot menu (⋮)</strong> in the top-right of Chrome.",
+          "1": "Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.",
+          "2": "Confirm in the dialog. POSmeister appears on your home screen as an app icon."
+        },
+        "samsung": {
+          "0": "Tap the <strong>menu (≡)</strong> in the bottom bar of Samsung Internet.",
+          "1": "Tap <strong>Add page to</strong>.",
+          "2": "Choose <strong>Home screen</strong>, then confirm. POSmeister launches as a stand-alone app from your home screen."
+        },
+        "firefox": {
+          "0": "Tap the <strong>three-dot menu (⋮)</strong> in Firefox.",
+          "1": "Choose <strong>Install</strong> or <strong>Add to Home screen</strong>.",
+          "2": "Confirm — POSmeister appears on your home screen."
+        },
+        "edge": {
+          "0": "Tap the <strong>menu (⋯)</strong> at the bottom of Edge.",
+          "1": "Choose <strong>Add to phone</strong> or <strong>Install app</strong>.",
+          "2": "Confirm in the system dialog."
+        },
+        "safari-ios": {
+          "0": "Tap the <strong>Share</strong> button (square with an arrow) at the bottom of Safari.",
+          "1": "Scroll down and choose <strong>Add to Home Screen</strong>.",
+          "2": "Tap <strong>Add</strong> in the top-right. POSmeister launches full-screen from your home screen."
+        },
+        "chrome-ios": {
+          "0": "Tap the <strong>Share</strong> button in Chrome.",
+          "1": "Choose <strong>Add to Home Screen</strong>.",
+          "2": "Confirm — the app icon appears on your home screen."
+        }
+      }
+    }
   },
   "offline": {
     "offline":          "Working offline — sales will queue locally and sync when online.",

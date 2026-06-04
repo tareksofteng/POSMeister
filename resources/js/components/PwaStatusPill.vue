@@ -1,22 +1,50 @@
 <template>
     <div class="flex items-center gap-1">
-        <!-- Install button — icon-only on phones, icon+label from sm up -->
+        <!-- ─── Install / Installing / How-to-install button ──────────────
+             Stays visible until the app is genuinely installed (either the
+             appinstalled event fired or display-mode flipped to standalone).
+             Older code hid this the moment userChoice = 'accepted' arrived,
+             which on Android Chrome happens BEFORE the install finishes —
+             users were seeing the button vanish but no app on home screen.
+        -->
         <button
-            v-if="installable"
-            @click="install"
-            class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 rounded-lg transition-colors"
-            :title="t('pwa.install')"
-            :aria-label="t('pwa.install')"
+            v-if="!isInstalled"
+            type="button"
+            @click="handleClick"
+            :disabled="isInstalling"
+            :class="['pill-btn', 'pill-install', { 'is-loading': isInstalling, 'is-unsupported': isUnsupported }]"
+            :title="installTitle"
+            :aria-label="installTitle"
         >
-            <ArrowDownTrayIcon class="w-4 h-4" />
-            <span class="hidden sm:inline">{{ t('pwa.install') }}</span>
+            <ArrowPathIcon v-if="isInstalling" class="w-4 h-4 animate-spin" />
+            <QuestionMarkCircleIcon v-else-if="isUnsupported" class="w-4 h-4" />
+            <ArrowDownTrayIcon v-else class="w-4 h-4" />
+            <span class="hidden sm:inline">{{ installLabel }}</span>
         </button>
 
-        <!-- Update available — same compact-on-phone pattern -->
+        <!-- ─── Installed badge ──────────────────────────────────────────
+             Only shown while we're NOT actually running standalone — i.e.
+             the user installed the app but is currently looking at the
+             website in their normal browser tab. Reassures them the
+             install completed; tap to open the standalone shell.
+        -->
+        <span
+            v-if="isInstalled && !runningStandalone"
+            class="pill-btn pill-installed"
+            :title="t('pwa.installedTitle')"
+        >
+            <CheckBadgeIcon class="w-4 h-4" />
+            <span class="hidden sm:inline">{{ t('pwa.installed') }}</span>
+        </span>
+
+        <!-- ─── Update available ─────────────────────────────────────────
+             A new SW is waiting; tapping reloads with the latest assets.
+        -->
         <button
             v-if="updateReady"
+            type="button"
             @click="applyUpdate"
-            class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/40 hover:bg-amber-100 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors"
+            class="pill-btn pill-update"
             :title="t('pwa.updateAvailable')"
             :aria-label="t('pwa.updateAvailable')"
         >
@@ -24,13 +52,13 @@
             <span class="hidden sm:inline">{{ t('pwa.update') }}</span>
         </button>
 
-        <!-- Connection status -->
+        <!-- ─── Connection / sync pill ──────────────────────────────── -->
         <button
             :class="[
-                'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors',
+                'pill-btn',
                 online
-                    ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800'
-                    : 'text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800'
+                    ? 'pill-online'
+                    : 'pill-offline'
             ]"
             :title="online ? t('pwa.online') : t('pwa.offline')"
             @click="forceSync"
@@ -41,67 +69,156 @@
                 {{ pendingCount }}
             </span>
         </button>
+
+        <!-- Fallback instructions modal -->
+        <PwaInstallInstructions
+            :open="showInstructions"
+            :browser="browserHint"
+            @close="showInstructions = false"
+        />
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/vue/24/outline';
+import {
+    ArrowDownTrayIcon, ArrowPathIcon, QuestionMarkCircleIcon, CheckBadgeIcon,
+} from '@heroicons/vue/24/outline';
 import { countQueue } from '@/pwa/offlineQueue';
 import { syncNow } from '@/pwa/syncWorker';
 import { applyUpdateNow } from '@/pwa/register';
+import { installState, browserHint, triggerInstall } from '@/pwa/install';
+import PwaInstallInstructions from './PwaInstallInstructions.vue';
 
 const { t } = useI18n();
 
-const online      = ref(typeof navigator !== 'undefined' ? navigator.onLine : true);
-const installable = ref(false);
-const updateReady = ref(false);
-const pendingCount = ref(0);
+const online        = ref(typeof navigator !== 'undefined' ? navigator.onLine : true);
+const updateReady   = ref(false);
+const pendingCount  = ref(0);
+const showInstructions = ref(false);
 
-let installEvent = null;
-let pollId = null;
+// State-machine reactive flags
+const isInstalling  = computed(() => installState.value === 'installing');
+const isInstalled   = computed(() => installState.value === 'installed');
+const isAvailable   = computed(() => installState.value === 'available');
+const isUnsupported = computed(() => installState.value === 'unsupported');
 
-function setOnline() { online.value = true; refreshPending(); }
-function setOffline() { online.value = false; refreshPending(); }
-function onInstallable(e) { installEvent = e.detail?.event; installable.value = true; }
-function onInstalled() { installEvent = null; installable.value = false; }
-function onUpdateReady() { updateReady.value = true; }
-function onSyncState(e) { pendingCount.value = e.detail?.pending ?? 0; }
+// True when the page is currently rendered as a standalone PWA. We hide the
+// "Installed" badge in that case — there's nothing to "open", they're already
+// inside the installed app.
+const runningStandalone = computed(() => {
+    if (typeof window === 'undefined') return false;
+    try { return window.matchMedia('(display-mode: standalone)').matches; }
+    catch { return false; }
+});
 
-async function refreshPending() {
-    try { pendingCount.value = await countQueue(); } catch { /* IndexedDB unavailable */ }
-}
+const installLabel = computed(() => {
+    if (isInstalling.value)  return t('pwa.installing');
+    if (isUnsupported.value) return t('pwa.howToInstall');
+    return t('pwa.install');
+});
 
-async function install() {
-    if (!installEvent) return;
-    installEvent.prompt();
-    const choice = await installEvent.userChoice.catch(() => ({ outcome: 'dismissed' }));
-    if (choice.outcome === 'accepted') installable.value = false;
+const installTitle = computed(() => {
+    if (isInstalling.value)  return t('pwa.installingTitle');
+    if (isUnsupported.value) return t('pwa.howToInstallTitle');
+    return t('pwa.install');
+});
+
+// ── Handlers ───────────────────────────────────────────────────────────────
+
+async function handleClick() {
+    // IMPORTANT — must call triggerInstall synchronously before any await,
+    // otherwise Android Chrome loses the user gesture and silently
+    // refuses to surface the OS dialog.
+    if (isUnsupported.value) {
+        showInstructions.value = true;
+        return;
+    }
+
+    const result = await triggerInstall();
+
+    // dismissed / unsupported / error → drop the user into the fallback
+    // modal so they have a recovery path instead of a dead button.
+    if (result.outcome === 'dismissed' || result.outcome === 'unsupported' || result.outcome === 'error') {
+        showInstructions.value = true;
+    }
+    // accepted → state machine keeps the button in 'installing' until
+    // appinstalled or the watchdog flips us into 'installed'.
 }
 
 function applyUpdate() { applyUpdateNow(); }
-function forceSync() { syncNow(); }
+function forceSync()  { syncNow(); }
 
+// ── Network / sync wiring ──────────────────────────────────────────────────
+
+function setOnline()  { online.value = true;  refreshPending(); }
+function setOffline() { online.value = false; refreshPending(); }
+function onUpdateReady() { updateReady.value = true; }
+function onSyncState(e)  { pendingCount.value = e.detail?.pending ?? 0; }
+
+async function refreshPending() {
+    try { pendingCount.value = await countQueue(); }
+    catch { /* IndexedDB unavailable */ }
+}
+
+let pollId = null;
 onMounted(() => {
-    window.addEventListener('online', setOnline);
+    window.addEventListener('online',  setOnline);
     window.addEventListener('offline', setOffline);
-    window.addEventListener('posmeister:pwa:installable', onInstallable);
-    window.addEventListener('posmeister:pwa:installed', onInstalled);
     window.addEventListener('posmeister:pwa:update-ready', onUpdateReady);
     window.addEventListener('posmeister:sync:state', onSyncState);
-    if (window.__posmeisterInstallEvent) { installEvent = window.__posmeisterInstallEvent; installable.value = true; }
     refreshPending();
     pollId = setInterval(refreshPending, 5000);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('online', setOnline);
+    window.removeEventListener('online',  setOnline);
     window.removeEventListener('offline', setOffline);
-    window.removeEventListener('posmeister:pwa:installable', onInstallable);
-    window.removeEventListener('posmeister:pwa:installed', onInstalled);
     window.removeEventListener('posmeister:pwa:update-ready', onUpdateReady);
     window.removeEventListener('posmeister:sync:state', onSyncState);
     if (pollId) clearInterval(pollId);
 });
 </script>
+
+<style scoped>
+@reference '../../css/app.css';
+
+.pill-btn {
+    @apply inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-semibold
+           rounded-lg border transition-colors;
+}
+.pill-btn:disabled { @apply opacity-70 cursor-default; }
+
+.pill-install {
+    @apply text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40
+           hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border-indigo-200 dark:border-indigo-800;
+}
+.pill-install.is-loading {
+    @apply bg-indigo-100 dark:bg-indigo-900/60 cursor-wait;
+}
+.pill-install.is-unsupported {
+    @apply text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40
+           hover:bg-slate-100 dark:hover:bg-slate-800/60 border-slate-200 dark:border-slate-700;
+}
+
+.pill-installed {
+    @apply text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/30
+           border-emerald-200 dark:border-emerald-800;
+    cursor: default;
+}
+
+.pill-update {
+    @apply text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/40
+           hover:bg-amber-100 border-amber-200 dark:border-amber-800;
+}
+
+.pill-online {
+    @apply text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/30
+           border-emerald-200 dark:border-emerald-800;
+}
+.pill-offline {
+    @apply text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-900/30
+           border-rose-200 dark:border-rose-800;
+}
+</style>
