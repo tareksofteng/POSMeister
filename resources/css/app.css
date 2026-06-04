@@ -63,6 +63,57 @@ button, a, [role="button"], input, select, textarea, label {
 /* Momentum scrolling for every scroll container on iOS Safari. */
 .scroll-smooth-mobile { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
 
+/* ── Premium app background ──────────────────────────────────────────────── */
+/* The default body bg (gray-50) reads as flat-grey on phones — especially
+   AMOLED panels. A subtle indigo-tinted gradient gives the app the same
+   "card on top of a glass surface" feel native apps have. Plain white on
+   md+ keeps the dashboard charts looking crisp. */
+body { background-color: #f8fafc; }
+@media (max-width: 768px) {
+    body {
+        background-image:
+            radial-gradient(1200px 600px at 50% -200px, rgba(99, 102, 241, 0.08), transparent 60%),
+            linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        background-attachment: fixed;
+    }
+}
+
+/* ── Custom scrollbar — visible but subtle (Chrome/Edge/Safari) ──────────── */
+/* The app's main scroll container (AppShell <main>) was effectively scroll-
+   without-feedback on desktop, which the user reported as "not premium".
+   This gives a 6px thumb that fades in on hover. Firefox uses scrollbar-color
+   instead. */
+.scroll-smooth-mobile::-webkit-scrollbar,
+main::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.scroll-smooth-mobile::-webkit-scrollbar-track,
+main::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scroll-smooth-mobile::-webkit-scrollbar-thumb,
+main::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 116, 139, 0.25);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.scroll-smooth-mobile::-webkit-scrollbar-thumb:hover,
+main::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(100, 116, 139, 0.45);
+}
+/* Firefox */
+.scroll-smooth-mobile, main {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 116, 139, 0.25) transparent;
+}
+/* Phones never benefit from a visible scrollbar — hide it entirely. */
+@media (max-width: 768px) {
+    main::-webkit-scrollbar { display: none; }
+    main { scrollbar-width: none; }
+}
+
 /* ── PWA + iOS safe-area helpers ─────────────────────────────────────────── */
 .pt-safe { padding-top:    env(safe-area-inset-top, 0); }
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0); }

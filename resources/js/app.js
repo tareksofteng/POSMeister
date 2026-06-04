@@ -17,6 +17,16 @@ app.use(i18n);
 
 app.mount('#app');
 
+// Fade out the boot splash that was painted directly in app.blade.php.
+// A short delay gives Vue one paint cycle to render the shell so the user
+// never sees a blank white flash between the splash and the first route.
+requestAnimationFrame(() => {
+    const splash = document.getElementById('posmeister-splash');
+    if (!splash) return;
+    splash.classList.add('is-fading');
+    setTimeout(() => splash.remove(), 400);
+});
+
 registerPwa();
 startSyncWorker();      // legacy IndexedDB queue (kept for older offline data)
 startSyncEngine();      // Phase Ω — batches offline_sales to /api/system/sync/sales

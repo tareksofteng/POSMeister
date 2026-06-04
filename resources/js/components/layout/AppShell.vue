@@ -34,10 +34,19 @@
             <OfflineBanner />
             <Topbar @toggle-sidebar="toggleSidebar" />
 
-            <main class="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain pb-safe scroll-smooth-mobile">
-                <RouterView />
+            <main class="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain pb-safe scroll-smooth-mobile main-with-bottom-nav lg:main-no-bottom-nav">
+                <!-- Subtle slide-fade between routes — feels like a native
+                     app's stack push without the heavy framer-motion cost. -->
+                <RouterView v-slot="{ Component }">
+                    <Transition name="page" mode="out-in" appear>
+                        <component :is="Component" />
+                    </Transition>
+                </RouterView>
             </main>
         </div>
+
+        <!-- Mobile bottom tab bar — only renders <lg via its own breakpoint -->
+        <BottomNav @open-more="mobileSidebarOpen = true" />
 
         <!-- Global command palette — always mounted, opens on Ctrl/Cmd+K -->
         <CommandPalette />
@@ -49,6 +58,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Sidebar from './Sidebar.vue';
 import Topbar  from './Topbar.vue';
+import BottomNav from './BottomNav.vue';
 import CommandPalette from '../CommandPalette.vue';
 import OfflineBanner  from '../OfflineBanner.vue';
 import { useSettingsStore } from '@/stores/settings';
@@ -104,4 +114,22 @@ onUnmounted(() => {
 
 /* Honour iOS safe-area on the bottom edge in standalone/PWA mode */
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0); }
+
+/* Push the main scroll area up by the bottom-nav height on phones so the
+   last list row isn't hidden under the floating tab bar. The bar is roughly
+   56px + safe-area, so 72px gives a small visual gap on top. */
+.main-with-bottom-nav {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0));
+}
+@media (min-width: 1024px) {
+    .lg\:main-no-bottom-nav { padding-bottom: 0; }
+}
+
+/* ── Page transition — slide in from a few px right, fade in/out ────────── */
+.page-enter-active,
+.page-leave-active {
+    transition: opacity 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.page-enter-from { opacity: 0; transform: translate3d(8px, 0, 0); }
+.page-leave-to   { opacity: 0; transform: translate3d(-4px, 0, 0); }
 </style>

@@ -15,34 +15,34 @@
         </div>
 
         <!-- ── Filter bar ────────────────────────────────────────────────── -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 print:hidden">
-            <div class="flex flex-wrap items-end gap-3">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-4 print:hidden">
+            <div class="grid grid-cols-2 gap-2.5 md:flex md:flex-wrap md:items-end md:gap-3">
                 <div>
-                    <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label class="block text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
                         {{ t('saleReturnRecord.from') }}
                     </label>
                     <input v-model="filters.date_from" type="date"
-                        class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white" />
+                        class="w-full md:w-auto px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white" />
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label class="block text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
                         {{ t('saleReturnRecord.to') }}
                     </label>
                     <input v-model="filters.date_to" type="date"
-                        class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white" />
+                        class="w-full md:w-auto px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white" />
                 </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                <div class="col-span-2 md:col-auto">
+                    <label class="block text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
                         {{ t('saleReturnRecord.customer') }}
                     </label>
                     <select v-model="filters.customer_id"
-                        class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white min-w-[180px]">
+                        class="w-full md:min-w-[180px] px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white">
                         <option value="">{{ t('saleReturnRecord.allCustomers') }}</option>
                         <option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option>
                     </select>
                 </div>
                 <button @click="loadRecord" :disabled="loading"
-                    class="inline-flex items-center gap-2 px-5 py-1.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+                    class="col-span-2 md:col-auto inline-flex items-center justify-center gap-2 px-5 py-2 md:py-1.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
                     <svg v-if="loading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -50,7 +50,7 @@
                     <MagnifyingGlassIcon v-else class="w-3.5 h-3.5" />
                     {{ t('saleReturnRecord.search') }}
                 </button>
-                <label v-if="returns.length" class="ml-auto inline-flex items-center gap-2 cursor-pointer select-none">
+                <label v-if="returns.length" class="col-span-2 md:col-auto md:ml-auto inline-flex items-center gap-2 cursor-pointer select-none">
                     <div class="relative">
                         <input type="checkbox" v-model="showAllDetails" class="sr-only peer" />
                         <div class="w-9 h-5 bg-gray-200 peer-checked:bg-teal-600 rounded-full transition-colors"></div>
@@ -62,20 +62,20 @@
         </div>
 
         <!-- ── KPI cards ─────────────────────────────────────────────────── -->
-        <div v-if="summary" class="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-4 py-3">
-                <p class="text-xs text-gray-500 font-medium">{{ t('saleReturnRecord.totalReturns') }}</p>
-                <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ summary.count }}</p>
+        <div v-if="summary" class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-3 sm:px-4 py-3 min-w-0">
+                <p class="text-[10px] sm:text-xs text-gray-500 font-medium truncate">{{ t('saleReturnRecord.totalReturns') }}</p>
+                <p class="text-lg sm:text-2xl font-bold text-gray-900 mt-0.5 tabular-nums truncate">{{ summary.count }}</p>
             </div>
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-4 py-3">
-                <p class="text-xs text-gray-500 font-medium">{{ t('saleReturnRecord.items') }}</p>
-                <p class="text-2xl font-bold text-gray-900 mt-0.5">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-3 sm:px-4 py-3 min-w-0">
+                <p class="text-[10px] sm:text-xs text-gray-500 font-medium truncate">{{ t('saleReturnRecord.items') }}</p>
+                <p class="text-lg sm:text-2xl font-bold text-gray-900 mt-0.5 tabular-nums truncate">
                     {{ returns.reduce((s, r) => s + (r.items?.length ?? 0), 0) }}
                 </p>
             </div>
-            <div class="bg-teal-600 rounded-xl shadow-sm px-4 py-3">
-                <p class="text-xs text-teal-200 font-medium">{{ t('saleReturns.totalReturn') }}</p>
-                <p class="text-2xl font-bold text-white mt-0.5 tabular-nums">{{ fmt(summary.total_amount) }}</p>
+            <div class="bg-teal-600 rounded-xl shadow-sm px-3 sm:px-4 py-3 col-span-2 lg:col-auto min-w-0">
+                <p class="text-[10px] sm:text-xs text-teal-200 font-medium truncate">{{ t('saleReturns.totalReturn') }}</p>
+                <p class="text-lg sm:text-2xl font-bold text-white mt-0.5 tabular-nums truncate">{{ fmt(summary.total_amount) }}</p>
             </div>
         </div>
 

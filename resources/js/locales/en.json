@@ -10,6 +10,14 @@
     },
     "management": "Management"
   },
+  "nav": {
+    "bottomNav": "Primary navigation",
+    "dashboard": "Home",
+    "pos": "POS",
+    "sales": "Sales",
+    "inventory": "Stock",
+    "more": "More"
+  },
   "menu": {
     "dashboard": "Dashboard",
     "pointOfSale": "Point of Sale",

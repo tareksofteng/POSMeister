@@ -10,6 +10,14 @@
     },
     "management": "Management"
   },
+  "nav": {
+    "bottomNav": "Hauptnavigation",
+    "dashboard": "Start",
+    "pos": "Kasse",
+    "sales": "Verkauf",
+    "inventory": "Lager",
+    "more": "Mehr"
+  },
   "menu": {
     "dashboard": "Dashboard",
     "pointOfSale": "Kassensystem",

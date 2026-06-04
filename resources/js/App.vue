@@ -16,8 +16,14 @@ onMounted(() => {
         auth.fetchMe();
     }
 
-    // Redirect to login when token expires mid-session
+    // Redirect to login when token expires mid-session. The axios interceptor
+    // already cleared localStorage + the IndexedDB snapshot; we still need to
+    // flush the in-memory Pinia state, otherwise the router guard sees
+    // `isAuthenticated = true` and bounces the user back to /dashboard.
     window.addEventListener('auth:expired', () => {
+        auth.token       = null;
+        auth.user        = null;
+        auth.permissions = [];
         router.push({ name: 'login' });
     });
 });

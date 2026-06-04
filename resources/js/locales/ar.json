@@ -10,6 +10,14 @@
     },
     "management": "الإدارة"
   },
+  "nav": {
+    "bottomNav": "التنقل الرئيسي",
+    "dashboard": "الرئيسية",
+    "pos": "نقطة البيع",
+    "sales": "المبيعات",
+    "inventory": "المخزون",
+    "more": "المزيد"
+  },
   "menu": {
     "dashboard": "لوحة التحكم",
     "pointOfSale": "نقطة البيع",

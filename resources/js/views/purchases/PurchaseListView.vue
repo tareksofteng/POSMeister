@@ -16,9 +16,9 @@
             </RouterLink>
         </div>
 
-        <!-- Toolbar -->
-        <div class="flex flex-col sm:flex-row gap-3 flex-wrap">
-            <div class="relative flex-1 min-w-[200px]">
+        <!-- Toolbar — phone: search full, status full, dates side-by-side -->
+        <div class="grid grid-cols-2 gap-2.5 sm:flex sm:flex-row sm:gap-3 sm:flex-wrap">
+            <div class="col-span-2 sm:flex-1 sm:min-w-[200px] relative">
                 <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 <input
                     v-model="searchQuery"
@@ -27,13 +27,13 @@
                     class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
             </div>
-            <select v-model="statusFilter" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="statusFilter" class="col-span-2 sm:col-auto w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                 <option value="">{{ t('purchases.allStatuses') }}</option>
                 <option value="draft">{{ t('purchases.statusDraft') }}</option>
                 <option value="received">{{ t('purchases.statusReceived') }}</option>
             </select>
-            <input v-model="dateFrom" type="date" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
-            <input v-model="dateTo"   type="date" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
+            <input v-model="dateFrom" type="date" class="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
+            <input v-model="dateTo"   type="date" class="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
         </div>
 
         <div v-if="listError" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ listError }}</div>

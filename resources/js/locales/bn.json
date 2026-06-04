@@ -10,6 +10,14 @@
     },
     "management": "ব্যবস্থাপনা"
   },
+  "nav": {
+    "bottomNav": "প্রধান নেভিগেশন",
+    "dashboard": "হোম",
+    "pos": "POS",
+    "sales": "বিক্রয়",
+    "inventory": "স্টক",
+    "more": "আরও"
+  },
   "menu": {
     "dashboard": "ড্যাশবোর্ড",
     "pointOfSale": "বিক্রয় কেন্দ্র",

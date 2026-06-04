@@ -31,13 +31,28 @@ api.interceptors.request.use((config) => {
 });
 
 // ── Response interceptor — handle auth errors ─────────────────────────────
+// On a confirmed 401 (server says the token is invalid), wipe BOTH layers of
+// auth state: localStorage and the IndexedDB offline snapshot. Skipping the
+// snapshot was creating an infinite logout↔auto-restore loop on production —
+// the router guard would call restoreFromOfflineSnapshot(), pull the same
+// expired token back from IDB, and the next request would 401 again. The
+// user's symptom was "I click Sales List, the page redirects back to
+// Dashboard" because the half-cleared auth left them in a permission-denied
+// state mid-navigation.
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('pos_token');
             localStorage.removeItem('pos_user');
-            // Let the router guard handle the redirect
+            localStorage.removeItem('pos_permissions');
+            // Drop the IndexedDB snapshot too — otherwise the next nav
+            // guard pulls the same stale token back and we 401-loop.
+            try {
+                const { clearAuthSnapshot } = await import('@/offline/authCache');
+                await clearAuthSnapshot();
+            } catch { /* IDB might be unavailable */ }
+            // Router guard listens for this and bounces to /login.
             window.dispatchEvent(new CustomEvent('auth:expired'));
         }
         return Promise.reject(error);
