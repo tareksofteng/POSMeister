@@ -91,6 +91,58 @@
                         <div v-else class="py-12 text-center text-sm text-gray-400">{{ t('customers.noSales') }}</div>
                     </div>
 
+                    <!-- Phase Y — Owned Devices tab -->
+                    <div v-if="activeTab === 'devices'" class="p-5 space-y-3">
+                        <div class="relative">
+                            <input
+                                v-model="devicesFilter"
+                                type="search"
+                                :placeholder="t('customers.devicesSearch')"
+                                class="w-full pl-3 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
+
+                        <div v-if="devicesLoading" class="space-y-2 animate-pulse">
+                            <div v-for="i in 3" :key="i" class="h-14 bg-slate-100 rounded-xl"></div>
+                        </div>
+
+                        <div v-else-if="!filteredDevices.length" class="py-12 text-center text-sm text-gray-400">
+                            {{ t('customers.noDevices') }}
+                        </div>
+
+                        <div v-else class="space-y-2">
+                            <article v-for="device in filteredDevices" :key="device.id"
+                                     class="rounded-xl border border-slate-200 bg-white p-3 hover:shadow-sm transition-shadow">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-mono text-sm font-semibold text-slate-900 truncate">
+                                            {{ device.serial_number }}
+                                        </p>
+                                        <p class="text-xs text-slate-600 truncate mt-0.5">
+                                            {{ device.product_name }} <span v-if="device.product_sku" class="text-slate-400">· {{ device.product_sku }}</span>
+                                        </p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            <span v-if="device.sale_date">{{ t('customers.purchasedOn') }}: {{ device.sale_date }}</span>
+                                        </p>
+                                    </div>
+                                    <span :class="['inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border whitespace-nowrap',
+                                                  device.is_under_warranty
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                    : (device.warranty_expiry_date ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200')]">
+                                        <span :class="['w-1 h-1 rounded-full',
+                                                       device.is_under_warranty ? 'bg-emerald-500'
+                                                       : (device.warranty_expiry_date ? 'bg-rose-500' : 'bg-slate-400')]" />
+                                        <span v-if="device.is_under_warranty && device.warranty_remaining_days != null">
+                                            {{ t('serials.warranty.daysLeft', { n: device.warranty_remaining_days }) }}
+                                        </span>
+                                        <span v-else-if="device.warranty_expiry_date">{{ t('serials.warranty.expired') }}</span>
+                                        <span v-else>{{ t('customers.noWarranty') }}</span>
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
                     <!-- Tab: Payments -->
                     <div v-if="activeTab === 'payments'" class="p-5">
                         <div v-if="ledgerLoading" class="space-y-3 animate-pulse">
@@ -213,10 +265,45 @@ const payments     = ref([]);
 const activeTab    = ref('sales');
 
 const tabs = computed(() => [
-    { key: 'sales',   label: t('customers.recentSales') },
+    { key: 'sales',    label: t('customers.recentSales') },
+    { key: 'devices',  label: t('customers.ownedDevices') },
     { key: 'payments', label: t('customers.payments') },
-    { key: 'record',  label: t('customers.recordPayment') },
+    { key: 'record',   label: t('customers.recordPayment') },
 ]);
+
+// ── Phase Y — Owned Devices tab ────────────────────────────────────────────
+const ownedDevices  = ref([]);
+const devicesLoading = ref(false);
+const devicesFilter = ref('');
+
+const filteredDevices = computed(() => {
+    const q = devicesFilter.value.trim().toUpperCase();
+    if (!q) return ownedDevices.value;
+    return ownedDevices.value.filter(d =>
+        (d.serial_number || '').toUpperCase().includes(q)
+        || (d.product_name || '').toUpperCase().includes(q)
+    );
+});
+
+async function loadOwnedDevices() {
+    devicesLoading.value = true;
+    try {
+        const { serialService } = await import('@/services/serialService');
+        const { data } = await serialService.ownedByCustomer(props.customerId);
+        ownedDevices.value = data.data ?? [];
+    } catch {
+        ownedDevices.value = [];
+    } finally {
+        devicesLoading.value = false;
+    }
+}
+
+// Lazy-load the devices list — only fetch when the tab actually opens.
+watch(activeTab, (tab) => {
+    if (tab === 'devices' && !ownedDevices.value.length && !devicesLoading.value) {
+        loadOwnedDevices();
+    }
+});
 
 const customerInitial = computed(() => {
     const name = customer.value?.name ?? '?';

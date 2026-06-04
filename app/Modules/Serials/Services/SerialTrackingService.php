@@ -127,6 +127,31 @@ class SerialTrackingService
 
         $this->assertCountMatchesQuantity($serials->count(), (int) $payload['expected_quantity']);
         $this->assertNoLocalDuplicates($serials);
+
+        // ── IDEMPOTENT RETRY ────────────────────────────────────────────
+        // If this purchase already has serials for this product, see if
+        // they exactly match what we're being asked to insert. If yes,
+        // return the existing rows as a no-op — the client retried after
+        // a network blip. If they partially overlap, that's a bug and we
+        // refuse to corrupt the state.
+        if (!empty($payload['purchase_id'])) {
+            $existing = ProductSerial::where('purchase_id', $payload['purchase_id'])
+                ->where('product_id',  $payload['product_id'])
+                ->orderBy('serial_number')
+                ->get();
+
+            if ($existing->isNotEmpty()) {
+                $existingSet = $existing->pluck('serial_number')->sort()->values()->all();
+                $incomingSet = $serials->sort()->values()->all();
+                if ($existingSet === $incomingSet) {
+                    return $existing;           // ← idempotent success
+                }
+                throw ValidationException::withMessages([
+                    'serials' => [__('errors.serials.purchase_already_has_serials')],
+                ]);
+            }
+        }
+
         $this->assertNoGlobalDuplicates($serials);
 
         $expiry = $this->warranties->calculateExpiryDate(
@@ -185,6 +210,20 @@ class SerialTrackingService
             throw ValidationException::withMessages([
                 'serial_ids' => [__('errors.serials.no_serials_selected')],
             ]);
+        }
+
+        // ── IDEMPOTENT RETRY ────────────────────────────────────────────
+        // If every requested serial is already marked sold on THIS sale,
+        // the client is retrying after a network blip — return the rows
+        // as-is. Anything else (mixed statuses, wrong sale_id) goes
+        // through normal validation below.
+        $alreadySold = ProductSerial::whereIn('id', $serialIds)
+            ->where('product_id', $payload['product_id'])
+            ->where('status', ProductSerial::STATUS_SOLD)
+            ->where('sale_id', (int) $payload['sale_id'])
+            ->get();
+        if ($alreadySold->count() === $serialIds->count()) {
+            return $alreadySold;            // ← idempotent success
         }
 
         $serials = ProductSerial::query()

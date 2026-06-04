@@ -151,6 +151,48 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- ── Phase Y: Serial / IMEI tracking ────────────────────────
+                     Premium opt-in for electronics / mobile shops. Locks
+                     itself once the product has any serial history so
+                     the underlying inventory invariant can't be broken
+                     mid-flight. Stays hidden for service products since
+                     services don't have serial numbers. -->
+                <div v-if="!form.is_service" class="mt-4 rounded-xl border border-indigo-100 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-50/60 to-white dark:from-indigo-950/40 dark:to-slate-900 p-4">
+                    <div class="flex items-start gap-3">
+                        <button
+                            type="button"
+                            @click="toggleSerialized"
+                            :disabled="serializationLocked"
+                            :class="['relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex-shrink-0 mt-0.5',
+                                     form.is_serialized ? 'bg-indigo-600' : 'bg-gray-300',
+                                     serializationLocked ? 'opacity-60 cursor-not-allowed' : '']"
+                        >
+                            <span :class="['inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform', form.is_serialized ? 'translate-x-4' : 'translate-x-1']" />
+                        </button>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <label class="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                    {{ t('products.isSerialized') }}
+                                </label>
+                                <span v-if="form.is_serialized" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-200">
+                                    <CpuChipIcon class="w-3 h-3" />
+                                    {{ t('products.serializedBadge') }}
+                                </span>
+                                <span v-if="serializationLocked" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-200" :title="t('products.isSerializedLockedTooltip')">
+                                    <LockClosedIcon class="w-3 h-3" />
+                                    {{ t('products.locked') }}
+                                </span>
+                            </div>
+                            <p class="mt-1 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                {{ t('products.isSerializedHelp') }}
+                            </p>
+                            <p v-if="serializationLocked" class="mt-1.5 text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+                                {{ t('products.isSerializedLockedTooltip') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="border-t border-gray-100" />
@@ -217,7 +259,7 @@ import { ref, reactive, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Modal     from '@/components/ui/Modal.vue';
 import FormField from '@/components/ui/FormField.vue';
-import { PhotoIcon } from '@heroicons/vue/24/outline';
+import { PhotoIcon, CpuChipIcon, LockClosedIcon } from '@heroicons/vue/24/outline';
 import { productService } from '@/services/productService';
 import { useSettingsStore } from '@/stores/settings';
 import { useAlert } from '@/composables/useAlert';
@@ -253,7 +295,8 @@ function defaultForm() {
         sku: '', name: '', description: '', barcode: '',
         category_id: '', brand_id: '', unit_id: '',
         cost_price: '', selling_price: '', wholesale_price: '', min_selling_price: '',
-        tax_rate: defaultVat.value, reorder_level: 0, is_service: false, is_active: true,
+        tax_rate: defaultVat.value, reorder_level: 0,
+        is_service: false, is_serialized: false, is_active: true,
     };
 }
 
@@ -280,8 +323,32 @@ const form = reactive({
     tax_rate: defaultVat.value,
     reorder_level: 0,
     is_service: false,
+    is_serialized: false,
     is_active: true,
 });
+
+/**
+ * Phase Y — once a product has any serial history (purchase or sale),
+ * the is_serialized flag is frozen at the backend. We mirror that
+ * decision in the UI so the toggle visibly reflects reality and the
+ * cashier doesn't have to discover the lock by failing validation.
+ *
+ * The backend Product model exposes isSerializationLocked(); we check
+ * `props.product.has_serial_history` first (cheap, included in the
+ * resource for edit), then fall back to a heuristic.
+ */
+const serializationLocked = computed(() => {
+    if (!props.product) return false;          // brand-new product
+    return !!props.product.has_serial_history;
+});
+
+function toggleSerialized() {
+    if (serializationLocked.value) return;
+    form.is_serialized = !form.is_serialized;
+    // A serialized product can't also be a "service" (services have no
+    // serial number). Flip them so the form stays coherent.
+    if (form.is_serialized) form.is_service = false;
+}
 
 const errors = reactive({
     sku: '', name: '', description: '', barcode: '',
@@ -321,6 +388,7 @@ watch(() => props.open, (isOpen) => {
         form.tax_rate          = val.tax_rate          ?? defaultVat.value;
         form.reorder_level     = val.reorder_level     ?? 0;
         form.is_service        = val.is_service        ?? false;
+        form.is_serialized     = val.is_serialized     ?? false;
         form.is_active         = val.is_active         ?? true;
         imagePreview.value     = val.image_url         ?? null;
     } else {
@@ -466,6 +534,7 @@ function buildPayload() {
         tax_rate:         form.tax_rate,
         reorder_level:    parseInt(form.reorder_level)      || 0,
         is_service:       form.is_service,
+        is_serialized:    form.is_serialized,
         is_active:        form.is_active,
     };
 }

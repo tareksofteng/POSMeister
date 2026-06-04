@@ -90,6 +90,17 @@ class ProductService
             $data['cost_price'] = 0;
         }
 
+        // Phase Y — once a serialized product has any device history,
+        // flipping is_serialized back to false would orphan the
+        // existing product_serials rows and break inventory math.
+        // Drop the field from the payload so the original value sticks.
+        if (array_key_exists('is_serialized', $data)
+            && (bool) $data['is_serialized'] !== (bool) $product->is_serialized
+            && $product->isSerializationLocked()
+        ) {
+            unset($data['is_serialized']);
+        }
+
         $product->update($data);
         return $product->fresh(['category', 'brand', 'unit']);
     }

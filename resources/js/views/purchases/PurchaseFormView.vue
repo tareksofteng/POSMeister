@@ -115,6 +115,17 @@
                                 class="w-full px-3 py-2.5 text-base text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 :disabled="isLocked"
                             />
+                            <!-- Phase Y — open AddSerialsModal for serialized products -->
+                            <button v-if="isSerializedLine(line) && !isLocked"
+                                    type="button"
+                                    @click="openSerialsModal(line)"
+                                    :class="['mt-1.5 w-full inline-flex items-center justify-center gap-1.5 px-2 py-1.5 text-[11px] font-semibold rounded-lg border transition-colors',
+                                             serialsFilled(line)
+                                               ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
+                                               : 'text-indigo-700 bg-indigo-50 border-indigo-200 hover:bg-indigo-100']">
+                                <CpuChipIcon class="w-3.5 h-3.5" />
+                                {{ serialsFilled(line) ? t('serials.lineBadge.complete', { n: line._serials.length }) : t('serials.lineBadge.add') }}
+                            </button>
                         </div>
                         <div>
                             <label class="block text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">{{ t('purchases.unitCost') }}</label>
@@ -184,7 +195,7 @@
                                 />
                             </td>
 
-                            <!-- Qty -->
+                            <!-- Qty + serials button -->
                             <td class="px-4 py-2">
                                 <input
                                     v-model.number="line.quantity"
@@ -193,6 +204,16 @@
                                     class="form-input text-xs text-right"
                                     :disabled="isLocked"
                                 />
+                                <button v-if="isSerializedLine(line) && !isLocked"
+                                        type="button"
+                                        @click="openSerialsModal(line)"
+                                        :class="['mt-1 w-full inline-flex items-center justify-center gap-1 px-1.5 py-1 text-[10px] font-semibold rounded-md border transition-colors',
+                                                 serialsFilled(line)
+                                                   ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
+                                                   : 'text-indigo-700 bg-indigo-50 border-indigo-200 hover:bg-indigo-100']">
+                                    <CpuChipIcon class="w-3 h-3" />
+                                    {{ serialsFilled(line) ? `${line._serials.length} SN` : t('serials.lineBadge.add') }}
+                                </button>
                             </td>
 
                             <!-- Unit cost -->
@@ -329,6 +350,17 @@
         </div>
 
     </div>
+
+    <!-- Phase Y — Serial entry modal -->
+    <AddSerialsModal
+        :open="serialsModalOpen"
+        :product="serialsModalLine?._product"
+        :quantity="Math.floor(serialsModalLine?.quantity || 0)"
+        :initial-serials="serialsModalLine?._serials || []"
+        :initial-warranty-months="serialsModalLine?._warranty_months || null"
+        @close="serialsModalOpen = false"
+        @confirm="onSerialsConfirmed"
+    />
 </template>
 
 <script setup>
@@ -348,6 +380,9 @@ import {
     DocumentArrowDownIcon,
 } from '@heroicons/vue/24/outline';
 import ProductSearchInput from '@/components/ui/ProductSearchInput.vue';
+import AddSerialsModal from '@/views/serials/AddSerialsModal.vue';
+import { serialService } from '@/services/serialService';
+import { CpuChipIcon } from '@heroicons/vue/24/outline';
 
 const { t }    = useI18n();
 const router   = useRouter();
@@ -439,6 +474,8 @@ function onProductSelect(line, product) {
         line.product_id = null;
         line._product   = null;
         line.unit_cost  = 0;
+        line._serials = [];
+        line._warranty_months = null;
         recalc(line);
         return;
     }
@@ -446,7 +483,83 @@ function onProductSelect(line, product) {
     line._product   = product;
     line.unit_cost  = parseFloat(product.cost_price ?? 0);
     line.vat_rate   = parseFloat(product.tax_rate   ?? defaultVat.value);
+    // Switching to a different product clears any captured serials.
+    line._serials = [];
+    line._warranty_months = null;
     recalc(line);
+}
+
+// ── Phase Y — serial entry modal wiring ──────────────────────────────────
+// A serialized line carries two extra frontend-only fields:
+//   line._serials          — array of trimmed/uppercased SN strings
+//   line._warranty_months  — optional integer
+// They are NOT sent to /api/purchases (existing payload stays unchanged).
+// After the purchase is saved, we POST them to /api/serials/attach-purchase
+// with the purchase_item_id from the response.
+const serialsModalOpen = ref(false);
+const serialsModalLine = ref(null);
+
+function isSerializedLine(line) {
+    return !!line?._product?.is_serialized;
+}
+
+function serialsFilled(line) {
+    return Array.isArray(line._serials)
+        && line._serials.length > 0
+        && line._serials.length === Math.floor(line.quantity || 0);
+}
+
+function openSerialsModal(line) {
+    serialsModalLine.value = line;
+    serialsModalOpen.value = true;
+}
+
+function onSerialsConfirmed(payload) {
+    if (!serialsModalLine.value) return;
+    serialsModalLine.value._serials = payload.serials;
+    serialsModalLine.value._warranty_months = payload.warrantyMonths;
+    serialsModalOpen.value = false;
+    serialsModalLine.value = null;
+}
+
+/**
+ * Idempotent post-save attach. Called from save() AFTER /api/purchases
+ * returns. For each serialized line in the freshly-saved purchase, we
+ * POST one batch to /api/serials/attach-purchase. Failure is logged but
+ * NOT propagated — the purchase itself is already committed; the cashier
+ * can re-open the purchase and click "Add Serials" again to retry. The
+ * backend's idempotency guard means a retry is safe.
+ */
+async function attachSerialsAfterSave(savedPurchase) {
+    if (!savedPurchase?.id) return;
+    const serializedLines = form.value.items.filter(l => isSerializedLine(l) && serialsFilled(l));
+    if (!serializedLines.length) return;
+
+    // Match captured client-side lines back to server-side line rows so
+    // we can pin the purchase_item_id (needed for the audit trail).
+    const serverItems = savedPurchase.items ?? [];
+    for (const line of serializedLines) {
+        const serverItem = serverItems.find(
+            it => it.product_id === line.product_id
+               && Number(it.quantity) === Number(line.quantity),
+        );
+        try {
+            await serialService.attachToPurchase({
+                product_id:        line.product_id,
+                purchase_id:       savedPurchase.id,
+                purchase_item_id:  serverItem?.id ?? null,
+                supplier_id:       savedPurchase.supplier_id ?? null,
+                branch_id:         savedPurchase.branch_id ?? null,
+                expected_quantity: line.quantity,
+                purchase_date:     savedPurchase.purchase_date ?? form.value.purchase_date,
+                warranty_months:   line._warranty_months ?? null,
+                serials:           line._serials,
+            });
+        } catch (err) {
+            console.warn('[serials] attach-to-purchase failed', err);
+            toast('error', t('serials.attach.purchaseFailed', { sku: line._product?.sku || '' }));
+        }
+    }
 }
 
 // ── Load data ─────────────────────────────────────────────────────────────
@@ -548,6 +661,16 @@ async function save(receive) {
         return;
     }
 
+    // Phase Y guard — serialized lines must have one captured serial per
+    // unit before we can save. Block early so the cashier never ships a
+    // half-completed purchase to the server.
+    const missingSerials = validItems.filter(l => isSerializedLine(l) && !serialsFilled(l));
+    if (missingSerials.length) {
+        const skus = missingSerials.map(l => l._product?.sku || l._product?.name).join(', ');
+        itemsError.value = t('serials.attach.missingForPurchase', { skus });
+        return;
+    }
+
     saving.value = receive ? 'receive' : 'draft';
 
     const payload = {
@@ -587,13 +710,22 @@ async function save(receive) {
         }
 
         let savedId;
+        let savedPurchase = null;
         if (isEdit.value) {
             savedId = parseInt(route.params.id);
-            await purchaseService.update(savedId, payload);
+            const { data } = await purchaseService.update(savedId, payload);
+            savedPurchase = data.data ?? data;
         } else {
             const { data } = await purchaseService.store(payload);
-            savedId = (data.data ?? data).id;
+            savedPurchase = data.data ?? data;
+            savedId = savedPurchase.id;
         }
+
+        // Phase Y — fire-and-forget the serial attach. Failure of this
+        // step is non-fatal: the purchase is already saved and the
+        // backend's idempotency guard lets the cashier retry later from
+        // the Serial Inventory modal.
+        await attachSerialsAfterSave(savedPurchase);
 
         toast('success', receive ? t('purchases.receivedSuccess') : (isEdit.value ? t('common.updatedSuccess') : t('common.createdSuccess')));
 

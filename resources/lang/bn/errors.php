@@ -51,5 +51,6 @@ return [
         'wrong_branch'             => 'সিরিয়াল ":sn" অন্য শাখার।',
         'no_serials_selected'      => 'অন্তত একটি সিরিয়াল সিলেক্ট করুন।',
         'serialization_locked'     => 'পণ্যের সিরিয়াল হিস্টরি থাকলে সিরিয়াল ট্র্যাকিং পরিবর্তন করা যাবে না।',
+        'purchase_already_has_serials' => 'এই purchase এ আগে থেকেই ভিন্ন সিরিয়াল attach আছে — mix করা যাবে না।',
     ],
 ];

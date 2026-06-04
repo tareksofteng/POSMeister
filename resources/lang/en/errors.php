@@ -60,5 +60,6 @@ return [
         'wrong_branch'             => 'Serial ":sn" belongs to a different branch.',
         'no_serials_selected'      => 'Please select at least one serial number.',
         'serialization_locked'     => 'Serial-number tracking cannot be changed once a product has serial history.',
+        'purchase_already_has_serials' => 'This purchase already has different serials attached. Refusing to mix them.',
     ],
 ];

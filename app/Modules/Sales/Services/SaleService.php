@@ -218,10 +218,29 @@ class SaleService
             )
             ->limit(12)
             ->get(['id', 'sku', 'name', 'image', 'selling_price', 'wholesale_price',
-                   'cost_price', 'tax_rate', 'unit_id', 'is_service', 'reorder_level']);
+                   'cost_price', 'tax_rate', 'unit_id', 'is_service', 'is_serialized', 'reorder_level']);
 
-        return $products->map(function ($p) use ($branchId) {
-            $inv = Inventory::where(['product_id' => $p->id, 'branch_id' => $branchId])->first();
+        // Phase Y — pre-count in-stock serials for any serialized hits so
+        // the cashier sees the real number of devices available on this
+        // branch, not the inventory counter.
+        $serializedIds = $products->filter(fn ($p) => (bool) $p->is_serialized)->pluck('id');
+        $serialStock = collect();
+        if ($serializedIds->isNotEmpty()) {
+            $serialStock = \App\Modules\Serials\Models\ProductSerial::query()
+                ->whereIn('product_id', $serializedIds)
+                ->where('branch_id', $branchId)
+                ->where('status', \App\Modules\Serials\Models\ProductSerial::STATUS_IN_STOCK)
+                ->selectRaw('product_id, COUNT(*) as c')
+                ->groupBy('product_id')
+                ->pluck('c', 'product_id');
+        }
+
+        return $products->map(function ($p) use ($branchId, $serialStock) {
+            $isSerialized = (bool) $p->is_serialized;
+            $stock = $isSerialized
+                ? (int) ($serialStock[$p->id] ?? 0)
+                : (float) (Inventory::where(['product_id' => $p->id, 'branch_id' => $branchId])->value('quantity') ?? 0);
+
             return [
                 'id'             => $p->id,
                 'sku'            => $p->sku,
@@ -234,7 +253,8 @@ class SaleService
                 'unit_name'      => $p->unit?->name ?? '',
                 'unit_symbol'    => $p->unit?->symbol ?? '',
                 'is_service'     => (bool) $p->is_service,
-                'stock'          => $inv ? (float) $inv->quantity : 0,
+                'is_serialized'  => $isSerialized,
+                'stock'          => $stock,
             ];
         })->toArray();
     }

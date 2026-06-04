@@ -71,6 +71,23 @@
                 <button @click="router.push({ name: 'product-detail', params: { id: row.id } })" class="p-1.5 text-gray-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors" :title="t('products.viewDetail')">
                     <EyeIcon class="w-4 h-4" />
                 </button>
+                <!-- Phase Y — Serial Inventory modal. Only visible for products
+                     that opted into serial tracking. Count badge surfaces the
+                     in-stock figure without an extra click. -->
+                <button
+                    v-if="row.is_serialized"
+                    @click="openSerials(row)"
+                    class="relative p-1.5 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
+                    :title="t('serials.openSerials')"
+                >
+                    <CpuChipIcon class="w-4 h-4" />
+                    <span
+                        v-if="row.in_stock_serials_count != null"
+                        class="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-indigo-600 text-white text-[9px] font-bold leading-none grid place-items-center"
+                    >
+                        {{ row.in_stock_serials_count }}
+                    </span>
+                </button>
                 <button @click="openEdit(row)" class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" :title="t('common.edit')">
                     <PencilSquareIcon class="w-4 h-4" />
                 </button>
@@ -102,6 +119,13 @@
         @saved="onSaved"
     />
 
+    <!-- Phase Y — Serial Inventory modal -->
+    <SerialInventoryModal
+        :open="serialsOpen"
+        :product="serialsTarget"
+        @close="serialsOpen = false"
+    />
+
 </template>
 
 <script setup>
@@ -114,8 +138,9 @@ import { brandService }    from '@/services/brandService';
 import { unitService }     from '@/services/unitService';
 import DataTable        from '@/components/ui/DataTable.vue';
 import ProductFormModal from './ProductFormModal.vue';
+import SerialInventoryModal from './SerialInventoryModal.vue';
 import { useAlert } from '@/composables/useAlert';
-import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon, QrCodeIcon } from '@heroicons/vue/24/outline';
+import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon, QrCodeIcon, CpuChipIcon } from '@heroicons/vue/24/outline';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -244,8 +269,13 @@ async function loadDropdownsFromCache() {
 const formOpen   = ref(false);
 const editTarget = ref(null);
 
+// Phase Y — Serial Inventory modal state.
+const serialsOpen   = ref(false);
+const serialsTarget = ref(null);
+
 function openCreate() { editTarget.value = null; formOpen.value = true; }
 function openEdit(row) { editTarget.value = { ...row }; formOpen.value = true; }
+function openSerials(row) { serialsTarget.value = row; serialsOpen.value = true; }
 
 function onSaved(isEdit) {
     formOpen.value = false;

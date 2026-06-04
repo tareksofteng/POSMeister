@@ -28,6 +28,16 @@ class ProductResource extends JsonResource
             'tax_rate'         => $this->tax_rate,
             'reorder_level'    => $this->reorder_level,
             'is_service'       => $this->is_service,
+            'is_serialized'    => (bool) $this->is_serialized,
+            // Surface the lock state to the editor — the modal disables the
+            // toggle (and shows a tooltip) when this is true, mirroring the
+            // backend invariant in ProductService::update.
+            'has_serial_history' => $this->relationLoaded('serials')
+                ? $this->serials->isNotEmpty()
+                : $this->serials()->exists(),
+            'in_stock_serials_count' => $this->is_serialized
+                ? $this->serials()->where('status', 'in_stock')->count()
+                : null,
             'is_active'        => $this->is_active,
             'profit_margin'    => $this->profit_margin,
             'image'            => $this->image,

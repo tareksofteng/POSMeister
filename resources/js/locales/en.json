@@ -559,6 +559,11 @@
     "taxRate": "VAT Rate",
     "reorderLevel": "Reorder Level",
     "isService": "Service product (no stock)",
+    "isSerialized": "Serial / IMEI tracking",
+    "isSerializedHelp": "Track each unit by its own serial number — perfect for electronics, phones and high-value assets. Existing inventory math stays unchanged for non-serialized products.",
+    "isSerializedLockedTooltip": "This product already has recorded serial-number history — the tracking mode is now locked to keep stock consistent.",
+    "serializedBadge": "Serialized",
+    "locked": "Locked",
     "profitMargin": "Profit margin",
     "sectionBasic": "Basic Information",
     "sectionPricing": "Pricing & Tax",
@@ -1040,6 +1045,11 @@
     "methodOther": "Other",
     "recentSales": "Recent Sales",
     "payments": "Payments",
+    "ownedDevices": "Owned Devices",
+    "devicesSearch": "Search serial or product…",
+    "noDevices": "No serialized devices linked to this customer.",
+    "purchasedOn": "Purchased",
+    "noWarranty": "No warranty",
     "noPayments": "No payments recorded.",
     "noSales": "No sales recorded.",
     "saleNumber": "Invoice #",
@@ -2928,6 +2938,90 @@
       "syncedAt":          "Synced at",
       "amount":            "Amount",
       "empty":             "No offline-originated sales recorded yet."
+    }
+  },
+  "serials": {
+    "module":            "Serial Tracking",
+    "openSerials":       "Open serial inventory",
+    "searchPlaceholder": "Search serial number, IMEI…",
+    "export":            "Export",
+    "exportCsv":         "Download CSV of the filtered rows",
+    "total":             "total",
+    "emptyTitle":        "No serial numbers yet",
+    "emptyDescription":  "Serial numbers appear here as soon as purchases register them.",
+    "kpi": {
+      "total":         "Total Units",
+      "inStock":       "In Stock",
+      "sold":          "Sold",
+      "underWarranty": "Under Warranty"
+    },
+    "status": {
+      "in_stock":          "In Stock",
+      "sold":              "Sold",
+      "reserved":          "Reserved",
+      "sales_returned":    "Sales Return",
+      "purchase_returned": "Purchase Return",
+      "damaged":           "Damaged",
+      "lost":              "Lost"
+    },
+    "col": {
+      "serial":   "Serial / IMEI",
+      "status":   "Status",
+      "branch":   "Branch",
+      "received": "Received",
+      "warranty": "Warranty"
+    },
+    "warranty": {
+      "valid":        "Under warranty",
+      "expired":      "Expired",
+      "expiringSoon": "{n}d left",
+      "daysLeft":     "{n}d"
+    },
+    "lineBadge": {
+      "add":      "Add Serials",
+      "complete": "{n} Serials ✓"
+    },
+    "attach": {
+      "missingForPurchase": "Capture serials for: {skus}",
+      "missingForSale":     "Pick serials for: {skus}",
+      "purchaseFailed":     "Serials for {sku} couldn't be attached — retry from the product Serials view.",
+      "saleFailed":         "Serial sync for {sku} failed — the sale was saved; reassign serials from the sale invoice."
+    },
+    "addModal": {
+      "eyebrow":             "Capture Serial Numbers",
+      "qty":                 "{n} units to register",
+      "expected":            "Expected",
+      "entered":             "Entered",
+      "warranty":            "Warranty",
+      "autofill":            "Autofill",
+      "clear":               "Clear",
+      "warrantyMonths":      "Warranty (months)",
+      "warrantyPlaceholder": "e.g. 12, 24, 36",
+      "autofillPrefix":      "Autofill prefix",
+      "autofillPlaceholder": "e.g. CAM2026",
+      "slotPlaceholder":     "Serial / IMEI #{n}",
+      "tip":                 "Tip",
+      "tipBody":             "Paste a multi-line block to auto-fill remaining slots. Inputs are uppercased automatically.",
+      "confirm":             "Confirm {n} / {total}",
+      "countMismatch":       "Number of serials doesn't match quantity.",
+      "duplicates":          "Remove duplicate serial numbers first.",
+      "autofillNeedsPrefix": "Enter a prefix to autofill."
+    },
+    "pickModal": {
+      "eyebrow":           "Pick Serial Numbers",
+      "available":         "Available",
+      "picked":            "Picked",
+      "qty":               "Quantity",
+      "scanPlaceholder":   "Scan or type serial / IMEI…",
+      "scanHint":          "Hit Enter to auto-add a single match — perfect for barcode scanners.",
+      "selectAll":         "Select all",
+      "clear":             "Clear",
+      "results":           "{n} result(s)",
+      "noWarranty":        "No warranty",
+      "truncated":         "Showing {shown} of {total} — narrow your search to see more.",
+      "emptyTitle":        "Nothing in stock",
+      "emptyDescription":  "There are no in-stock serials for this product at this branch.",
+      "confirm":           "Confirm {n} unit(s)"
     }
   }
 }

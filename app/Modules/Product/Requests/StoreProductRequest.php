@@ -25,6 +25,7 @@ class StoreProductRequest extends FormRequest
             'tax_rate'         => ['required', 'numeric', 'in:0,7,19'],
             'reorder_level'    => ['nullable', 'integer', 'min:0'],
             'is_service'       => ['boolean'],
+            'is_serialized'    => ['boolean'],
             'is_active'        => ['boolean'],
         ];
     }

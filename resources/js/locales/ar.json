@@ -558,6 +558,11 @@
     "taxRate": "نسبة الضريبة",
     "reorderLevel": "حد إعادة الطلب",
     "isService": "خدمة (بدون مخزون)",
+    "isSerialized": "تتبع الرقم التسلسلي / IMEI",
+    "isSerializedHelp": "تتبّع كل وحدة عبر رقمها التسلسلي — مثالي للإلكترونيات والهواتف والأصول عالية القيمة. تظل حسابات المخزون كما هي للمنتجات غير التسلسلية.",
+    "isSerializedLockedTooltip": "يحتوي هذا المنتج على سجل أرقام تسلسلية مسبق — تم قفل الإعداد للحفاظ على اتساق المخزون.",
+    "serializedBadge": "تسلسلي",
+    "locked": "مقفول",
     "profitMargin": "هامش الربح",
     "sectionBasic": "المعلومات الأساسية",
     "sectionPricing": "الأسعار والضرائب",
@@ -1038,6 +1043,11 @@
     "methodOther": "أخرى",
     "recentSales": "المبيعات الأخيرة",
     "payments": "المدفوعات",
+    "ownedDevices": "أجهزة العميل",
+    "devicesSearch": "ابحث برقم تسلسلي أو منتج…",
+    "noDevices": "لا أجهزة تسلسلية مرتبطة بهذا العميل.",
+    "purchasedOn": "تاريخ الشراء",
+    "noWarranty": "بدون ضمان",
     "noPayments": "لا مدفوعات مسجلة.",
     "noSales": "لا مبيعات مسجلة.",
     "saleNumber": "رقم الفاتورة",
@@ -2926,6 +2936,90 @@
       "syncedAt":          "تمت المزامنة",
       "amount":            "المبلغ",
       "empty":             "لا توجد مبيعات دون اتصال بعد."
+    }
+  },
+  "serials": {
+    "module":            "تتبع الأرقام التسلسلية",
+    "openSerials":       "فتح مخزون الأرقام التسلسلية",
+    "searchPlaceholder": "ابحث برقم تسلسلي، IMEI…",
+    "export":            "تصدير",
+    "exportCsv":         "تحميل الصفوف المُرشّحة كـ CSV",
+    "total":             "الإجمالي",
+    "emptyTitle":        "لا توجد أرقام تسلسلية بعد",
+    "emptyDescription":  "تظهر الأرقام التسلسلية هنا عند تسجيل المشتريات لها.",
+    "kpi": {
+      "total":         "إجمالي الوحدات",
+      "inStock":       "في المخزون",
+      "sold":          "مباع",
+      "underWarranty": "تحت الضمان"
+    },
+    "status": {
+      "in_stock":          "في المخزون",
+      "sold":              "مباع",
+      "reserved":          "محجوز",
+      "sales_returned":    "إرجاع من العميل",
+      "purchase_returned": "إرجاع للمورد",
+      "damaged":           "تالف",
+      "lost":              "مفقود"
+    },
+    "col": {
+      "serial":   "رقم تسلسلي / IMEI",
+      "status":   "الحالة",
+      "branch":   "الفرع",
+      "received": "تاريخ الاستلام",
+      "warranty": "الضمان"
+    },
+    "warranty": {
+      "valid":        "ضمان ساري",
+      "expired":      "منتهي",
+      "expiringSoon": "{n} يوم متبقي",
+      "daysLeft":     "{n} يوم"
+    },
+    "lineBadge": {
+      "add":      "إضافة أرقام تسلسلية",
+      "complete": "{n} SN ✓"
+    },
+    "attach": {
+      "missingForPurchase": "أدخل الأرقام التسلسلية لـ: {skus}",
+      "missingForSale":     "اختر الأرقام التسلسلية لـ: {skus}",
+      "purchaseFailed":     "تعذّر ربط الأرقام التسلسلية لـ {sku} — أعد المحاولة من شاشة المنتج.",
+      "saleFailed":         "فشل مزامنة الأرقام التسلسلية لـ {sku} — البيع محفوظ؛ أعد التخصيص من الفاتورة."
+    },
+    "addModal": {
+      "eyebrow":             "تسجيل الأرقام التسلسلية",
+      "qty":                 "{n} وحدة للتسجيل",
+      "expected":            "المتوقع",
+      "entered":             "المُدخل",
+      "warranty":            "الضمان",
+      "autofill":            "ملء تلقائي",
+      "clear":               "مسح",
+      "warrantyMonths":      "الضمان (شهور)",
+      "warrantyPlaceholder": "مثلاً 12، 24، 36",
+      "autofillPrefix":      "بادئة الملء التلقائي",
+      "autofillPlaceholder": "مثلاً CAM2026",
+      "slotPlaceholder":     "رقم تسلسلي / IMEI #{n}",
+      "tip":                 "تلميح",
+      "tipBody":             "الصق كتلة متعددة الأسطر — تُملأ الخانات الفارغة تلقائياً. تُحول المدخلات إلى أحرف كبيرة.",
+      "confirm":             "تأكيد {n} / {total}",
+      "countMismatch":       "عدد الأرقام التسلسلية لا يطابق الكمية.",
+      "duplicates":          "يرجى إزالة الأرقام المكررة.",
+      "autofillNeedsPrefix": "أدخل بادئة لإجراء الملء التلقائي."
+    },
+    "pickModal": {
+      "eyebrow":           "اختيار الأرقام التسلسلية",
+      "available":         "متاح",
+      "picked":            "مُختار",
+      "qty":               "الكمية",
+      "scanPlaceholder":   "امسح أو اكتب الرقم التسلسلي / IMEI…",
+      "scanHint":          "اضغط Enter لإضافة المطابقة الفريدة — مثالي للماسح الضوئي.",
+      "selectAll":         "اختر الكل",
+      "clear":             "مسح",
+      "results":           "{n} نتيجة",
+      "noWarranty":        "بدون ضمان",
+      "truncated":         "عرض {shown} من {total} — قلّص البحث لرؤية المزيد.",
+      "emptyTitle":        "لا يوجد مخزون",
+      "emptyDescription":  "لا توجد أرقام تسلسلية متاحة لهذا المنتج في هذا الفرع.",
+      "confirm":           "تأكيد {n} وحدة"
     }
   }
 }

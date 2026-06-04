@@ -140,11 +140,25 @@
                                             <div class="min-w-0">
                                                 <p class="font-semibold text-gray-900 text-sm truncate max-w-[160px]">{{ line.name }}</p>
                                                 <p class="text-xs text-gray-400">{{ line.sku }} · {{ line.unit_symbol || line.unit_name }}</p>
+                                                <!-- Phase Y — show picked SNs under the product name -->
+                                                <p v-if="line.is_serialized && line._serials?.length"
+                                                   class="mt-0.5 text-[10px] font-mono text-indigo-600 truncate max-w-[160px]"
+                                                   :title="line._serials.join(', ')">
+                                                    SN: {{ line._serials.join(', ') }}
+                                                </p>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-3 py-2 text-right">
-                                        <input
+                                        <!-- Serialized: clickable badge that reopens the picker.
+                                             Non-serialized: editable numeric input. -->
+                                        <button v-if="line.is_serialized"
+                                                @click="openSerialPicker(line)"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">
+                                            <CheckBadgeIcon class="w-3.5 h-3.5" />
+                                            {{ line.quantity }}
+                                        </button>
+                                        <input v-else
                                             type="number"
                                             min="0.01"
                                             step="0.01"
@@ -387,6 +401,16 @@
         </div>
 
     </div>
+
+    <!-- Phase Y — Serial picker for serialized line items -->
+    <SelectSerialsModal
+        :open="serialPickerOpen"
+        :product="serialPickerLine ? { id: serialPickerLine.product_id, name: serialPickerLine.name, sku: serialPickerLine.sku } : null"
+        :branch-id="authStore.branchId"
+        :initial-ids="serialPickerLine?._serial_ids || []"
+        @close="serialPickerOpen = false"
+        @confirm="onSerialsPicked"
+    />
 </template>
 
 <script setup>
@@ -397,6 +421,8 @@ import { useSettingsStore } from '@/stores/settings';
 import { useAuthStore }     from '@/stores/auth';
 import { useAlert }         from '@/composables/useAlert';
 import { saleService }      from '@/services/saleService';
+import { serialService }    from '@/services/serialService';
+import SelectSerialsModal   from '@/views/serials/SelectSerialsModal.vue';
 import { customerService }  from '@/services/customerService';
 import { useDebounce }      from '@vueuse/core';
 import { searchProducts }   from '@/offline/productsCache';
@@ -564,6 +590,10 @@ function buildLine(product) {
         unit_name:  product.unit_name,
         unit_symbol:product.unit_symbol,
         is_service: product.is_service,
+        // Phase Y — serialized line tracking. _serial_ids drives quantity.
+        is_serialized: !!product.is_serialized,
+        _serial_ids:   [],
+        _serials:      [],
         stock:      product.stock,
         cost_price: product.cost_price,
         tax_rate:   product.tax_rate,
@@ -584,6 +614,19 @@ function addToCart(product) {
         return;
     }
 
+    // Phase Y — serialized products bypass the +1 increment path entirely.
+    // Adding a line creates a stub with quantity 0; opening the picker
+    // (auto-opened below) sets the quantity from the user's selection.
+    if (product.is_serialized) {
+        let line = cart.value.find(l => l.product_id === product.id);
+        if (!line) {
+            line = buildLine({ ...product, quantity: 0 });
+            cart.value.push(line);
+        }
+        openSerialPicker(line);
+        return;
+    }
+
     const existing = cart.value.find(l => l.product_id === product.id);
     if (existing) {
         if (!product.is_service && existing.quantity >= product.stock) {
@@ -596,6 +639,66 @@ function addToCart(product) {
         cart.value.push(buildLine({ ...product, quantity: 1 }));
     }
     nextTick(() => searchInputRef.value?.focus());
+}
+
+// ── Phase Y — serial picker integration ──────────────────────────────────
+const serialPickerOpen = ref(false);
+const serialPickerLine = ref(null);
+
+function openSerialPicker(line) {
+    serialPickerLine.value = line;
+    serialPickerOpen.value = true;
+}
+
+function onSerialsPicked(payload) {
+    const line = serialPickerLine.value;
+    if (line) {
+        line._serial_ids = payload.ids;
+        line._serials    = payload.serials;
+        line.quantity    = payload.ids.length;
+        recalcLine(line);
+        // If the cashier picked zero (cleared selection then confirmed),
+        // drop the line entirely.
+        if (line.quantity === 0) {
+            const idx = cart.value.indexOf(line);
+            if (idx >= 0) cart.value.splice(idx, 1);
+        }
+    }
+    serialPickerOpen.value = false;
+    serialPickerLine.value = null;
+    nextTick(() => searchInputRef.value?.focus());
+}
+
+/**
+ * Phase Y — POST one attach-sale call per serialized line after the
+ * sale is created. Each call is independently idempotent: the backend
+ * either flips all the picked serials to 'sold' as a single atomic
+ * transition or rejects the batch. If one line fails (e.g. a serial
+ * was sold simultaneously on another terminal), the cashier sees a
+ * toast and the offending line can be re-picked from Sales List.
+ */
+async function attachSaleSerialsAfterCreate(savedSale) {
+    if (!savedSale?.id) return;
+    const serializedLines = cart.value.filter(l => l.is_serialized && l._serial_ids?.length);
+    if (!serializedLines.length) return;
+
+    const serverItems = savedSale.items ?? [];
+    for (const line of serializedLines) {
+        const serverItem = serverItems.find(it => it.product_id === line.product_id);
+        try {
+            await serialService.attachToSale({
+                product_id:    line.product_id,
+                sale_id:       savedSale.id,
+                sale_item_id:  serverItem?.id ?? null,
+                customer_id:   customer.type === 'registered' ? customer.id : null,
+                branch_id:     authStore.branchId ?? null,
+                serial_ids:    line._serial_ids,
+            });
+        } catch (err) {
+            console.warn('[serials] attach-to-sale failed', err);
+            toast('error', t('serials.attach.saleFailed', { sku: line.sku || '' }));
+        }
+    }
 }
 
 function recalcLine(line) {
@@ -649,6 +752,16 @@ async function confirmSale() {
     saleError.value = '';
     if (!cart.value.length) return;
 
+    // Phase Y — every serialized line MUST have its serials picked before
+    // the cashier can confirm. Block the sale early with a clear toast.
+    const missing = cart.value.filter(l => l.is_serialized && (!l._serial_ids || l._serial_ids.length === 0));
+    if (missing.length) {
+        const skus = missing.map(l => l.sku || l.name).join(', ');
+        saleError.value = t('serials.attach.missingForSale', { skus });
+        toast('error', saleError.value);
+        return;
+    }
+
     // Auto-fill cash if still 0
     if (payment.cash === 0 && payment.card === 0) {
         payment.cash = grandTotal.value;
@@ -691,7 +804,13 @@ async function confirmSale() {
         }
 
         const { data } = await saleService.store(payload);
-        const saleId   = (data.data ?? data).id;
+        const saved   = data.data ?? data;
+        const saleId  = saved.id;
+
+        // Phase Y — after the sale lands, attach the picked serials. The
+        // backend lockForUpdate + idempotency guard makes this safe even
+        // if we retry the call (network blip mid-attach).
+        await attachSaleSerialsAfterCreate(saved);
 
         toast('success', t('pos.saleSuccess'));
 

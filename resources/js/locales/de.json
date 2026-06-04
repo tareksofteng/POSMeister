@@ -559,6 +559,11 @@
     "taxRate": "MwSt.-Satz",
     "reorderLevel": "Mindestbestand",
     "isService": "Dienstleistung (kein Lager)",
+    "isSerialized": "Seriennummern- / IMEI-Verfolgung",
+    "isSerializedHelp": "Jede Einheit wird über ihre eigene Seriennummer geführt — ideal für Elektronik, Smartphones und Anlagengüter. Die bestehende Lagerlogik bleibt für Produkte ohne Serientracking unverändert.",
+    "isSerializedLockedTooltip": "Für dieses Produkt existiert bereits eine Seriennummern-Historie — die Einstellung ist gesperrt, damit der Bestand konsistent bleibt.",
+    "serializedBadge": "Serienprodukt",
+    "locked": "Gesperrt",
     "profitMargin": "Gewinnmarge",
     "sectionBasic": "Grundinformationen",
     "sectionPricing": "Preise & Steuern",
@@ -1040,6 +1045,11 @@
     "methodOther": "Sonstige",
     "recentSales": "Letzte Verkäufe",
     "payments": "Zahlungen",
+    "ownedDevices": "Geräte des Kunden",
+    "devicesSearch": "Seriennummer oder Produkt suchen…",
+    "noDevices": "Keine Seriennummern mit diesem Kunden verknüpft.",
+    "purchasedOn": "Gekauft",
+    "noWarranty": "Keine Garantie",
     "noPayments": "Keine Zahlungen erfasst.",
     "noSales": "Keine Verkäufe erfasst.",
     "saleNumber": "Rechnungs-Nr.",
@@ -2928,6 +2938,90 @@
       "syncedAt":          "Synchronisiert am",
       "amount":            "Betrag",
       "empty":             "Noch keine offline erstellten Verkäufe."
+    }
+  },
+  "serials": {
+    "module":            "Seriennummern",
+    "openSerials":       "Serienbestand öffnen",
+    "searchPlaceholder": "Seriennummer, IMEI suchen…",
+    "export":            "Exportieren",
+    "exportCsv":         "Gefilterte Zeilen als CSV herunterladen",
+    "total":             "gesamt",
+    "emptyTitle":        "Noch keine Seriennummern",
+    "emptyDescription":  "Seriennummern erscheinen hier, sobald Einkäufe sie erfassen.",
+    "kpi": {
+      "total":         "Einheiten gesamt",
+      "inStock":       "Im Bestand",
+      "sold":          "Verkauft",
+      "underWarranty": "In Garantie"
+    },
+    "status": {
+      "in_stock":          "Im Bestand",
+      "sold":              "Verkauft",
+      "reserved":          "Reserviert",
+      "sales_returned":    "Kundenrückgabe",
+      "purchase_returned": "Lieferantenrückgabe",
+      "damaged":           "Beschädigt",
+      "lost":              "Verloren"
+    },
+    "col": {
+      "serial":   "Seriennummer / IMEI",
+      "status":   "Status",
+      "branch":   "Filiale",
+      "received": "Eingang",
+      "warranty": "Garantie"
+    },
+    "warranty": {
+      "valid":        "Garantie aktiv",
+      "expired":      "Abgelaufen",
+      "expiringSoon": "{n}T verbleibend",
+      "daysLeft":     "{n}T"
+    },
+    "lineBadge": {
+      "add":      "Seriennummern",
+      "complete": "{n} SN ✓"
+    },
+    "attach": {
+      "missingForPurchase": "Seriennummern erfassen für: {skus}",
+      "missingForSale":     "Seriennummern wählen für: {skus}",
+      "purchaseFailed":     "Seriennummern für {sku} konnten nicht angehängt werden — bitte aus der Produktansicht erneut versuchen.",
+      "saleFailed":         "Seriennummern-Sync für {sku} fehlgeschlagen — Verkauf wurde gespeichert; bitte aus der Rechnung neu zuordnen."
+    },
+    "addModal": {
+      "eyebrow":             "Seriennummern erfassen",
+      "qty":                 "{n} Einheiten zu registrieren",
+      "expected":            "Erwartet",
+      "entered":             "Erfasst",
+      "warranty":            "Garantie",
+      "autofill":            "Auto-Füllen",
+      "clear":               "Leeren",
+      "warrantyMonths":      "Garantie (Monate)",
+      "warrantyPlaceholder": "z. B. 12, 24, 36",
+      "autofillPrefix":      "Auto-Füll-Präfix",
+      "autofillPlaceholder": "z. B. CAM2026",
+      "slotPlaceholder":     "Seriennummer / IMEI #{n}",
+      "tip":                 "Tipp",
+      "tipBody":             "Mehrzeiligen Block einfügen — leere Felder werden automatisch gefüllt. Eingaben werden in Großbuchstaben umgewandelt.",
+      "confirm":             "Bestätigen {n} / {total}",
+      "countMismatch":       "Anzahl der Seriennummern stimmt nicht mit der Menge überein.",
+      "duplicates":          "Bitte doppelte Seriennummern entfernen.",
+      "autofillNeedsPrefix": "Bitte einen Präfix für die Auto-Füllung angeben."
+    },
+    "pickModal": {
+      "eyebrow":           "Seriennummern auswählen",
+      "available":         "Verfügbar",
+      "picked":            "Ausgewählt",
+      "qty":               "Menge",
+      "scanPlaceholder":   "Seriennummer / IMEI scannen oder tippen…",
+      "scanHint":          "Mit Enter wird ein eindeutiger Treffer hinzugefügt — ideal für Barcode-Scanner.",
+      "selectAll":         "Alle auswählen",
+      "clear":             "Leeren",
+      "results":           "{n} Treffer",
+      "noWarranty":        "Keine Garantie",
+      "truncated":         "Zeige {shown} von {total} — bitte die Suche verfeinern.",
+      "emptyTitle":        "Kein Bestand",
+      "emptyDescription":  "Für dieses Produkt sind in dieser Filiale keine Einheiten verfügbar.",
+      "confirm":           "{n} Einheit(en) bestätigen"
     }
   }
 }

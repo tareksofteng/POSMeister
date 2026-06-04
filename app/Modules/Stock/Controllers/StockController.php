@@ -35,27 +35,58 @@ class StockController extends Controller
 
         $items = $query->get()->filter(fn($inv) => $inv->product !== null);
 
+        // Phase Y — pre-fetch a fast count map of in_stock serial rows so
+        // serialized products report their authoritative quantity (the
+        // number of physical devices currently flagged in_stock), not a
+        // hand-maintained counter from the inventory table.
+        //
+        // Non-serialized products are unaffected — their quantity still
+        // comes from the existing $inv->quantity aggregate.
+        $serializedProductIds = $items->pluck('product')
+            ->filter(fn ($p) => (bool) ($p->is_serialized ?? false))
+            ->pluck('id')
+            ->unique()
+            ->values();
+
+        $serialCounts = collect();
+        if ($serializedProductIds->isNotEmpty()) {
+            $serialCounts = \App\Modules\Serials\Models\ProductSerial::query()
+                ->whereIn('product_id', $serializedProductIds)
+                ->where('status', \App\Modules\Serials\Models\ProductSerial::STATUS_IN_STOCK)
+                ->when($user->branch_id, fn ($q) => $q->where('branch_id', $user->branch_id))
+                ->selectRaw('product_id, COUNT(*) as c')
+                ->groupBy('product_id')
+                ->pluck('c', 'product_id');
+        }
+
         // Group by product, summing quantities (handles multi-branch for admin)
-        $rows = $items->groupBy('product_id')->map(function ($group) {
+        $rows = $items->groupBy('product_id')->map(function ($group) use ($serialCounts) {
             $inv      = $group->first();
-            $totalQty = $group->sum(fn($i) => (float) $i->quantity);
-            $reorder  = (float) ($inv->product->reorder_level ?? 0);
+            $product  = $inv->product;
+            $isSerialized = (bool) ($product->is_serialized ?? false);
+
+            $totalQty = $isSerialized
+                ? (int) ($serialCounts[$inv->product_id] ?? 0)
+                : $group->sum(fn($i) => (float) $i->quantity);
+
+            $reorder  = (float) ($product->reorder_level ?? 0);
 
             return [
                 'id'            => $inv->product_id,
-                'sku'           => $inv->product->sku           ?? '—',
-                'name'          => $inv->product->name          ?? '—',
-                'image_url'     => $inv->product->image
-                                   ? Storage::url($inv->product->image) : null,
-                'category_name' => $inv->product->category?->name ?? '—',
-                'brand_name'    => $inv->product->brand?->name    ?? '—',
-                'unit_name'     => $inv->product->unit?->name     ?? '',
-                'unit_symbol'   => $inv->product->unit?->symbol   ?? '',
+                'sku'           => $product->sku           ?? '—',
+                'name'          => $product->name          ?? '—',
+                'image_url'     => $product->image
+                                   ? Storage::url($product->image) : null,
+                'category_name' => $product->category?->name ?? '—',
+                'brand_name'    => $product->brand?->name    ?? '—',
+                'unit_name'     => $product->unit?->name     ?? '',
+                'unit_symbol'   => $product->unit?->symbol   ?? '',
+                'is_serialized' => $isSerialized,
                 'quantity'      => $totalQty,
                 'reorder_level' => $reorder,
-                'cost_price'    => (float) $inv->product->cost_price,
-                'selling_price' => (float) $inv->product->selling_price,
-                'stock_value'   => round($totalQty * (float) $inv->product->cost_price, 2),
+                'cost_price'    => (float) $product->cost_price,
+                'selling_price' => (float) $product->selling_price,
+                'stock_value'   => round($totalQty * (float) $product->cost_price, 2),
                 'low_stock'     => $totalQty > 0 && $reorder > 0 && $totalQty <= $reorder,
                 'out_of_stock'  => $totalQty <= 0,
             ];

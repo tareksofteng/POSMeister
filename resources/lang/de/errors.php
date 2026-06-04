@@ -51,5 +51,6 @@ return [
         'wrong_branch'             => 'Seriennummer ":sn" gehört zu einer anderen Filiale.',
         'no_serials_selected'      => 'Bitte mindestens eine Seriennummer auswählen.',
         'serialization_locked'     => 'Die Seriennummern-Verfolgung kann nicht mehr geändert werden, sobald ein Produkt eine Serienhistorie besitzt.',
+        'purchase_already_has_serials' => 'Dieser Einkauf hat bereits andere Seriennummern erfasst — Vermischung wird abgelehnt.',
     ],
 ];

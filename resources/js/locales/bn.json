@@ -558,6 +558,11 @@
     "taxRate": "মূসক হার",
     "reorderLevel": "পুনরায় অর্ডার স্তর",
     "isService": "সেবা পণ্য (স্টক নেই)",
+    "isSerialized": "সিরিয়াল / IMEI ট্র্যাকিং",
+    "isSerializedHelp": "প্রত্যেকটি ইউনিট আলাদা সিরিয়াল নম্বরে ট্র্যাক হবে — ইলেকট্রনিক্স, মোবাইল, দামি অ্যাসেটের জন্য আদর্শ। সাধারণ পণ্যের stock গণনা আগের মতই অপরিবর্তিত থাকবে।",
+    "isSerializedLockedTooltip": "এই পণ্যের সিরিয়াল হিস্টরি আছে — stock ঠিক রাখার জন্য এই সেটিং এখন লক করা।",
+    "serializedBadge": "সিরিয়ালাইজড",
+    "locked": "লকড",
     "profitMargin": "মুনাফার মার্জিন",
     "sectionBasic": "মূল তথ্য",
     "sectionPricing": "মূল্য ও ট্যাক্স",
@@ -1038,6 +1043,11 @@
     "methodOther": "অন্যান্য",
     "recentSales": "সাম্প্রতিক বিক্রয়",
     "payments": "পেমেন্ট",
+    "ownedDevices": "কেনা ডিভাইস",
+    "devicesSearch": "সিরিয়াল বা পণ্য খুঁজুন…",
+    "noDevices": "এই গ্রাহকের সাথে কোনো সিরিয়ালাইজড ডিভাইস যুক্ত নেই।",
+    "purchasedOn": "ক্রয়",
+    "noWarranty": "ওয়ারেন্টি নেই",
     "noPayments": "কোনো পেমেন্ট রেকর্ড নেই।",
     "noSales": "কোনো বিক্রয় রেকর্ড নেই।",
     "saleNumber": "চালান নং",
@@ -2926,6 +2936,90 @@
       "syncedAt":          "সিঙ্ক হয়েছে",
       "amount":            "পরিমাণ",
       "empty":             "এখনো কোনো অফলাইন বিক্রয় নেই।"
+    }
+  },
+  "serials": {
+    "module":            "সিরিয়াল ট্র্যাকিং",
+    "openSerials":       "সিরিয়াল ইনভেন্টরি দেখুন",
+    "searchPlaceholder": "সিরিয়াল নম্বর, IMEI খুঁজুন…",
+    "export":            "এক্সপোর্ট",
+    "exportCsv":         "ফিল্টার করা সারিগুলো CSV হিসেবে ডাউনলোড করুন",
+    "total":             "মোট",
+    "emptyTitle":        "এখনো কোনো সিরিয়াল নম্বর নেই",
+    "emptyDescription":  "পণ্য ক্রয় রেজিস্টার হলেই সিরিয়াল এখানে দেখা যাবে।",
+    "kpi": {
+      "total":         "মোট ইউনিট",
+      "inStock":       "স্টকে",
+      "sold":          "বিক্রিত",
+      "underWarranty": "ওয়ারেন্টিতে"
+    },
+    "status": {
+      "in_stock":          "স্টকে",
+      "sold":              "বিক্রিত",
+      "reserved":          "রিজার্ভড",
+      "sales_returned":    "ক্রেতা থেকে ফেরত",
+      "purchase_returned": "সাপ্লায়ারে ফেরত",
+      "damaged":           "ক্ষতিগ্রস্ত",
+      "lost":              "হারানো"
+    },
+    "col": {
+      "serial":   "সিরিয়াল / IMEI",
+      "status":   "স্ট্যাটাস",
+      "branch":   "শাখা",
+      "received": "প্রাপ্ত",
+      "warranty": "ওয়ারেন্টি"
+    },
+    "warranty": {
+      "valid":        "ওয়ারেন্টি চালু",
+      "expired":      "শেষ",
+      "expiringSoon": "{n}দিন বাকি",
+      "daysLeft":     "{n}দিন"
+    },
+    "lineBadge": {
+      "add":      "সিরিয়াল যোগ",
+      "complete": "{n} SN ✓"
+    },
+    "attach": {
+      "missingForPurchase": "সিরিয়াল entry দিন: {skus}",
+      "missingForSale":     "সিরিয়াল সিলেক্ট করুন: {skus}",
+      "purchaseFailed":     "{sku} এর সিরিয়াল attach হয়নি — Product Serials থেকে retry করুন।",
+      "saleFailed":         "{sku} এর সিরিয়াল sync ফেল — বিক্রয় save হয়েছে; invoice থেকে reassign করুন।"
+    },
+    "addModal": {
+      "eyebrow":             "সিরিয়াল নম্বর entry",
+      "qty":                 "{n} টি unit register করতে হবে",
+      "expected":            "প্রত্যাশিত",
+      "entered":             "Entry হয়েছে",
+      "warranty":            "ওয়ারেন্টি",
+      "autofill":            "অটো-ফিল",
+      "clear":               "Clear",
+      "warrantyMonths":      "ওয়ারেন্টি (মাস)",
+      "warrantyPlaceholder": "যেমন 12, 24, 36",
+      "autofillPrefix":      "অটো-ফিল prefix",
+      "autofillPlaceholder": "যেমন CAM2026",
+      "slotPlaceholder":     "সিরিয়াল / IMEI #{n}",
+      "tip":                 "Tip",
+      "tipBody":             "Multi-line paste করলে বাকি slot গুলো auto fill হবে। Input সব uppercase হবে।",
+      "confirm":             "Confirm {n} / {total}",
+      "countMismatch":       "সিরিয়াল সংখ্যা quantity এর সাথে মিলছে না।",
+      "duplicates":          "ডুপ্লিকেট সিরিয়াল remove করুন।",
+      "autofillNeedsPrefix": "Auto-fill এর জন্য prefix দিন।"
+    },
+    "pickModal": {
+      "eyebrow":           "সিরিয়াল সিলেক্ট",
+      "available":         "উপলব্ধ",
+      "picked":            "সিলেক্ট",
+      "qty":               "পরিমাণ",
+      "scanPlaceholder":   "সিরিয়াল / IMEI scan করুন বা টাইপ করুন…",
+      "scanHint":          "একটি ম্যাচ থাকলে Enter চাপলে auto add — barcode scanner এর জন্য আদর্শ।",
+      "selectAll":         "সব সিলেক্ট",
+      "clear":             "Clear",
+      "results":           "{n} টি ফলাফল",
+      "noWarranty":        "ওয়ারেন্টি নেই",
+      "truncated":         "{total} এর মধ্যে {shown} দেখানো হচ্ছে — search সংক্ষিপ্ত করুন।",
+      "emptyTitle":        "স্টকে নেই",
+      "emptyDescription":  "এই branch এ এই product এর কোনো in-stock সিরিয়াল নেই।",
+      "confirm":           "{n} টি unit confirm করুন"
     }
   }
 }
