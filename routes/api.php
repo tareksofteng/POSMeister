@@ -549,6 +549,21 @@ Route::middleware(['auth:sanctum', 'branch'])->group(function () {
         Route::delete('products/{product}/image',      [ProductController::class, 'deleteImage']);
     });
 
+    // ── Phase Y — Serial / IMEI / Warranty tracking ─────────────────────
+    // Read endpoints are open to any authenticated user (cashiers need
+    // to see the available-for-sale list at POS). Write endpoints stay
+    // open here because they're always called from inside an already-
+    // permission-gated workflow (PurchaseService::receive, SaleService
+    // ::confirm, etc.) and additional guards live in those services.
+    Route::get   ('products/{product}/serials',                 [\App\Modules\Serials\Controllers\SerialController::class, 'indexForProduct']);
+    Route::get   ('products/{product}/serials/available',       [\App\Modules\Serials\Controllers\SerialController::class, 'availableForSale']);
+    Route::get   ('products/{product}/serials/in-stock-count',  [\App\Modules\Serials\Controllers\SerialController::class, 'inStockCount']);
+    Route::get   ('serials/warranty-expiring',                  [\App\Modules\Serials\Controllers\SerialController::class, 'warrantyExpiringSoon']);
+    Route::get   ('serials/{serial}',                           [\App\Modules\Serials\Controllers\SerialController::class, 'show']);
+    Route::post  ('serials/attach-purchase',                    [\App\Modules\Serials\Controllers\SerialController::class, 'attachToPurchase']);
+    Route::post  ('serials/attach-sale',                        [\App\Modules\Serials\Controllers\SerialController::class, 'attachToSale']);
+    Route::get   ('customers/{customer}/owned-devices',         [\App\Modules\Serials\Controllers\SerialController::class, 'ownedByCustomer']);
+
     // ── Sales / POS ──────────────────────────────────────────────────────
     // POS product search (all authenticated users)
     Route::get('pos/products',            [SaleController::class, 'posSearch']);

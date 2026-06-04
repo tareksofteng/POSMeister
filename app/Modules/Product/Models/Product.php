@@ -30,6 +30,7 @@ class Product extends Model
         'tax_rate',
         'reorder_level',
         'is_service',
+        'is_serialized',
         'is_active',
     ];
 
@@ -40,6 +41,7 @@ class Product extends Model
         'min_selling_price' => 'decimal:2',
         'tax_rate'         => 'decimal:2',
         'is_service'       => 'boolean',
+        'is_serialized'    => 'boolean',
         'is_active'        => 'boolean',
     ];
 
@@ -66,6 +68,43 @@ class Product extends Model
     public function inventory(): HasMany
     {
         return $this->hasMany(Inventory::class);
+    }
+
+    /**
+     * Phase Y — serial / IMEI / warranty tracking.
+     *
+     * Every physical device for a serialized product lives in
+     * product_serials. The relation is loaded eagerly only when the UI
+     * actually needs it (Serial Inventory modal, Customer "Owned Devices"
+     * tab); the rest of the app treats it like any other HasMany.
+     */
+    public function serials(): HasMany
+    {
+        return $this->hasMany(\App\Modules\Serials\Models\ProductSerial::class);
+    }
+
+    /**
+     * Sellable serialized units only — used by the inventory dashboard so
+     * a serialized product's "on-hand quantity" is derived from real
+     * serials in stock, never from a hand-maintained counter.
+     */
+    public function inStockSerials(): HasMany
+    {
+        return $this->serials()->where('status', \App\Modules\Serials\Models\ProductSerial::STATUS_IN_STOCK);
+    }
+
+    /**
+     * Once a product has any serial history (purchase or sale movement),
+     * the is_serialized flag is frozen — flipping it after the fact would
+     * leave the inventory in an inconsistent state.
+     *
+     * Used by:
+     *   - StoreProductRequest / UpdateProductRequest (validation)
+     *   - ProductFormModal.vue (checkbox disabled state + tooltip)
+     */
+    public function isSerializationLocked(): bool
+    {
+        return $this->serials()->exists();
     }
 
     public function scopeActive($query)

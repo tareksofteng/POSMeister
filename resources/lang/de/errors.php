@@ -39,4 +39,17 @@ return [
         'period_locked'      => 'Diese Lohnperiode kann nicht mehr bearbeitet werden.',
         'paid_not_deletable' => 'Bezahlte Abrechnungen können nicht gelöscht werden.',
     ],
+    'serials' => [
+        'product_not_serialized'   => 'Für dieses Produkt ist keine Seriennummern-Verfolgung aktiviert.',
+        'count_mismatch'           => ':have Seriennummer(n) angegeben, aber :expect erwartet.',
+        'duplicate_in_batch'       => 'Doppelte Seriennummern in dieser Charge.',
+        'duplicate_in_system'      => 'Seriennummer ":sn" ist bereits im System vorhanden.',
+        'unknown_serial'           => 'Eine oder mehrere ausgewählte Seriennummern wurden nicht gefunden.',
+        'not_in_stock'             => 'Seriennummer ":sn" ist nicht im Bestand und kann nicht verkauft werden.',
+        'not_sold'                 => 'Seriennummer ":sn" wurde nicht als verkauft erfasst.',
+        'not_on_sale'              => 'Seriennummer ":sn" gehört nicht zum ursprünglichen Verkauf.',
+        'wrong_branch'             => 'Seriennummer ":sn" gehört zu einer anderen Filiale.',
+        'no_serials_selected'      => 'Bitte mindestens eine Seriennummer auswählen.',
+        'serialization_locked'     => 'Die Seriennummern-Verfolgung kann nicht mehr geändert werden, sobald ein Produkt eine Serienhistorie besitzt.',
+    ],
 ];

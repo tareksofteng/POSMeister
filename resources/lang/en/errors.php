@@ -48,4 +48,17 @@ return [
         'period_locked'  => 'This payroll period can no longer be edited.',
         'paid_not_deletable' => 'Paid payslips cannot be deleted.',
     ],
+    'serials' => [
+        'product_not_serialized'   => 'This product is not configured for serial-number tracking.',
+        'count_mismatch'           => 'You provided :have serial number(s) but :expect were expected.',
+        'duplicate_in_batch'       => 'Duplicate serial numbers found in this batch.',
+        'duplicate_in_system'      => 'Serial number ":sn" already exists in the system.',
+        'unknown_serial'           => 'One or more selected serial numbers could not be found.',
+        'not_in_stock'             => 'Serial ":sn" is not in stock and cannot be sold.',
+        'not_sold'                 => 'Serial ":sn" has no recorded sale to return.',
+        'not_on_sale'              => 'Serial ":sn" was not part of the original sale.',
+        'wrong_branch'             => 'Serial ":sn" belongs to a different branch.',
+        'no_serials_selected'      => 'Please select at least one serial number.',
+        'serialization_locked'     => 'Serial-number tracking cannot be changed once a product has serial history.',
+    ],
 ];
