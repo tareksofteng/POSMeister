@@ -2,6 +2,7 @@
 
 namespace App\Modules\NotificationCenter\Controllers;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\NotificationCenter\Models\NotificationPreference;
 use App\Modules\NotificationCenter\Models\SmartNotification;
 use App\Modules\NotificationCenter\Services\BusinessEventDetector;
@@ -21,14 +22,27 @@ class NotificationCenterController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
+        $ctx  = app(BranchContextService::class);
+
+        // Branch-aware notifications — a low-stock alert raised against
+        // Dhaka shouldn't pop up in the Chattogram workspace. Notifications
+        // with NULL branch_id are "company-wide" and surface everywhere.
+        // The scopeForBranch helper combines branch context with the
+        // null-allowance rule via OR.
+        $baseScope = fn ($q) => $this->scopeForBranch($q, $ctx);
+
         $q = SmartNotification::query()->active()->forUser($user->id, $user->role ?? null);
+        $baseScope($q);
 
         if ($cat = $request->input('category')) $q->where('category', $cat);
         if ($sev = $request->input('severity')) $q->where('severity', $sev);
         if ($request->boolean('unread'))        $q->whereNull('read_at');
 
         $rows = $q->orderByDesc('urgency')->orderByDesc('id')->limit(100)->get();
-        $unread = SmartNotification::query()->active()->forUser($user->id, $user->role ?? null)->unread()->count();
+
+        $unreadQ = SmartNotification::query()->active()->forUser($user->id, $user->role ?? null)->unread();
+        $baseScope($unreadQ);
+        $unread = $unreadQ->count();
 
         return response()->json([
             'data'   => $rows,
@@ -173,5 +187,19 @@ class NotificationCenterController extends Controller
     {
         $built = $this->digests->buildDaily();
         return response()->json(['data' => ['built' => $built]]);
+    }
+
+    /**
+     * Apply branch isolation to a notification query. Workspace context
+     * binds even for admins — switching to Dhaka must hide Chattogram
+     * alerts. Rows with branch_id IS NULL are company-wide announcements
+     * and always show, regardless of workspace.
+     */
+    private function scopeForBranch($q, BranchContextService $ctx): void
+    {
+        if ($ctx->isMainBranch()) return;
+        $current = $ctx->current();
+        if ($current === null) return;
+        $q->where(fn ($w) => $w->whereNull('branch_id')->orWhere('branch_id', $current));
     }
 }

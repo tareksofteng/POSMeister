@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Branch\Services\BranchContextService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -19,8 +20,13 @@ class DashboardController extends Controller
 {
     public function stats(): JsonResponse
     {
-        $user     = auth()->user();
-        $branchId = $user?->branch_id;
+        // Topbar workspace context is binding. NULL = Main Branch / All
+        // Branches super-workspace (admin) — no branch filter applied so
+        // every `when($branchId, ...)` below stays inert and the KPIs
+        // aggregate cross-branch. Specific branch id scopes every block.
+        $user = auth()->user();
+        $ctx  = app(BranchContextService::class);
+        $branchId = $ctx->isMainBranch() ? null : $ctx->current();
 
         $today      = Carbon::today();
         $monthStart = $today->copy()->startOfMonth()->toDateString();

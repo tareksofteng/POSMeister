@@ -4,6 +4,7 @@ namespace App\Modules\Accounting\Controllers;
 
 use App\Modules\Accounting\Models\BankAccount;
 use App\Modules\Accounting\Services\AccountingReportService;
+use App\Modules\Branch\Services\BranchContextService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -16,6 +17,9 @@ class BankAccountController extends Controller
     {
         $q = BankAccount::query()->with('account:id,account_code,account_name', 'branch:id,name');
         if ($request->boolean('active_only', true)) $q->where('is_active', true);
+
+        // Workspace scope is binding even before the explicit drill-down.
+        $q = app(BranchContextService::class)->scopeQuery($q);
         if ($branchId = $request->input('branch_id')) $q->where('branch_id', $branchId);
 
         $rows = $q->orderBy('name')->get();

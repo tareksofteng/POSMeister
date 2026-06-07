@@ -36,6 +36,9 @@
             <!-- PWA / connectivity status -->
             <PwaStatusPill />
 
+            <!-- Branch workspace switcher — beside Language by request -->
+            <BranchSwitcher />
+
             <!-- Language switcher -->
             <LanguageSwitcher />
 
@@ -128,6 +131,7 @@ function openPalette() {
 }
 
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
+import BranchSwitcher from '@/components/layout/BranchSwitcher.vue';
 import PwaStatusPill from '@/components/PwaStatusPill.vue';
 
 defineEmits(['toggle-sidebar']);

@@ -4,6 +4,7 @@ namespace App\Modules\Accounting\Controllers;
 
 use App\Modules\Accounting\Models\JournalEntry;
 use App\Modules\Accounting\Services\AccountingService;
+use App\Modules\Branch\Services\BranchContextService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -24,11 +25,11 @@ class JournalEntryController extends Controller
         if ($to   = $request->input('to'))   $q->whereDate('entry_date', '<=', $to);
         if ($status = $request->input('status')) $q->where('status', $status);
         if ($refType = $request->input('reference_type')) $q->where('reference_type', $refType);
-        if ($branchId = $request->input('branch_id')) $q->where('branch_id', $branchId);
 
-        if (Auth::user()?->role !== 'admin' && Auth::user()?->branch_id) {
-            $q->where('branch_id', Auth::user()->branch_id);
-        }
+        // Workspace scope first — even an admin in Chattogram must not see
+        // Dhaka journals. Explicit ?branch_id= further narrows.
+        $q = app(BranchContextService::class)->scopeQuery($q);
+        if ($branchId = $request->input('branch_id')) $q->where('branch_id', $branchId);
 
         $perPage = (int) $request->input('per_page', 25);
         return response()->json($q->paginate($perPage));

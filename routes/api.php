@@ -87,13 +87,23 @@ Route::prefix('auth')->group(function () {
 Route::get('system/ping', [SystemHealthController::class, 'ping'])->middleware('throttle:60,1');
 
 // ── Protected ─────────────────────────────────────────────────────────────
-Route::middleware(['auth:sanctum', 'branch'])->group(function () {
+// `branch.current` runs BEFORE the legacy `branch` middleware so the
+// X-Branch-Id header (sent by the SPA) wins over the query-string fallback
+// already baked into BranchScopeMiddleware. Both push onto the same
+// container key `pos.activeBranchId`, so downstream `BranchScoped` traits
+// don't need to know which one set it.
+Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function () {
 
     // Auth
     Route::prefix('auth')->group(function () {
         Route::get('me',      [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
+
+    // ── Branch context (Topbar workspace switcher) ──────────────────────
+    Route::get ('branch-context/current',   [\App\Modules\Branch\Controllers\BranchContextController::class, 'current']);
+    Route::get ('branch-context/available', [\App\Modules\Branch\Controllers\BranchContextController::class, 'available']);
+    Route::post('branch-context/switch',    [\App\Modules\Branch\Controllers\BranchContextController::class, 'switch']);
 
     // Dashboard stats
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);

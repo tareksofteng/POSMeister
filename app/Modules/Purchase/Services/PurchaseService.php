@@ -3,6 +3,7 @@
 namespace App\Modules\Purchase\Services;
 
 use App\Modules\Branch\Models\Branch;
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Inventory;
 use App\Modules\Purchase\Models\Purchase;
 use App\Modules\Purchase\Models\PurchaseItem;
@@ -18,6 +19,12 @@ class PurchaseService
     {
         $q = Purchase::with(['supplier', 'branch'])
             ->withCount('items');
+
+        // STRICT branch isolation — Topbar workspace context wins. Even if
+        // the request slips a legacy `branch_id` filter through it can only
+        // NARROW the scope, never expand it. Main Branch / "All branches"
+        // (admin) bypass returns the query unchanged.
+        $q = app(BranchContextService::class)->scopeQuery($q);
 
         if (!empty($filters['search'])) {
             $term = '%' . $filters['search'] . '%';
@@ -61,6 +68,10 @@ class PurchaseService
             ->orderByDesc('purchase_date')
             ->orderByDesc('id');
 
+        // Branch isolation — Chattogram workspace must NOT see Dhaka rows
+        // in the Purchase Record report. The Topbar context is binding.
+        $q = app(BranchContextService::class)->scopeQuery($q);
+
         if (!empty($filters['date_from'])) {
             $q->whereDate('purchase_date', '>=', $filters['date_from']);
         }
@@ -94,7 +105,14 @@ class PurchaseService
         return DB::transaction(function () use ($data) {
             $items    = $data['items'] ?? [];
             $totals   = $this->calculateTotals($items, $data);
-            $branchId = $data['branch_id']
+            // Phase Workspace HARDENED — frontend `branch_id` is now
+            // IGNORED on create (the only writes that need it are admin
+            // legacy edits, which take a different code path). The Topbar
+            // workspace context is binding, falling back to the user's
+            // home branch and finally any active branch. Never trust the
+            // payload — a manipulated client could otherwise post into a
+            // branch the cashier shouldn't touch.
+            $branchId = app(BranchContextService::class)->current()
                 ?? auth()->user()->branch_id
                 ?? Branch::where('is_active', true)->value('id');
 

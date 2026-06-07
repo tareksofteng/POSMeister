@@ -27,6 +27,15 @@ api.interceptors.request.use((config) => {
     if (locale) {
         config.headers['Accept-Language'] = locale;
     }
+    // Branch workspace context — the BranchContextService on the server
+    // reads this header, validates the user can access it, and pins it
+    // for the lifetime of the request. Empty string ("All branches"
+    // super workspace for admins) is a legal value, so we send the
+    // header whenever the key exists in localStorage.
+    const branchId = localStorage.getItem('pos_branch_id');
+    if (branchId !== null) {
+        config.headers['X-Branch-Id'] = branchId;
+    }
     return config;
 });
 

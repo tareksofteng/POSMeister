@@ -2,6 +2,7 @@
 
 namespace App\Modules\Product\Services;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Product;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -73,7 +74,11 @@ class ProductService
 
     private function branchScopedInventory($q)
     {
-        $branchId = auth()->user()?->branch_id;
+        // Topbar workspace context — null when admin is in the Main
+        // Branch / "All branches" super-workspace (sums every branch's
+        // inventory together), specific id otherwise.
+        $ctx      = app(BranchContextService::class);
+        $branchId = $ctx->isMainBranch() ? null : $ctx->current();
         return $branchId ? $q->where('branch_id', $branchId) : $q;
     }
 

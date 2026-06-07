@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sales\Services;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Sales\Models\Customer;
 use App\Modules\Sales\Models\CustomerPayment;
 use App\Modules\Sales\Models\SaleReturn;
@@ -15,8 +16,21 @@ class CustomerService
 
     public function paginate(array $filters = []): LengthAwarePaginator
     {
-        $q = Customer::withSum(['sales as total_due_raw' => fn($s) => $s->where('status', 'active')], 'due_amount')
-            ->withSum('payments as total_paid_due', 'amount');
+        // Customers themselves are SHARED across branches (no branch_id on
+        // the customers table) so the master list isn't filtered. But the
+        // due / paid aggregates ARE branch-aware: a customer's outstanding
+        // balance in Dhaka workspace must NOT include their Chattogram
+        // sales. The sub-queries route through scopeQuery so Main Branch
+        // / All Branches keeps the legacy "all-branch totals" behaviour.
+        $ctx = app(BranchContextService::class);
+        $q = Customer::withSum([
+                'sales as total_due_raw' => fn($s) =>
+                    $ctx->scopeQuery($s->where('status', 'active'))
+            ], 'due_amount')
+            ->withSum([
+                'payments as total_paid_due' => fn($p) =>
+                    $ctx->scopeQuery($p)
+            ], 'amount');
 
         if (!empty($filters['search'])) {
             $term = '%' . $filters['search'] . '%';
@@ -43,10 +57,26 @@ class CustomerService
 
     public function find(int $id): Customer
     {
-        return Customer::withSum(['sales as total_sales_amount' => fn($s) => $s->where('status', 'active')], 'grand_total')
-            ->withCount(['sales as total_sales_count' => fn($s) => $s->where('status', 'active')])
-            ->withSum(['sales as total_due_raw' => fn($s) => $s->where('status', 'active')], 'due_amount')
-            ->withSum('payments as total_paid_due', 'amount')
+        // Same branch-aware aggregates as paginate() — the detail drawer's
+        // KPIs (lifetime sales, outstanding due, payments received) must
+        // reflect the active workspace, not a cross-branch total.
+        $ctx = app(BranchContextService::class);
+        return Customer::withSum([
+                'sales as total_sales_amount' => fn($s) =>
+                    $ctx->scopeQuery($s->where('status', 'active'))
+            ], 'grand_total')
+            ->withCount([
+                'sales as total_sales_count' => fn($s) =>
+                    $ctx->scopeQuery($s->where('status', 'active'))
+            ])
+            ->withSum([
+                'sales as total_due_raw' => fn($s) =>
+                    $ctx->scopeQuery($s->where('status', 'active'))
+            ], 'due_amount')
+            ->withSum([
+                'payments as total_paid_due' => fn($p) =>
+                    $ctx->scopeQuery($p)
+            ], 'amount')
             ->findOrFail($id);
     }
 
@@ -54,8 +84,10 @@ class CustomerService
 
     public function getRecentSales(Customer $customer, int $limit = 10): Collection
     {
-        return $customer->sales()
-            ->where('status', 'active')
+        $ctx = app(BranchContextService::class);
+        return $ctx->scopeQuery(
+                $customer->sales()->where('status', 'active')
+            )
             ->orderByDesc('sale_date')
             ->limit($limit)
             ->get(['id', 'sale_number', 'sale_date', 'grand_total', 'total_paid', 'due_amount']);
@@ -63,7 +95,8 @@ class CustomerService
 
     public function getPayments(Customer $customer): Collection
     {
-        return $customer->payments()
+        $ctx = app(BranchContextService::class);
+        return $ctx->scopeQuery($customer->payments())
             ->orderByDesc('payment_date')
             ->orderByDesc('id')
             ->get();
@@ -71,8 +104,14 @@ class CustomerService
 
     public function storePayment(Customer $customer, array $data): CustomerPayment
     {
+        $ctx = app(BranchContextService::class);
         return $customer->payments()->create([
-            'branch_id'      => $data['branch_id'] ?? auth()->user()->branch_id,
+            // Topbar workspace wins on writes. Explicit branch_id in $data
+            // still wins for legacy admin flows; otherwise default to the
+            // active workspace, falling back to user's home branch.
+            'branch_id'      => $data['branch_id']
+                                ?? $ctx->current()
+                                ?? auth()->user()->branch_id,
             'amount'         => $data['amount'],
             'payment_method' => $data['payment_method'] ?? 'cash',
             'payment_date'   => $data['payment_date'],

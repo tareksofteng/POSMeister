@@ -76,9 +76,13 @@ class ExpenseService
         $data['expense_number'] = $this->generateNumber();
         $data['status'] = 'pending';
 
-        if (empty($data['branch_id'])) {
-            $data['branch_id'] = Auth::user()?->branch_id;
-        }
+        // Workspace context binds on writes — payload branch_id is
+        // accepted only when admin is doing an explicit override and the
+        // legacy `branch_id` filter survived in $data. Default flow uses
+        // the Topbar workspace; cashier home branch is the last resort.
+        $data['branch_id'] = $data['branch_id']
+            ?? app(\App\Modules\Branch\Services\BranchContextService::class)->current()
+            ?? Auth::user()?->branch_id;
 
         if ($attachment) {
             $data['attachment'] = $this->saveAttachment($attachment);
@@ -367,13 +371,13 @@ class ExpenseService
 
     private function applyBranchScope($query): void
     {
-        $user = Auth::user();
-        if (!$user || $this->isAdmin()) {
-            return;
-        }
-        if ($user->branch_id) {
-            $query->where('branch_id', $user->branch_id);
-        }
+        // Topbar workspace context is now the source of truth — admin in
+        // Chattogram workspace must NOT see Dhaka expenses (the old code
+        // returned early for every admin, leaking everything).
+        // BranchContextService::scopeQuery does the right thing for
+        // Main Branch / All Branches (no filter) and specific branches
+        // (where branch_id = current).
+        app(\App\Modules\Branch\Services\BranchContextService::class)->scopeQuery($query);
     }
 
     private function isAdmin(): bool

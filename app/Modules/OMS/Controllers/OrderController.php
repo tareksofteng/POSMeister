@@ -2,6 +2,7 @@
 
 namespace App\Modules\OMS\Controllers;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\OMS\Models\Order;
 use App\Modules\OMS\Services\OrderService;
 use Illuminate\Http\JsonResponse;
@@ -32,9 +33,9 @@ class OrderController extends Controller
             });
         }
 
-        if (Auth::user()?->role !== 'admin' && Auth::user()?->branch_id) {
-            $q->where('branch_id', Auth::user()->branch_id);
-        }
+        // Workspace context — admin in Chattogram must NOT see Dhaka
+        // orders. The legacy "admin sees everything" branch was the leak.
+        $q = app(BranchContextService::class)->scopeQuery($q);
 
         return response()->json($q->paginate((int) $request->input('per_page', 25)));
     }
@@ -42,7 +43,10 @@ class OrderController extends Controller
     public function dashboard(Request $request): JsonResponse
     {
         $data = $request->validate(['branch_id' => 'nullable|integer|exists:branches,id']);
-        return response()->json(['data' => $this->orders->dashboard($data['branch_id'] ?? null)]);
+        // Workspace context overrides when no explicit branch is requested.
+        $ctx = app(BranchContextService::class);
+        $branchId = $data['branch_id'] ?? ($ctx->isMainBranch() ? null : $ctx->current());
+        return response()->json(['data' => $this->orders->dashboard($branchId)]);
     }
 
     public function show(Order $order): JsonResponse

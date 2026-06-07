@@ -30,18 +30,21 @@
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{{ t('purchases.sectionHeader') }}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Branch (always shown; disabled for non-admin users with a fixed branch) -->
+                <!-- Workspace pill — replaces the branch dropdown. Source of truth
+                     is the Topbar BranchSwitcher; the form just shows where the
+                     purchase will land so the cashier never wonders. Click the
+                     pill to surface the switcher. -->
                 <div>
                     <label class="form-label">{{ t('branches.title') }}</label>
-                    <select
-                        v-model="form.branch_id"
-                        class="form-input"
-                        :disabled="isLocked || (!authStore.isAdmin && !!authStore.branchId)"
-                    >
-                        <option value="">— {{ t('branches.selectBranch') }} —</option>
-                        <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
-                    </select>
-                    <p v-if="errors.branch_id" class="form-error">{{ errors.branch_id }}</p>
+                    <div class="workspace-pill" :title="t('purchases.workspaceHint')">
+                        <BuildingStorefrontIcon class="w-4 h-4 text-indigo-600" />
+                        <span class="font-semibold text-slate-900 truncate">
+                            {{ branchStore.displayLabel
+                                ?? (branchStore.isAllBranches && authStore.isAdmin
+                                    ? t('branchSwitcher.allBranchesShort')
+                                    : t('purchases.workspaceUnset')) }}
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Supplier -->
@@ -372,6 +375,8 @@ import { purchaseService } from '@/services/purchaseService';
 import { supplierService } from '@/services/supplierService';
 import { useSettingsStore } from '@/stores/settings';
 import { useAuthStore } from '@/stores/auth';
+import { useBranchContextStore } from '@/stores/branchContext';
+import { BuildingStorefrontIcon } from '@heroicons/vue/24/outline';
 import { useAlert } from '@/composables/useAlert';
 
 import {
@@ -390,6 +395,7 @@ const route    = useRoute();
 const { toast, confirm } = useAlert();
 const settingsStore = useSettingsStore();
 const authStore     = useAuthStore();
+const branchStore   = useBranchContextStore();
 
 const currencySymbol = computed(() => settingsStore.settings?.currency_symbol ?? '€');
 const defaultVat     = computed(() => settingsStore.settings?.vat_default ?? 19);
@@ -674,7 +680,12 @@ async function save(receive) {
     saving.value = receive ? 'receive' : 'draft';
 
     const payload = {
-        branch_id:       form.value.branch_id   || null,
+        // Phase Workspace — branch_id intentionally omitted on create so the
+        // backend's BranchContextService::current() (resolved from the
+        // X-Branch-Id header set by the Topbar switcher) wins. On edit we
+        // still send the original branch_id so the saved record's branch
+        // stays put even if the user is currently in a different workspace.
+        ...(isEdit.value && form.value.branch_id ? { branch_id: form.value.branch_id } : {}),
         supplier_id:     form.value.supplier_id || null,
         purchase_date:   form.value.purchase_date,
         reference:       form.value.reference || null,
@@ -771,4 +782,10 @@ async function save(receive) {
 .btn-primary  { @apply flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50; }
 .btn-secondary{ @apply flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors; }
 .btn-sm-primary { @apply flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors; }
+/* Workspace pill — read-only display of the active branch context. */
+.workspace-pill {
+    @apply flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-indigo-50/60 dark:bg-indigo-900/30
+           border border-indigo-100 dark:border-indigo-800 text-slate-700 dark:text-slate-200;
+    min-height: 40px;
+}
 </style>

@@ -4,6 +4,7 @@ namespace App\Modules\Accounting\Services;
 
 use App\Modules\Accounting\Models\ChartOfAccount;
 use App\Modules\Accounting\Models\JournalEntryLine;
+use App\Modules\Branch\Services\BranchContextService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,8 +28,7 @@ class AccountingReportService
             ->with(['entry:id,entry_number,reference_type,reference_number,narration,status'])
             ->where('account_id', $accountId)
             ->whereBetween('entry_date', [$from, $to])
-            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
-            ->when(!$this->isAdmin(), fn($q) => $q->where('branch_id', Auth::user()->branch_id))
+            ->tap(fn($q) => $this->applyBranchScope($q, $branchId))
             ->orderBy('entry_date')
             ->orderBy('id')
             ->get();
@@ -206,8 +206,7 @@ class AccountingReportService
         $rows = JournalEntryLine::query()
             ->where('account_id', $accountId)
             ->whereBetween('entry_date', [$from, $to])
-            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
-            ->when(!$this->isAdmin(), fn($q) => $q->where('branch_id', Auth::user()->branch_id))
+            ->tap(fn($q) => $this->applyBranchScope($q, $branchId))
             ->selectRaw('entry_date, SUM(debit) as cash_in, SUM(credit) as cash_out')
             ->groupBy('entry_date')
             ->orderBy('entry_date')
@@ -271,8 +270,7 @@ class AccountingReportService
         $row = JournalEntryLine::query()
             ->where('account_id', $accountId)
             ->where('entry_date', '<', $date)
-            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
-            ->when(!$this->isAdmin(), fn($q) => $q->where('branch_id', Auth::user()->branch_id))
+            ->tap(fn($q) => $this->applyBranchScope($q, $branchId))
             ->selectRaw('COALESCE(SUM(debit), 0) as d, COALESCE(SUM(credit), 0) as c')
             ->first();
 
@@ -289,8 +287,7 @@ class AccountingReportService
         $row = JournalEntryLine::query()
             ->where('account_id', $account->id)
             ->where('entry_date', '<=', $asOf)
-            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
-            ->when(!$this->isAdmin(), fn($q) => $q->where('branch_id', Auth::user()->branch_id))
+            ->tap(fn($q) => $this->applyBranchScope($q, $branchId))
             ->selectRaw('COALESCE(SUM(debit), 0) as d, COALESCE(SUM(credit), 0) as c')
             ->first();
 
@@ -421,5 +418,25 @@ class AccountingReportService
     private function isAdmin(): bool
     {
         return Auth::user()?->role === 'admin';
+    }
+
+    /**
+     * Branch scope used by every report query. Combines the optional
+     * explicit drill-down (`$explicit`, e.g. "show me Dhaka only" picked
+     * from a report filter) with the active Topbar workspace context so
+     * an admin browsing in Chattogram can no longer see Dhaka ledgers
+     * via a missing-filter call. Order of precedence:
+     *
+     *   1. $explicit (user-driven drill-down)            → strictly that branch
+     *   2. BranchContextService::current()              → strictly that branch
+     *   3. Main Branch / All Branches super workspace   → no scope
+     */
+    private function applyBranchScope($q, ?int $explicit): void
+    {
+        if ($explicit) {
+            $q->where('branch_id', $explicit);
+            return;
+        }
+        app(BranchContextService::class)->scopeQuery($q);
     }
 }

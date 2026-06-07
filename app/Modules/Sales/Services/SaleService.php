@@ -3,6 +3,7 @@
 namespace App\Modules\Sales\Services;
 
 use App\Modules\Branch\Models\Branch;
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Inventory;
 use App\Modules\Product\Models\Product;
 use App\Modules\Sales\Models\Sale;
@@ -17,6 +18,9 @@ class SaleService
     {
         $q = Sale::with(['customer', 'branch'])
             ->withCount('items');
+
+        // STRICT branch isolation — Topbar workspace context is binding.
+        $q = app(BranchContextService::class)->scopeQuery($q);
 
         if (!empty($filters['search'])) {
             $term = '%' . $filters['search'] . '%';
@@ -59,6 +63,9 @@ class SaleService
         $q = Sale::with(['customer', 'branch', 'items.product.unit'])
             ->orderByDesc('sale_date')->orderByDesc('id');
 
+        // Branch isolation — Sale Record report.
+        $q = app(BranchContextService::class)->scopeQuery($q);
+
         if (!empty($filters['date_from'])) {
             $q->whereDate('sale_date', '>=', $filters['date_from']);
         }
@@ -88,7 +95,11 @@ class SaleService
             $freight  = (float) ($data['freight_amount']  ?? 0);
             $totals   = SaleCalculator::calculate($items, $discount, $freight);
 
-            $branchId = $data['branch_id']
+            // Phase Workspace HARDENED — frontend `branch_id` IGNORED on
+            // create. Topbar workspace context binds. A manipulated client
+            // could otherwise post a Dhaka cashier's sale into the
+            // Chattogram books; not on our watch.
+            $branchId = app(\App\Modules\Branch\Services\BranchContextService::class)->current()
                 ?? auth()->user()->branch_id
                 ?? Branch::where('is_active', true)->value('id');
 

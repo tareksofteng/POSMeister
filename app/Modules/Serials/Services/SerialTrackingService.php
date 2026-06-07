@@ -2,6 +2,7 @@
 
 namespace App\Modules\Serials\Services;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Product;
 use App\Modules\Serials\Models\ProductSerial;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -57,6 +58,12 @@ class SerialTrackingService
         $q = ProductSerial::query()
             ->with(['branch:id,name', 'product:id,name,sku'])
             ->where('product_id', $productId);
+
+        // Workspace scope first — Dhaka serials must never appear in the
+        // Chattogram Inventory drawer. Explicit branch_id filter still
+        // works as a narrowing drill-down (e.g. for cross-branch reports
+        // launched from Main Branch).
+        $q = app(BranchContextService::class)->scopeQuery($q);
 
         if (!empty($filters['status']))     $q->where('status', $filters['status']);
         if (!empty($filters['branch_id']))  $q->where('branch_id', $filters['branch_id']);

@@ -92,8 +92,10 @@ import { countQueue } from '@/pwa/offlineQueue';
 import { syncNow } from '@/pwa/syncWorker';
 import { applyUpdateNow } from '@/pwa/register';
 import { installState, browserHint, triggerInstall } from '@/pwa/install';
+import { useAlert } from '@/composables/useAlert';
 
 const { t } = useI18n();
+const { toast } = useAlert();
 
 const online        = ref(typeof navigator !== 'undefined' ? navigator.onLine : true);
 const updateReady   = ref(false);
@@ -103,6 +105,7 @@ const pendingCount  = ref(0);
 const isInstalling  = computed(() => installState.value === 'installing');
 const isInstalled   = computed(() => installState.value === 'installed');
 const isAvailable   = computed(() => installState.value === 'available');
+const isUnsupported = computed(() => installState.value === 'unsupported');
 
 // True when the page is currently rendered as a standalone PWA. We hide the
 // "Installed" badge in that case — there's nothing to "open", they're already
@@ -114,14 +117,22 @@ const runningStandalone = computed(() => {
 });
 
 /**
- * Show the install button ONLY while the browser actively offers an
- * install path. Unknown / unsupported states keep the button hidden —
- * the old behaviour rendered a confusing "?" question-mark fallback
- * on Chrome Android whenever the event hadn't fired (which is also
- * the case when the app is already installed), telling users to
- * follow a manual guide that wasn't necessary.
+ * Show the install button on Chromium browsers (Chrome, Edge,
+ * desktop & Android) whenever the app isn't already installed AND
+ * the browser isn't explicitly in the "no beforeinstallprompt ever"
+ * group (Safari iOS, Firefox, Samsung Internet, Chrome iOS — those
+ * are flagged at boot).
+ *
+ * On Chrome Android, beforeinstallprompt is delayed behind an
+ * engagement heuristic — the user may load the page and not see the
+ * event fire for a few seconds. Hiding the button until then made it
+ * feel like the install was broken; now the button stays visible and
+ * a click handler gracefully nudges the user if the event still
+ * hasn't arrived.
  */
-const showInstallButton = computed(() => isAvailable.value || isInstalling.value);
+const showInstallButton = computed(() =>
+    !isInstalled.value && !isUnsupported.value
+);
 
 const installLabel = computed(() => {
     if (isInstalling.value) return t('pwa.installing');
@@ -139,12 +150,19 @@ async function handleClick() {
     // IMPORTANT — must call triggerInstall synchronously before any await,
     // otherwise Android Chrome loses the user gesture and silently
     // refuses to surface the OS dialog.
-    await triggerInstall();
-    // Outcomes:
-    //   accepted   → state machine keeps the button in 'installing' until
-    //                appinstalled or the watchdog flips us into 'installed'.
-    //   dismissed  → state goes back to 'available'; user can retry.
-    //   error      → logged; button stays visible for retry.
+    const result = await triggerInstall();
+
+    // Chromium delayed the prompt — give the user a quick nudge instead
+    // of leaving them staring at a button that did nothing. Don't change
+    // state; the button stays visible so the user can try again as soon
+    // as the event arrives (which often happens seconds later).
+    if (result.outcome === 'not-ready-yet') {
+        toast('info', t('pwa.notReadyYet'));
+    }
+    // accepted   → state machine keeps the button in 'installing' until
+    //              appinstalled or the watchdog flips us into 'installed'.
+    // dismissed  → state goes back to 'available'; user can retry.
+    // error      → logged; button stays visible for retry.
 }
 
 function applyUpdate() { applyUpdateNow(); }

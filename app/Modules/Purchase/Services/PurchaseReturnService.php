@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchase\Services;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Inventory;
 use App\Modules\Purchase\Models\Purchase;
 use App\Modules\Purchase\Models\PurchaseItem;
@@ -26,6 +27,8 @@ class PurchaseReturnService
         $q = PurchaseReturn::with(['purchase', 'supplier', 'branch', 'items.product.unit'])
             ->orderByDesc('return_date')->orderByDesc('id');
 
+        $q = app(BranchContextService::class)->scopeQuery($q);
+
         if (!empty($filters['date_from'])) {
             $q->whereDate('return_date', '>=', $filters['date_from']);
         }
@@ -43,6 +46,8 @@ class PurchaseReturnService
     {
         $q = PurchaseReturn::with(['purchase', 'supplier', 'branch'])
             ->withCount('items');
+
+        $q = app(BranchContextService::class)->scopeQuery($q);
 
         if (!empty($filters['search'])) {
             $term = '%' . $filters['search'] . '%';

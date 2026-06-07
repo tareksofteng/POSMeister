@@ -2,6 +2,7 @@
 
 namespace App\Modules\Stock\Controllers;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Brand;
 use App\Modules\Product\Models\Inventory;
 use App\Modules\Product\Models\Product;
@@ -19,10 +20,15 @@ class StockController extends Controller
      */
     public function current(Request $request): JsonResponse
     {
-        $user = auth()->user();
+        // Branch context — the Topbar workspace switcher is the source of
+        // truth. A NULL value here means "Main Branch / All Branches"
+        // (admin super-workspace) and disables the branch filter; any
+        // other value scopes EVERY downstream stock query to that branch.
+        $ctx              = app(BranchContextService::class);
+        $contextBranchId  = $ctx->isMainBranch() ? null : $ctx->current();
 
         $query = Inventory::with(['product' => fn($q) => $q->with(['category', 'unit', 'brand'])])
-            ->when($user->branch_id, fn($q) => $q->where('branch_id', $user->branch_id))
+            ->when($contextBranchId, fn($q) => $q->where('branch_id', $contextBranchId))
             ->when($request->filled('category_id'), fn($q) =>
                 $q->whereHas('product', fn($p) => $p->where('category_id', $request->category_id))
             )
@@ -53,7 +59,7 @@ class StockController extends Controller
             $serialCounts = \App\Modules\Serials\Models\ProductSerial::query()
                 ->whereIn('product_id', $serializedProductIds)
                 ->where('status', \App\Modules\Serials\Models\ProductSerial::STATUS_IN_STOCK)
-                ->when($user->branch_id, fn ($q) => $q->where('branch_id', $user->branch_id))
+                ->when($contextBranchId, fn ($q) => $q->where('branch_id', $contextBranchId))
                 ->selectRaw('product_id, COUNT(*) as c')
                 ->groupBy('product_id')
                 ->pluck('c', 'product_id');

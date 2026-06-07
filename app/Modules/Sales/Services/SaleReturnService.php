@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sales\Services;
 
+use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Product\Models\Inventory;
 use App\Modules\Sales\Models\Sale;
 use App\Modules\Sales\Models\SaleItem;
@@ -26,6 +27,8 @@ class SaleReturnService
         $q = SaleReturn::with(['sale', 'customer', 'branch', 'items.product.unit'])
             ->orderByDesc('return_date')->orderByDesc('id');
 
+        $q = app(BranchContextService::class)->scopeQuery($q);
+
         if (!empty($filters['date_from'])) {
             $q->whereDate('return_date', '>=', $filters['date_from']);
         }
@@ -43,6 +46,8 @@ class SaleReturnService
     {
         $q = SaleReturn::with(['sale', 'customer', 'branch'])
             ->withCount('items');
+
+        $q = app(BranchContextService::class)->scopeQuery($q);
 
         if (!empty($filters['search'])) {
             $term = '%' . $filters['search'] . '%';

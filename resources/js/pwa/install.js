@@ -183,9 +183,15 @@ export async function triggerInstall() {
     if (_state.value === 'installed') return { outcome: 'already-installed' };
 
     if (!_deferredPrompt) {
-        transition('unsupported', { reason: 'no-deferred-prompt' });
+        // Chrome / Edge fire beforeinstallprompt only after their internal
+        // engagement heuristic is satisfied — typically a handful of seconds
+        // of interaction plus repeat visits. The event might still arrive
+        // moments later, so we deliberately do NOT transition to
+        // `unsupported` here (that would hide the button and surface a
+        // confusing "?" fallback). Caller can use the outcome to nudge the
+        // user with a small toast and leave the button visible for retry.
         emit('install_prompt_unavailable', { browser: _browserHint.value });
-        return { outcome: 'unsupported' };
+        return { outcome: 'not-ready-yet' };
     }
 
     emit('install_prompt_shown');

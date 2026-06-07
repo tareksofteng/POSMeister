@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\BranchScopeMiddleware;
+use App\Http\Middleware\CurrentBranchMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\SetLocaleMiddleware;
 use Illuminate\Foundation\Application;
@@ -26,9 +27,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // ── Named middleware aliases ──────────────────────────────────────
+        // `branch.current` runs the X-Branch-Id resolver + ACL guard. It's
+        // applied at the api group level inside routes/api.php so it
+        // executes on every authenticated request without touching every
+        // controller.
         $middleware->alias([
-            'role'   => RoleMiddleware::class,
-            'branch' => BranchScopeMiddleware::class,
+            'role'           => RoleMiddleware::class,
+            'branch'         => BranchScopeMiddleware::class,
+            'branch.current' => CurrentBranchMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
