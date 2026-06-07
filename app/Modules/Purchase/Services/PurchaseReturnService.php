@@ -165,6 +165,11 @@ class PurchaseReturnService
                 'created_by'    => auth()->id(),
             ]);
 
+            // Phase Y — collect serialized line payloads so we can flip
+            // statuses + write audit rows AFTER the PurchaseReturn row
+            // exists.
+            $serialQueue = [];
+
             foreach ($returnItems as $row) {
                 $qty       = (float) $row['return_qty'];
                 $cost      = (float) $row['unit_cost'];
@@ -179,10 +184,30 @@ class PurchaseReturnService
                     'line_total'         => $lineTotal,
                 ]);
 
-                // Return to supplier → stock decreases
-                Inventory::where('product_id', $row['product_id'])
-                         ->where('branch_id', $purchase->branch_id)
-                         ->decrement('quantity', $qty);
+                $product = \App\Modules\Product\Models\Product::find($row['product_id']);
+                $isSerialized = (bool) ($product?->is_serialized ?? false);
+
+                if ($isSerialized && !empty($row['serial_ids'])) {
+                    $serialQueue[] = [
+                        'purchase_return_id' => $purchaseReturn->id,
+                        'product_id'         => (int) $row['product_id'],
+                        'serial_ids'         => array_values((array) $row['serial_ids']),
+                    ];
+                } else {
+                    // Return to supplier → stock decreases (non-serialized only)
+                    Inventory::where('product_id', $row['product_id'])
+                             ->where('branch_id', $purchase->branch_id)
+                             ->decrement('quantity', $qty);
+                }
+            }
+
+            // Phase Y — flip statuses via SerialTrackingService → routes
+            // through SerialMovementService for the audit log.
+            if (!empty($serialQueue)) {
+                $tracking = app(\App\Modules\Serials\Services\SerialTrackingService::class);
+                foreach ($serialQueue as $payload) {
+                    $tracking->returnToSupplier($payload);
+                }
             }
 
             return $purchaseReturn->fresh(['purchase', 'supplier', 'branch', 'items.product']);

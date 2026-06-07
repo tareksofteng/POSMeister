@@ -207,9 +207,15 @@
                     <div class="grid grid-cols-3 gap-2 mt-3 pt-2 border-t border-gray-100">
                         <div>
                             <p class="text-[9px] uppercase tracking-wider text-gray-400 font-semibold">{{ t('stock.colQty') }}</p>
-                            <p class="text-sm font-bold text-gray-900 tabular-nums">
+                            <p class="text-sm font-bold text-gray-900 tabular-nums flex items-center gap-1.5">
                                 {{ row.quantity % 1 === 0 ? row.quantity : row.quantity.toFixed(2) }}
                                 <span class="text-[10px] font-normal text-gray-400">{{ row.unit_symbol || row.unit_name }}</span>
+                                <button v-if="row.is_serialized"
+                                        @click="openSerialView(row)"
+                                        class="inline-flex items-center justify-center w-5 h-5 rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors flex-shrink-0"
+                                        :title="t('serials.openSerials')">
+                                    <CpuChipIcon class="w-3 h-3" />
+                                </button>
                             </p>
                         </div>
                         <div>
@@ -317,6 +323,16 @@
                                         {{ row.quantity % 1 === 0 ? row.quantity : row.quantity.toFixed(2) }}
                                         <span class="text-xs font-normal text-gray-400 ml-0.5">{{ row.unit_symbol || row.unit_name }}</span>
                                     </span>
+                                    <!-- Phase Y — serial view: opens SerialInventoryModal scoped to
+                                         this product. Visible only for serialized products. The
+                                         qty shown above is already derived from product_serials.in_stock,
+                                         so what the user sees inside the modal matches the row count. -->
+                                    <button v-if="row.is_serialized"
+                                            @click="openSerialView(row)"
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors flex-shrink-0"
+                                            :title="t('serials.openSerials')">
+                                        <CpuChipIcon class="w-3.5 h-3.5" />
+                                    </button>
                                 </div>
                             </td>
 
@@ -367,6 +383,13 @@
         </div>
 
     </div>
+
+    <!-- Phase Y — Serial Inventory drawer for serialized products -->
+    <SerialInventoryModal
+        :open="serialModalOpen"
+        :product="serialModalProduct"
+        @close="serialModalOpen = false"
+    />
 </template>
 
 <script setup>
@@ -374,16 +397,26 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useSettingsStore } from '@/stores/settings';
 import { stockService } from '@/services/stockService';
+import SerialInventoryModal from '@/views/products/SerialInventoryModal.vue';
 
 import {
     ArchiveBoxIcon, PrinterIcon, MagnifyingGlassIcon,
     PhotoIcon, CubeIcon, BanknotesIcon,
     ExclamationTriangleIcon, XCircleIcon,
     FunnelIcon, TagIcon, BuildingStorefrontIcon, CubeTransparentIcon,
+    CpuChipIcon,
 } from '@heroicons/vue/24/outline';
 
 const { t } = useI18n();
 const settingsStore = useSettingsStore();
+
+// Phase Y — drawer state for the per-row serial inventory popup.
+const serialModalOpen    = ref(false);
+const serialModalProduct = ref(null);
+function openSerialView(row) {
+    serialModalProduct.value = { id: row.id, name: row.name, sku: row.sku };
+    serialModalOpen.value    = true;
+}
 
 function formatCurrency(value) {
     if (value == null) return '—';

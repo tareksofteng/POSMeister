@@ -35,13 +35,16 @@
             <Topbar @toggle-sidebar="toggleSidebar" />
 
             <main class="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain pb-safe scroll-smooth-mobile main-with-bottom-nav lg:main-no-bottom-nav">
-                <!-- Subtle slide-fade between routes — feels like a native
-                     app's stack push without the heavy framer-motion cost. -->
-                <RouterView v-slot="{ Component }">
-                    <Transition name="page" mode="out-in" appear>
-                        <component :is="Component" />
-                    </Transition>
-                </RouterView>
+                <!-- Plain RouterView. The slide-fade Transition that used to
+                     wrap this was racing the chunk loader: when a lazy route
+                     finished resolving AFTER its leave animation ended, the
+                     incoming page mounted in `enter-from` state (opacity 0)
+                     and stayed invisible until the user hit refresh. The
+                     animation was a polish-only thing; correct content
+                     beats subtle motion every time. We can bring it back
+                     later via a `<Suspense>` wrapper that waits for the
+                     chunk before triggering the transition. -->
+                <RouterView />
             </main>
         </div>
 

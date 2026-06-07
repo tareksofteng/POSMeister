@@ -100,7 +100,7 @@
 
             <!-- ── Mobile: stacked cards ────────────────────────────────── -->
             <div v-else class="lg:hidden space-y-2">
-                <article v-for="row in rows" :key="row.id" class="serial-card">
+                <article v-for="row in rows" :key="row.id" @click="openDetail(row.id)" class="serial-card cursor-pointer">
                     <div class="flex items-start gap-3">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
@@ -132,7 +132,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                        <tr v-for="row in rows" :key="row.id" class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                        <tr v-for="row in rows" :key="row.id" @click="openDetail(row.id)" class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 cursor-pointer">
                             <td class="px-3 py-2 font-mono text-slate-900 dark:text-slate-100">{{ row.serial_number }}</td>
                             <td class="px-3 py-2"><StatusBadge :status="row.status" /></td>
                             <td class="px-3 py-2 text-slate-600 dark:text-slate-400">{{ row.branch_name || '—' }}</td>
@@ -160,6 +160,13 @@
             </div>
         </div>
     </Modal>
+
+    <!-- Phase Y Round 2C — Serial timeline drawer -->
+    <SerialDetailDrawer
+        :open="detailOpen"
+        :serial-id="detailSerialId"
+        @close="detailOpen = false"
+    />
 </template>
 
 <script setup>
@@ -170,6 +177,7 @@ import {
     ChevronLeftIcon, ChevronRightIcon,
 } from '@heroicons/vue/24/outline';
 import Modal from '@/components/ui/Modal.vue';
+import SerialDetailDrawer from '@/views/serials/SerialDetailDrawer.vue';
 import { useDebounce } from '@vueuse/core';
 import { serialService } from '@/services/serialService';
 
@@ -190,6 +198,14 @@ const error   = ref('');
 const search  = ref('');
 const statuses = ref([]);                    // multi-select status filter
 const debouncedSearch = useDebounce(search, 280);
+
+// Phase Y Round 2C — drawer state for the timeline view.
+const detailOpen     = ref(false);
+const detailSerialId = ref(null);
+function openDetail(id) {
+    detailSerialId.value = id;
+    detailOpen.value = true;
+}
 
 // Aggregate KPI counts derived from the full filtered set (current page
 // for now — backend aggregate endpoint can come in Round 2C if needed).

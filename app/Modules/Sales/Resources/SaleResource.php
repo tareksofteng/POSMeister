@@ -50,22 +50,40 @@ class SaleResource extends JsonResource
             'created_by_name' => $this->whenLoaded('creator', fn() => $this->creator?->name, '—'),
             'created_at'      => $this->created_at?->format('Y-m-d H:i'),
 
-            'items' => $this->whenLoaded('items', fn() => $this->items->map(fn($item) => [
-                'id'          => $item->id,
-                'product_id'  => $item->product_id,
-                'name'        => $item->product?->name ?? '—',
-                'sku'         => $item->product?->sku  ?? '—',
-                'image_url'   => $item->product?->image ? Storage::url($item->product->image) : null,
-                'unit_name'   => $item->product?->unit?->name   ?? '',
-                'unit_symbol' => $item->product?->unit?->symbol ?? '',
-                'quantity'    => (float) $item->quantity,
-                'unit_price'  => (float) $item->unit_price,
-                'cost_price'  => (float) $item->cost_price,
-                'tax_rate'    => (float) $item->tax_rate,
-                'vat_amount'  => (float) $item->vat_amount,
-                'line_total'  => (float) $item->line_total,
-                'is_service'  => $item->is_service,
-            ])),
+            'items' => $this->whenLoaded('items', fn() => $this->items->map(function ($item) {
+                // Phase Y — surface the actual serial numbers sold on this
+                // line so the invoice PDF + customer-facing receipt can
+                // print them. Only queried when the underlying product is
+                // serialized; otherwise the array stays empty and the
+                // frontend hides the section.
+                $serials = [];
+                $isSerialized = (bool) ($item->product?->is_serialized ?? false);
+                if ($isSerialized) {
+                    $serials = \App\Modules\Serials\Models\ProductSerial::query()
+                        ->where('sale_item_id', $item->id)
+                        ->pluck('serial_number')
+                        ->all();
+                }
+
+                return [
+                    'id'             => $item->id,
+                    'product_id'     => $item->product_id,
+                    'name'           => $item->product?->name ?? '—',
+                    'sku'            => $item->product?->sku  ?? '—',
+                    'image_url'      => $item->product?->image ? Storage::url($item->product->image) : null,
+                    'unit_name'      => $item->product?->unit?->name   ?? '',
+                    'unit_symbol'    => $item->product?->unit?->symbol ?? '',
+                    'quantity'       => (float) $item->quantity,
+                    'unit_price'     => (float) $item->unit_price,
+                    'cost_price'     => (float) $item->cost_price,
+                    'tax_rate'       => (float) $item->tax_rate,
+                    'vat_amount'     => (float) $item->vat_amount,
+                    'line_total'     => (float) $item->line_total,
+                    'is_service'     => $item->is_service,
+                    'is_serialized'  => $isSerialized,
+                    'serial_numbers' => $serials,
+                ];
+            })),
         ];
     }
 }

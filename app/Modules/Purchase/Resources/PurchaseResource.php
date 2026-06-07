@@ -39,21 +39,37 @@ class PurchaseResource extends JsonResource
             'total_amount'    => (float) $this->total_amount,
             'items_count'     => $this->whenCounted('items'),
             'items'           => $this->whenLoaded('items', fn() =>
-                $this->items->map(fn($item) => [
-                    'id'           => $item->id,
-                    'product_id'   => $item->product_id,
-                    'product_name' => $item->product?->name ?? '—',
-                    'product_sku'  => $item->product?->sku ?? '',
-                    'unit_name'    => $item->product?->unit?->name ?? null,
-                    'unit_symbol'  => $item->product?->unit?->symbol ?? null,
-                    'image_url'    => $item->product?->image
-                                      ? \Storage::url($item->product->image) : null,
-                    'quantity'     => (float) $item->quantity,
-                    'unit_cost'    => (float) $item->unit_cost,
-                    'vat_rate'     => (float) $item->vat_rate,
-                    'vat_amount'   => (float) $item->vat_amount,
-                    'line_total'   => (float) $item->line_total,
-                ])
+                $this->items->map(function ($item) {
+                    // Phase Y — pull every serial received against this
+                    // purchase line so the invoice + GRN can print them
+                    // for the supplier's confirmation.
+                    $serials = [];
+                    $isSerialized = (bool) ($item->product?->is_serialized ?? false);
+                    if ($isSerialized) {
+                        $serials = \App\Modules\Serials\Models\ProductSerial::query()
+                            ->where('purchase_item_id', $item->id)
+                            ->pluck('serial_number')
+                            ->all();
+                    }
+
+                    return [
+                        'id'             => $item->id,
+                        'product_id'     => $item->product_id,
+                        'product_name'   => $item->product?->name ?? '—',
+                        'product_sku'    => $item->product?->sku ?? '',
+                        'unit_name'      => $item->product?->unit?->name ?? null,
+                        'unit_symbol'    => $item->product?->unit?->symbol ?? null,
+                        'image_url'      => $item->product?->image
+                                            ? \Storage::url($item->product->image) : null,
+                        'quantity'       => (float) $item->quantity,
+                        'unit_cost'      => (float) $item->unit_cost,
+                        'vat_rate'       => (float) $item->vat_rate,
+                        'vat_amount'     => (float) $item->vat_amount,
+                        'line_total'     => (float) $item->line_total,
+                        'is_serialized'  => $isSerialized,
+                        'serial_numbers' => $serials,
+                    ];
+                })
             ),
             'created_at'      => $this->created_at?->toDateTimeString(),
         ];

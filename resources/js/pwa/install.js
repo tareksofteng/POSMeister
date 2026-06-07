@@ -44,7 +44,11 @@
 import { ref, readonly } from 'vue';
 
 const ACCEPTED_WATCHDOG_MS  = 4000;
-const UNSUPPORTED_TIMEOUT_MS = 4000;
+
+// Browsers that genuinely don't expose beforeinstallprompt — they need
+// the manual "Add to Home Screen" menu route. Marked unsupported on
+// boot so the UI can react immediately without waiting for a timeout.
+const NEVER_FIRES_BROWSERS = ['samsung', 'firefox', 'safari-ios', 'chrome-ios'];
 
 const _state       = ref('unknown');
 const _browserHint = ref('chrome');
@@ -105,6 +109,15 @@ export function setupInstallStateMachine() {
         return;
     }
 
+    // Browsers that don't expose beforeinstallprompt at all (Safari iOS,
+    // Firefox Android, Samsung Internet, Chrome iOS) are marked unsupported
+    // right away so the UI hides the install button instead of waiting.
+    if (NEVER_FIRES_BROWSERS.includes(_browserHint.value)) {
+        transition('unsupported', { reason: 'browser-never-fires' });
+        emit('install_unsupported', { browser: _browserHint.value });
+        return;
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
         // Capture the event so we can fire prompt() later from our own
         // button click. The browser's native mini-infobar is suppressed
@@ -137,15 +150,17 @@ export function setupInstallStateMachine() {
         else if (mm.addListener) mm.addListener(handler);  // Safari ≤13
     } catch { /* matchMedia unsupported */ }
 
-    // If neither beforeinstallprompt nor standalone fires within the
-    // grace window, the engine doesn't support our programmatic path.
-    // We'll surface a "How to install" button that opens instructions.
-    setTimeout(() => {
-        if (_state.value === 'unknown') {
-            transition('unsupported', { reason: 'no-event-within-grace' });
-            emit('install_unsupported', { browser: _browserHint.value });
-        }
-    }, UNSUPPORTED_TIMEOUT_MS);
+    // Intentionally no timeout here. On Chromium browsers,
+    // beforeinstallprompt is fired only AFTER the engagement heuristic
+    // is satisfied — sometimes seconds, sometimes minutes after the
+    // page loads, and never if the app is already installed. A short
+    // grace window used to transition `unknown → unsupported`, which
+    // surfaced a confusing "How to install" question-mark button on
+    // Chrome Android (especially on devices where the app was already
+    // installed). Now we stay in `unknown` indefinitely — the UI hides
+    // the install button until the event actually arrives, mirroring
+    // Chrome's own behaviour where it only shows the "Install app"
+    // option once it's truly available.
 }
 
 // ── Public action: triggered from the install button ─────────────────────

@@ -58,6 +58,12 @@ class ProductController extends Controller
             // Live stock — used by SaleForm + POS dropdowns to surface availability
             'stock'          => (float) ($p->stock ?? 0),
             'reorder_level'  => (float) ($p->reorder_level ?? 0),
+            // Phase Y — must be in the response so PurchaseFormView /
+            // SaleFormView can render the "Add Serials" / "Select Serials"
+            // button when the cashier picks a serialized product. Without
+            // this field the frontend's isSerializedLine() always returns
+            // false and the button never renders.
+            'is_serialized'  => (bool) $p->is_serialized,
         ]);
 
         return response()->json($results);

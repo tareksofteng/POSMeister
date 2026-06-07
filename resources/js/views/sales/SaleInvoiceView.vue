@@ -188,6 +188,19 @@
                                 <p class="font-mono text-gray-700">{{ item.tax_rate }}%</p>
                             </div>
                         </div>
+                        <!-- Phase Y — serial numbers (mobile card) -->
+                        <div v-if="item.is_serialized && item.serial_numbers?.length"
+                             class="mt-2 pt-2 border-t border-dashed border-indigo-200">
+                            <p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-1">
+                                {{ t('serials.invoice.label') }}
+                            </p>
+                            <div class="flex flex-wrap gap-1">
+                                <span v-for="sn in item.serial_numbers" :key="sn"
+                                      class="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-mono text-[10px] font-semibold border border-indigo-100">
+                                    {{ sn }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -237,6 +250,15 @@
                                         <div>
                                             <span class="font-medium text-gray-900">{{ item.name }}</span>
                                             <span v-if="item.sku" class="ml-1.5 text-xs text-gray-400 font-mono">({{ item.sku }})</span>
+                                            <!-- Phase Y — serial numbers under the product name -->
+                                            <div v-if="item.is_serialized && item.serial_numbers?.length"
+                                                 class="mt-0.5 flex flex-wrap gap-1">
+                                                <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">{{ t('serials.invoice.label') }}:</span>
+                                                <span v-for="sn in item.serial_numbers" :key="sn"
+                                                      class="font-mono text-[10px] text-indigo-700 font-semibold">
+                                                    {{ sn }}<span v-if="sn !== item.serial_numbers[item.serial_numbers.length - 1]">,</span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

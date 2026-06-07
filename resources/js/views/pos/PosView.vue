@@ -762,6 +762,17 @@ async function confirmSale() {
         return;
     }
 
+    // Phase Y Round 2C — serialized products MUST be sold online. Two
+    // offline terminals could otherwise pick the same SN, and the sync
+    // engine has no safe way to arbitrate. Block the sale early so the
+    // cashier sees the reason instead of a silent sync conflict later.
+    if (cart.value.some(l => l.is_serialized)
+        && typeof navigator !== 'undefined' && navigator.onLine === false) {
+        saleError.value = t('serials.offline.blocked');
+        toast('error', saleError.value);
+        return;
+    }
+
     // Auto-fill cash if still 0
     if (payment.cash === 0 && payment.card === 0) {
         payment.cash = grandTotal.value;

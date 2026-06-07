@@ -7,17 +7,26 @@
              which on Android Chrome happens BEFORE the install finishes —
              users were seeing the button vanish but no app on home screen.
         -->
+        <!-- Show the install button ONLY when the browser has actually
+             surfaced an installable state (event captured) or is mid-
+             install. Older builds also rendered a question-mark fallback
+             when the state landed on `unsupported` — which on Chrome
+             Android happened whenever the app was already installed and
+             the prompt never re-fired, confusing users into thinking
+             they had to follow a manual guide they didn't need. Now the
+             button stays hidden in that case, matching Chrome's own
+             behaviour where it only surfaces "Install app" when truly
+             available. -->
         <button
-            v-if="!isInstalled"
+            v-if="showInstallButton"
             type="button"
             @click="handleClick"
             :disabled="isInstalling"
-            :class="['pill-btn', 'pill-install', { 'is-loading': isInstalling, 'is-unsupported': isUnsupported }]"
+            :class="['pill-btn', 'pill-install', { 'is-loading': isInstalling }]"
             :title="installTitle"
             :aria-label="installTitle"
         >
             <ArrowPathIcon v-if="isInstalling" class="w-4 h-4 animate-spin" />
-            <QuestionMarkCircleIcon v-else-if="isUnsupported" class="w-4 h-4" />
             <ArrowDownTrayIcon v-else class="w-4 h-4" />
             <span class="hidden sm:inline">{{ installLabel }}</span>
         </button>
@@ -70,12 +79,6 @@
             </span>
         </button>
 
-        <!-- Fallback instructions modal -->
-        <PwaInstallInstructions
-            :open="showInstructions"
-            :browser="browserHint"
-            @close="showInstructions = false"
-        />
     </div>
 </template>
 
@@ -83,26 +86,23 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
-    ArrowDownTrayIcon, ArrowPathIcon, QuestionMarkCircleIcon, CheckBadgeIcon,
+    ArrowDownTrayIcon, ArrowPathIcon, CheckBadgeIcon,
 } from '@heroicons/vue/24/outline';
 import { countQueue } from '@/pwa/offlineQueue';
 import { syncNow } from '@/pwa/syncWorker';
 import { applyUpdateNow } from '@/pwa/register';
 import { installState, browserHint, triggerInstall } from '@/pwa/install';
-import PwaInstallInstructions from './PwaInstallInstructions.vue';
 
 const { t } = useI18n();
 
 const online        = ref(typeof navigator !== 'undefined' ? navigator.onLine : true);
 const updateReady   = ref(false);
 const pendingCount  = ref(0);
-const showInstructions = ref(false);
 
 // State-machine reactive flags
 const isInstalling  = computed(() => installState.value === 'installing');
 const isInstalled   = computed(() => installState.value === 'installed');
 const isAvailable   = computed(() => installState.value === 'available');
-const isUnsupported = computed(() => installState.value === 'unsupported');
 
 // True when the page is currently rendered as a standalone PWA. We hide the
 // "Installed" badge in that case — there's nothing to "open", they're already
@@ -113,15 +113,23 @@ const runningStandalone = computed(() => {
     catch { return false; }
 });
 
+/**
+ * Show the install button ONLY while the browser actively offers an
+ * install path. Unknown / unsupported states keep the button hidden —
+ * the old behaviour rendered a confusing "?" question-mark fallback
+ * on Chrome Android whenever the event hadn't fired (which is also
+ * the case when the app is already installed), telling users to
+ * follow a manual guide that wasn't necessary.
+ */
+const showInstallButton = computed(() => isAvailable.value || isInstalling.value);
+
 const installLabel = computed(() => {
-    if (isInstalling.value)  return t('pwa.installing');
-    if (isUnsupported.value) return t('pwa.howToInstall');
+    if (isInstalling.value) return t('pwa.installing');
     return t('pwa.install');
 });
 
 const installTitle = computed(() => {
-    if (isInstalling.value)  return t('pwa.installingTitle');
-    if (isUnsupported.value) return t('pwa.howToInstallTitle');
+    if (isInstalling.value) return t('pwa.installingTitle');
     return t('pwa.install');
 });
 
@@ -131,20 +139,12 @@ async function handleClick() {
     // IMPORTANT — must call triggerInstall synchronously before any await,
     // otherwise Android Chrome loses the user gesture and silently
     // refuses to surface the OS dialog.
-    if (isUnsupported.value) {
-        showInstructions.value = true;
-        return;
-    }
-
-    const result = await triggerInstall();
-
-    // dismissed / unsupported / error → drop the user into the fallback
-    // modal so they have a recovery path instead of a dead button.
-    if (result.outcome === 'dismissed' || result.outcome === 'unsupported' || result.outcome === 'error') {
-        showInstructions.value = true;
-    }
-    // accepted → state machine keeps the button in 'installing' until
-    // appinstalled or the watchdog flips us into 'installed'.
+    await triggerInstall();
+    // Outcomes:
+    //   accepted   → state machine keeps the button in 'installing' until
+    //                appinstalled or the watchdog flips us into 'installed'.
+    //   dismissed  → state goes back to 'available'; user can retry.
+    //   error      → logged; button stays visible for retry.
 }
 
 function applyUpdate() { applyUpdateNow(); }

@@ -344,6 +344,26 @@ class SerialTrackingService
             ->pluck('serial_number')
             ->first();
         if ($clash) {
+            // Phase Y Round 2C — fire the "Duplicate Serial Attempt"
+            // security alert before we throw the validation error.
+            // Notification dispatch is best-effort so an outage in the
+            // notification module never blocks the legitimate validation
+            // failure from reaching the caller.
+            try {
+                app(\App\Modules\NotificationCenter\Services\SmartNotificationService::class)->push([
+                    'category'         => 'security',
+                    'code'             => 'serials.duplicate_attempt',
+                    'severity'         => 'danger',
+                    'urgency'          => 80,
+                    'audience_role'    => 'admin',
+                    'title'            => __('notifications.serials.duplicate.title'),
+                    'message'          => __('notifications.serials.duplicate.message', ['sn' => $clash]),
+                    'dedupe_key'       => 'serials.duplicate_attempt:'.$clash,
+                    'cooldown_minutes' => 30,
+                    'meta'             => ['serial_number' => $clash],
+                ]);
+            } catch (\Throwable $e) { /* never block the validation throw */ }
+
             throw ValidationException::withMessages([
                 'serials' => [__('errors.serials.duplicate_in_system', ['sn' => $clash])],
             ]);

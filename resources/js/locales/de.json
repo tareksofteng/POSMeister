@@ -3022,6 +3022,31 @@
       "emptyTitle":        "Kein Bestand",
       "emptyDescription":  "Für dieses Produkt sind in dieser Filiale keine Einheiten verfügbar.",
       "confirm":           "{n} Einheit(en) bestätigen"
+    },
+    "detail": {
+      "status":        "Status",
+      "branch":        "Filiale",
+      "received":      "Eingang",
+      "warranty":      "Garantie",
+      "timeline":      "Gerätehistorie",
+      "emptyTimeline": "Noch keine Ereignisse erfasst."
+    },
+    "movement": {
+      "purchase":         "Vom Lieferanten erhalten",
+      "sale":             "An Kunden verkauft",
+      "sales_return":     "Vom Kunden zurückgegeben",
+      "purchase_return":  "An Lieferanten zurückgesandt",
+      "transfer":         "Filialtransfer",
+      "reserve":          "Reserviert",
+      "unreserve":        "Reservierung aufgehoben",
+      "damage":           "Als beschädigt markiert",
+      "lost":             "Als verloren markiert"
+    },
+    "offline": {
+      "blocked": "Serienprodukte erfordern Online-Validierung. Bitte verbinden, um den Verkauf zu bestätigen."
+    },
+    "invoice": {
+      "label": "Seriennummer"
     }
   }
 }

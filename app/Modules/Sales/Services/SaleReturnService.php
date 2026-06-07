@@ -169,6 +169,10 @@ class SaleReturnService
                 'created_by'    => auth()->id(),
             ]);
 
+            // Phase Y — collect serialized line payloads so we can flip
+            // statuses + write audit rows AFTER the SaleReturn row exists.
+            $serialQueue = [];
+
             foreach ($returnItems as $row) {
                 $qty       = (float) $row['return_qty'];
                 $price     = (float) $row['unit_price'];
@@ -183,10 +187,37 @@ class SaleReturnService
                     'line_total'     => $lineTotal,
                 ]);
 
-                // Customer returns goods → stock increases
-                Inventory::where('product_id', $row['product_id'])
-                         ->where('branch_id', $sale->branch_id)
-                         ->increment('quantity', $qty);
+                // Phase Y — serialized products derive their stock from
+                // product_serials.in_stock count, so DON'T touch the
+                // Inventory counter for them. The serial-status flip
+                // below is the only thing that affects sellable count.
+                $product = \App\Modules\Product\Models\Product::find($row['product_id']);
+                $isSerialized = (bool) ($product?->is_serialized ?? false);
+
+                if ($isSerialized && !empty($row['serial_ids'])) {
+                    $serialQueue[] = [
+                        'sales_return_id' => $saleReturn->id,
+                        'sale_id'         => $sale->id,
+                        'product_id'      => (int) $row['product_id'],
+                        'serial_ids'      => array_values((array) $row['serial_ids']),
+                        'resellable'      => (bool) ($row['resellable'] ?? true),
+                    ];
+                } else {
+                    // Customer returns goods → stock increases (non-serialized only)
+                    Inventory::where('product_id', $row['product_id'])
+                             ->where('branch_id', $sale->branch_id)
+                             ->increment('quantity', $qty);
+                }
+            }
+
+            // Phase Y — flip statuses through SerialTrackingService
+            // (which routes through SerialMovementService) so the audit
+            // log is consistent. No direct status writes anywhere.
+            if (!empty($serialQueue)) {
+                $tracking = app(\App\Modules\Serials\Services\SerialTrackingService::class);
+                foreach ($serialQueue as $payload) {
+                    $tracking->returnFromCustomer($payload);
+                }
             }
 
             return $saleReturn->fresh(['sale', 'customer', 'branch', 'items.product']);

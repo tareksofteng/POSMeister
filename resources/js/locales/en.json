@@ -3022,6 +3022,31 @@
       "emptyTitle":        "Nothing in stock",
       "emptyDescription":  "There are no in-stock serials for this product at this branch.",
       "confirm":           "Confirm {n} unit(s)"
+    },
+    "detail": {
+      "status":        "Status",
+      "branch":        "Branch",
+      "received":      "Received",
+      "warranty":      "Warranty",
+      "timeline":      "Movement Timeline",
+      "emptyTimeline": "No events recorded yet."
+    },
+    "movement": {
+      "purchase":         "Received from supplier",
+      "sale":             "Sold to customer",
+      "sales_return":     "Returned by customer",
+      "purchase_return":  "Returned to supplier",
+      "transfer":         "Branch transfer",
+      "reserve":          "Reserved",
+      "unreserve":        "Released",
+      "damage":           "Marked damaged",
+      "lost":             "Marked lost"
+    },
+    "offline": {
+      "blocked": "Serialized products require online validation. Reconnect to confirm this sale."
+    },
+    "invoice": {
+      "label": "Serial #"
     }
   }
 }

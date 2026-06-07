@@ -114,7 +114,19 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-500 mb-1">{{ t('sales.qty') }}</label>
-                                <input v-model.number="line.quantity" @input="recalcLine(line)" type="number"
+                                <!-- Phase Y — serialized: badge button instead of editable input -->
+                                <button v-if="isSerializedLine(line)"
+                                        type="button"
+                                        @click="openSerialPicker(line)"
+                                        :class="['w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 text-base font-bold border rounded-lg transition-colors',
+                                                 line._serial_ids?.length
+                                                   ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
+                                                   : 'text-indigo-700 bg-indigo-50 border-indigo-200 hover:bg-indigo-100']">
+                                    <CheckBadgeIcon v-if="line._serial_ids?.length" class="w-4 h-4" />
+                                    <CpuChipIcon v-else class="w-4 h-4" />
+                                    {{ line._serial_ids?.length ? line._serial_ids.length : t('serials.lineBadge.add') }}
+                                </button>
+                                <input v-else v-model.number="line.quantity" @input="recalcLine(line)" type="number"
                                     min="0.01" step="0.01" inputmode="decimal"
                                     class="w-full px-3 py-2.5 text-base text-right border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                             </div>
@@ -176,7 +188,18 @@
                                     </p>
                                 </td>
                                 <td class="td">
-                                    <input v-model.number="line.quantity" @input="recalcLine(line)" type="number"
+                                    <button v-if="isSerializedLine(line)"
+                                            type="button"
+                                            @click="openSerialPicker(line)"
+                                            :class="['inline-flex items-center justify-center gap-1 w-full px-2 py-1.5 text-xs font-bold border rounded-md transition-colors',
+                                                     line._serial_ids?.length
+                                                       ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
+                                                       : 'text-indigo-700 bg-indigo-50 border-indigo-200 hover:bg-indigo-100']">
+                                        <CheckBadgeIcon v-if="line._serial_ids?.length" class="w-3 h-3" />
+                                        <CpuChipIcon v-else class="w-3 h-3" />
+                                        {{ line._serial_ids?.length ? line._serial_ids.length : 'SN' }}
+                                    </button>
+                                    <input v-else v-model.number="line.quantity" @input="recalcLine(line)" type="number"
                                         min="0.01" step="0.01" class="ctrl-sm text-right" />
                                 </td>
                                 <td class="td">
@@ -328,10 +351,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Phase Y Round 2C — back-office serial picker -->
+    <SelectSerialsModal
+        :open="serialPickerOpen"
+        :product="serialPickerLine?._product"
+        :branch-id="authStore.branchId"
+        :initial-ids="serialPickerLine?._serial_ids || []"
+        @close="serialPickerOpen = false"
+        @confirm="onSerialsPicked"
+    />
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter, RouterLink } from 'vue-router';
 import { saleService } from '@/services/saleService';
@@ -340,6 +373,10 @@ import { useAlert } from '@/composables/useAlert';
 import { useCurrency } from '@/composables/useCurrency';
 import { getAll } from '@/offline/db';
 import ProductSearchInput from '@/components/ui/ProductSearchInput.vue';
+import SelectSerialsModal from '@/views/serials/SelectSerialsModal.vue';
+import { serialService } from '@/services/serialService';
+import { useAuthStore } from '@/stores/auth';
+import { CheckBadgeIcon, CpuChipIcon } from '@heroicons/vue/24/outline';
 import {
     ArrowLeftIcon, PlusIcon, XMarkIcon, CheckIcon, ArrowPathIcon,
     UserIcon, ListBulletIcon, AdjustmentsHorizontalIcon, CalculatorIcon,
@@ -442,6 +479,8 @@ function onProductPick(line, p) {
         line.product_id = null;
         line._product = null;
         line.unit_price = 0;
+        line._serial_ids = [];
+        line._serials = [];
         recalcLine(line);
         return;
     }
@@ -449,8 +488,69 @@ function onProductPick(line, p) {
     line._product = p;
     const wholesale = form.value.sale_type === 'wholesale' && p.wholesale_price > 0;
     line.unit_price = parseFloat(wholesale ? p.wholesale_price : p.selling_price) || 0;
+    // Phase Y — serialized products clear qty + open picker on next tick.
+    line._serial_ids = [];
+    line._serials    = [];
     // keep whatever VAT the user already chose on this line; do not override from product
     recalcLine(line);
+    if (p.is_serialized) {
+        line.quantity = 0;
+        nextTick(() => openSerialPicker(line));
+    }
+}
+
+// ── Phase Y Round 2C — serial picker integration ─────────────────────────
+const authStore = useAuthStore();
+const serialPickerOpen = ref(false);
+const serialPickerLine = ref(null);
+
+function isSerializedLine(line) {
+    return !!line?._product?.is_serialized;
+}
+
+function openSerialPicker(line) {
+    serialPickerLine.value = line;
+    serialPickerOpen.value = true;
+}
+
+function onSerialsPicked(payload) {
+    const line = serialPickerLine.value;
+    if (line) {
+        line._serial_ids = payload.ids;
+        line._serials    = payload.serials;
+        line.quantity    = payload.ids.length;
+        recalcLine(line);
+    }
+    serialPickerOpen.value = false;
+    serialPickerLine.value = null;
+}
+
+/**
+ * Post-save attach — mirrors PosView::attachSaleSerialsAfterCreate.
+ * Called after saleService.store(). Idempotent on retry thanks to the
+ * Round 2B backend guard.
+ */
+async function attachSaleSerialsAfterCreate(savedSale) {
+    if (!savedSale?.id) return;
+    const lines = form.value.items.filter(l => isSerializedLine(l) && l._serial_ids?.length);
+    if (!lines.length) return;
+    const serverItems = savedSale.items ?? [];
+    for (const line of lines) {
+        const serverItem = serverItems.find(it => it.product_id === line.product_id);
+        try {
+            await serialService.attachToSale({
+                product_id:    line.product_id,
+                sale_id:       savedSale.id,
+                sale_item_id:  serverItem?.id ?? null,
+                customer_id:   form.value.customer_id || null,
+                branch_id:     authStore.branchId ?? null,
+                serial_ids:    line._serial_ids,
+            });
+        } catch (err) {
+            console.warn('[serials] attach-to-sale (back office) failed', err);
+            toast('error', t('serials.attach.saleFailed', { sku: line._product?.sku || '' }));
+        }
+    }
 }
 
 function autoFillCash() {
@@ -532,6 +632,25 @@ async function save() {
         router.push({ name: 'sales' });
     }
 
+    // Phase Y Round 2C — pre-save guards.
+    // 1. Every serialized line must have at least one picked serial.
+    // 2. Serialized products MUST be sold online — there's no way to
+    //    arbitrate two offline terminals picking the same SN.
+    const missingSerials = valid.filter(l => isSerializedLine(l) && (!l._serial_ids || l._serial_ids.length === 0));
+    if (missingSerials.length) {
+        const skus = missingSerials.map(l => l._product?.sku || l._product?.name).join(', ');
+        serverError.value = t('serials.attach.missingForSale', { skus });
+        saving.value = false;
+        return;
+    }
+    const hasSerialized = valid.some(isSerializedLine);
+    if (hasSerialized && typeof navigator !== 'undefined' && navigator.onLine === false) {
+        serverError.value = t('serials.offline.blocked');
+        toast('error', serverError.value);
+        saving.value = false;
+        return;
+    }
+
     try {
         if (typeof navigator !== 'undefined' && navigator.onLine === false) {
             await queueOffline();
@@ -539,7 +658,9 @@ async function save() {
         }
 
         const { data } = await saleService.store(payload);
-        const id = (data.data ?? data).id;
+        const saved = data.data ?? data;
+        const id    = saved.id;
+        await attachSaleSerialsAfterCreate(saved);
         toast('success', t('common.createdSuccess'));
         const goToInvoice = await confirm({
             title: t('sales.printPromptTitle'),

@@ -48,7 +48,13 @@ class ProductService
             ->active()
             ->withSum(['inventory as stock' => fn ($q) => $this->branchScopedInventory($q)], 'quantity');
 
-        $cols = ['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate', 'unit_id', 'image', 'reorder_level'];
+        // `is_serialized` is required by PurchaseFormView / PosView /
+        // SaleFormView so they can swap the qty input for the "Add Serials"
+        // (purchase) or "Select Serials" (sale) modal trigger. Without
+        // this column the dropdown returns the product but the flag is
+        // undefined → the trigger never renders.
+        $cols = ['id', 'sku', 'name', 'selling_price', 'cost_price', 'tax_rate',
+                 'unit_id', 'image', 'reorder_level', 'is_serialized'];
 
         if ($term === '') {
             return $base->latest()->limit(100)->get($cols);

@@ -9,7 +9,7 @@
             leave-to-class="opacity-0"
         >
             <div
-                v-if="modelValue"
+                v-if="isOpen"
                 class="fixed inset-0 z-50 flex items-center justify-center p-4"
                 @click.self="onBackdropClick"
             >
@@ -26,17 +26,21 @@
                     leave-to-class="opacity-0 scale-95 translate-y-2"
                 >
                     <div
-                        v-if="modelValue"
+                        v-if="isOpen"
                         :class="['relative w-full bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh]', sizeClass]"
                         role="dialog"
                         :aria-label="title"
                     >
-                        <!-- Header -->
+                        <!-- Header — uses #title slot when provided, else falls back to the title prop. -->
                         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
-                            <h2 class="text-base font-semibold text-gray-900">{{ title }}</h2>
+                            <div class="flex-1 min-w-0">
+                                <slot name="title">
+                                    <h2 class="text-base font-semibold text-gray-900">{{ title }}</h2>
+                                </slot>
+                            </div>
                             <button
-                                @click="$emit('update:modelValue', false)"
-                                class="p-1.5 -mr-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                                @click="close"
+                                class="p-1.5 -mr-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0 ml-3"
                             >
                                 <XMarkIcon class="w-5 h-5" />
                             </button>
@@ -65,14 +69,42 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 
+/*
+ |--------------------------------------------------------------------------
+ | Modal — dual API
+ |--------------------------------------------------------------------------
+ |
+ | Long-standing usage:
+ |   <Modal v-model="show" title="Edit Product">...</Modal>
+ |   (drives modelValue prop + update:modelValue event)
+ |
+ | Alternative usage (used by the Phase Y serial modals):
+ |   <Modal :open="show" @close="show = false">
+ |       <template #title>...rich content...</template>
+ |       ...
+ |   </Modal>
+ |
+ | Both work simultaneously. `isOpen` collapses to `modelValue || open`
+ | so the visibility check stays a single ref, and `close()` fires BOTH
+ | update:modelValue=false and close so neither call-site is left
+ | guessing about state.
+ */
 const props = defineProps({
-    modelValue: { type: Boolean, required: true },
-    title:      { type: String,  required: true },
+    modelValue: { type: Boolean, default: null },   // legacy v-model
+    open:       { type: Boolean, default: null },   // new alias
+    title:      { type: String,  default: '' },     // optional now — #title slot can replace it
     size:       { type: String,  default: 'md' },   // sm | md | lg | xl
     persistent: { type: Boolean, default: false },  // prevent close on backdrop click
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'close']);
+
+const isOpen = computed(() => Boolean(props.modelValue || props.open));
+
+function close() {
+    emit('update:modelValue', false);
+    emit('close');
+}
 
 const sizeClass = computed(() => ({
     'sm': 'max-w-sm',
@@ -82,16 +114,12 @@ const sizeClass = computed(() => ({
 })[props.size] ?? 'max-w-lg');
 
 function onBackdropClick() {
-    if (!props.persistent) {
-        emit('update:modelValue', false);
-    }
+    if (!props.persistent) close();
 }
 
 // ESC key to close
 function onKeydown(e) {
-    if (e.key === 'Escape' && props.modelValue && !props.persistent) {
-        emit('update:modelValue', false);
-    }
+    if (e.key === 'Escape' && isOpen.value && !props.persistent) close();
 }
 
 onMounted  (() => document.addEventListener('keydown', onKeydown));

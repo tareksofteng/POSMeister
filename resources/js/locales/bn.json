@@ -3020,6 +3020,31 @@
       "emptyTitle":        "স্টকে নেই",
       "emptyDescription":  "এই branch এ এই product এর কোনো in-stock সিরিয়াল নেই।",
       "confirm":           "{n} টি unit confirm করুন"
+    },
+    "detail": {
+      "status":        "স্ট্যাটাস",
+      "branch":        "শাখা",
+      "received":      "প্রাপ্ত",
+      "warranty":      "ওয়ারেন্টি",
+      "timeline":      "ডিভাইস ইতিহাস",
+      "emptyTimeline": "এখনো কোনো ইভেন্ট নেই।"
+    },
+    "movement": {
+      "purchase":         "সাপ্লায়ার থেকে প্রাপ্ত",
+      "sale":             "ক্রেতার কাছে বিক্রি",
+      "sales_return":     "ক্রেতা থেকে ফেরত",
+      "purchase_return":  "সাপ্লায়ারে ফেরত",
+      "transfer":         "শাখা ট্রান্সফার",
+      "reserve":          "রিজার্ভড",
+      "unreserve":        "রিজার্ভ বাতিল",
+      "damage":           "ক্ষতিগ্রস্ত চিহ্নিত",
+      "lost":             "হারানো চিহ্নিত"
+    },
+    "offline": {
+      "blocked": "সিরিয়ালাইজড পণ্য বিক্রির জন্য অনলাইন ভ্যালিডেশন দরকার। সংযোগ ফিরলে বিক্রি confirm করুন।"
+    },
+    "invoice": {
+      "label": "সিরিয়াল নং"
     }
   }
 }

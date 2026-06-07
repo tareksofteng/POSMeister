@@ -65,10 +65,16 @@
                                     <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-2">{{ n.message }}</p>
 
                                     <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                        <!-- Only render the link when the action carries a valid
+                                             route name. A null / unknown name makes
+                                             router.resolve() throw, which kills the entire
+                                             notification dropdown (and surfaces as a repeated
+                                             "Cannot read properties of undefined (reading 'href')"
+                                             noise in the console). -->
                                         <RouterLink
-                                            v-for="(a, ai) in (n.actions || [])"
+                                            v-for="(a, ai) in validActions(n.actions)"
                                             :key="ai"
-                                            :to="{ name: a.route, params: a.params }"
+                                            :to="{ name: a.route, params: a.params || {} }"
                                             @click="store.markRead(n.id); open = false;"
                                             :class="['text-[11px] font-semibold px-2 py-0.5 rounded',
                                                 a.type === 'primary'
@@ -100,14 +106,30 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { onClickOutside } from '@vueuse/core';
 import { BellIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
 import { useNotificationsStore } from '@/stores/notifications';
 
 const { t } = useI18n();
+const router = useRouter();
 const store = useNotificationsStore();
 const open = ref(false);
 const containerRef = ref(null);
+
+// Pre-compute the set of valid route names ONCE so the per-render filter is
+// O(1) per action and never has to swallow a thrown router.resolve. This is
+// the source of the "Cannot read properties of undefined (reading 'href')"
+// console spam — older notification rows stored route names like
+// `inventory-reorder` that have since been renamed or deleted.
+const validRouteNames = new Set(
+    router.getRoutes().map(r => r.name).filter(Boolean)
+);
+
+function validActions(actions) {
+    if (!Array.isArray(actions)) return [];
+    return actions.filter(a => a && a.route && validRouteNames.has(a.route));
+}
 
 function toggle() { open.value = !open.value; if (open.value) store.fetch(); }
 onClickOutside(containerRef, () => { open.value = false; });
