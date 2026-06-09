@@ -1,16 +1,48 @@
 <template>
     <!--
-        Premium executive KPI marquee. Auto-scrolls horizontally, pauses on
-        hover or touch, supports manual swipe/drag. Items are duplicated so
-        the scroll loops seamlessly. Each card is a tiny glassmorphism tile
-        with a coloured glow, animated counter and trend pill.
+        KpiMarquee — Phase AC Round 2 polish.
+
+        Premium executive KPI carousel. The auto-scroll behaviour from
+        Phase X is preserved, but the marquee now:
+
+          – renders a mini sparkline per card when item.sparkline is
+            provided (a [n1, n2, ...] array of recent values),
+          – exposes manual prev/next nav buttons on desktop (≥ md), so
+            the owner can scrub without waiting for the auto-loop,
+          – pauses the auto-scroll while either nav button is held or
+            on hover (existing behaviour).
+
+        Backwards compatible — every existing prop on every item is
+        honoured. Cards without a sparkline array just skip the chart.
     -->
-    <section class="kpi-marquee group" @mouseenter="pause = true" @mouseleave="pause = false">
+    <section
+        class="kpi-marquee group"
+        @mouseenter="pause = true"
+        @mouseleave="pause = false"
+    >
+        <!-- Manual nav — md+ only; doesn't compete with phone swipe. -->
+        <button
+            type="button"
+            class="kpi-nav kpi-nav--prev"
+            :aria-label="t('dashboard.marquee.prev', 'Previous')"
+            @click="nudge(-1)"
+        >
+            <ChevronLeftIcon class="w-4 h-4" />
+        </button>
+        <button
+            type="button"
+            class="kpi-nav kpi-nav--next"
+            :aria-label="t('dashboard.marquee.next', 'Next')"
+            @click="nudge(1)"
+        >
+            <ChevronRightIcon class="w-4 h-4" />
+        </button>
+
         <div
             ref="trackRef"
             class="kpi-track"
-            :class="{ 'kpi-track--paused': pause }"
-            :style="{ animationDuration: `${duration}s` }"
+            :class="{ 'kpi-track--paused': pause || manualScroll, 'kpi-track--manual': manualScroll }"
+            :style="trackStyle"
         >
             <div
                 v-for="(kpi, i) in renderItems"
@@ -38,20 +70,32 @@
                         {{ Math.abs(kpi.delta).toFixed(1) }}%
                     </div>
                 </div>
+
+                <!-- Mini sparkline — pure inline SVG so no chart lib. -->
+                <div v-if="hasSparkline(kpi)" class="kpi-sparkline">
+                    <svg :viewBox="`0 0 ${SPK_W} ${SPK_H}`" preserveAspectRatio="none" class="kpi-spk-svg">
+                        <path :d="sparkAreaPath(kpi.sparkline)" :class="['kpi-spk-area', kpi.tone + '-spk-area']" />
+                        <path :d="sparkLinePath(kpi.sparkline)" :class="['kpi-spk-line', kpi.tone + '-spk-line']" />
+                    </svg>
+                </div>
             </div>
         </div>
     </section>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/vue/24/outline';
+import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import {
+    ArrowUpIcon, ArrowDownIcon, ChevronLeftIcon, ChevronRightIcon,
+} from '@heroicons/vue/24/outline';
 import AnimatedCounter from './AnimatedCounter.vue';
 
 const props = defineProps({
     items: { type: Array, required: true },
 });
 
+const { t } = useI18n();
 const pause = ref(false);
 const trackRef = ref(null);
 
@@ -60,6 +104,71 @@ const renderItems = computed(() => [...props.items, ...props.items]);
 
 // Slow scroll for many items, faster for few — feels right at any count
 const duration = computed(() => Math.max(20, props.items.length * 4));
+
+// ── Manual nav state ─────────────────────────────────────────────────────
+// When the user clicks a nav button we switch the track from CSS keyframe
+// animation to a manual transform offset for one step. The auto-scroll
+// re-engages after a short idle so the dashboard never feels "stuck".
+const manualOffset = ref(0);
+const manualScroll = ref(false);
+const CARD_WIDTH_PX = 252;   // 240 card + 12 gap
+
+const trackStyle = computed(() => {
+    if (manualScroll.value) {
+        return { transform: `translateX(${manualOffset.value}px)`, animationDuration: `${duration.value}s` };
+    }
+    return { animationDuration: `${duration.value}s` };
+});
+
+let resumeTimer = null;
+function nudge(dir) {
+    manualScroll.value = true;
+    // Bound the offset to one full loop length so we don't disappear.
+    const maxOffset = -(props.items.length * CARD_WIDTH_PX);
+    manualOffset.value = Math.max(maxOffset, Math.min(0, manualOffset.value + dir * -CARD_WIDTH_PX));
+
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+        manualScroll.value = false;
+        manualOffset.value = 0;
+    }, 4000);   // resume auto-scroll after 4s of inactivity
+}
+
+// ── Sparkline rendering (inline SVG, no library) ─────────────────────────
+
+const SPK_W = 120;
+const SPK_H = 28;
+
+function hasSparkline(kpi) {
+    return Array.isArray(kpi.sparkline) && kpi.sparkline.length >= 2;
+}
+function sparkPoints(arr) {
+    const vals = arr.map(v => Number(v) || 0);
+    let min = Math.min(...vals);
+    let max = Math.max(...vals);
+    if (min === max) { min -= 1; max += 1; }
+    const span = max - min;
+    return vals.map((v, i) => ({
+        x: (i / (vals.length - 1)) * SPK_W,
+        y: SPK_H - 2 - ((v - min) / span) * (SPK_H - 4),
+    }));
+}
+function sparkLinePath(arr) {
+    const pts = sparkPoints(arr);
+    return 'M ' + pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ');
+}
+function sparkAreaPath(arr) {
+    const pts = sparkPoints(arr);
+    const line = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ');
+    return `M 0,${SPK_H} L ${line} L ${SPK_W},${SPK_H} Z`;
+}
+
+// If parent swaps the items array (e.g. workspace switch) reset manual state.
+watch(() => props.items, () => {
+    manualScroll.value = false;
+    manualOffset.value = 0;
+    clearTimeout(resumeTimer);
+});
 </script>
 
 <style scoped>
@@ -71,6 +180,34 @@ const duration = computed(() => Math.max(20, props.items.length * 4));
             mask-image: linear-gradient(90deg, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
 }
 
+/* Manual nav buttons — desktop only so phone swipe still feels native */
+.kpi-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px; height: 30px;
+    z-index: 3;
+    display: none;
+    align-items: center; justify-content: center;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    box-shadow: var(--elev-2);
+    transition:
+        background-color var(--motion-fast) var(--motion-out),
+        color            var(--motion-fast) var(--motion-out),
+        transform        var(--motion-fast) var(--motion-out);
+}
+@media (min-width: 768px) {
+    .group:hover .kpi-nav { display: flex; }
+}
+.kpi-nav:hover { color: var(--text-primary); background: rgb(238 242 255); }
+html.dark .kpi-nav:hover { background: rgb(67 56 202 / 0.18); }
+.kpi-nav:active { transform: translateY(-50%) scale(0.92); }
+.kpi-nav--prev { left: 8px; }
+.kpi-nav--next { right: 8px; }
+
 .kpi-track {
     display: flex;
     gap: 0.75rem;
@@ -79,7 +216,11 @@ const duration = computed(() => Math.max(20, props.items.length * 4));
     animation: kpi-scroll linear infinite;
 }
 .kpi-track--paused { animation-play-state: paused; }
-.kpi-marquee:hover .kpi-track { animation-play-state: paused; }
+.kpi-track--manual {
+    animation: none !important;
+    transition: transform 400ms var(--motion-spring);
+}
+.kpi-marquee:hover .kpi-track:not(.kpi-track--manual) { animation-play-state: paused; }
 
 @keyframes kpi-scroll {
     from { transform: translateX(0); }
@@ -141,6 +282,39 @@ const duration = computed(() => Math.max(20, props.items.length * 4));
 }
 .kpi-trend--up   { @apply bg-emerald-100/70 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300; }
 .kpi-trend--down { @apply bg-rose-100/70    text-rose-700    dark:bg-rose-900/30    dark:text-rose-300; }
+
+/* ── Mini sparkline per card — phase AC Round 2 ────────────────────────── */
+.kpi-sparkline {
+    margin-top: 0.5rem;
+    width: 100%;
+    height: 28px;
+    overflow: hidden;
+}
+.kpi-spk-svg { width: 100%; height: 100%; display: block; }
+.kpi-spk-line {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.kpi-spk-area { opacity: 0.18; }
+
+/* Per-tone sparkline colors so the chart inherits the card's mood. */
+.indigo-spk-line  { stroke: rgb(79 70 229); }
+.emerald-spk-line { stroke: rgb(16 185 129); }
+.amber-spk-line   { stroke: rgb(245 158 11); }
+.rose-spk-line    { stroke: rgb(244 63 94); }
+.sky-spk-line     { stroke: rgb(14 165 233); }
+.violet-spk-line  { stroke: rgb(124 58 237); }
+.slate-spk-line   { stroke: rgb(100 116 139); }
+
+.indigo-spk-area  { fill: rgb(79 70 229); }
+.emerald-spk-area { fill: rgb(16 185 129); }
+.amber-spk-area   { fill: rgb(245 158 11); }
+.rose-spk-area    { fill: rgb(244 63 94); }
+.sky-spk-area     { fill: rgb(14 165 233); }
+.violet-spk-area  { fill: rgb(124 58 237); }
+.slate-spk-area   { fill: rgb(100 116 139); }
 
 @media (prefers-reduced-motion: reduce) {
     .kpi-track { animation: none !important; }

@@ -49,11 +49,32 @@
             </div>
         </section>
 
+        <!-- ── Phase AC: Executive Hero augmentation ──
+             Pair the existing greeting hero with the Business Health
+             card so the very first thing the owner sees is a 0–100
+             score + delta. Score is computed server-side and pushed
+             with the rest of the stats payload (no extra round-trip).
+             On phones the card slots below the hero; on desktop it
+             sits beside the role / refresh cluster. -->
+        <section v-if="d?.health" class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 anim-fade-up">
+            <BusinessHealthCard :health="d.health" />
+            <HealthRingsRow :health="d.health" />
+        </section>
+
+        <!-- Phase AC — rule-based insights row. Horizontally scrolls on
+             phones, fills the page on desktop. Hidden when the engine
+             returns no insights (clean baseline). -->
+        <InsightsCarousel v-if="d?.insights?.length" :insights="d.insights" />
+
         <!-- ── Phase AB-2: Business Alerts widget ──
              Sits between the smart-alerts banner and the executive KPI
              cards so it's the LOUDEST signal on the dashboard once data
              loads. Pure read; auto-refreshes every 2 minutes. -->
         <BusinessAlertsWidget />
+
+        <!-- Phase AC — multi-branch leaderboard. Self-hides when the
+             user is in a single-branch workspace (backend returns []). -->
+        <BranchLeaderboard v-if="d?.branch_leaderboard?.length >= 2" :branches="d.branch_leaderboard" />
 
         <!-- ── EXECUTIVE SNAPSHOT — premium KPI cards with sparklines.
              While loading the first payload, show 6 shape-aware skeleton
@@ -122,38 +143,14 @@
             <InsightTile :label="t('dashboard.insights.activeStaff')"  :value="String(d?.hrm?.active_employees ?? 0)" :icon="UserGroupIcon" tone="slate" />
         </section>
 
-        <!-- Sales trend mini-chart + Quick access — wrapped in .card .card-analytics
-             so spacing and elevation track the rest of the design system. -->
+        <!-- Phase AC Round 2 — TrendsPanel replaces the static 14-day bar
+             chart with a full period+metric switcher (revenue / profit /
+             purchase / cash flow × 7d / 30d / 90d). Self-fetches on tab
+             switch and uses the design-system Skeleton on transitions. -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <section class="card card-analytics lg:col-span-2">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <p class="t-overline">{{ t('dashboard.trend.title') }}</p>
-                        <p class="t-caption mt-0.5">{{ t('dashboard.trend.subtitle') }}</p>
-                    </div>
-                    <p class="text-sm text-slate-700 dark:text-slate-200 font-mono">Ø {{ fmt(trendAvg) }}</p>
-                </div>
-                <Skeleton v-if="!d" variant="chart" />
-                <div v-else-if="(d?.sales_trend ?? []).length" class="flex items-end gap-1.5 h-32">
-                    <div v-for="day in d.sales_trend" :key="day.date"
-                         class="flex-1 flex flex-col items-center gap-1 group">
-                        <div class="w-full bg-indigo-100 dark:bg-indigo-900/30 rounded-t-md overflow-hidden flex flex-col-reverse h-full">
-                            <div class="w-full bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t-md transition-all group-hover:from-indigo-700"
-                                 :style="{ height: trendBar(day.revenue) + '%' }"
-                                 :title="day.date + ': ' + fmt(day.revenue)"></div>
-                        </div>
-                        <span class="text-[10px] text-slate-400 font-mono">{{ formatDay(day.date) }}</span>
-                    </div>
-                </div>
-                <EmptyState
-                    v-else
-                    size="sm"
-                    tone="indigo"
-                    :icon="ChartBarIcon"
-                    :title="t('dashboard.trend.emptyTitle', 'No sales yet this period')"
-                    :description="t('dashboard.trend.emptyDesc', 'Trend chart will appear after the first sales are recorded.')"
-                />
-            </section>
+            <div class="lg:col-span-2">
+                <TrendsPanel />
+            </div>
 
             <section class="card card-analytics">
                 <p class="t-overline mb-3">{{ t('dashboard.quickAccess.title') }}</p>
@@ -342,6 +339,13 @@ import SparklineCard  from '@/components/dashboard/SparklineCard.vue';
 import BusinessActivityFeed from '@/components/dashboard/BusinessActivityFeed.vue';
 // Phase AB-2 — proactive business alerts surface
 import BusinessAlertsWidget from '@/components/dashboard/BusinessAlertsWidget.vue';
+// Phase AC — Executive Dashboard 2.0 additions
+import BusinessHealthCard   from '@/components/dashboard/BusinessHealthCard.vue';
+import HealthRingsRow       from '@/components/dashboard/HealthRingsRow.vue';
+import InsightsCarousel     from '@/components/dashboard/InsightsCarousel.vue';
+import BranchLeaderboard    from '@/components/dashboard/BranchLeaderboard.vue';
+// Phase AC Round 2 — full-period trend switcher
+import TrendsPanel          from '@/components/dashboard/TrendsPanel.vue';
 
 // Phase AA design-system primitives
 import Button     from '@/components/ui/Button.vue';
@@ -441,8 +445,8 @@ const marqueeItems = computed(() => {
     const inv = d.value?.inventory || {};
     const o   = d.value?.orders    || {};
     return [
-        { key: 'sales-today',  label: t('dashboard.kpi.todayRevenue'),    value: +s.today_revenue || 0,    prefix: currencyPrefix.value, icon: BanknotesIcon,         tone: 'indigo',  delta: s.delta_vs_yesterday },
-        { key: 'sales-month',  label: t('dashboard.kpi.monthRevenue'),    value: +s.month_revenue || 0,    prefix: currencyPrefix.value, icon: ChartBarIcon,          tone: 'emerald' },
+        { key: 'sales-today',  label: t('dashboard.kpi.todayRevenue'),    value: +s.today_revenue || 0,    prefix: currencyPrefix.value, icon: BanknotesIcon,         tone: 'indigo',  delta: s.delta_vs_yesterday, sparkline: trendValues.value },
+        { key: 'sales-month',  label: t('dashboard.kpi.monthRevenue'),    value: +s.month_revenue || 0,    prefix: currencyPrefix.value, icon: ChartBarIcon,          tone: 'emerald', sparkline: trendValues.value },
         { key: 'purch-today',  label: t('dashboard.kpi.todayPurchase'),   value: +p.today || 0,            prefix: currencyPrefix.value, icon: TruckIcon,             tone: 'sky' },
         { key: 'purch-month',  label: t('dashboard.kpi.monthPurchase'),   value: +p.month || 0,            prefix: currencyPrefix.value, icon: TruckIcon,             tone: 'sky' },
         { key: 'cust-pay',     label: t('dashboard.kpi.customerPayments'),value: +p.customer_paid_month || 0, prefix: currencyPrefix.value, icon: CurrencyDollarIcon, tone: 'emerald' },

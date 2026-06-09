@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Dashboard\Services\BusinessHealthService;
 use App\Modules\Dashboard\Services\DashboardInsightsService;
+use App\Modules\Dashboard\Services\DashboardTrendsService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -20,6 +22,25 @@ use Illuminate\Support\Facades\DB;
  */
 class DashboardController extends Controller
 {
+    /**
+     * GET /api/dashboard/trends?metric=revenue|profit|purchase|cash_flow&days=7|30|90
+     *
+     * Phase AC Round 2 — Executive trend chart data source. Kept out of
+     * the main stats() payload so a 90-day view isn't computed for users
+     * who never expand the period switcher. Workspace-aware via the
+     * service.
+     */
+    public function trends(Request $request, DashboardTrendsService $trends): JsonResponse
+    {
+        $metric = $request->input('metric', 'revenue');
+        $days   = (int) $request->input('days', 30);
+        return response()->json(['data' => [
+            'metric' => $metric,
+            'days'   => $days,
+            'series' => $trends->series($metric, $days),
+        ]]);
+    }
+
     public function stats(): JsonResponse
     {
         // Topbar workspace context is binding. NULL = Main Branch / All
