@@ -49,14 +49,10 @@
             </div>
         </section>
 
-        <!-- ── Phase AC: Executive Hero augmentation ──
-             Pair the existing greeting hero with the Business Health
-             card so the very first thing the owner sees is a 0–100
-             score + delta. Score is computed server-side and pushed
-             with the rest of the stats payload (no extra round-trip).
-             On phones the card slots below the hero; on desktop it
-             sits beside the role / refresh cluster. -->
-        <section v-if="d?.health" class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 anim-fade-up">
+        <!-- Health snapshot — score card spans full width, with the four
+             ring widgets stacked below. Gives every metric room to breathe
+             and keeps the visual rhythm consistent on every viewport. -->
+        <section v-if="d?.health" class="space-y-3 sm:space-y-4 anim-fade-up">
             <BusinessHealthCard :health="d.health" />
             <HealthRingsRow :health="d.health" />
         </section>
@@ -152,81 +148,16 @@
                 <TrendsPanel />
             </div>
 
-            <section class="card card-analytics">
-                <p class="t-overline mb-3">{{ t('dashboard.quickAccess.title') }}</p>
-                <div class="space-y-1.5">
-                    <RouterLink v-for="link in quickLinks" :key="link.label"
-                                :to="link.to"
-                                class="quick-link group">
-                        <div :class="['quick-link-icon', link.iconBg]">
-                            <component :is="link.icon" :class="['w-4 h-4', link.iconColor]" />
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">{{ link.label }}</p>
-                            <p class="text-xs text-slate-400 dark:text-slate-500 truncate">{{ link.desc }}</p>
-                        </div>
-                        <ChevronRightIcon class="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-400 transition-transform group-hover:translate-x-0.5" />
-                    </RouterLink>
-                </div>
-            </section>
+            <QuickActionsPanel />
         </div>
 
-        <!-- Top products + Top customers — Phase AA: card surface, premium
-             list rows, branded rank chips, real EmptyState for zero-data. -->
+        <!-- Phase AC Round 3 — Top Products 2.0 + Top Customers 2.0. The
+             old single-list sections are replaced by 4-tab tier panels
+             that fetch their own slices on demand. Empty states are
+             tier-specific so the user always sees a useful message. -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <section class="card overflow-hidden">
-                <div class="dash-list-head">
-                    <p class="t-overline">{{ t('dashboard.topProducts.title') }}</p>
-                    <RouterLink :to="{ name: 'products' }" class="dash-list-link">{{ t('dashboard.viewAll') }} →</RouterLink>
-                </div>
-                <Skeleton v-if="!d" class="px-5 py-3" variant="row" />
-                <ul v-else-if="(d.top_products ?? []).length" class="divide-y divide-slate-100 dark:divide-slate-800">
-                    <li v-for="(p, i) in d.top_products" :key="p.product_id" class="dash-list-row">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="dash-list-rank">#{{ i + 1 }}</span>
-                            <div class="min-w-0">
-                                <p class="font-medium text-slate-800 dark:text-slate-100 truncate">{{ p.name }}</p>
-                                <p class="text-[11px] text-slate-500 font-mono">{{ p.sku }} · {{ p.qty_sold }} {{ t('dashboard.topProducts.sold') }}</p>
-                            </div>
-                        </div>
-                        <p class="font-mono text-sm text-slate-800 dark:text-slate-100 font-semibold">{{ fmt(p.revenue) }}</p>
-                    </li>
-                </ul>
-                <EmptyState
-                    v-else
-                    size="sm"
-                    tone="indigo"
-                    :icon="TagIcon"
-                    :title="t('dashboard.topProducts.empty')"
-                />
-            </section>
-
-            <section class="card overflow-hidden">
-                <div class="dash-list-head">
-                    <p class="t-overline">{{ t('dashboard.topCustomers.title') }}</p>
-                    <RouterLink :to="{ name: 'customers' }" class="dash-list-link">{{ t('dashboard.viewAll') }} →</RouterLink>
-                </div>
-                <Skeleton v-if="!d" class="px-5 py-3" variant="row" />
-                <ul v-else-if="(d.top_customers ?? []).length" class="divide-y divide-slate-100 dark:divide-slate-800">
-                    <li v-for="(c, i) in d.top_customers" :key="c.customer_id" class="dash-list-row">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="dash-list-rank">#{{ i + 1 }}</span>
-                            <div class="min-w-0">
-                                <p class="font-medium text-slate-800 dark:text-slate-100 truncate">{{ c.name }}</p>
-                                <p class="text-[11px] text-slate-500">{{ c.visits }} {{ t('dashboard.topCustomers.visits') }}</p>
-                            </div>
-                        </div>
-                        <p class="font-mono text-sm text-slate-800 dark:text-slate-100 font-semibold">{{ fmt(c.revenue) }}</p>
-                    </li>
-                </ul>
-                <EmptyState
-                    v-else
-                    size="sm"
-                    tone="emerald"
-                    :icon="UsersIcon"
-                    :title="t('dashboard.topCustomers.empty')"
-                />
-            </section>
+            <TopProductsPanel />
+            <TopCustomersPanel />
         </div>
 
         <!-- Recent sales + Activity feed -->
@@ -268,7 +199,15 @@
                     tone="emerald"
                     :icon="ShoppingCartIcon"
                     :title="t('dashboard.recentSales.empty')"
-                />
+                    :description="t('dashboard.recentSales.emptyDesc', 'Open the POS or record a new sale to see it appear here in real time.')"
+                >
+                    <template #action>
+                        <RouterLink :to="{ name: 'pos' }" class="rs-cta">
+                            <ShoppingCartIcon class="w-4 h-4" />
+                            {{ t('menu.cashTerminal', 'Open POS') }}
+                        </RouterLink>
+                    </template>
+                </EmptyState>
             </section>
 
             <section class="card overflow-hidden">
@@ -281,37 +220,9 @@
             </section>
         </div>
 
-        <!-- System info + Module status — card surface, refined chips -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <section class="card card-analytics">
-                <p class="t-overline mb-3">{{ t('dashboard.systemInfo.title') }}</p>
-                <dl class="space-y-2.5 text-sm">
-                    <div v-for="item in systemInfo" :key="item.label" class="flex items-center justify-between gap-3">
-                        <dt class="text-xs text-slate-500 dark:text-slate-400">{{ item.label }}</dt>
-                        <dd class="text-xs font-semibold text-slate-700 dark:text-slate-200 font-mono truncate">{{ item.value }}</dd>
-                    </div>
-                </dl>
-            </section>
-
-            <section class="card lg:col-span-2 overflow-hidden">
-                <div class="dash-list-head">
-                    <div>
-                        <p class="t-overline">{{ t('dashboard.moduleStatus.title') }}</p>
-                        <p class="t-caption mt-0.5">{{ t('dashboard.moduleStatus.subtitle') }}</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 divide-x divide-y divide-slate-100 dark:divide-slate-800">
-                    <div v-for="m in moduleStatusList" :key="m.key"
-                         class="flex flex-col items-center gap-2 px-3 py-4 text-center">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.18)]"></span>
-                        <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">{{ m.label }}</p>
-                        <span class="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-bold">
-                            {{ m.phase }}
-                        </span>
-                    </div>
-                </div>
-            </section>
-        </div>
+        <!-- A compact bottom strip showing the things the operator needs to
+             trust: connectivity, install state, sync queue, alerts. -->
+        <SystemHealthFooter />
 
     </div>
 </template>
@@ -346,6 +257,12 @@ import InsightsCarousel     from '@/components/dashboard/InsightsCarousel.vue';
 import BranchLeaderboard    from '@/components/dashboard/BranchLeaderboard.vue';
 // Phase AC Round 2 — full-period trend switcher
 import TrendsPanel          from '@/components/dashboard/TrendsPanel.vue';
+// Phase AC Round 3 — Top Products + Top Customers 2.0
+import TopProductsPanel     from '@/components/dashboard/TopProductsPanel.vue';
+import TopCustomersPanel    from '@/components/dashboard/TopCustomersPanel.vue';
+// Phase AC Round 4 — premium quick actions + system health footer
+import QuickActionsPanel    from '@/components/dashboard/QuickActionsPanel.vue';
+import SystemHealthFooter   from '@/components/dashboard/SystemHealthFooter.vue';
 
 // Phase AA design-system primitives
 import Button     from '@/components/ui/Button.vue';
@@ -634,4 +551,12 @@ onMounted(load);
 .dash-list-rank {
     @apply text-xs text-slate-400 dark:text-slate-500 font-mono w-6 flex-shrink-0;
 }
+
+/* Open POS shortcut surfaced inside the empty Recent Sales card. */
+.rs-cta {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold
+           bg-emerald-600 text-white hover:bg-emerald-700 transition-colors;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.18) inset, var(--elev-1);
+}
+.rs-cta:hover { box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, var(--elev-2); }
 </style>

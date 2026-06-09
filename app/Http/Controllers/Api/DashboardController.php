@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\Dashboard\Services\BusinessHealthService;
 use App\Modules\Dashboard\Services\DashboardInsightsService;
+use App\Modules\Dashboard\Services\DashboardTiersService;
 use App\Modules\Dashboard\Services\DashboardTrendsService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -38,6 +39,32 @@ class DashboardController extends Controller
             'metric' => $metric,
             'days'   => $days,
             'series' => $trends->series($metric, $days),
+        ]]);
+    }
+
+    /**
+     * GET /api/dashboard/top-products?tab=best|slow|dead|reorder
+     * GET /api/dashboard/top-customers?tab=vip|recent|outstanding|biggest
+     *
+     * Phase AC Round 3 — Top Products / Top Customers tier panels.
+     * Workspace-aware via the service. Defaults to 'best' / 'vip' when
+     * the tab isn't recognised so a stale frontend cache never 500s.
+     */
+    public function topProducts(Request $request, DashboardTiersService $tiers): JsonResponse
+    {
+        $tab = $request->input('tab', 'best');
+        return response()->json(['data' => [
+            'tab'  => $tab,
+            'rows' => $tiers->products($tab),
+        ]]);
+    }
+
+    public function topCustomersV2(Request $request, DashboardTiersService $tiers): JsonResponse
+    {
+        $tab = $request->input('tab', 'vip');
+        return response()->json(['data' => [
+            'tab'  => $tab,
+            'rows' => $tiers->customers($tab),
         ]]);
     }
 

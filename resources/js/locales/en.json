@@ -184,7 +184,10 @@
     "showing": "Showing",
     "stock": "Stock",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "clearFilters": "Clear filters",
+    "online": "Online",
+    "offline": "Offline"
   },
   "paymentMethod": {
     "cash": "Cash",
@@ -312,7 +315,8 @@
       "empty": "No sales recorded yet",
       "startSale": "Open POS terminal →",
       "due": "Due",
-      "paid": "Fully paid"
+      "paid": "Fully paid",
+      "emptyDesc": "Open the POS or record a new sale to see it appear here in real time."
     },
     "heroSubtitle": "Live snapshot of your business across every module",
     "refresh": "Refresh",
@@ -337,12 +341,42 @@
     "topProducts": {
       "title": "Top Products (MTD)",
       "sold": "sold",
-      "empty": "No sales this month yet"
+      "empty": "No sales this month yet",
+      "best": "Best sellers",
+      "slow": "Slow movers",
+      "dead": "Dead stock",
+      "reorder": "Reorder needed",
+      "bestSubtitle": "Highest revenue products this month.",
+      "slowSubtitle": "Sold but moved 5 units or fewer this month.",
+      "deadSubtitle": "Active products with no sale in 90+ days.",
+      "reorderSubtitle": "At or below reorder level — restock soon.",
+      "units": "units",
+      "days": "d idle",
+      "short": "short"
     },
     "topCustomers": {
       "title": "Top Customers (MTD)",
       "visits": "visits",
-      "empty": "No registered customer sales yet"
+      "empty": "No registered customer sales yet",
+      "vip": "VIP",
+      "recent": "Recent",
+      "outstanding": "Highest due",
+      "biggest": "Biggest sale",
+      "vipSubtitle": "Lifetime top spenders — protect this relationship.",
+      "recentSubtitle": "Customers with the most recent purchase.",
+      "outstandingSubtitle": "Largest outstanding receivable balances.",
+      "biggestSubtitle": "Highest single invoice this month.",
+      "invoices": "invoices",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "ago": "ago",
+      "tier": {
+        "vip": "VIP",
+        "regular": "Regular",
+        "recent": "Recent",
+        "overdue": "Overdue",
+        "biggest": "Top buyer"
+      }
     },
     "activity": {
       "title": "Activity Feed",
@@ -357,6 +391,24 @@
         "delivery": "Delivery",
         "return": "Return"
       }
+    },
+    "rings": {
+      "noData": "No data yet"
+    },
+    "health": {
+      "connectivity": "Connectivity",
+      "pwa": "PWA",
+      "installed": "Installed",
+      "browser": "Browser",
+      "sync": "Offline sync",
+      "syncOffline": "Offline — queuing",
+      "pending": "pending",
+      "ready": "Ready",
+      "notifications": "Notifications",
+      "unread": "unread",
+      "clear": "Clear",
+      "workspace": "Workspace",
+      "locale": "Locale"
     }
   },
   "branches": {

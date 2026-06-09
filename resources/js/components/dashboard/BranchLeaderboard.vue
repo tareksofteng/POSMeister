@@ -146,15 +146,21 @@ html.dark .rank-chip.is-top {
 
 .lb-kpis {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     flex-shrink: 0;
 }
-.lb-kpi { display: flex; flex-direction: column; align-items: flex-end; }
+.lb-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 56px;     /* prevents "৳ 0" being cropped on dense Bangla labels */
+}
 .lb-kpi-value {
     font-size: 0.8125rem;
     font-weight: 700;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 /* Mobile — drop the KPI strip to its own row so the leaderboard

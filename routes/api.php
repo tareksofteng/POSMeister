@@ -106,8 +106,10 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
     Route::post('branch-context/switch',    [\App\Modules\Branch\Controllers\BranchContextController::class, 'switch']);
 
     // Dashboard stats
-    Route::get('dashboard/stats',  [DashboardController::class, 'stats']);
-    Route::get('dashboard/trends', [DashboardController::class, 'trends']);
+    Route::get('dashboard/stats',          [DashboardController::class, 'stats']);
+    Route::get('dashboard/trends',         [DashboardController::class, 'trends']);
+    Route::get('dashboard/top-products',   [DashboardController::class, 'topProducts']);
+    Route::get('dashboard/top-customers',  [DashboardController::class, 'topCustomersV2']);
 
     // ── Phase Ω+ — Smart Notification Center (any auth user) ────────────
     Route::get ('notifications',                   [NotificationCenterController::class, 'index']);

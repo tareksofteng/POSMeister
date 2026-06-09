@@ -184,7 +184,10 @@
     "showing": "Zeige",
     "stock": "Bestand",
     "previous": "Zurück",
-    "next": "Weiter"
+    "next": "Weiter",
+    "online": "Online",
+    "offline": "Offline",
+    "clearFilters": "Filter zurücksetzen"
   },
   "paymentMethod": {
     "cash": "Bar",
@@ -313,13 +316,27 @@
       "out_of_stock": "{count} Artikel nicht verfügbar",
       "dead_stock": "{count} Artikel ohne Verkauf seit 90 Tagen",
       "overdue_payments": "{count} Verkäufe über 30 Tage überfällig",
-      "payroll_pending": "{count} Lohnzettel warten auf Freigabe"
+      "payroll_pending": "{count} Lohnzettel warten auf Freigabe",
+      "title": "Geschäftswarnungen",
+      "subtitle": "Wichtigste Probleme über alle sichtbaren Filialen.",
+      "critical": "Kritisch",
+      "unresolved": "Offen",
+      "topRecurring": "Häufigster Code",
+      "noneThisWeek": "Diese Woche keine",
+      "empty": "Keine Geschäftswarnungen",
+      "emptyHint": "Sobald Bestand, Finanzen oder Betrieb Aufmerksamkeit erfordern, erscheint es zuerst hier."
     },
     "insights": {
       "stockValue": "Lagerwert",
       "openOrders": "Offene Aufträge",
       "loyalty": "Treueverbindlichkeit",
-      "activeStaff": "Aktive Mitarbeiter"
+      "activeStaff": "Aktive Mitarbeiter",
+      "title": "Geschäftsinsights",
+      "subtitle": "Mustererkennungen, die das System in Ihren Abläufen festgestellt hat.",
+      "positive": "Positiv",
+      "info": "Info",
+      "warning": "Warnung",
+      "danger": "Kritisch"
     },
     "trend": {
       "title": "Umsatz — Letzte 14 Tage",
@@ -328,12 +345,58 @@
     "topProducts": {
       "title": "Top-Produkte (Monat)",
       "sold": "verkauft",
-      "empty": "Noch keine Verkäufe diesen Monat"
+      "empty": "Noch keine Verkäufe diesen Monat",
+      "best": "Bestseller",
+      "slow": "Langsame Verkäufer",
+      "dead": "Totlagerung",
+      "reorder": "Nachbestellen",
+      "bestSubtitle": "Umsatzstärkste Produkte in diesem Monat.",
+      "slowSubtitle": "Verkauft, aber ≤ 5 Einheiten in diesem Monat.",
+      "deadSubtitle": "Aktive Produkte ohne Verkauf seit 90+ Tagen.",
+      "reorderSubtitle": "Am oder unter Bestellpunkt — bald nachfüllen.",
+      "bestEmpty": "Noch keine Verkäufe diesen Monat",
+      "bestEmptyDesc": "Top-Verkäufer erscheinen nach dem ersten Verkauf.",
+      "slowEmpty": "Keine langsamen Verkäufer",
+      "slowEmptyDesc": "Jedes verkaufte Produkt bewegte mehr als 5 Einheiten diesen Monat.",
+      "deadEmpty": "Keine Totlagerung",
+      "deadEmptyDesc": "Jedes aktive Produkt hatte mindestens einen Verkauf in den letzten 90 Tagen.",
+      "reorderEmpty": "Bestand gesund",
+      "reorderEmptyDesc": "Kein aktives Produkt unter dem Bestellpunkt.",
+      "units": "Einheiten",
+      "days": "T inaktiv",
+      "short": "Fehlbestand"
     },
     "topCustomers": {
       "title": "Top-Kunden (Monat)",
       "visits": "Besuche",
-      "empty": "Noch keine registrierten Kundenverkäufe"
+      "empty": "Noch keine registrierten Kundenverkäufe",
+      "vip": "VIP",
+      "recent": "Aktuell",
+      "outstanding": "Höchste Forderung",
+      "biggest": "Größter Verkauf",
+      "vipSubtitle": "Lebenslange Top-Käufer — diese Beziehung pflegen.",
+      "recentSubtitle": "Kunden mit dem zuletzt getätigten Einkauf.",
+      "outstandingSubtitle": "Größte ausstehende Forderungssalden.",
+      "biggestSubtitle": "Höchste Einzelrechnung diesen Monat.",
+      "vipEmpty": "Noch keine VIP-Daten",
+      "vipEmptyDesc": "Rankings erscheinen, sobald die Verkaufshistorie ausreicht.",
+      "recentEmpty": "Keine aktuelle Aktivität",
+      "recentEmptyDesc": "Neue Verkäufe erscheinen sofort in dieser Liste.",
+      "outstandingEmpty": "Alles klar — keine offenen Forderungen",
+      "outstandingEmptyDesc": "Jede Kundenrechnung beglichen.",
+      "biggestEmpty": "Noch keine Verkäufe diesen Monat",
+      "biggestEmptyDesc": "Sobald Rechnungen ausgestellt sind, erscheint die größte hier.",
+      "invoices": "Rechnungen",
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "ago": "her",
+      "tier": {
+        "vip": "VIP",
+        "regular": "Stammkunde",
+        "recent": "Aktuell",
+        "overdue": "Überfällig",
+        "biggest": "Top-Käufer"
+      }
     },
     "activity": {
       "title": "Aktivitäten",
@@ -356,7 +419,67 @@
       "empty": "Noch keine Verkäufe erfasst",
       "startSale": "POS-Terminal öffnen →",
       "due": "Offen",
-      "paid": "Vollständig bezahlt"
+      "paid": "Vollständig bezahlt",
+      "emptyDesc": "Öffnen Sie die Kasse oder erfassen Sie einen neuen Verkauf — er erscheint in Echtzeit hier."
+    },
+    "rings": {
+      "salesTrend": "Umsatztrend",
+      "profitMargin": "Gewinnmarge",
+      "inventoryHealth": "Bestandsstatus",
+      "cashFlow": "Liquidität",
+      "noData": "Noch keine Daten"
+    },
+    "health": {
+      "title": "Geschäftsgesundheit",
+      "vsAverage": "vs. 7-Tage-Durchschnitt",
+      "noDelta": "Verkaufsbasis wird aufgebaut.",
+      "toggleDetail": "Details anzeigen",
+      "connectivity": "Verbindung",
+      "pwa": "PWA",
+      "installed": "Installiert",
+      "browser": "Browser",
+      "sync": "Offline-Sync",
+      "syncOffline": "Offline — wird gepuffert",
+      "pending": "ausstehend",
+      "ready": "Bereit",
+      "notifications": "Benachrichtigungen",
+      "unread": "ungelesen",
+      "clear": "Leer",
+      "workspace": "Arbeitsbereich",
+      "locale": "Sprache",
+      "tier": {
+        "excellent": "Ausgezeichnet",
+        "healthy": "Gesund",
+        "attention": "Aufmerksamkeit nötig",
+        "action": "Handlung erforderlich"
+      }
+    },
+    "leaderboard": {
+      "title": "Filialleistung",
+      "subtitle": "Monat bis dato — Arbeitsbereich wechseln, um eine Filiale im Detail zu betrachten.",
+      "branches": "Filialen",
+      "top": "Top",
+      "sales": "Umsatz",
+      "orders": "Aufträge",
+      "customers": "Kunden"
+    },
+    "trends": {
+      "total": "Gesamt",
+      "avgPerDay": "Ø pro Tag",
+      "latest": "Aktuell",
+      "delta": "vs. Vorperiode",
+      "emptyTitle": "Noch nicht genügend Daten",
+      "emptyDesc": "Trend erscheint, sobald mindestens zwei Tage Aktivität im gewählten Fenster vorliegen.",
+      "metric": {
+        "revenue": "Umsatz",
+        "profit": "Gewinn",
+        "purchase": "Einkauf",
+        "cashFlow": "Liquidität"
+      }
+    },
+    "marquee": {
+      "prev": "Zurück",
+      "next": "Weiter"
     }
   },
   "branches": {

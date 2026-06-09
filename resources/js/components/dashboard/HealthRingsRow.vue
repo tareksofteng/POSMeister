@@ -63,60 +63,53 @@ function tierFor(pct) {
 }
 
 const rings = computed(() => {
-    const s = props.health?.subscores;
-    if (!s) return [];
+    const s = props.health?.subscores || {};
+    const fallback = t('dashboard.rings.noData', 'No data yet');
 
-    const out = [];
+    // Always render four rings — when a sub-score is missing the ring shows
+    // 0% with a "no data yet" note, keeping the 4-column rhythm intact
+    // instead of collapsing the layout on a fresh install.
+    const salesPct  = s.sales  ? Math.max(0, Math.min(100, ((+s.sales.score)  / 25) * 100)) : 0;
+    const riskPct   = s.risk   ? Math.max(0, Math.min(100, ((+s.risk.score)   / 20) * 100)) : 0;
+    const cashPct   = s.cash   ? Math.max(0, Math.min(100, ((+s.cash.score)   / 20) * 100)) : 0;
+    const profitPct = (s.profit && s.profit.margin_pct != null)
+        ? Math.max(0, Math.min(100, +s.profit.margin_pct))
+        : 0;
 
-    // Sales Trend — score normalised to its 25pt cap → 0–100%.
-    if (s.sales) {
-        const pct = Math.max(0, Math.min(100, ((+s.sales.score) / 25) * 100));
-        out.push({
-            key:  'sales',
+    const profitTier = (s.profit && s.profit.margin_pct != null)
+        ? tierFor(profitPct >= 30 ? 95 : profitPct >= 15 ? 75 : profitPct >= 5 ? 55 : 30)
+        : 'rose';
+
+    return [
+        {
+            key:   'sales',
             label: t('dashboard.rings.salesTrend', 'Sales Trend'),
-            pct,
-            tier: tierFor(pct),
-            note: s.sales.note || '—',
-        });
-    }
-
-    // Profit Margin — clamp the raw margin to 0..100 for the ring.
-    if (s.profit && s.profit.margin_pct != null) {
-        const pct = Math.max(0, Math.min(100, +s.profit.margin_pct));
-        out.push({
-            key:  'profit',
+            pct:   salesPct,
+            tier:  tierFor(salesPct),
+            note:  s.sales?.note || fallback,
+        },
+        {
+            key:   'profit',
             label: t('dashboard.rings.profitMargin', 'Profit Margin'),
-            pct,
-            tier: tierFor(pct >= 30 ? 95 : pct >= 15 ? 75 : pct >= 5 ? 55 : 30),
-            note: s.profit.note || `${pct.toFixed(1)}%`,
-        });
-    }
-
-    // Inventory Health — "risk" sub-score normalised to its 20pt cap.
-    if (s.risk) {
-        const pct = Math.max(0, Math.min(100, ((+s.risk.score) / 20) * 100));
-        out.push({
-            key:  'inventory',
+            pct:   profitPct,
+            tier:  profitTier,
+            note:  s.profit?.note || fallback,
+        },
+        {
+            key:   'inventory',
             label: t('dashboard.rings.inventoryHealth', 'Inventory Health'),
-            pct,
-            tier: tierFor(pct),
-            note: s.risk.note || '—',
-        });
-    }
-
-    // Cash Flow — uses the cash sub-score (20pt cap) as the indicator.
-    if (s.cash) {
-        const pct = Math.max(0, Math.min(100, ((+s.cash.score) / 20) * 100));
-        out.push({
-            key:  'cash',
+            pct:   riskPct,
+            tier:  tierFor(riskPct),
+            note:  s.risk?.note || fallback,
+        },
+        {
+            key:   'cash',
             label: t('dashboard.rings.cashFlow', 'Cash Flow'),
-            pct,
-            tier: tierFor(pct),
-            note: s.cash.note || '—',
-        });
-    }
-
-    return out;
+            pct:   cashPct,
+            tier:  tierFor(cashPct),
+            note:  s.cash?.note || fallback,
+        },
+    ];
 });
 </script>
 
@@ -128,12 +121,12 @@ const rings = computed(() => {
     grid-template-columns: 1fr 1fr;
     gap: 0.625rem;
 }
-@media (min-width: 768px) {
-    .rings-row { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (min-width: 1024px) {
+    .rings-row { grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
 }
 
 .health-ring-card {
-    padding: 0.875rem 0.875rem;
+    padding: 1rem 1.125rem;
     display: flex;
     align-items: center;
     gap: 0.875rem;
@@ -143,11 +136,33 @@ const rings = computed(() => {
     isolation: isolate;
     transition:
         transform var(--motion-fast) var(--motion-out),
-        box-shadow var(--motion-fast) var(--motion-out);
+        box-shadow var(--motion-fast) var(--motion-out),
+        border-color var(--motion-fast) var(--motion-out);
+}
+.health-ring-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.6;
+}
+.health-ring-card.tier-emerald::before { background: radial-gradient(120% 90% at 100% 0%, rgba(16,185,129,0.10), transparent 55%); }
+.health-ring-card.tier-sky::before     { background: radial-gradient(120% 90% at 100% 0%, rgba(14,165,233,0.10), transparent 55%); }
+.health-ring-card.tier-amber::before   { background: radial-gradient(120% 90% at 100% 0%, rgba(245,158,11,0.12), transparent 55%); }
+.health-ring-card.tier-rose::before    { background: radial-gradient(120% 90% at 100% 0%, rgba(244,63,94,0.12),  transparent 55%); }
+.health-ring-card :deep(.t-overline) {
+    /* Long Bangla / German labels wrap rather than truncate. */
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 .health-ring-card:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: var(--elev-2);
+    border-color: var(--border-strong);
 }
 
 .ring-mini-wrap {
