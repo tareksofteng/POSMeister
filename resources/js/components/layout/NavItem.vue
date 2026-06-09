@@ -61,10 +61,17 @@ function handleNav(event, navigate) {
 <style scoped>
 @reference '../../../css/app.css';
 
+/* Phase AA — refined navigation. The previous bright indigo gradient
+   read as "admin template"; this version uses a tinted surface with a
+   crisp 3px left rail (Linear / Vercel pattern) so active state is
+   clearly readable but the sidebar still feels enterprise-grade. */
 .nav-item {
     @apply relative w-full flex items-center gap-3 px-3 py-2 rounded-lg
-           text-sm font-medium text-slate-400
-           transition-all duration-200;
+           text-sm font-medium text-slate-400;
+    transition:
+        background-color var(--motion-fast) var(--motion-out),
+        color            var(--motion-fast) var(--motion-out),
+        transform        var(--motion-fast) var(--motion-out);
 }
 .nav-item:hover:not(.is-disabled):not(.is-active) {
     @apply bg-slate-800/60 text-slate-100;
@@ -73,39 +80,46 @@ function handleNav(event, navigate) {
 
 .nav-item.is-collapsed { @apply justify-center; }
 
-/* Active route: indigo gradient + soft shadow + bright text */
+/* Active route — tinted surface, refined indigo, no flashy gradient */
 .nav-item.is-active {
-    color: rgb(255 255 255);
-    background-image: linear-gradient(to right, rgb(79 70 229), rgb(99 102 241));
-    box-shadow: 0 4px 12px -2px rgb(79 70 229 / 0.35),
-                inset 0 0 0 1px rgb(129 140 248 / 0.45);
+    color: rgb(224 231 255);
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.16) 0%, rgba(79, 70, 229, 0.14) 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(129, 140, 248, 0.22),
+        0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }
-.nav-item.is-active .nav-item-icon { color: white; }
+.nav-item.is-active .nav-item-icon { color: rgb(165 180 252); }
 
-/* Disabled state */
+/* Disabled / coming-soon */
 .nav-item.is-disabled {
     @apply text-slate-600 cursor-not-allowed;
 }
 
 .nav-item-icon {
-    @apply flex-shrink-0 transition-transform duration-200;
+    @apply flex-shrink-0;
+    transition: transform var(--motion-fast) var(--motion-out);
 }
 
-/* Subtle vertical accent on the left edge of the active item */
+/* Crisp 3px rail on the left edge of the active item — taller, glow-tipped */
 .nav-indicator {
     position: absolute;
-    left: 0;
+    left: -1px;
     top: 50%;
     width: 3px;
-    height: 60%;
-    background: white;
+    height: 70%;
+    background: linear-gradient(180deg, rgb(165 180 252) 0%, rgb(99 102 241) 100%);
     border-radius: 0 3px 3px 0;
     transform: translateY(-50%);
-    opacity: 0.85;
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.22), 0 0 10px -2px rgba(99, 102, 241, 0.55);
 }
 
 .nav-soon-badge {
     @apply flex-shrink-0 text-[10px] font-medium text-slate-500 bg-slate-800/80
            px-1.5 py-0.5 rounded uppercase tracking-wider;
+}
+
+/* Touch-grade height on phones — matches Apple HIG / WCAG 2.5.5 */
+@media (max-width: 768px) {
+    .nav-item { min-height: 44px; }
 }
 </style>

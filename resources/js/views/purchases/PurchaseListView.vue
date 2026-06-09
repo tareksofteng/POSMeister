@@ -1,42 +1,36 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 anim-fade-in">
 
-        <!-- Page header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <!-- Page header — unified typography + Button primitive. -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 anim-fade-up">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('purchases.title') }}</h1>
-                <p class="mt-1 text-sm text-gray-500">
+                <h1 class="h1-display">{{ t('purchases.title') }}</h1>
+                <p class="mt-1.5 t-body">
                     {{ t('purchases.subtitle') }}
-                    <span v-if="meta" class="text-gray-400">({{ meta.total }} {{ t('common.total') }})</span>
+                    <span v-if="meta" class="text-slate-400">({{ meta.total }} {{ t('common.total') }})</span>
                 </p>
             </div>
-            <RouterLink :to="{ name: 'purchase-create' }" class="btn-primary">
-                <PlusIcon class="w-4 h-4" />
+            <Button variant="primary" :to="{ name: 'purchase-create' }" :leading-icon="PlusIcon">
                 {{ t('purchases.new') }}
-            </RouterLink>
+            </Button>
         </div>
 
-        <!-- Toolbar — phone: search full, status full, dates side-by-side -->
-        <div class="grid grid-cols-2 gap-2.5 sm:flex sm:flex-row sm:gap-3 sm:flex-wrap">
-            <div class="col-span-2 sm:flex-1 sm:min-w-[200px] relative">
-                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                    v-model="searchQuery"
-                    type="search"
-                    :placeholder="t('purchases.searchPlaceholder')"
-                    class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+        <!-- Filter toolbar — same control surface as Sales / Stock / etc. -->
+        <div class="card filter-bar">
+            <div class="relative flex-1 min-w-[200px]">
+                <MagnifyingGlassIcon class="filter-icon" />
+                <input v-model="searchQuery" type="search" :placeholder="t('purchases.searchPlaceholder')" class="filter-input filter-input-search" />
             </div>
-            <select v-model="statusFilter" class="col-span-2 sm:col-auto w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="statusFilter" class="filter-input">
                 <option value="">{{ t('purchases.allStatuses') }}</option>
                 <option value="draft">{{ t('purchases.statusDraft') }}</option>
                 <option value="received">{{ t('purchases.statusReceived') }}</option>
             </select>
-            <input v-model="dateFrom" type="date" class="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
-            <input v-model="dateTo"   type="date" class="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
+            <input v-model="dateFrom" type="date" class="filter-input" />
+            <input v-model="dateTo"   type="date" class="filter-input" />
         </div>
 
-        <div v-if="listError" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ listError }}</div>
+        <div v-if="listError" class="card card-alert card-alert-danger text-sm">{{ listError }}</div>
 
         <!-- Table -->
         <DataTable
@@ -45,53 +39,57 @@
             :loading="loading"
             :meta="meta"
             sort-key="purchase_date"
+            empty-tone="indigo"
+            :empty-icon="TruckIcon"
             :empty-title="t('purchases.emptyTitle')"
             :empty-message="t('purchases.emptyMessage')"
             @page-change="fetchPage"
         >
             <template #cell-status="{ value }">
-                <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium', value === 'received' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800']">
+                <span :class="['status-pill', value === 'received' ? 'status-pill-success' : 'status-pill-warning']">
                     {{ value === 'received' ? t('purchases.statusReceived') : t('purchases.statusDraft') }}
                 </span>
             </template>
 
             <template #row-actions="{ row }">
-                <!-- Invoice (received only) -->
                 <RouterLink
                     v-if="row.status === 'received'"
                     :to="{ name: 'purchase-invoice', params: { id: row.id } }"
-                    class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors inline-flex"
+                    class="row-action row-action-indigo"
                     :title="t('purchases.viewInvoice')"
                 >
                     <DocumentTextIcon class="w-4 h-4" />
                 </RouterLink>
-                <!-- Edit (draft only) -->
                 <RouterLink
                     v-if="row.status === 'draft'"
                     :to="{ name: 'purchase-edit', params: { id: row.id } }"
-                    class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors inline-flex"
+                    class="row-action row-action-indigo"
                     :title="t('common.edit')"
                 >
                     <PencilSquareIcon class="w-4 h-4" />
                 </RouterLink>
-                <!-- Receive stock (draft only) -->
                 <button
                     v-if="row.status === 'draft'"
                     @click="confirmReceive(row)"
-                    class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                    class="row-action row-action-emerald"
                     :title="t('purchases.receive')"
                 >
                     <CheckBadgeIcon class="w-4 h-4" />
                 </button>
-                <!-- Delete (draft only) -->
                 <button
                     v-if="row.status === 'draft'"
                     @click="confirmDelete(row)"
-                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    class="row-action row-action-danger"
                     :title="t('common.delete')"
                 >
                     <TrashIcon class="w-4 h-4" />
                 </button>
+            </template>
+
+            <template #empty-action>
+                <Button variant="primary" :to="{ name: 'purchase-create' }" :leading-icon="PlusIcon">
+                    {{ t('purchases.new') }}
+                </Button>
             </template>
         </DataTable>
 
@@ -108,10 +106,11 @@ import { useDebounce } from '@vueuse/core';
 import { useAlert } from '@/composables/useAlert';
 
 import DataTable from '@/components/ui/DataTable.vue';
+import Button    from '@/components/ui/Button.vue';
 
 import {
     PlusIcon, MagnifyingGlassIcon, PencilSquareIcon,
-    TrashIcon, CheckBadgeIcon, DocumentTextIcon,
+    TrashIcon, CheckBadgeIcon, DocumentTextIcon, TruckIcon,
 } from '@heroicons/vue/24/outline';
 
 const { t } = useI18n();
@@ -244,9 +243,3 @@ async function confirmDelete(row) {
 }
 </script>
 
-<style scoped>
-@reference '../../../css/app.css';
-.btn-primary {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm;
-}
-</style>

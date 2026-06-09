@@ -1,73 +1,95 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 anim-fade-in">
 
-        <!-- Page header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <!-- Page header — unified typography + Button primitives. -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 anim-fade-up">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('sales.title') }}</h1>
-                <p class="mt-1 text-sm text-gray-500">
+                <h1 class="h1-display">{{ t('sales.title') }}</h1>
+                <p class="mt-1.5 t-body">
                     {{ t('sales.subtitle') }}
-                    <span v-if="meta" class="text-gray-400">({{ meta.total }} {{ t('common.total') }})</span>
+                    <span v-if="meta" class="text-slate-400">({{ meta.total }} {{ t('common.total') }})</span>
                 </p>
             </div>
-            <div class="flex items-center gap-2">
-                <RouterLink :to="{ name: 'pos' }" class="btn-secondary">
-                    <ShoppingCartIcon class="w-4 h-4" />
+            <div class="flex items-center gap-2 flex-wrap">
+                <Button
+                    variant="secondary"
+                    :to="{ name: 'pos' }"
+                    :leading-icon="ShoppingCartIcon"
+                >
                     {{ t('menu.cashTerminal') }}
-                </RouterLink>
-                <RouterLink :to="{ name: 'sale-create' }" class="btn-primary">
-                    <DocumentPlusIcon class="w-4 h-4" />
+                </Button>
+                <Button
+                    variant="primary"
+                    :to="{ name: 'sale-create' }"
+                    :leading-icon="DocumentPlusIcon"
+                >
                     {{ t('sales.newSale') }}
-                </RouterLink>
+                </Button>
             </div>
         </div>
 
-        <!-- Filters — phone: search full row, status full row, dates side-by-side -->
-        <div class="grid grid-cols-2 gap-2.5 sm:flex sm:flex-row sm:gap-3 sm:flex-wrap">
-            <div class="col-span-2 sm:flex-1 sm:min-w-[200px] relative">
-                <MagnifyingGlassIcon
-                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input v-model="searchQuery" type="search" :placeholder="t('sales.searchPlaceholder')"
-                    class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <!--
+            Filter toolbar — premium chrome via .card surface so the
+            filter block reads as a coherent control surface, not four
+            stray inputs floating on the background.
+        -->
+        <div class="card filter-bar">
+            <div class="relative flex-1 min-w-[200px]">
+                <MagnifyingGlassIcon class="filter-icon" />
+                <input v-model="searchQuery" type="search" :placeholder="t('sales.searchPlaceholder')" class="filter-input filter-input-search" />
             </div>
-            <select v-model="statusFilter"
-                class="col-span-2 sm:col-auto w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="statusFilter" class="filter-input">
                 <option value="">{{ t('common.allStatuses') }}</option>
                 <option value="active">{{ t('sales.statusActive') }}</option>
                 <option value="cancelled">{{ t('sales.statusCancelled') }}</option>
             </select>
-            <input v-model="dateFrom" type="date"
-                class="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
-            <input v-model="dateTo" type="date"
-                class="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" />
+            <input v-model="dateFrom" type="date" class="filter-input" />
+            <input v-model="dateTo"   type="date" class="filter-input" />
         </div>
 
-        <div v-if="listError" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{
-            listError }}</div>
+        <div v-if="listError" class="card card-alert card-alert-danger text-sm">{{ listError }}</div>
 
-        <!-- Table -->
-        <DataTable :columns="columns" :rows="rows" :loading="loading" :meta="meta" sort-key="sale_date"
-            :empty-title="t('sales.emptyTitle')" :empty-message="t('sales.emptyMessage')" @page-change="fetchPage">
+        <!-- Table — DataTable now consumes the Phase AA premium chrome. -->
+        <DataTable
+            :columns="columns"
+            :rows="rows"
+            :loading="loading"
+            :meta="meta"
+            sort-key="sale_date"
+            empty-tone="emerald"
+            :empty-icon="ShoppingCartIcon"
+            :empty-title="t('sales.emptyTitle')"
+            :empty-message="t('sales.emptyMessage')"
+            @page-change="fetchPage"
+        >
             <template #cell-status="{ value }">
-                <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
-                    value === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700']">
+                <span :class="['status-pill', value === 'active' ? 'status-pill-success' : 'status-pill-danger']">
                     {{ value === 'active' ? t('sales.statusActive') : t('sales.statusCancelled') }}
                 </span>
             </template>
 
             <template #row-actions="{ row }">
-                <!-- View invoice -->
-                <RouterLink :to="{ name: 'sale-invoice', params: { id: row.id } }"
-                    class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors inline-flex"
-                    :title="t('sales.viewInvoice')">
+                <RouterLink
+                    :to="{ name: 'sale-invoice', params: { id: row.id } }"
+                    class="row-action row-action-indigo"
+                    :title="t('sales.viewInvoice')"
+                >
                     <DocumentTextIcon class="w-4 h-4" />
                 </RouterLink>
-                <!-- Cancel (active only) -->
-                <button v-if="row.status === 'active'" @click="confirmCancel(row)"
-                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    :title="t('sales.cancel')">
+                <button
+                    v-if="row.status === 'active'"
+                    @click="confirmCancel(row)"
+                    class="row-action row-action-danger"
+                    :title="t('sales.cancel')"
+                >
                     <XCircleIcon class="w-4 h-4" />
                 </button>
+            </template>
+
+            <template #empty-action>
+                <Button variant="primary" :to="{ name: 'sale-create' }" :leading-icon="DocumentPlusIcon">
+                    {{ t('sales.newSale') }}
+                </Button>
             </template>
         </DataTable>
 
@@ -83,6 +105,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { useDebounce } from '@vueuse/core';
 import { useAlert } from '@/composables/useAlert';
 import DataTable from '@/components/ui/DataTable.vue';
+import Button    from '@/components/ui/Button.vue';
 import {
     ShoppingCartIcon, DocumentPlusIcon, MagnifyingGlassIcon,
     DocumentTextIcon, XCircleIcon,
@@ -194,14 +217,3 @@ async function confirmCancel(row) {
 }
 </script>
 
-<style scoped>
-@reference '../../../css/app.css';
-
-.btn-primary {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm;
-}
-
-.btn-secondary {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors;
-}
-</style>

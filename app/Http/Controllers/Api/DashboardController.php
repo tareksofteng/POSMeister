@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Services\BranchContextService;
+use App\Modules\Dashboard\Services\BusinessHealthService;
+use App\Modules\Dashboard\Services\DashboardInsightsService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -33,21 +35,55 @@ class DashboardController extends Controller
         $weekAgo    = $today->copy()->subDays(13)->toDateString();
         $yesterday  = $today->copy()->subDay()->toDateString();
 
+        // Defensive block-level isolation — the dashboard aggregates a
+        // dozen different subsystems. If ONE block throws (a renamed
+        // column, a missing table after a migration rollback, a future
+        // branch-scoping bug like the customers/sales ambiguity), the
+        // whole executive view used to 500. Now each block degrades to
+        // its empty-state default and the rest of the page renders, with
+        // the failure surfaced in laravel.log for diagnosis.
+        $safe = function (string $label, \Closure $fn, $fallback) {
+            try { return $fn(); }
+            catch (\Throwable $e) {
+                logger()->warning("dashboard.block_failed.{$label}", [
+                    'error' => $e->getMessage(),
+                    'file'  => $e->getFile().':'.$e->getLine(),
+                ]);
+                return $fallback;
+            }
+        };
+
         return response()->json([
             'as_of'          => $today->toIso8601String(),
-            'sales'          => $this->salesBlock($branchId, $today, $monthStart, $yesterday),
-            'purchases'      => $this->purchasesBlock($branchId, $today, $monthStart),
-            'finance'        => $this->financeBlock($branchId, $monthStart),
-            'inventory'      => $this->inventoryBlock($branchId),
-            'customers'      => $this->customersBlock($branchId),
-            'orders'         => $this->ordersBlock($branchId),
-            'hrm'            => $this->hrmBlock($branchId),
-            'recent_sales'   => $this->recentSales($branchId, 5),
-            'sales_trend'    => $this->salesTrend($branchId, $weekAgo),
-            'top_products'   => $this->topProductsMonth($branchId, $monthStart, 5),
-            'top_customers'  => $this->topCustomersMonth($branchId, $monthStart, 5),
-            'alerts'         => $this->alerts($branchId),
-            'activity'       => $this->recentActivity($branchId, 10),
+            'sales'          => $safe('sales',         fn() => $this->salesBlock($branchId, $today, $monthStart, $yesterday),
+                                      ['today_revenue'=>0,'today_sales_count'=>0,'yesterday_revenue'=>0,'delta_vs_yesterday'=>null,'month_revenue'=>0,'month_collected'=>0,'month_outstanding'=>0,'month_sales_count'=>0]),
+            'purchases'      => $safe('purchases',     fn() => $this->purchasesBlock($branchId, $today, $monthStart),
+                                      ['today'=>0,'month'=>0,'supplier_paid_month'=>0,'customer_paid_month'=>0]),
+            'finance'        => $safe('finance',       fn() => $this->financeBlock($branchId, $monthStart),
+                                      ['revenue_month'=>0,'cogs_month'=>0,'expenses_month'=>0,'payroll_month'=>0,'net_profit_month'=>0,'gross_margin_pct'=>0,'cash_balance'=>0,'bank_balance'=>0]),
+            'inventory'      => $safe('inventory',     fn() => $this->inventoryBlock($branchId),
+                                      ['stock_value'=>0,'low_stock_count'=>0,'out_of_stock_count'=>0,'dead_stock_count'=>0]),
+            'customers'      => $safe('customers',     fn() => $this->customersBlock($branchId),
+                                      ['active_count'=>0,'new_this_month'=>0,'outstanding_due'=>0,'loyalty_points'=>0,'loyalty_liability'=>0]),
+            'orders'         => $safe('orders',        fn() => $this->ordersBlock($branchId),
+                                      ['open'=>0,'today'=>0,'delivered_month'=>0]),
+            'hrm'            => $safe('hrm',           fn() => $this->hrmBlock($branchId),
+                                      ['active_employees'=>0,'pending_approvals'=>0,'late_today'=>0]),
+            'recent_sales'   => $safe('recent_sales',  fn() => $this->recentSales($branchId, 5),       []),
+            'sales_trend'    => $safe('sales_trend',   fn() => $this->salesTrend($branchId, $weekAgo), []),
+            'top_products'   => $safe('top_products',  fn() => $this->topProductsMonth($branchId, $monthStart, 5),  []),
+            'top_customers'  => $safe('top_customers', fn() => $this->topCustomersMonth($branchId, $monthStart, 5), []),
+            'alerts'         => $safe('alerts',        fn() => $this->alerts($branchId),        []),
+            'activity'       => $safe('activity',      fn() => $this->recentActivity($branchId, 10), []),
+
+            // Phase AC — Executive Dashboard 2.0 additions. Each lives in
+            // its own service so the dashboard controller stays focused
+            // on aggregation, and failures degrade independently via the
+            // existing $safe() wrapper.
+            'health'         => $safe('health',        fn() => app(BusinessHealthService::class)->compute(),
+                                      ['score'=>0,'tier'=>'rose','delta'=>null,'subscores'=>[]]),
+            'insights'       => $safe('insights',      fn() => app(DashboardInsightsService::class)->compute(), []),
+            'branch_leaderboard' => $safe('branch_leaderboard', fn() => $this->branchLeaderboard($branchId, $today, $monthStart), []),
         ]);
     }
 
@@ -423,11 +459,15 @@ class DashboardController extends Controller
 
     private function topCustomersMonth(?int $branchId, string $monthStart, int $limit): array
     {
+        // ⚠️ The customers table ALSO has a branch_id column, so a bare
+        // `where('branch_id', …)` after the join below throws
+        // "Column 'branch_id' in where clause is ambiguous" → 500.
+        // Qualify with `sales.` to remove the ambiguity.
         return DB::table('sales')
             ->whereNotNull('customer_id')
             ->where('status', 'active')
             ->whereDate('sale_date', '>=', $monthStart)
-            ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+            ->when($branchId, fn($q) => $q->where('sales.branch_id', $branchId))
             ->join('customers as c', 'c.id', '=', 'sales.customer_id')
             ->selectRaw('
                 c.id, c.name,
@@ -554,6 +594,89 @@ class DashboardController extends Controller
         $d = (float) $row->d;
         $c = (float) $row->c;
         return $account->normal_balance === 'debit' ? $d - $c : $c - $d;
+    }
+
+    /**
+     * Branch leaderboard — Phase AC. Only meaningful when the user is
+     * looking at the aggregate (Main Branch / All Branches super
+     * workspace). For a specific branch workspace we return an empty
+     * array so the frontend can hide the section cleanly.
+     *
+     * Each row carries the branch's today + month sales + active
+     * customer count + an "approx_profit" estimate (revenue minus a
+     * conservative 25% COGS proxy when we don't have per-branch cost
+     * data). Sorted by month sales descending so the top branch is
+     * easy to spot.
+     */
+    private function branchLeaderboard(?int $branchId, Carbon $today, string $monthStart): array
+    {
+        // When in a single branch workspace, the leaderboard collapses
+        // into a one-row trivial answer — hide it entirely.
+        if ($branchId !== null) return [];
+        if (!$this->tableExists('branches') || !$this->tableExists('sales')) return [];
+
+        $branches = DB::table('branches')->where('is_active', true)->get(['id', 'name', 'code']);
+        if ($branches->isEmpty()) return [];
+
+        $todayMap = DB::table('sales')
+            ->where('status', 'active')
+            ->whereDate('sale_date', $today)
+            ->selectRaw('branch_id, SUM(grand_total) as total, COUNT(*) as cnt')
+            ->groupBy('branch_id')
+            ->get()
+            ->keyBy('branch_id');
+
+        $monthMap = DB::table('sales')
+            ->where('status', 'active')
+            ->whereDate('sale_date', '>=', $monthStart)
+            ->selectRaw('branch_id, SUM(grand_total) as total, COUNT(*) as cnt')
+            ->groupBy('branch_id')
+            ->get()
+            ->keyBy('branch_id');
+
+        // Customers may not have branch_id everywhere; we fall back to a
+        // "customers seen via sales this month" approximation in that case.
+        $customerMap = collect();
+        if ($this->columnExists('customers', 'branch_id')) {
+            $customerMap = DB::table('customers')
+                ->where('is_active', true)
+                ->whereNull('deleted_at')
+                ->selectRaw('branch_id, COUNT(*) as cnt')
+                ->groupBy('branch_id')
+                ->pluck('cnt', 'branch_id');
+        } else {
+            $customerMap = DB::table('sales')
+                ->whereNotNull('customer_id')
+                ->whereDate('sale_date', '>=', $monthStart)
+                ->selectRaw('branch_id, COUNT(DISTINCT customer_id) as cnt')
+                ->groupBy('branch_id')
+                ->pluck('cnt', 'branch_id');
+        }
+
+        $rows = $branches->map(function ($b) use ($todayMap, $monthMap, $customerMap) {
+            $today  = $todayMap[$b->id]  ?? null;
+            $month  = $monthMap[$b->id]  ?? null;
+            $monthRev = (float) ($month->total ?? 0);
+            return [
+                'branch_id'        => (int) $b->id,
+                'name'             => $b->name,
+                'code'             => $b->code ?? null,
+                'today_sales'      => (float) ($today->total ?? 0),
+                'today_count'      => (int)   ($today->cnt   ?? 0),
+                'month_sales'      => $monthRev,
+                'month_count'      => (int)   ($month->cnt   ?? 0),
+                // Conservative profit proxy — pricing is set so 25% is a
+                // realistic floor margin. Used purely for the leaderboard's
+                // tiny bar; not used in any accounting figure.
+                'approx_profit'    => round($monthRev * 0.25, 2),
+                'active_customers' => (int) ($customerMap[$b->id] ?? 0),
+            ];
+        })
+        ->sortByDesc('month_sales')
+        ->values()
+        ->all();
+
+        return $rows;
     }
 
     private function tableExists(string $table): bool

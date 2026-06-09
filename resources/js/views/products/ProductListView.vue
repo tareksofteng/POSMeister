@@ -1,44 +1,38 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 anim-fade-in">
 
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <!-- Header — unified typography + Button primitive. -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 anim-fade-up">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('products.title') }}</h1>
-                <p class="mt-1 text-sm text-gray-500">
+                <h1 class="h1-display">{{ t('products.title') }}</h1>
+                <p class="mt-1.5 t-body">
                     {{ t('products.subtitle') }}
-                    <span v-if="meta" class="text-gray-400">({{ meta.total }} {{ t('common.total') }})</span>
+                    <span v-if="meta" class="text-slate-400">({{ meta.total }} {{ t('common.total') }})</span>
                 </p>
             </div>
-            <button @click="openCreate" class="btn-primary">
-                <PlusIcon class="w-4 h-4" />
+            <Button variant="primary" :leading-icon="PlusIcon" @click="openCreate">
                 {{ t('products.new') }}
-            </button>
+            </Button>
         </div>
 
-        <!-- Filters -->
-        <div class="flex flex-col sm:flex-row gap-3 flex-wrap">
-            <div class="relative flex-1 min-w-[200px] max-w-sm">
-                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                    v-model="searchQuery"
-                    type="search"
-                    :placeholder="t('products.searchPlaceholder')"
-                    class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+        <!-- Filters — premium toolbar with search + 3 selects. -->
+        <div class="card filter-bar">
+            <div class="relative flex-1 min-w-[200px]">
+                <MagnifyingGlassIcon class="filter-icon" />
+                <input v-model="searchQuery" type="search" :placeholder="t('products.searchPlaceholder')" class="filter-input filter-input-search" />
             </div>
 
-            <select v-model="categoryFilter" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="categoryFilter" class="filter-input">
                 <option value="">{{ t('products.allCategories') }}</option>
                 <option v-for="c in categoryOptions" :key="c.id" :value="c.id">{{ c.name }}</option>
             </select>
 
-            <select v-model="brandFilter" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="brandFilter" class="filter-input">
                 <option value="">{{ t('products.allBrands') }}</option>
                 <option v-for="b in brandOptions" :key="b.id" :value="b.id">{{ b.name }}</option>
             </select>
 
-            <select v-model="statusFilter" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="statusFilter" class="filter-input">
                 <option value="">{{ t('common.allStatuses') }}</option>
                 <option value="1">{{ t('common.active') }}</option>
                 <option value="0">{{ t('common.inactive') }}</option>
@@ -46,9 +40,7 @@
         </div>
 
         <!-- Error -->
-        <div v-if="listError" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {{ listError }}
-        </div>
+        <div v-if="listError" class="card card-alert card-alert-danger text-sm">{{ listError }}</div>
 
         <!-- Table -->
         <DataTable
@@ -56,19 +48,25 @@
             :rows="rows"
             :loading="loading"
             :meta="meta"
+            empty-tone="indigo"
+            :empty-icon="CubeIcon"
             :empty-title="t('products.emptyTitle')"
             :empty-message="t('products.emptyMessage')"
             @page-change="fetchPage"
         >
             <template #cell(_image)="{ row }">
-                <div class="w-9 h-9 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <div class="w-9 h-9 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
                     <img v-if="row.image_url" :src="row.image_url" :alt="row.name" class="w-full h-full object-cover" />
-                    <PhotoIcon v-else class="w-4 h-4 text-gray-300" />
+                    <PhotoIcon v-else class="w-4 h-4 text-slate-300 dark:text-slate-600" />
                 </div>
             </template>
 
             <template #row-actions="{ row }">
-                <button @click="router.push({ name: 'product-detail', params: { id: row.id } })" class="p-1.5 text-gray-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors" :title="t('products.viewDetail')">
+                <button
+                    @click="router.push({ name: 'product-detail', params: { id: row.id } })"
+                    class="row-action row-action-indigo"
+                    :title="t('products.viewDetail')"
+                >
                     <EyeIcon class="w-4 h-4" />
                 </button>
                 <!-- Phase Y — Serial Inventory modal. Only visible for products
@@ -77,7 +75,7 @@
                 <button
                     v-if="row.is_serialized"
                     @click="openSerials(row)"
-                    class="relative p-1.5 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
+                    class="row-action row-action-indigo relative"
                     :title="t('serials.openSerials')"
                 >
                     <CpuChipIcon class="w-4 h-4" />
@@ -88,23 +86,29 @@
                         {{ row.in_stock_serials_count }}
                     </span>
                 </button>
-                <button @click="openEdit(row)" class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" :title="t('common.edit')">
+                <button @click="openEdit(row)" class="row-action row-action-indigo" :title="t('common.edit')">
                     <PencilSquareIcon class="w-4 h-4" />
                 </button>
                 <button
                     @click="router.push({ name: 'product-barcode', params: { id: row.id } })"
-                    class="p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                    class="row-action row-action-indigo"
                     :title="t('products.generateBarcode')"
                 >
                     <QrCodeIcon class="w-4 h-4" />
                 </button>
-                <button @click="confirmToggle(row)" class="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" :title="row.is_active ? t('common.deactivate') : t('common.activate')">
+                <button @click="confirmToggle(row)" class="row-action row-action-amber" :title="row.is_active ? t('common.deactivate') : t('common.activate')">
                     <NoSymbolIcon v-if="row.is_active" class="w-4 h-4" />
                     <CheckCircleIcon v-else class="w-4 h-4" />
                 </button>
-                <button @click="confirmDelete(row)" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" :title="t('common.delete')">
+                <button @click="confirmDelete(row)" class="row-action row-action-danger" :title="t('common.delete')">
                     <TrashIcon class="w-4 h-4" />
                 </button>
+            </template>
+
+            <template #empty-action>
+                <Button variant="primary" :leading-icon="PlusIcon" @click="openCreate">
+                    {{ t('products.new') }}
+                </Button>
             </template>
         </DataTable>
     </div>
@@ -137,10 +141,11 @@ import { categoryService } from '@/services/categoryService';
 import { brandService }    from '@/services/brandService';
 import { unitService }     from '@/services/unitService';
 import DataTable        from '@/components/ui/DataTable.vue';
+import Button           from '@/components/ui/Button.vue';
 import ProductFormModal from './ProductFormModal.vue';
 import SerialInventoryModal from './SerialInventoryModal.vue';
 import { useAlert } from '@/composables/useAlert';
-import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon, QrCodeIcon, CpuChipIcon } from '@heroicons/vue/24/outline';
+import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon, EyeIcon, PhotoIcon, QrCodeIcon, CpuChipIcon, CubeIcon } from '@heroicons/vue/24/outline';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -321,9 +326,3 @@ async function confirmDelete(row) {
 }
 </script>
 
-<style scoped>
-@reference '../../../css/app.css';
-.btn-primary {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm;
-}
-</style>

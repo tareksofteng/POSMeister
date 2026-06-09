@@ -1,37 +1,34 @@
 <template>
-    <div class="p-6 lg:p-8 space-y-6">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 anim-fade-in">
 
         <!-- ── Page Header ─────────────────────────────────────────────── -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 anim-fade-up">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ t('customers.title') }}</h1>
-                <p class="mt-1 text-sm text-gray-500">
+                <h1 class="h1-display">{{ t('customers.title') }}</h1>
+                <p class="mt-1.5 t-body">
                     {{ t('customers.subtitle') }}
-                    <span v-if="meta" class="text-gray-400">({{ meta.total }} {{ t('common.total') }})</span>
+                    <span v-if="meta" class="text-slate-400">({{ meta.total }} {{ t('common.total') }})</span>
                 </p>
             </div>
-            <button @click="openForm(null)" class="btn-primary">
-                <PlusIcon class="w-4 h-4" />
+            <Button variant="primary" :leading-icon="PlusIcon" @click="openForm(null)">
                 {{ t('customers.newCustomer') }}
-            </button>
+            </Button>
         </div>
 
         <!-- ── Filters ─────────────────────────────────────────────────── -->
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="card filter-bar">
             <div class="relative flex-1 min-w-[200px]">
-                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input v-model="searchQuery" type="search" :placeholder="t('customers.searchPlaceholder')"
-                    class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <MagnifyingGlassIcon class="filter-icon" />
+                <input v-model="searchQuery" type="search" :placeholder="t('customers.searchPlaceholder')" class="filter-input filter-input-search" />
             </div>
-            <select v-model="statusFilter"
-                class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <select v-model="statusFilter" class="filter-input">
                 <option value="">{{ t('common.allStatuses') }}</option>
                 <option value="1">{{ t('common.active') }}</option>
                 <option value="0">{{ t('common.inactive') }}</option>
             </select>
         </div>
 
-        <div v-if="listError" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ listError }}</div>
+        <div v-if="listError" class="card card-alert card-alert-danger text-sm">{{ listError }}</div>
 
         <!-- ── Table ───────────────────────────────────────────────────── -->
         <DataTable
@@ -40,49 +37,53 @@
             :loading="loading"
             :meta="meta"
             sort-key="name"
+            empty-tone="emerald"
+            :empty-icon="UsersIcon"
             :empty-title="t('customers.emptyTitle')"
             :empty-message="t('customers.emptyMessage')"
             @page-change="fetchPage"
         >
             <template #cell-customer_type="{ value }">
-                <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
-                    value === 'wholesale' ? 'bg-violet-100 text-violet-800' : 'bg-blue-50 text-blue-700']">
+                <span :class="['status-pill', value === 'wholesale' ? 'status-pill-info' : 'status-pill-neutral']">
                     {{ value === 'wholesale' ? t('customers.typeWholesale') : t('customers.typeRetail') }}
                 </span>
             </template>
 
             <template #cell-current_due="{ value }">
-                <span v-if="value > 0" class="text-amber-700 font-semibold">
+                <span v-if="value > 0" class="text-amber-700 dark:text-amber-400 font-semibold font-mono">
                     {{ formatCurrency(value) }}
                 </span>
-                <span v-else class="text-emerald-600 text-xs font-medium">—</span>
+                <span v-else class="text-emerald-600 dark:text-emerald-400 text-xs font-medium">—</span>
             </template>
 
             <template #cell-is_active="{ value }">
-                <span :class="['inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium',
-                    value ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500']">
-                    <span :class="['w-1.5 h-1.5 rounded-full', value ? 'bg-emerald-500' : 'bg-gray-400']"></span>
+                <span :class="['status-pill', value ? 'status-pill-success' : 'status-pill-neutral']">
+                    <span :class="['w-1.5 h-1.5 rounded-full', value ? 'bg-emerald-500' : 'bg-slate-400']"></span>
                     {{ value ? t('common.active') : t('common.inactive') }}
                 </span>
             </template>
 
             <template #row-actions="{ row }">
-                <!-- Ledger -->
                 <button
                     @click="openDetail(row)"
-                    class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                    class="row-action row-action-indigo"
                     :title="t('customers.ledger')"
                 >
                     <BookOpenIcon class="w-4 h-4" />
                 </button>
-                <!-- Edit -->
                 <button
                     @click="openForm(row)"
-                    class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                    class="row-action row-action-indigo"
                     :title="t('common.edit')"
                 >
                     <PencilSquareIcon class="w-4 h-4" />
                 </button>
+            </template>
+
+            <template #empty-action>
+                <Button variant="primary" :leading-icon="PlusIcon" @click="openForm(null)">
+                    {{ t('customers.newCustomer') }}
+                </Button>
             </template>
         </DataTable>
 
@@ -112,10 +113,11 @@ import { useSettingsStore } from '@/stores/settings';
 import { useAlert } from '@/composables/useAlert';
 import { customerService } from '@/services/customerService';
 import DataTable from '@/components/ui/DataTable.vue';
+import Button    from '@/components/ui/Button.vue';
 import CustomerFormModal from './CustomerFormModal.vue';
 import CustomerDetailModal from './CustomerDetailModal.vue';
 import {
-    PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, BookOpenIcon,
+    PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, BookOpenIcon, UsersIcon,
 } from '@heroicons/vue/24/outline';
 
 const { t }           = useI18n();
@@ -195,9 +197,3 @@ function openDetail(row) {
 }
 </script>
 
-<style scoped>
-@reference '../../../css/app.css';
-.btn-primary {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm;
-}
-</style>

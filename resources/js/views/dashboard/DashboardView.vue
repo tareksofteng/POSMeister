@@ -1,26 +1,33 @@
 <template>
-    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div class="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto anim-fade-in">
 
-        <!-- Hero -->
-        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 sm:gap-4">
+        <!-- ── Hero ──
+            Phase AA polish: typography uses the new scale (.t-overline / .h1-display),
+            the action cluster swaps inline classes for the unified <Button> primitive.
+            Same content; reads commercial. -->
+        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 sm:gap-4 anim-fade-up">
             <div>
-                <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-1">{{ dateString }}</p>
-                <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
+                <p class="t-overline text-indigo-500 mb-1.5">{{ dateString }}</p>
+                <h1 class="h1-display">
                     {{ greeting }}, <span class="text-indigo-600">{{ auth.userName }}</span>
                 </h1>
-                <p class="mt-1 text-xs sm:text-sm text-slate-500">{{ t('dashboard.heroSubtitle') }}</p>
+                <p class="mt-1.5 t-body">{{ t('dashboard.heroSubtitle') }}</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <span :class="roleBadgeClass">{{ roleBadgeLabel }}</span>
-                <span class="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+                <span class="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     {{ t('dashboard.systemActive') }}
                 </span>
-                <button @click="load" :disabled="loading"
-                        class="inline-flex items-center gap-1.5 text-xs text-slate-600 bg-white border border-slate-200 rounded-lg px-3 py-2 hover:bg-slate-50 disabled:opacity-50">
-                    <ArrowPathIcon :class="['w-3.5 h-3.5', loading && 'animate-spin']" />
+                <Button
+                    variant="secondary"
+                    size="sm"
+                    :leading-icon="ArrowPathIcon"
+                    :loading="loading"
+                    @click="load"
+                >
                     {{ t('dashboard.refresh') }}
-                </button>
+                </Button>
             </div>
         </header>
 
@@ -29,18 +36,32 @@
              vertical real estate they don't have. Show it from md up only. -->
         <KpiMarquee v-if="d" :items="marqueeItems" class="hidden md:block" />
 
-        <!-- Smart alerts banner -->
-        <section v-if="alerts.length" class="flex flex-wrap gap-2">
+        <!-- ── Smart alerts banner ──
+            Phase AA: replaces 4 inline tone classes with the unified
+            .card-alert-* system. Same data; reads as one design language
+            with notifications, status pills, and serial-warranty chips. -->
+        <section v-if="alerts.length" class="flex flex-wrap gap-2 anim-fade-up">
             <div v-for="(a, i) in alerts" :key="i"
-                 :class="['inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium', alertClass(a.severity)]">
-                <ExclamationTriangleIcon v-if="a.severity !== 'info'" class="w-3.5 h-3.5" />
-                <InformationCircleIcon v-else class="w-3.5 h-3.5" />
+                 :class="['card card-alert', cardAlertToneClass(a.severity), 'inline-flex items-center gap-2 text-xs font-medium']">
+                <ExclamationTriangleIcon v-if="a.severity !== 'info'" class="w-3.5 h-3.5 flex-shrink-0" />
+                <InformationCircleIcon v-else class="w-3.5 h-3.5 flex-shrink-0" />
                 {{ t('dashboard.alerts.' + a.kind, { count: a.count }) }}
             </div>
         </section>
 
-        <!-- ── EXECUTIVE SNAPSHOT (premium KPI cards with sparklines) ─── -->
-        <section class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-2.5 sm:gap-4">
+        <!-- ── Phase AB-2: Business Alerts widget ──
+             Sits between the smart-alerts banner and the executive KPI
+             cards so it's the LOUDEST signal on the dashboard once data
+             loads. Pure read; auto-refreshes every 2 minutes. -->
+        <BusinessAlertsWidget />
+
+        <!-- ── EXECUTIVE SNAPSHOT — premium KPI cards with sparklines.
+             While loading the first payload, show 6 shape-aware skeleton
+             tiles so the layout doesn't jump when data lands. -->
+        <section v-if="!d" class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-2.5 sm:gap-4 anim-stagger">
+            <Skeleton v-for="i in 6" :key="i" variant="kpi-card" />
+        </section>
+        <section v-else class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-2.5 sm:gap-4 anim-fade-up anim-stagger">
             <SparklineCard
                 :label="t('dashboard.kpi.todayRevenue')"
                 :value="+d?.sales?.today_revenue || 0"
@@ -101,20 +122,22 @@
             <InsightTile :label="t('dashboard.insights.activeStaff')"  :value="String(d?.hrm?.active_employees ?? 0)" :icon="UserGroupIcon" tone="slate" />
         </section>
 
-        <!-- Sales trend mini-chart + Quick access -->
+        <!-- Sales trend mini-chart + Quick access — wrapped in .card .card-analytics
+             so spacing and elevation track the rest of the design system. -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <section class="lg:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm p-5">
+            <section class="card card-analytics lg:col-span-2">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.trend.title') }}</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">{{ t('dashboard.trend.subtitle') }}</p>
+                        <p class="t-overline">{{ t('dashboard.trend.title') }}</p>
+                        <p class="t-caption mt-0.5">{{ t('dashboard.trend.subtitle') }}</p>
                     </div>
-                    <p class="text-sm text-slate-700 font-mono">Ø {{ fmt(trendAvg) }}</p>
+                    <p class="text-sm text-slate-700 dark:text-slate-200 font-mono">Ø {{ fmt(trendAvg) }}</p>
                 </div>
-                <div class="flex items-end gap-1.5 h-32">
-                    <div v-for="day in d?.sales_trend ?? []" :key="day.date"
+                <Skeleton v-if="!d" variant="chart" />
+                <div v-else-if="(d?.sales_trend ?? []).length" class="flex items-end gap-1.5 h-32">
+                    <div v-for="day in d.sales_trend" :key="day.date"
                          class="flex-1 flex flex-col items-center gap-1 group">
-                        <div class="w-full bg-indigo-100 rounded-t-md overflow-hidden flex flex-col-reverse h-full">
+                        <div class="w-full bg-indigo-100 dark:bg-indigo-900/30 rounded-t-md overflow-hidden flex flex-col-reverse h-full">
                             <div class="w-full bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t-md transition-all group-hover:from-indigo-700"
                                  :style="{ height: trendBar(day.revenue) + '%' }"
                                  :title="day.date + ': ' + fmt(day.revenue)"></div>
@@ -122,114 +145,138 @@
                         <span class="text-[10px] text-slate-400 font-mono">{{ formatDay(day.date) }}</span>
                     </div>
                 </div>
+                <EmptyState
+                    v-else
+                    size="sm"
+                    tone="indigo"
+                    :icon="ChartBarIcon"
+                    :title="t('dashboard.trend.emptyTitle', 'No sales yet this period')"
+                    :description="t('dashboard.trend.emptyDesc', 'Trend chart will appear after the first sales are recorded.')"
+                />
             </section>
 
-            <section class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">{{ t('dashboard.quickAccess.title') }}</h3>
-                <div class="space-y-2">
+            <section class="card card-analytics">
+                <p class="t-overline mb-3">{{ t('dashboard.quickAccess.title') }}</p>
+                <div class="space-y-1.5">
                     <RouterLink v-for="link in quickLinks" :key="link.label"
                                 :to="link.to"
-                                class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-indigo-50 transition-colors group">
-                        <div :class="['w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0', link.iconBg]">
+                                class="quick-link group">
+                        <div :class="['quick-link-icon', link.iconBg]">
                             <component :is="link.icon" :class="['w-4 h-4', link.iconColor]" />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-slate-800 group-hover:text-indigo-700">{{ link.label }}</p>
-                            <p class="text-xs text-slate-400 truncate">{{ link.desc }}</p>
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">{{ link.label }}</p>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 truncate">{{ link.desc }}</p>
                         </div>
-                        <ChevronRightIcon class="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                        <ChevronRightIcon class="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-400 transition-transform group-hover:translate-x-0.5" />
                     </RouterLink>
                 </div>
             </section>
         </div>
 
-        <!-- Top products + Top customers -->
+        <!-- Top products + Top customers — Phase AA: card surface, premium
+             list rows, branded rank chips, real EmptyState for zero-data. -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <section class="bg-white border border-slate-200 rounded-xl shadow-sm">
-                <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.topProducts.title') }}</h3>
-                    <RouterLink :to="{ name: 'products' }" class="text-xs text-indigo-600 hover:underline">{{ t('dashboard.viewAll') }} →</RouterLink>
+            <section class="card overflow-hidden">
+                <div class="dash-list-head">
+                    <p class="t-overline">{{ t('dashboard.topProducts.title') }}</p>
+                    <RouterLink :to="{ name: 'products' }" class="dash-list-link">{{ t('dashboard.viewAll') }} →</RouterLink>
                 </div>
-                <ul class="divide-y divide-slate-50">
-                    <li v-for="(p, i) in d?.top_products ?? []" :key="p.product_id"
-                        class="flex items-center justify-between px-5 py-2.5 hover:bg-slate-50/60">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <span class="text-xs text-slate-400 font-mono w-6">#{{ i + 1 }}</span>
+                <Skeleton v-if="!d" class="px-5 py-3" variant="row" />
+                <ul v-else-if="(d.top_products ?? []).length" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <li v-for="(p, i) in d.top_products" :key="p.product_id" class="dash-list-row">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="dash-list-rank">#{{ i + 1 }}</span>
                             <div class="min-w-0">
-                                <p class="font-medium text-slate-800 truncate">{{ p.name }}</p>
+                                <p class="font-medium text-slate-800 dark:text-slate-100 truncate">{{ p.name }}</p>
                                 <p class="text-[11px] text-slate-500 font-mono">{{ p.sku }} · {{ p.qty_sold }} {{ t('dashboard.topProducts.sold') }}</p>
                             </div>
                         </div>
-                        <p class="font-mono text-sm text-slate-800 font-semibold">{{ fmt(p.revenue) }}</p>
-                    </li>
-                    <li v-if="(d?.top_products ?? []).length === 0" class="px-5 py-8 text-center text-sm text-slate-400">
-                        {{ t('dashboard.topProducts.empty') }}
+                        <p class="font-mono text-sm text-slate-800 dark:text-slate-100 font-semibold">{{ fmt(p.revenue) }}</p>
                     </li>
                 </ul>
+                <EmptyState
+                    v-else
+                    size="sm"
+                    tone="indigo"
+                    :icon="TagIcon"
+                    :title="t('dashboard.topProducts.empty')"
+                />
             </section>
 
-            <section class="bg-white border border-slate-200 rounded-xl shadow-sm">
-                <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.topCustomers.title') }}</h3>
-                    <RouterLink :to="{ name: 'customers' }" class="text-xs text-indigo-600 hover:underline">{{ t('dashboard.viewAll') }} →</RouterLink>
+            <section class="card overflow-hidden">
+                <div class="dash-list-head">
+                    <p class="t-overline">{{ t('dashboard.topCustomers.title') }}</p>
+                    <RouterLink :to="{ name: 'customers' }" class="dash-list-link">{{ t('dashboard.viewAll') }} →</RouterLink>
                 </div>
-                <ul class="divide-y divide-slate-50">
-                    <li v-for="(c, i) in d?.top_customers ?? []" :key="c.customer_id"
-                        class="flex items-center justify-between px-5 py-2.5 hover:bg-slate-50/60">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <span class="text-xs text-slate-400 font-mono w-6">#{{ i + 1 }}</span>
+                <Skeleton v-if="!d" class="px-5 py-3" variant="row" />
+                <ul v-else-if="(d.top_customers ?? []).length" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <li v-for="(c, i) in d.top_customers" :key="c.customer_id" class="dash-list-row">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="dash-list-rank">#{{ i + 1 }}</span>
                             <div class="min-w-0">
-                                <p class="font-medium text-slate-800 truncate">{{ c.name }}</p>
+                                <p class="font-medium text-slate-800 dark:text-slate-100 truncate">{{ c.name }}</p>
                                 <p class="text-[11px] text-slate-500">{{ c.visits }} {{ t('dashboard.topCustomers.visits') }}</p>
                             </div>
                         </div>
-                        <p class="font-mono text-sm text-slate-800 font-semibold">{{ fmt(c.revenue) }}</p>
-                    </li>
-                    <li v-if="(d?.top_customers ?? []).length === 0" class="px-5 py-8 text-center text-sm text-slate-400">
-                        {{ t('dashboard.topCustomers.empty') }}
+                        <p class="font-mono text-sm text-slate-800 dark:text-slate-100 font-semibold">{{ fmt(c.revenue) }}</p>
                     </li>
                 </ul>
+                <EmptyState
+                    v-else
+                    size="sm"
+                    tone="emerald"
+                    :icon="UsersIcon"
+                    :title="t('dashboard.topCustomers.empty')"
+                />
             </section>
         </div>
 
         <!-- Recent sales + Activity feed -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <section class="lg:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm">
-                <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+            <section class="card lg:col-span-2 overflow-hidden">
+                <div class="dash-list-head">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.recentSales.title') }}</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">{{ t('dashboard.recentSales.subtitle') }}</p>
+                        <p class="t-overline">{{ t('dashboard.recentSales.title') }}</p>
+                        <p class="t-caption mt-0.5">{{ t('dashboard.recentSales.subtitle') }}</p>
                     </div>
-                    <RouterLink :to="{ name: 'sales' }" class="text-xs text-indigo-600 hover:underline">{{ t('dashboard.viewAll') }} →</RouterLink>
+                    <RouterLink :to="{ name: 'sales' }" class="dash-list-link">{{ t('dashboard.viewAll') }} →</RouterLink>
                 </div>
-                <ul v-if="(d?.recent_sales ?? []).length" class="divide-y divide-slate-50">
-                    <li v-for="s in d.recent_sales" :key="s.id"
-                        class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50/60">
-                        <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                            <ShoppingCartIcon class="w-4 h-4 text-emerald-600" />
+                <div v-if="!d" class="px-5 py-3 space-y-2">
+                    <Skeleton variant="row" />
+                    <Skeleton variant="row" />
+                    <Skeleton variant="row" />
+                </div>
+                <ul v-else-if="(d.recent_sales ?? []).length" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <li v-for="s in d.recent_sales" :key="s.id" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
+                            <ShoppingCartIcon class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-slate-900 font-mono">{{ s.sale_number }}</p>
+                            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100 font-mono">{{ s.sale_number }}</p>
                             <p class="text-xs text-slate-500 truncate">{{ s.customer_name }} · {{ s.sale_date }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-semibold text-slate-900 font-mono">{{ fmt(s.grand_total) }}</p>
-                            <p v-if="s.due_amount > 0" class="text-[11px] text-amber-700 font-medium">
+                            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100 font-mono">{{ fmt(s.grand_total) }}</p>
+                            <p v-if="s.due_amount > 0" class="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
                                 {{ t('dashboard.recentSales.due') }}: {{ fmt(s.due_amount) }}
                             </p>
-                            <p v-else class="text-[11px] text-emerald-600 font-medium">{{ t('dashboard.recentSales.paid') }}</p>
+                            <p v-else class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">{{ t('dashboard.recentSales.paid') }}</p>
                         </div>
                     </li>
                 </ul>
-                <div v-else class="px-5 py-12 text-center">
-                    <ShoppingCartIcon class="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                    <p class="text-sm text-slate-400">{{ t('dashboard.recentSales.empty') }}</p>
-                </div>
+                <EmptyState
+                    v-else
+                    size="sm"
+                    tone="emerald"
+                    :icon="ShoppingCartIcon"
+                    :title="t('dashboard.recentSales.empty')"
+                />
             </section>
 
-            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
-                <div class="px-5 py-3 border-b border-slate-100 dark:border-slate-800">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.activity.title') }}</h3>
+            <section class="card overflow-hidden">
+                <div class="dash-list-head">
+                    <p class="t-overline">{{ t('dashboard.activity.title') }}</p>
                 </div>
                 <div class="px-2 py-2 max-h-96 overflow-y-auto">
                     <BusinessActivityFeed :items="feedItems" :limit="10" />
@@ -237,29 +284,31 @@
             </section>
         </div>
 
-        <!-- System info + Module status -->
+        <!-- System info + Module status — card surface, refined chips -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <section class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">{{ t('dashboard.systemInfo.title') }}</h3>
+            <section class="card card-analytics">
+                <p class="t-overline mb-3">{{ t('dashboard.systemInfo.title') }}</p>
                 <dl class="space-y-2.5 text-sm">
-                    <div v-for="item in systemInfo" :key="item.label" class="flex items-center justify-between">
-                        <dt class="text-xs text-slate-500">{{ item.label }}</dt>
-                        <dd class="text-xs font-semibold text-slate-700">{{ item.value }}</dd>
+                    <div v-for="item in systemInfo" :key="item.label" class="flex items-center justify-between gap-3">
+                        <dt class="text-xs text-slate-500 dark:text-slate-400">{{ item.label }}</dt>
+                        <dd class="text-xs font-semibold text-slate-700 dark:text-slate-200 font-mono truncate">{{ item.value }}</dd>
                     </div>
                 </dl>
             </section>
 
-            <section class="lg:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                <div class="px-5 py-3 border-b border-slate-100">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('dashboard.moduleStatus.title') }}</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">{{ t('dashboard.moduleStatus.subtitle') }}</p>
+            <section class="card lg:col-span-2 overflow-hidden">
+                <div class="dash-list-head">
+                    <div>
+                        <p class="t-overline">{{ t('dashboard.moduleStatus.title') }}</p>
+                        <p class="t-caption mt-0.5">{{ t('dashboard.moduleStatus.subtitle') }}</p>
+                    </div>
                 </div>
-                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 divide-x divide-y divide-slate-100">
+                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 divide-x divide-y divide-slate-100 dark:divide-slate-800">
                     <div v-for="m in moduleStatusList" :key="m.key"
                          class="flex flex-col items-center gap-2 px-3 py-4 text-center">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <p class="text-[11px] font-semibold text-slate-700">{{ m.label }}</p>
-                        <span class="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.18)]"></span>
+                        <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">{{ m.label }}</p>
+                        <span class="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-bold">
                             {{ m.phase }}
                         </span>
                     </div>
@@ -291,6 +340,13 @@ import {
 import KpiMarquee     from '@/components/dashboard/KpiMarquee.vue';
 import SparklineCard  from '@/components/dashboard/SparklineCard.vue';
 import BusinessActivityFeed from '@/components/dashboard/BusinessActivityFeed.vue';
+// Phase AB-2 — proactive business alerts surface
+import BusinessAlertsWidget from '@/components/dashboard/BusinessAlertsWidget.vue';
+
+// Phase AA design-system primitives
+import Button     from '@/components/ui/Button.vue';
+import Skeleton   from '@/components/ui/Skeleton.vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
 
 const { t } = useI18n();
 const { intlLocale } = useLocale();
@@ -341,12 +397,19 @@ const roleBadgeClass = computed(() => ROLE_CLASSES[auth.userRole] ?? ROLE_CLASSE
 const roleBadgeLabel = computed(() => t(`dashboard.roleBadges.${auth.userRole ?? 'cashier'}`));
 
 const alerts = computed(() => d.value?.alerts ?? []);
-function alertClass(severity) {
+
+/**
+ * Map backend severity → design-system .card-alert-* tone. Single mapping
+ * point so the rest of the product can swap the same banner widget in
+ * with one class, and dark mode lights up automatically.
+ */
+function cardAlertToneClass(severity) {
     return {
-        critical: 'bg-rose-50 border-rose-200 text-rose-800',
-        warning:  'bg-amber-50 border-amber-200 text-amber-800',
-        info:     'bg-indigo-50 border-indigo-200 text-indigo-800',
-    }[severity] ?? 'bg-slate-50 border-slate-200 text-slate-700';
+        critical: 'card-alert-danger',
+        warning:  'card-alert-warning',
+        info:     'card-alert-info',
+        success:  'card-alert-success',
+    }[severity] ?? 'card-alert-info';
 }
 
 const trendAvg = computed(() => {
@@ -528,3 +591,43 @@ async function loadFromCache() {
 
 onMounted(load);
 </script>
+
+<style scoped>
+@reference '../../../css/app.css';
+
+/* Quick-access link — premium hover lift + indigo wash. The icon disc
+   stays bright (semantic) while the surrounding tile picks up an indigo
+   tint so the whole card becomes a single "press-able" affordance. */
+.quick-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg;
+    transition:
+        background-color var(--motion-fast) var(--motion-out),
+        transform        var(--motion-fast) var(--motion-out);
+}
+.quick-link:hover {
+    @apply bg-indigo-50 dark:bg-indigo-900/20;
+}
+.quick-link-icon {
+    @apply w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 10px -6px rgba(99, 102, 241, 0.18);
+}
+
+/* List sections (Top Products / Customers / Recent Sales / Activity) —
+   single visual rhythm. Header row, hover row, ranked chip. */
+.dash-list-head {
+    @apply px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3;
+}
+.dash-list-link {
+    @apply text-xs text-indigo-600 dark:text-indigo-400 font-semibold;
+    transition: color var(--motion-fast) var(--motion-out);
+}
+.dash-list-link:hover { @apply text-indigo-700 dark:text-indigo-300 underline; }
+.dash-list-row {
+    @apply flex items-center justify-between gap-3 px-5 py-2.5;
+    transition: background-color var(--motion-fast) var(--motion-out);
+}
+.dash-list-row:hover { @apply bg-slate-50/60 dark:bg-slate-800/40; }
+.dash-list-rank {
+    @apply text-xs text-slate-400 dark:text-slate-500 font-mono w-6 flex-shrink-0;
+}
+</style>

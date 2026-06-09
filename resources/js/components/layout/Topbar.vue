@@ -1,5 +1,12 @@
 <template>
-    <header class="topbar sticky top-0 z-20 flex h-14 sm:h-16 flex-shrink-0 items-center gap-2 sm:gap-4 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 sm:px-6 pt-safe">
+    <!--
+        Phase AA — frosted-glass topbar. The previous flat white bar read as
+        "admin template". The .topbar-surface utility paints a translucent
+        white with backdrop-blur so content scrolling underneath reveals
+        through the bar (Linear / Vercel / Notion pattern), gives the
+        product a real commercial feel.
+    -->
+    <header class="topbar topbar-surface sticky top-0 z-20 flex h-14 sm:h-16 flex-shrink-0 items-center gap-2 sm:gap-4 px-3 sm:px-6 pt-safe">
 
         <!-- Sidebar toggle — hamburger on mobile, collapse-rail on desktop -->
         <button
@@ -22,15 +29,19 @@
         <!-- Right actions -->
         <div class="flex items-center gap-0.5 sm:gap-1">
 
-            <!-- Quick search (opens command palette) -->
+            <!--
+                Quick search trigger — refined for Phase AA. Pill border,
+                tabular kbd, premium hover lift. The whole thing acts as
+                one "trigger" affordance instead of a button + icon mash.
+            -->
             <button
                 @click="openPalette"
-                class="hidden md:inline-flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
+                class="topbar-search hidden md:inline-flex items-center gap-2.5 pl-2.5 pr-1.5 py-1.5 text-sm text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700 rounded-lg"
                 :title="t('palette.openHint')"
             >
                 <MagnifyingGlassIcon class="w-4 h-4" />
                 <span>{{ t('palette.openLabel') }}</span>
-                <kbd class="text-[10px] font-mono font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded px-1.5 py-0.5">⌘K</kbd>
+                <kbd class="text-[10px] font-mono font-semibold text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-600 rounded px-1.5 py-0.5">⌘K</kbd>
             </button>
 
             <!-- PWA / connectivity status -->
@@ -162,3 +173,31 @@ async function handleLogout() {
     router.push({ name: 'login' });
 }
 </script>
+
+<style scoped>
+@reference '../../../css/app.css';
+
+/* Search trigger — animated underline + hover lift */
+.topbar-search {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.75), rgba(241, 245, 249, 0.6));
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition:
+        background-color var(--motion-fast) var(--motion-out),
+        border-color     var(--motion-fast) var(--motion-out),
+        transform        var(--motion-fast) var(--motion-out),
+        box-shadow       var(--motion-fast) var(--motion-out);
+}
+.topbar-search:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgb(165 180 252);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 12px -6px rgba(99,102,241,0.35);
+}
+html.dark .topbar-search {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(30, 41, 59, 0.6));
+}
+html.dark .topbar-search:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgb(99 102 241);
+}
+</style>

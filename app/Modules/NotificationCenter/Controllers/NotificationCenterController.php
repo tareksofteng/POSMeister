@@ -5,7 +5,9 @@ namespace App\Modules\NotificationCenter\Controllers;
 use App\Modules\Branch\Services\BranchContextService;
 use App\Modules\NotificationCenter\Models\NotificationPreference;
 use App\Modules\NotificationCenter\Models\SmartNotification;
+use App\Modules\NotificationCenter\Models\NotificationDigest;
 use App\Modules\NotificationCenter\Services\BusinessEventDetector;
+use App\Modules\NotificationCenter\Services\NotificationAnalyticsService;
 use App\Modules\NotificationCenter\Services\NotificationDigestService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -122,32 +124,76 @@ class NotificationCenterController extends Controller
         return response()->json(['data' => ['archived' => $affected]]);
     }
 
-    /** GET /api/notifications/digest */
+    /**
+     * GET /api/notifications/digest?period=morning|evening|weekly
+     *
+     * Returns the latest persisted digest for the requested period.
+     * Defaults to morning (the most-requested variant), and falls back
+     * to the legacy 'daily' rows that pre-Round-4 schedulers wrote so
+     * the user isn't staring at an empty page during the first hours
+     * after the upgrade.
+     */
     public function digest(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $row = \App\Modules\NotificationCenter\Models\NotificationDigest::query()
+        $user   = $request->user();
+        $period = $request->input('period', NotificationDigestService::PERIOD_MORNING);
+        $allowed = [
+            NotificationDigestService::PERIOD_MORNING,
+            NotificationDigestService::PERIOD_EVENING,
+            NotificationDigestService::PERIOD_WEEKLY,
+        ];
+        if (!in_array($period, $allowed, true)) {
+            $period = NotificationDigestService::PERIOD_MORNING;
+        }
+
+        $row = NotificationDigest::query()
             ->where('user_id', $user->id)
-            ->where('period', 'daily')
+            ->where('period', $period)
             ->orderByDesc('for_date')
             ->first();
+
+        // Legacy bridge — pre-Round-4 rows used the 'daily' label for
+        // what we now call 'morning'. If nothing matches the new label,
+        // try the old one so existing users aren't staring at a blank
+        // page in the hours between deploy and the first new scheduler tick.
+        if (!$row && $period === NotificationDigestService::PERIOD_MORNING) {
+            $row = NotificationDigest::query()
+                ->where('user_id', $user->id)
+                ->where('period', 'daily')
+                ->orderByDesc('for_date')
+                ->first();
+        }
+
         return response()->json(['data' => $row]);
     }
 
-    /** GET /api/notifications/analytics — admin */
-    public function analytics(): JsonResponse
+    /**
+     * GET /api/notifications/digest/preview?period=morning|evening|weekly
+     *
+     * Computes a fresh digest in-memory and returns it without
+     * persisting. Powers the "Preview now" button in the digest UI so
+     * users can see exactly what their next scheduled digest contains.
+     */
+    public function digestPreview(Request $request, NotificationDigestService $digests): JsonResponse
     {
-        $base = SmartNotification::query();
+        $period = $request->input('period', NotificationDigestService::PERIOD_MORNING);
         return response()->json(['data' => [
-            'unresolved'  => (clone $base)->whereNull('acked_at')->whereNull('archived_at')->count(),
-            'critical'    => (clone $base)->whereNull('acked_at')->where('severity', 'critical')->count(),
-            'last_24h'    => (clone $base)->where('created_at', '>=', now()->subDay())->count(),
-            'last_7d'     => (clone $base)->where('created_at', '>=', now()->subWeek())->count(),
-            'by_category' => (clone $base)->where('created_at', '>=', now()->subWeek())
-                ->selectRaw('category, COUNT(*) as count')->groupBy('category')->pluck('count', 'category'),
-            'top_codes'   => (clone $base)->where('created_at', '>=', now()->subWeek())
-                ->selectRaw('code, COUNT(*) as count')->groupBy('code')->orderByDesc('count')->limit(10)->get(),
+            'period'  => $period,
+            'summary' => $digests->preview($request->user(), $period),
         ]]);
+    }
+
+    /**
+     * GET /api/notifications/analytics — admin
+     *
+     * Powered by NotificationAnalyticsService so the controller stays
+     * thin and the metric definitions live in one auditable place.
+     * Workspace-scoped: Main Branch / All Branches sees the aggregate,
+     * a branch workspace sees only its own + global rows.
+     */
+    public function analytics(NotificationAnalyticsService $analytics): JsonResponse
+    {
+        return response()->json(['data' => $analytics->summary()]);
     }
 
     /** GET /api/notifications/preferences */

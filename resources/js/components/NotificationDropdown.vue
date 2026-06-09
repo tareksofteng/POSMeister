@@ -1,14 +1,19 @@
 <template>
     <div class="relative" ref="containerRef">
+        <!-- Bell trigger — Phase AA: refined hover, pulsing red dot when
+             there's an UNREAD notification (.notif-dot from app.css), badge
+             chip for the count. -->
         <button
             @click="toggle"
-            class="relative touch-target flex items-center justify-center text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            class="notif-bell touch-target relative inline-flex items-center justify-center rounded-lg"
             :aria-label="t('notifications.title')"
+            :aria-expanded="open"
+            :aria-haspopup="true"
         >
             <BellIcon class="w-5 h-5" />
             <span
                 v-if="store.unread > 0"
-                class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center"
+                class="notif-badge absolute -top-0.5 -right-0.5"
             >
                 {{ store.unread > 99 ? '99+' : store.unread }}
             </span>
@@ -22,68 +27,84 @@
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
         >
-            <div v-if="open"
-                class="absolute right-0 top-full mt-1.5 w-[22rem] max-w-[92vw] origin-top-right rounded-xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5 z-50 overflow-hidden"
-            >
-                <div class="px-3 py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div v-if="open" class="notif-panel" role="dialog" :aria-label="t('notifications.title')">
+
+                <!-- Header — premium surface with overline + actions cluster. -->
+                <header class="notif-panel-head">
                     <div class="min-w-0">
-                        <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ t('notifications.title') }}</p>
-                        <p class="text-[11px] text-slate-500">{{ t('notifications.unread', { n: store.unread }) }}</p>
+                        <p class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">{{ t('notifications.title') }}</p>
+                        <p class="t-caption mt-0.5">{{ t('notifications.unread', { n: store.unread }) }}</p>
                     </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <button v-if="store.unread > 0" @click="store.markAllRead()" class="text-[11px] font-semibold text-indigo-600 hover:underline">
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <button
+                            v-if="store.unread > 0"
+                            @click="store.markAllRead()"
+                            class="notif-link-btn"
+                        >
                             {{ t('notifications.markAllRead') }}
                         </button>
-                        <button v-if="store.items.length > 0" @click="onClearRead" class="text-[11px] font-semibold text-slate-500 hover:underline">
+                        <button
+                            v-if="store.items.length > 0"
+                            @click="onClearRead"
+                            class="notif-link-btn is-muted"
+                        >
                             {{ t('notifications.clearRead') }}
                         </button>
                     </div>
-                </div>
+                </header>
 
-                <div class="max-h-[60vh] overflow-y-auto overscroll-contain">
-                    <div v-if="!store.items.length" class="px-4 py-10 text-center">
-                        <CheckCircleIcon class="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-                        <p class="text-sm text-slate-500">{{ t('notifications.empty') }}</p>
-                    </div>
+                <!-- Body — scroll container, empty state, list. -->
+                <div class="notif-panel-body">
+                    <EmptyState
+                        v-if="!store.items.length"
+                        size="sm"
+                        tone="emerald"
+                        :icon="CheckCircleIcon"
+                        :title="t('notifications.empty')"
+                    />
 
                     <ul v-else class="divide-y divide-slate-100 dark:divide-slate-800">
                         <li
                             v-for="n in store.items.slice(0, 20)"
                             :key="n.id"
-                            :class="['p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors', !n.read_at && 'bg-indigo-50/40 dark:bg-indigo-900/10']"
+                            :class="['notif-item', !n.read_at && 'is-unread']"
                         >
                             <div class="flex items-start gap-2.5">
-                                <span :class="['mt-1.5 w-2 h-2 rounded-full flex-shrink-0', sevDot(n.severity)]" />
+                                <!-- Severity rail — coloured priority chip per .notif-priority-* -->
+                                <span :class="['notif-rail', `notif-rail-${n.severity || 'info'}`]" />
+
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">{{ n.category }}</p>
-                                        <span :class="['text-[9px] font-bold uppercase tracking-wider px-1.5 rounded', sevBadge(n.severity)]">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <p class="t-overline">{{ n.category }}</p>
+                                        <span :class="['status-pill', sevPill(n.severity)]">
                                             {{ n.severity }}
                                         </span>
                                     </div>
                                     <p class="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug">{{ n.title }}</p>
                                     <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-2">{{ n.message }}</p>
 
+                                    <!-- Action row — Only render RouterLinks when the action
+                                         carries a route name that still exists. A stale name
+                                         (e.g. `inventory-reorder` after a rename) makes
+                                         router.resolve() throw, which kills the dropdown and
+                                         floods the console with "Cannot read properties of
+                                         undefined (reading 'href')". Filtering at the
+                                         pre-computed Set is O(1) per action. -->
                                     <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
-                                        <!-- Only render the link when the action carries a valid
-                                             route name. A null / unknown name makes
-                                             router.resolve() throw, which kills the entire
-                                             notification dropdown (and surfaces as a repeated
-                                             "Cannot read properties of undefined (reading 'href')"
-                                             noise in the console). -->
                                         <RouterLink
                                             v-for="(a, ai) in validActions(n.actions)"
                                             :key="ai"
                                             :to="{ name: a.route, params: a.params || {} }"
                                             @click="store.markRead(n.id); open = false;"
-                                            :class="['text-[11px] font-semibold px-2 py-0.5 rounded',
-                                                a.type === 'primary'
-                                                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300']"
+                                            :class="['notif-action', a.type === 'primary' && 'is-primary']"
                                         >
                                             {{ t(a.label) }}
                                         </RouterLink>
-                                        <button v-if="!n.acked_at" @click="store.ack(n.id)" class="text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline ml-auto">
+                                        <button
+                                            v-if="!n.acked_at"
+                                            @click="store.ack(n.id)"
+                                            class="notif-link-btn ml-auto text-emerald-700 dark:text-emerald-400"
+                                        >
                                             {{ t('notifications.ack') }}
                                         </button>
                                     </div>
@@ -93,11 +114,16 @@
                     </ul>
                 </div>
 
-                <div class="px-3 py-2 border-t border-slate-200 dark:border-slate-800 text-center">
-                    <RouterLink :to="{ name: 'notifications' }" @click="open = false" class="text-xs font-semibold text-indigo-600 hover:underline">
+                <footer class="notif-panel-foot">
+                    <RouterLink
+                        :to="{ name: 'notifications' }"
+                        @click="open = false"
+                        class="notif-link-btn"
+                    >
                         {{ t('notifications.viewAll') }}
+                        <ArrowLongRightIcon class="w-3.5 h-3.5" />
                     </RouterLink>
-                </div>
+                </footer>
             </div>
         </Transition>
     </div>
@@ -108,8 +134,9 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { onClickOutside } from '@vueuse/core';
-import { BellIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
+import { BellIcon, CheckCircleIcon, ArrowLongRightIcon } from '@heroicons/vue/24/outline';
 import { useNotificationsStore } from '@/stores/notifications';
+import EmptyState from '@/components/ui/EmptyState.vue';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -142,16 +169,156 @@ async function onClearRead() {
 onMounted(() => store.startPolling());
 onUnmounted(() => store.stopPolling());
 
-function sevDot(s) {
-    return ({ info: 'bg-sky-500', success: 'bg-emerald-500', warning: 'bg-amber-500', danger: 'bg-rose-500', critical: 'bg-red-600 animate-pulse' })[s] || 'bg-slate-400';
-}
-function sevBadge(s) {
+// Severity → .status-pill tone. Single mapping across the product so a
+// "critical" alert in the dropdown reads the same as a "critical" badge
+// in the Dashboard alert banner.
+function sevPill(s) {
     return ({
-        info:    'bg-sky-100 text-sky-700',
-        success: 'bg-emerald-100 text-emerald-700',
-        warning: 'bg-amber-100 text-amber-700',
-        danger:  'bg-rose-100 text-rose-700',
-        critical:'bg-red-200 text-red-900',
-    })[s] || 'bg-slate-100 text-slate-700';
+        info:     'status-pill-info',
+        success:  'status-pill-success',
+        warning:  'status-pill-warning',
+        danger:   'status-pill-danger',
+        critical: 'status-pill-danger',
+    })[s] || 'status-pill-neutral';
 }
 </script>
+
+<style scoped>
+@reference '../../css/app.css';
+
+/* Bell trigger — premium hover wash. */
+.notif-bell {
+    color: var(--text-tertiary);
+    width: 36px; height: 36px;
+    transition:
+        color            var(--motion-fast) var(--motion-out),
+        background-color var(--motion-fast) var(--motion-out);
+}
+.notif-bell:hover {
+    color: var(--text-primary);
+    background: rgb(241 245 249);
+}
+html.dark .notif-bell:hover { background: rgb(30 41 59); }
+
+/* Dropdown panel — design-system .card surface, elevation 4 for the float. */
+.notif-panel {
+    position: absolute;
+    right: 0; top: 100%;
+    margin-top: 0.5rem;
+    width: 22rem;
+    max-width: 92vw;
+    transform-origin: top right;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    border-radius: 0.875rem;
+    box-shadow: var(--elev-4);
+    z-index: 50;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+.notif-panel-head {
+    flex-shrink: 0;
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+.notif-panel-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.notif-panel-foot {
+    flex-shrink: 0;
+    padding: 0.5rem 0.875rem;
+    border-top: 1px solid var(--border-default);
+    background: var(--surface-sunken);
+    text-align: center;
+}
+
+/* Each list item — left rail for severity, hover wash, unread tint. */
+.notif-item {
+    padding: 0.75rem;
+    transition: background-color var(--motion-fast) var(--motion-out);
+}
+.notif-item:hover { background: rgb(248 250 252); }
+html.dark .notif-item:hover { background: rgb(30 41 59 / 0.4); }
+.notif-item.is-unread {
+    background: rgb(238 242 255 / 0.55);
+}
+html.dark .notif-item.is-unread {
+    background: rgb(67 56 202 / 0.12);
+}
+.notif-rail {
+    margin-top: 0.375rem;
+    width: 3px;
+    align-self: stretch;
+    min-height: 28px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+.notif-rail-info     { background: rgb(14 165 233); }
+.notif-rail-success  { background: rgb(16 185 129); }
+.notif-rail-warning  { background: rgb(245 158 11); }
+.notif-rail-danger   { background: rgb(244 63 94); }
+.notif-rail-critical {
+    background: rgb(225 29 72);
+    box-shadow: 0 0 0 1px rgba(225, 29, 72, 0.18);
+    animation: notif-pulse 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+    .notif-rail-critical { animation: none; }
+}
+
+/* Action chips inside an item — match button primitive vocabulary. */
+.notif-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    background: rgb(226 232 240);
+    color: rgb(51 65 85);
+    transition: background-color var(--motion-fast) var(--motion-out);
+}
+.notif-action:hover { background: rgb(203 213 225); }
+html.dark .notif-action {
+    background: rgb(51 65 85);
+    color: rgb(226 232 240);
+}
+html.dark .notif-action:hover { background: rgb(71 85 105); }
+.notif-action.is-primary {
+    background: rgb(79 70 229);
+    color: white;
+}
+.notif-action.is-primary:hover { background: rgb(67 56 202); }
+
+/* Text-link-button — the small "Mark all read / Clear read / View all" CTAs */
+.notif-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: rgb(67 56 202);
+    transition:
+        background-color var(--motion-fast) var(--motion-out),
+        color            var(--motion-fast) var(--motion-out);
+}
+.notif-link-btn:hover {
+    background: rgb(238 242 255);
+}
+html.dark .notif-link-btn { color: rgb(165 180 252); }
+html.dark .notif-link-btn:hover { background: rgb(67 56 202 / 0.18); }
+.notif-link-btn.is-muted { color: var(--text-tertiary); }
+.notif-link-btn.is-muted:hover { background: rgb(241 245 249); color: var(--text-primary); }
+html.dark .notif-link-btn.is-muted:hover { background: rgb(30 41 59); }
+</style>

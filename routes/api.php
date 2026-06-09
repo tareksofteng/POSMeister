@@ -111,6 +111,7 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
     // ── Phase Ω+ — Smart Notification Center (any auth user) ────────────
     Route::get ('notifications',                   [NotificationCenterController::class, 'index']);
     Route::get ('notifications/digest',            [NotificationCenterController::class, 'digest']);
+    Route::get ('notifications/digest/preview',    [NotificationCenterController::class, 'digestPreview']);
     Route::get ('notifications/preferences',       [NotificationCenterController::class, 'preferences']);
     Route::put ('notifications/preferences',       [NotificationCenterController::class, 'savePreferences']);
     Route::post('notifications/mark-all-read',     [NotificationCenterController::class, 'markAllRead']);
@@ -123,6 +124,14 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
         Route::get ('notifications/analytics',         [NotificationCenterController::class, 'analytics']);
         Route::post('notifications/detect',            [NotificationCenterController::class, 'runDetectors']);
         Route::post('notifications/build-digest',      [NotificationCenterController::class, 'buildDigest']);
+
+        // Phase AB Round 3 — Notification Rule Engine CRUD. Admin
+        // tunes per-code cooldowns, escalation thresholds, audience.
+        Route::get   ('notifications/rules',              [\App\Modules\NotificationCenter\Controllers\NotificationRulesController::class, 'index']);
+        Route::get   ('notifications/rules/codes',        [\App\Modules\NotificationCenter\Controllers\NotificationRulesController::class, 'codes']);
+        Route::post  ('notifications/rules',              [\App\Modules\NotificationCenter\Controllers\NotificationRulesController::class, 'store']);
+        Route::put   ('notifications/rules/{rule}',       [\App\Modules\NotificationCenter\Controllers\NotificationRulesController::class, 'update']);
+        Route::delete('notifications/rules/{rule}',       [\App\Modules\NotificationCenter\Controllers\NotificationRulesController::class, 'destroy']);
     });
 
     // ── Phase Ω — Offline-first POS ─────────────────────────────────────

@@ -4,6 +4,7 @@ namespace App\Modules\NotificationCenter\Services;
 
 use App\Modules\NotificationCenter\Models\NotificationPreference;
 use App\Modules\NotificationCenter\Models\SmartNotification;
+use App\Modules\NotificationCenter\Services\NotificationRuleEngine;
 use Illuminate\Support\Carbon;
 
 /**
@@ -30,6 +31,10 @@ use Illuminate\Support\Carbon;
  */
 class SmartNotificationService
 {
+    public function __construct(
+        private readonly ?NotificationRuleEngine $rules = null,
+    ) {}
+
     public function push(array $payload): ?SmartNotification
     {
         $payload = array_merge([
@@ -45,6 +50,17 @@ class SmartNotificationService
             'entity_id'        => null,
             'expires_at'       => null,
         ], $payload);
+
+        // Phase AB Round 3 — admin-configurable rule overlay. Consulted
+        // BEFORE user-pref filtering and the dedupe/cooldown lookup so a
+        // disabled code or a sub-floor severity short-circuits cleanly.
+        // The engine is optional (constructor-injected) so the existing
+        // test harness that builds SmartNotificationService by hand
+        // still works without wiring it up.
+        if ($this->rules) {
+            if ($this->rules->shouldSuppress($payload)) return null;
+            $payload = $this->rules->applyOverrides($payload);
+        }
 
         if ($this->shouldSkip($payload)) return null;
 

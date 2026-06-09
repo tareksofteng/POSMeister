@@ -73,6 +73,24 @@ const routes = [
                 component: () => import('@/views/notifications/NotificationPreferencesView.vue'),
                 meta: { titleKey: 'notifications.preferences' },
             },
+            {
+                path: 'notifications/analytics',
+                name: 'notification-analytics',
+                component: () => import('@/views/notifications/NotificationAnalyticsView.vue'),
+                meta: { titleKey: 'notifications.analytics.title', adminOnly: true },
+            },
+            {
+                path: 'notifications/rules',
+                name: 'notification-rules',
+                component: () => import('@/views/notifications/NotificationRulesView.vue'),
+                meta: { titleKey: 'notifications.rules.title', adminOnly: true },
+            },
+            {
+                path: 'notifications/digest',
+                name: 'notification-digest',
+                component: () => import('@/views/notifications/NotificationDigestView.vue'),
+                meta: { titleKey: 'notifications.digest.title' },
+            },
 
             // ── Phase Z: SystemOps (admin-only) ───────────────────────────
             {

@@ -1,145 +1,150 @@
 <template>
+    <!--
+        SupplierFormModal — refactored on Phase AA Round 4 design system.
+        Modal chrome via .form-modal-* utilities (single language with
+        every other form modal), fields grouped via <FormSection>, all
+        inputs use the unified .form-input rhythm, save/cancel use the
+        <Button> primitive. Visual rewrite only — every event, prop, and
+        emit is unchanged.
+    -->
     <Teleport to="body">
         <Transition name="modal">
-            <div v-if="open" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="$emit('update:open', false)" />
+            <div v-if="open" class="form-modal-overlay">
+                <div class="absolute inset-0" @click="$emit('update:open', false)" />
 
-                <div class="relative w-full sm:max-w-2xl bg-white sm:rounded-2xl shadow-2xl flex flex-col max-h-screen sm:max-h-[90vh]">
+                <div class="form-modal-shell">
 
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+                    <header class="form-modal-header">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                <BuildingOffice2Icon class="w-5 h-5 text-indigo-600" />
+                            <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
+                                <BuildingOffice2Icon class="w-5 h-5 text-indigo-600 dark:text-indigo-300" />
                             </div>
                             <div>
-                                <h2 class="text-base font-semibold text-gray-900 leading-none">
+                                <h2 class="text-base font-semibold text-slate-900 dark:text-slate-100 leading-tight">
                                     {{ isEdit ? t('suppliers.editTitle') : t('suppliers.createTitle') }}
                                 </h2>
-                                <p class="text-xs text-gray-400 mt-0.5">
+                                <p class="t-caption mt-0.5">
                                     {{ isEdit ? t('suppliers.editSubtitle') : t('suppliers.createSubtitle') }}
                                 </p>
                             </div>
                         </div>
-                        <button @click="$emit('update:open', false)" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                        <button
+                            type="button"
+                            @click="$emit('update:open', false)"
+                            class="row-action"
+                            :aria-label="t('common.close', 'Close')"
+                        >
                             <XMarkIcon class="w-5 h-5" />
                         </button>
-                    </div>
+                    </header>
 
-                    <!-- Body -->
-                    <form @submit.prevent="submit" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+                    <form @submit.prevent="submit" class="form-modal-body">
 
-                        <!-- Company name -->
-                        <div>
-                            <label class="form-label">{{ t('suppliers.companyName') }} <span class="text-red-500">*</span></label>
-                            <input
-                                v-model="form.name"
-                                type="text"
-                                autofocus
-                                class="form-input"
-                                :class="{ 'border-red-300 focus:ring-red-500': errors.name }"
-                                :placeholder="t('suppliers.namePlaceholder')"
-                            />
-                            <p v-if="errors.name" class="form-error">{{ errors.name }}</p>
-                        </div>
+                        <FormSection
+                            :title="t('suppliers.section.basics', 'Company')"
+                            :description="t('suppliers.section.basicsDesc', 'Legal name and tax identification.')"
+                        >
+                            <FormField id="sup-name" :label="t('suppliers.companyName')" :error="errors.name" required>
+                                <input
+                                    id="sup-name"
+                                    v-model="form.name"
+                                    type="text"
+                                    autofocus
+                                    :class="['form-input', { 'is-invalid': errors.name }]"
+                                    :placeholder="t('suppliers.namePlaceholder')"
+                                />
+                            </FormField>
+                        </FormSection>
 
-                        <!-- Contact row -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="form-label">{{ t('suppliers.contactPerson') }}</label>
+                        <FormSection
+                            :title="t('suppliers.section.contact', 'Contact')"
+                            :description="t('suppliers.section.contactDesc', 'Who we reach when an order needs confirming.')"
+                            cols="2"
+                        >
+                            <FormField :label="t('suppliers.contactPerson')">
                                 <input v-model="form.contact_person" type="text" class="form-input" :placeholder="t('suppliers.contactPersonPlaceholder')" />
-                            </div>
-                            <div>
-                                <label class="form-label">{{ t('suppliers.vatNumber') }}</label>
+                            </FormField>
+                            <FormField :label="t('suppliers.vatNumber')">
                                 <input v-model="form.vat_number" type="text" class="form-input" placeholder="DE123456789" />
-                            </div>
-                        </div>
-
-                        <!-- Communication row -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="form-label">{{ t('common.email') }}</label>
-                                <div class="relative">
-                                    <EnvelopeIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                            </FormField>
+                            <FormField :label="t('common.email')" :error="errors.email">
+                                <div class="form-input-group">
+                                    <EnvelopeIcon class="form-input-icon-left" />
                                     <input
                                         v-model="form.email"
                                         type="email"
-                                        class="form-input pl-9"
-                                        :class="{ 'border-red-300 focus:ring-red-500': errors.email }"
+                                        :class="['form-input form-input-with-icon-left', { 'is-invalid': errors.email }]"
                                         :placeholder="t('suppliers.emailPlaceholder')"
                                     />
                                 </div>
-                                <p v-if="errors.email" class="form-error">{{ errors.email }}</p>
-                            </div>
-                            <div>
-                                <label class="form-label">{{ t('common.phone') }}</label>
-                                <div class="relative">
-                                    <PhoneIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                                    <input v-model="form.phone" type="text" class="form-input pl-9" placeholder="+49 30 12345678" />
+                            </FormField>
+                            <FormField :label="t('common.phone')">
+                                <div class="form-input-group">
+                                    <PhoneIcon class="form-input-icon-left" />
+                                    <input v-model="form.phone" type="text" class="form-input form-input-with-icon-left" placeholder="+49 30 12345678" />
                                 </div>
-                            </div>
-                        </div>
+                            </FormField>
+                        </FormSection>
 
-                        <!-- Location row -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="form-label">{{ t('suppliers.city') }}</label>
+                        <FormSection
+                            :title="t('suppliers.section.address', 'Address')"
+                            cols="2"
+                        >
+                            <FormField :label="t('suppliers.city')">
                                 <input v-model="form.city" type="text" class="form-input" placeholder="Berlin" />
-                            </div>
-                            <div>
-                                <label class="form-label">{{ t('suppliers.country') }}</label>
+                            </FormField>
+                            <FormField :label="t('suppliers.country')">
                                 <input v-model="form.country" type="text" class="form-input" placeholder="Deutschland" />
+                            </FormField>
+                            <div class="sm:col-span-2">
+                                <FormField :label="t('appSettings.address')">
+                                    <input v-model="form.address" type="text" class="form-input" :placeholder="t('suppliers.addressPlaceholder')" />
+                                </FormField>
                             </div>
-                        </div>
+                        </FormSection>
 
-                        <!-- Address -->
-                        <div>
-                            <label class="form-label">{{ t('appSettings.address') }}</label>
-                            <input v-model="form.address" type="text" class="form-input" :placeholder="t('suppliers.addressPlaceholder')" />
-                        </div>
+                        <FormSection :title="t('suppliers.section.notes', 'Notes')">
+                            <FormField :label="t('suppliers.notes')" :hint="t('suppliers.notesHint', 'Internal — not shown on documents.')">
+                                <textarea v-model="form.notes" rows="2" class="form-textarea" :placeholder="t('suppliers.notesPlaceholder')" />
+                            </FormField>
 
-                        <!-- Notes -->
-                        <div>
-                            <label class="form-label">{{ t('suppliers.notes') }}</label>
-                            <textarea v-model="form.notes" rows="2" class="form-input resize-none" :placeholder="t('suppliers.notesPlaceholder')" />
-                        </div>
-
-                        <!-- Status -->
-                        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
-                            <div>
-                                <p class="text-sm font-medium text-gray-700">{{ t('common.status') }}</p>
-                                <p class="text-xs text-gray-400">{{ form.is_active ? t('suppliers.activeHint') : t('suppliers.inactiveHint') }}</p>
+                            <div class="form-toggle">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('common.status') }}</p>
+                                    <p class="t-caption mt-0.5">{{ form.is_active ? t('suppliers.activeHint') : t('suppliers.inactiveHint') }}</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    @click="form.is_active = !form.is_active"
+                                    :class="['form-switch', { 'is-on': form.is_active }]"
+                                    :aria-pressed="form.is_active"
+                                    :aria-label="t('common.status')"
+                                />
                             </div>
-                            <button
-                                type="button"
-                                @click="form.is_active = !form.is_active"
-                                :class="['relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2', form.is_active ? 'bg-indigo-600' : 'bg-gray-200']"
-                            >
-                                <span :class="['pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition-transform duration-200', form.is_active ? 'translate-x-5' : 'translate-x-0']" />
-                            </button>
-                        </div>
+                        </FormSection>
 
-                        <!-- Server error -->
-                        <p v-if="serverError" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{{ serverError }}</p>
+                        <div v-if="serverError" class="card card-alert card-alert-danger text-sm">{{ serverError }}</div>
                     </form>
 
-                    <!-- Footer -->
-                    <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/80 rounded-b-2xl flex-shrink-0">
-                        <div v-if="isEdit" class="text-xs text-gray-400">
-                            {{ t('suppliers.codeLabel') }}: <span class="font-mono font-medium text-gray-600">{{ props.supplier?.code }}</span>
+                    <footer class="form-modal-footer with-meta">
+                        <div v-if="isEdit" class="t-caption">
+                            {{ t('suppliers.codeLabel') }}: <span class="font-mono font-medium text-slate-600 dark:text-slate-300">{{ props.supplier?.code }}</span>
                         </div>
                         <div v-else />
-                        <div class="flex gap-3">
-                            <button type="button" @click="$emit('update:open', false)" class="btn-secondary">
+                        <div class="flex items-center gap-2">
+                            <Button variant="secondary" @click="$emit('update:open', false)">
                                 {{ t('common.cancel') }}
-                            </button>
-                            <button @click="submit" :disabled="saving" class="btn-primary">
-                                <CheckIcon v-if="!saving" class="w-4 h-4" />
-                                <span v-if="saving" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            </Button>
+                            <Button
+                                variant="primary"
+                                :loading="saving"
+                                :leading-icon="saving ? null : CheckIcon"
+                                @click="submit"
+                            >
                                 {{ saving ? t('common.saving') : (isEdit ? t('common.saveChanges') : t('suppliers.createSupplier')) }}
-                            </button>
+                            </Button>
                         </div>
-                    </div>
+                    </footer>
 
                 </div>
             </div>
@@ -155,6 +160,9 @@ import {
     XMarkIcon, BuildingOffice2Icon,
     EnvelopeIcon, PhoneIcon, CheckIcon,
 } from '@heroicons/vue/24/outline';
+import FormField   from '@/components/ui/FormField.vue';
+import FormSection from '@/components/ui/FormSection.vue';
+import Button      from '@/components/ui/Button.vue';
 
 const props = defineProps({
     open:     { type: Boolean, default: false },
@@ -220,12 +228,16 @@ async function submit() {
 
 <style scoped>
 @reference '../../../css/app.css';
-.form-label   { @apply block text-xs font-medium text-gray-600 mb-1.5; }
-.form-input   { @apply w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white transition-shadow; }
-.form-error   { @apply mt-1 text-xs text-red-600; }
-.btn-primary  { @apply flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed; }
-.btn-secondary{ @apply flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors; }
-.modal-enter-active, .modal-leave-active { transition: all 0.2s ease; }
+
+/* Local-only — the modal enter/leave timing. All form chrome
+   (.form-input, .form-label, .form-error, .form-modal-*, .btn-*) now
+   lives in app.css and is shared with every other form. */
+.modal-enter-active, .modal-leave-active { transition: opacity var(--motion-base) var(--motion-out); }
 .modal-enter-from, .modal-leave-to { opacity: 0; }
-.modal-enter-from .relative, .modal-leave-to .relative { transform: scale(0.96) translateY(8px); }
+.modal-enter-active .form-modal-shell,
+.modal-leave-active .form-modal-shell {
+    transition: transform var(--motion-base) var(--motion-spring);
+}
+.modal-enter-from .form-modal-shell,
+.modal-leave-to   .form-modal-shell { transform: scale(0.97) translateY(8px); }
 </style>
