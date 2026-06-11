@@ -26,7 +26,7 @@
  *
  * Bumping CACHE_VERSION forces every client to reload on next visit.
  */
-const CACHE_VERSION = 'posmeister-v3';
+const CACHE_VERSION = 'posmeister-v4';
 const SHELL_CACHE   = `${CACHE_VERSION}-shell`;
 const ASSETS_CACHE  = `${CACHE_VERSION}-assets`;
 const PAGES_CACHE   = `${CACHE_VERSION}-pages`;
@@ -221,3 +221,93 @@ async function navigationHandler(req) {
         return Response.error();
     }
 }
+
+
+/* ──────────────────────────────────────────────────────────────────────
+ * Phase AD — Web Push handlers.
+ *
+ * The backend ships a JSON payload shaped like:
+ *   {
+ *     id, code, category, severity, urgency, branch_id,
+ *     title, body,
+ *     actions: [{action, title}, ...],
+ *     click:   { route, params },
+ *     sent_at,
+ *   }
+ *
+ * `severity` drives the badge tone; `actions` map to native notification
+ * buttons; `click` and each `action` carry a route name we hand off to
+ * the SPA via `?notif=<id>&route=<name>` when the user clicks.
+ * ──────────────────────────────────────────────────────────────────── */
+
+self.addEventListener('push', (event) => {
+    if (!event.data) return;
+    let data = {};
+    try { data = event.data.json(); } catch { data = { title: 'POSmeister', body: event.data.text() }; }
+
+    const tag = `posmeister-${data.code || data.id || Date.now()}`;
+    const title = data.title || 'POSmeister';
+    const options = {
+        body:    data.body || '',
+        icon:    '/icons/icon-192.png',
+        badge:   '/icons/icon-72.png',
+        tag,
+        renotify: data.severity === 'critical',
+        requireInteraction: data.severity === 'critical',
+        timestamp: data.sent_at ? Date.parse(data.sent_at) : Date.now(),
+        data,
+        actions: Array.isArray(data.actions) ? data.actions.slice(0, 2) : [],
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    const data   = event.notification.data || {};
+    const action = event.action;
+
+    // When the user taps an action button we use that route; otherwise we
+    // honour the primary click target. Falls back to the bell-inbox.
+    let target = '/notifications';
+    if (action) {
+        target = `/?_route=${encodeURIComponent(action)}&_notif=${data.id || ''}`;
+    } else if (data.click && data.click.route) {
+        target = `/?_route=${encodeURIComponent(data.click.route)}&_notif=${data.id || ''}`;
+    } else {
+        target = `/notifications?_notif=${data.id || ''}`;
+    }
+
+    event.waitUntil((async () => {
+        // Focus an existing window if one is already showing POSmeister.
+        const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        for (const c of all) {
+            try {
+                await c.navigate(target);
+                return c.focus();
+            } catch { /* navigate not allowed, fall through */ }
+        }
+        return self.clients.openWindow(target);
+    })());
+});
+
+self.addEventListener('pushsubscriptionchange', (event) => {
+    // Browser asked us to renew (key rotation, expiry). Re-subscribe with
+    // the SAME applicationServerKey and POST the new endpoint up to the
+    // backend so we don't lose the device silently.
+    event.waitUntil((async () => {
+        try {
+            const old = event.oldSubscription;
+            const newSub = await self.registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: old ? old.options.applicationServerKey : undefined,
+            });
+            await fetch('/api/push/resubscribe', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subscription: newSub, oldEndpoint: old?.endpoint }),
+            });
+        } catch (e) { /* fall back to next launch */ }
+    })());
+});

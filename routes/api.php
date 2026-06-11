@@ -123,10 +123,19 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
     Route::post('notifications/{notification}/read',    [NotificationCenterController::class, 'markRead']);
     Route::post('notifications/{notification}/ack',     [NotificationCenterController::class, 'ack']);
     Route::post('notifications/{notification}/archive', [NotificationCenterController::class, 'archive']);
+    // ── Phase AD — Web Push (auth user) ────────────────────────────────
+    Route::get   ('push/vapid-key',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'vapidKey']);
+    Route::post  ('push/subscribe',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'subscribe']);
+    Route::post  ('push/unsubscribe',                [\App\Modules\NotificationCenter\Controllers\PushController::class, 'unsubscribe']);
+    Route::get   ('push/devices',                    [\App\Modules\NotificationCenter\Controllers\PushController::class, 'devices']);
+    Route::post  ('push/devices/{subscription}/rename', [\App\Modules\NotificationCenter\Controllers\PushController::class, 'rename']);
+    Route::delete('push/devices/{subscription}',     [\App\Modules\NotificationCenter\Controllers\PushController::class, 'destroy']);
+
     Route::middleware('role:admin')->group(function () {
         Route::get ('notifications/analytics',         [NotificationCenterController::class, 'analytics']);
         Route::post('notifications/detect',            [NotificationCenterController::class, 'runDetectors']);
         Route::post('notifications/build-digest',      [NotificationCenterController::class, 'buildDigest']);
+        Route::get ('push/analytics',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'analytics']);
 
         // Phase AB Round 3 — Notification Rule Engine CRUD. Admin
         // tunes per-code cooldowns, escalation thresholds, audience.

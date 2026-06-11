@@ -49,6 +49,11 @@
             </div>
         </section>
 
+        <!-- A one-time opt-in for browser notifications. The card itself
+             handles all the lifecycle — once a user grants or declines,
+             it stays out of the way. -->
+        <PushPermissionCard />
+
         <!-- Health snapshot — score card spans full width, with the four
              ring widgets stacked below. Gives every metric room to breathe
              and keeps the visual rhythm consistent on every viewport. -->
@@ -263,6 +268,8 @@ import TopCustomersPanel    from '@/components/dashboard/TopCustomersPanel.vue';
 // Phase AC Round 4 — premium quick actions + system health footer
 import QuickActionsPanel    from '@/components/dashboard/QuickActionsPanel.vue';
 import SystemHealthFooter   from '@/components/dashboard/SystemHealthFooter.vue';
+// Phase AD — Web Push opt-in surface (self-hides once granted/denied)
+import PushPermissionCard   from '@/components/dashboard/PushPermissionCard.vue';
 
 // Phase AA design-system primitives
 import Button     from '@/components/ui/Button.vue';

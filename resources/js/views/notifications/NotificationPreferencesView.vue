@@ -84,6 +84,53 @@
                 </div>
             </FormSection>
 
+            <!-- Phase AD — Web Push per-priority. Hidden when the browser
+                 doesn't support Web Push or hasn't been granted permission. -->
+            <FormSection
+                :title="t('push.section.title', 'Browser notifications')"
+                :description="t('push.section.desc', 'Per-priority toggles for push notifications. Critical alerts always ship — they bypass mute windows.')"
+            >
+                <div v-if="pushSupportState === 'unsupported'" class="card card-alert card-alert-info text-sm">
+                    {{ t('push.unsupportedHint', 'This browser does not support push notifications.') }}
+                </div>
+                <div v-else-if="pushSupportState === 'denied'" class="card card-alert card-alert-warning text-sm">
+                    {{ t('push.deniedHint', 'Your browser blocked notifications. Allow them in site settings to enable.') }}
+                </div>
+                <div v-else>
+                    <div class="form-toggle">
+                        <div>
+                            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ t('push.receive', 'Receive push notifications') }}</p>
+                            <p class="t-caption mt-0.5">{{ pushEnabled ? t('push.enabledHint', 'Subscribed on this device.') : t('push.notEnabledHint', 'Click to subscribe this device.') }}</p>
+                        </div>
+                        <button
+                            type="button"
+                            :class="['form-switch', { 'is-on': pushEnabled }]"
+                            :aria-pressed="pushEnabled"
+                            :disabled="pushBusy"
+                            @click="togglePush"
+                        />
+                    </div>
+
+                    <div v-if="pushEnabled" class="push-priority-grid mt-3">
+                        <label v-for="bucket in priorityBuckets" :key="bucket.key" class="push-priority-row">
+                            <input
+                                type="checkbox"
+                                :checked="(form.channels.web_push?.[bucket.key]) ?? bucket.default"
+                                @change="togglePriority(bucket.key, $event.target.checked)"
+                                :disabled="bucket.key === 'critical'"
+                            />
+                            <div>
+                                <p class="push-priority-label">
+                                    {{ bucket.label }}
+                                    <span v-if="bucket.key === 'critical'" class="push-priority-locked">{{ t('push.alwaysOn', 'always on') }}</span>
+                                </p>
+                                <p class="t-caption">{{ bucket.hint }}</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </FormSection>
+
             <div class="flex items-center justify-end gap-2 pt-5 mt-5 border-t border-slate-100 dark:border-slate-800">
                 <Button
                     variant="primary"
@@ -103,6 +150,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ArrowLongRightIcon, CheckIcon } from '@heroicons/vue/24/outline';
 import { notificationService } from '@/services/notificationService';
+import { pushService } from '@/services/pushService';
 import FormField   from '@/components/ui/FormField.vue';
 import FormSection from '@/components/ui/FormSection.vue';
 import Button      from '@/components/ui/Button.vue';
@@ -114,9 +162,60 @@ const form = reactive({
     min_severity: 'info',
     quiet_hours: null,
     digest: { daily: true, weekly: false },
+    channels: {
+        web_push: { critical: true, high: true, medium: false, low: false },
+    },
 });
 const quietFrom = ref('');
 const quietTo   = ref('');
+
+// ── Push (Web Push) state ────────────────────────────────────────────────
+const pushSupportState = ref('checking'); // 'supported' | 'denied' | 'unsupported' | 'checking'
+const pushEnabled = ref(false);
+const pushBusy    = ref(false);
+
+const priorityBuckets = computed(() => [
+    { key: 'critical', label: t('push.priority.critical', 'Critical'), hint: t('push.priority.criticalHint', 'Out of stock, sync failures, negative balance.'),    default: true  },
+    { key: 'high',     label: t('push.priority.high',     'High'),     hint: t('push.priority.highHint',     'Reorder, supplier due, customer due, low cash.'),     default: true  },
+    { key: 'medium',   label: t('push.priority.medium',   'Medium'),   hint: t('push.priority.mediumHint',   'Slow movers, sales targets, warranty expiring.'),     default: false },
+    { key: 'low',      label: t('push.priority.low',      'Low'),      hint: t('push.priority.lowHint',      'New customer, daily and weekly summaries.'),          default: false },
+]);
+
+async function refreshPushState() {
+    if (!(await pushService.isSupported())) {
+        pushSupportState.value = 'unsupported';
+        return;
+    }
+    const perm = await pushService.currentPermission();
+    if (perm === 'denied') {
+        pushSupportState.value = 'denied';
+        return;
+    }
+    pushSupportState.value = 'supported';
+    const sub = await pushService.existingSubscription();
+    pushEnabled.value = !!sub;
+}
+
+async function togglePush() {
+    if (pushBusy.value) return;
+    pushBusy.value = true;
+    try {
+        if (pushEnabled.value) {
+            await pushService.disable();
+            pushEnabled.value = false;
+        } else {
+            const res = await pushService.enable();
+            if (res.ok) pushEnabled.value = true;
+            else if (res.status === 'denied') pushSupportState.value = 'denied';
+        }
+    } finally {
+        pushBusy.value = false;
+    }
+}
+
+function togglePriority(key, on) {
+    form.channels.web_push = { ...(form.channels.web_push || {}), [key]: on };
+}
 
 const categories = computed(() => [
     { key: 'inventory', label: t('notifications.category.inventory') },
@@ -150,12 +249,17 @@ onMounted(async () => {
             min_severity:     data.data.min_severity     || 'info',
             quiet_hours:      data.data.quiet_hours      || null,
             digest:           data.data.digest           || { daily: true, weekly: false },
+            channels:         data.data.channels         || form.channels,
         });
+        if (!form.channels.web_push) {
+            form.channels.web_push = { critical: true, high: true, medium: false, low: false };
+        }
         if (form.quiet_hours) {
             quietFrom.value = form.quiet_hours.from || '';
             quietTo.value   = form.quiet_hours.to   || '';
         }
     } catch { /* defaults already set */ }
+    await refreshPushState();
 });
 </script>
 

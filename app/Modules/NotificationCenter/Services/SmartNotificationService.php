@@ -85,7 +85,7 @@ class SmartNotificationService
             return $existing;
         }
 
-        return SmartNotification::query()->updateOrCreate(
+        $notification = SmartNotification::query()->updateOrCreate(
             [
                 'dedupe_key'       => $payload['dedupe_key'],
                 'audience_user_id' => $payload['audience_user_id'],
@@ -110,6 +110,19 @@ class SmartNotificationService
                 'acked_at'         => null,
             ]
         );
+
+        // Phase AD — hand off to outbound channels. Best-effort; channel
+        // failures are logged but never surface to the caller. The
+        // in-app inbox above is the source of truth.
+        if ($notification && app()->bound(\App\Modules\NotificationCenter\Services\PushDispatcher::class)) {
+            try {
+                app(\App\Modules\NotificationCenter\Services\PushDispatcher::class)->dispatch($notification);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        return $notification;
     }
 
     /**
