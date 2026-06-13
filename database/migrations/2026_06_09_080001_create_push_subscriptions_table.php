@@ -27,8 +27,10 @@ return new class extends Migration
 
             // The W3C Push API subscription — endpoint URL is unique per
             // device, the two keys (p256dh + auth) are needed to encrypt
-            // the payload.
-            $table->text('endpoint');
+            // the payload. Endpoint is VARCHAR(500) so MySQL can apply
+            // the unique index (TEXT columns need a key length); real-
+            // world endpoints sit comfortably under 400 chars.
+            $table->string('endpoint', 500);
             $table->string('p256dh_key', 200);
             $table->string('auth_token', 80);
 

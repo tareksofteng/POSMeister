@@ -3199,5 +3199,41 @@
     "invoice": {
       "label": "Seriennummer"
     }
+  },
+  "push": {
+    "title": "Überall informiert bleiben",
+    "headline": "Browser-Benachrichtigungen aktivieren",
+    "body": "POSmeister meldet Probleme, die Aufmerksamkeit erfordern — auch wenn dieser Tab geschlossen ist. Sie können sie jederzeit in den Einstellungen deaktivieren.",
+    "bullets": {
+      "critical": "Kritische Bestands- und Kassenprobleme",
+      "due": "Fälligkeitserinnerungen für Kunden und Lieferanten",
+      "system": "Backup-, Sync- und Offline-Warnungen"
+    },
+    "enable": "Benachrichtigungen aktivieren",
+    "enabling": "Wird aktiviert…",
+    "later": "Vielleicht später",
+    "success": "Push-Benachrichtigungen aktiviert.",
+    "error": "Benachrichtigungen konnten nicht aktiviert werden. Erneut in den Einstellungen versuchen.",
+    "deniedHint": "Ihr Browser hat Benachrichtigungen blockiert. Erlauben Sie sie in den Site-Einstellungen.",
+    "serverHint": "Push ist auf dem Server nicht konfiguriert. Bitten Sie Ihren Admin, push:vapid auszuführen.",
+    "unsupportedHint": "Dieser Browser unterstützt Push-Benachrichtigungen nicht.",
+    "receive": "Push-Benachrichtigungen empfangen",
+    "enabledHint": "Auf diesem Gerät abonniert.",
+    "notEnabledHint": "Klicken, um dieses Gerät zu abonnieren.",
+    "alwaysOn": "immer aktiv",
+    "section": {
+      "title": "Browser-Benachrichtigungen",
+      "desc": "Schalter pro Priorität für Push-Benachrichtigungen. Kritische Warnungen werden immer gesendet — sie umgehen Stumm-Fenster."
+    },
+    "priority": {
+      "critical": "Kritisch",
+      "criticalHint": "Bestand aufgebraucht, Sync-Fehler, negativer Saldo.",
+      "high": "Hoch",
+      "highHint": "Nachbestellung, Lieferanten- und Kundenfälligkeit, knappe Liquidität.",
+      "medium": "Mittel",
+      "mediumHint": "Langsame Verkäufer, Verkaufsziele, Garantieablauf.",
+      "low": "Niedrig",
+      "lowHint": "Neuer Kunde, tägliche und wöchentliche Zusammenfassungen."
+    }
   }
 }

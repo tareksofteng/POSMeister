@@ -311,4 +311,53 @@ html.dark .pref-chip-muted-tag {
     background: rgb(30 41 59);
     color: rgb(148 163 184);
 }
+
+/* Phase AD — per-priority checkboxes inside the Push section. */
+.push-priority-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+@media (min-width: 640px) { .push-priority-grid { grid-template-columns: 1fr 1fr; } }
+
+.push-priority-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--border-default);
+    border-radius: 0.625rem;
+    background: var(--surface-raised);
+    cursor: pointer;
+    transition: border-color var(--motion-fast) var(--motion-out), background-color var(--motion-fast) var(--motion-out);
+}
+.push-priority-row:hover { border-color: var(--border-strong); }
+.push-priority-row input[type="checkbox"] {
+    margin-top: 2px;
+    width: 16px; height: 16px;
+    accent-color: rgb(79 70 229);
+    flex-shrink: 0;
+}
+.push-priority-row input[type="checkbox"]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.push-priority-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex; align-items: center; gap: 0.375rem;
+}
+.push-priority-locked {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1px 0.375rem;
+    border-radius: 999px;
+    background: rgb(238 242 255);
+    color: rgb(67 56 202);
+}
+html.dark .push-priority-locked {
+    background: rgb(67 56 202 / 0.25);
+    color: rgb(165 180 252);
+}
 </style>

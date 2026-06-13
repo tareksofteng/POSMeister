@@ -92,6 +92,11 @@ Route::get('system/ping', [SystemHealthController::class, 'ping'])->middleware('
 // already baked into BranchScopeMiddleware. Both push onto the same
 // container key `pos.activeBranchId`, so downstream `BranchScoped` traits
 // don't need to know which one set it.
+// Phase AD — VAPID public key is, by RFC8292 definition, public. The
+// Service Worker fetches it during installation (before any user
+// session exists), so it sits outside the auth group.
+Route::get('push/vapid-key', [\App\Modules\NotificationCenter\Controllers\PushController::class, 'vapidKey']);
+
 Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function () {
 
     // Auth
@@ -123,8 +128,8 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
     Route::post('notifications/{notification}/read',    [NotificationCenterController::class, 'markRead']);
     Route::post('notifications/{notification}/ack',     [NotificationCenterController::class, 'ack']);
     Route::post('notifications/{notification}/archive', [NotificationCenterController::class, 'archive']);
-    // ── Phase AD — Web Push (auth user) ────────────────────────────────
-    Route::get   ('push/vapid-key',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'vapidKey']);
+    // ── Phase AD — Web Push (auth user). vapid-key lives outside this
+    // group because the Service Worker needs it before login. ─────────
     Route::post  ('push/subscribe',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'subscribe']);
     Route::post  ('push/unsubscribe',                [\App\Modules\NotificationCenter\Controllers\PushController::class, 'unsubscribe']);
     Route::get   ('push/devices',                    [\App\Modules\NotificationCenter\Controllers\PushController::class, 'devices']);

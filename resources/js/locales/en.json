@@ -3128,5 +3128,41 @@
     "invoice": {
       "label": "Serial #"
     }
+  },
+  "push": {
+    "title": "Stay informed anywhere",
+    "headline": "Enable browser notifications",
+    "body": "POSmeister will alert you about issues that need attention — even when this tab is closed. You can turn it off anytime in Settings.",
+    "bullets": {
+      "critical": "Critical stock and cash issues",
+      "due": "Customer and supplier due reminders",
+      "system": "Backup, sync and offline alerts"
+    },
+    "enable": "Enable Notifications",
+    "enabling": "Enabling…",
+    "later": "Maybe later",
+    "success": "Push notifications enabled.",
+    "error": "Could not enable notifications. Try again from Settings.",
+    "deniedHint": "Your browser blocked notifications. Allow them in site settings to enable.",
+    "serverHint": "Push is not configured on the server. Ask your admin to run push:vapid.",
+    "unsupportedHint": "This browser does not support push notifications.",
+    "receive": "Receive push notifications",
+    "enabledHint": "Subscribed on this device.",
+    "notEnabledHint": "Click to subscribe this device.",
+    "alwaysOn": "always on",
+    "section": {
+      "title": "Browser notifications",
+      "desc": "Per-priority toggles for push notifications. Critical alerts always ship — they bypass mute windows."
+    },
+    "priority": {
+      "critical": "Critical",
+      "criticalHint": "Out of stock, sync failures, negative balance.",
+      "high": "High",
+      "highHint": "Reorder, supplier due, customer due, low cash.",
+      "medium": "Medium",
+      "mediumHint": "Slow movers, sales targets, warranty expiring.",
+      "low": "Low",
+      "lowHint": "New customer, daily and weekly summaries."
+    }
   }
 }
