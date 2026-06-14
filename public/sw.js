@@ -26,7 +26,7 @@
  *
  * Bumping CACHE_VERSION forces every client to reload on next visit.
  */
-const CACHE_VERSION = 'posmeister-v4';
+const CACHE_VERSION = 'posmeister-v5';
 const SHELL_CACHE   = `${CACHE_VERSION}-shell`;
 const ASSETS_CACHE  = `${CACHE_VERSION}-assets`;
 const PAGES_CACHE   = `${CACHE_VERSION}-pages`;
@@ -240,35 +240,74 @@ async function navigationHandler(req) {
  * the SPA via `?notif=<id>&route=<name>` when the user clicks.
  * ──────────────────────────────────────────────────────────────────── */
 
+/*
+ * Grouping rule (Phase AD R3):
+ *   – tag = the notification's `code` (e.g. "inventory.low_stock")
+ *   – a second push with the same code REPLACES the first natively
+ *   – we count how many notifications share the tag and rewrite the
+ *     title/body to read "3 Inventory alerts" instead of three pops
+ *   – `renotify` only re-buzzes for critical severity; everything else
+ *     updates silently so the phone doesn't vibrate for each refresh
+ */
 self.addEventListener('push', (event) => {
     if (!event.data) return;
     let data = {};
     try { data = event.data.json(); } catch { data = { title: 'POSmeister', body: event.data.text() }; }
 
     const tag = `posmeister-${data.code || data.id || Date.now()}`;
-    const title = data.title || 'POSmeister';
-    const options = {
-        body:    data.body || '',
-        icon:    '/icons/icon-192.png',
-        badge:   '/icons/icon-72.png',
-        tag,
-        renotify: data.severity === 'critical',
-        requireInteraction: data.severity === 'critical',
-        timestamp: data.sent_at ? Date.parse(data.sent_at) : Date.now(),
-        data,
-        actions: Array.isArray(data.actions) ? data.actions.slice(0, 2) : [],
-    };
-    event.waitUntil(self.registration.showNotification(title, options));
+
+    event.waitUntil((async () => {
+        // Peek at existing notifications under this tag so we can group.
+        const existing = await self.registration.getNotifications({ tag });
+        const groupSize = existing.length + 1;
+
+        let title = data.title || 'POSmeister';
+        let body  = data.body  || '';
+        if (groupSize > 1) {
+            const categoryLabel = categoryHeadline(data.category, groupSize);
+            title = categoryLabel || title;
+            body  = data.title ? `Latest: ${data.title}` : body;
+        }
+
+        return self.registration.showNotification(title, {
+            body,
+            icon:    '/icons/icon-192.png',
+            badge:   '/icons/icon-72.png',
+            tag,
+            renotify: data.severity === 'critical',
+            requireInteraction: data.severity === 'critical',
+            silent: data.severity !== 'critical' && groupSize > 1,
+            timestamp: data.sent_at ? Date.parse(data.sent_at) : Date.now(),
+            data: { ...data, _group: groupSize },
+            actions: Array.isArray(data.actions) ? data.actions.slice(0, 2) : [],
+        });
+    })());
 });
+
+function categoryHeadline(category, count) {
+    const map = {
+        inventory:  'Inventory alerts',
+        sales:      'Sales alerts',
+        purchase:   'Purchase alerts',
+        customer:   'Customer alerts',
+        supplier:   'Supplier alerts',
+        finance:    'Finance alerts',
+        accounting: 'Accounting alerts',
+        hrm:        'HR alerts',
+        system:     'System alerts',
+    };
+    const label = map[category] || 'POSmeister alerts';
+    return `${count} ${label}`;
+}
 
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
     const data   = event.notification.data || {};
-    const action = event.action;
+    const action = event.action || '';
+    const dismissed = false;
 
-    // When the user taps an action button we use that route; otherwise we
-    // honour the primary click target. Falls back to the bell-inbox.
+    // Route resolution: action button > primary click target > inbox.
     let target = '/notifications';
     if (action) {
         target = `/?_route=${encodeURIComponent(action)}&_notif=${data.id || ''}`;
@@ -279,6 +318,26 @@ self.addEventListener('notificationclick', (event) => {
     }
 
     event.waitUntil((async () => {
+        // Beacon the click — fire-and-forget so it never blocks navigation.
+        try {
+            const sub = await self.registration.pushManager.getSubscription();
+            const payload = JSON.stringify({
+                notification_id: data.id || null,
+                code:            data.code || null,
+                action:          action || null,
+                endpoint:        sub?.endpoint || null,
+                dismissed,
+            });
+            // navigator.sendBeacon isn't available in SW; use fetch + keepalive.
+            fetch('/api/push/click', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    payload,
+                keepalive: true,
+                credentials: 'include',
+            }).catch(() => { /* tolerable */ });
+        } catch (e) { /* don't block on telemetry */ }
+
         // Focus an existing window if one is already showing POSmeister.
         const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
         for (const c of all) {
@@ -288,6 +347,29 @@ self.addEventListener('notificationclick', (event) => {
             } catch { /* navigate not allowed, fall through */ }
         }
         return self.clients.openWindow(target);
+    })());
+});
+
+self.addEventListener('notificationclose', (event) => {
+    // User swiped away without tapping — log as dismissed for CTR math.
+    const data = event.notification.data || {};
+    event.waitUntil((async () => {
+        try {
+            const sub = await self.registration.pushManager.getSubscription();
+            fetch('/api/push/click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    notification_id: data.id || null,
+                    code:            data.code || null,
+                    action:          null,
+                    endpoint:        sub?.endpoint || null,
+                    dismissed:       true,
+                }),
+                keepalive: true,
+                credentials: 'include',
+            }).catch(() => {});
+        } catch (e) { /* no-op */ }
     })());
 });
 

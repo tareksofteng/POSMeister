@@ -97,6 +97,11 @@ Route::get('system/ping', [SystemHealthController::class, 'ping'])->middleware('
 // session exists), so it sits outside the auth group.
 Route::get('push/vapid-key', [\App\Modules\NotificationCenter\Controllers\PushController::class, 'vapidKey']);
 
+// Phase AD R3 — click beacon. Public because the SW may not have a
+// fresh CSRF token in scope; identity is reconciled server-side from
+// the supplied subscription endpoint (every row is user-owned).
+Route::post('push/click', [\App\Modules\NotificationCenter\Controllers\PushController::class, 'click']);
+
 Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function () {
 
     // Auth

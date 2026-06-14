@@ -3,7 +3,9 @@
 namespace App\Modules\NotificationCenter\Controllers;
 
 use App\Modules\Branch\Services\BranchContextService;
+use App\Modules\NotificationCenter\Models\NotificationClick;
 use App\Modules\NotificationCenter\Models\PushSubscription;
+use App\Modules\NotificationCenter\Models\SmartNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -110,6 +112,35 @@ class PushController extends Controller
         $today = now()->startOfDay();
         $week  = now()->subWeek();
 
+        // ── Click metrics (Phase AD Round 3) ─────────────────────────────
+        // Notifications sent today = smart_notifications created today.
+        // Click rate = unique-notification clicks / sent. We count
+        // distinct notification_ids so 3 taps on the same alert don't
+        // inflate the CTR.
+        $sentToday   = SmartNotification::query()->where('created_at', '>=', $today)->count();
+        $sentWeek    = SmartNotification::query()->where('created_at', '>=', $week)->count();
+
+        $clicksToday = NotificationClick::query()
+            ->where('clicked_at', '>=', $today)
+            ->distinct('notification_id')
+            ->count('notification_id');
+        $clicksWeek  = NotificationClick::query()
+            ->where('clicked_at', '>=', $week)
+            ->distinct('notification_id')
+            ->count('notification_id');
+
+        $ctrToday = $sentToday > 0 ? round(($clicksToday / $sentToday) * 100, 1) : null;
+        $ctrWeek  = $sentWeek  > 0 ? round(($clicksWeek  / $sentWeek)  * 100, 1) : null;
+
+        $topClicked = NotificationClick::query()
+            ->where('clicked_at', '>=', $week)
+            ->whereNotNull('code')
+            ->selectRaw('code, COUNT(*) as clicks')
+            ->groupBy('code')
+            ->orderByDesc('clicks')
+            ->limit(5)
+            ->get();
+
         return response()->json(['data' => [
             'devices_total'      => PushSubscription::query()->where('is_active', true)->count(),
             'users_with_push'    => PushSubscription::query()->where('is_active', true)->distinct('user_id')->count('user_id'),
@@ -126,7 +157,72 @@ class PushController extends Controller
                 ->selectRaw('COALESCE(browser, "unknown") as browser, COUNT(*) as count')
                 ->groupBy('browser')
                 ->pluck('count', 'browser'),
+
+            // Click-through stats
+            'sent_today'         => $sentToday,
+            'sent_week'          => $sentWeek,
+            'clicks_today'       => $clicksToday,
+            'clicks_week'        => $clicksWeek,
+            'ctr_today_pct'      => $ctrToday,
+            'ctr_week_pct'       => $ctrWeek,
+            'top_clicked'        => $topClicked,
         ]]);
+    }
+
+    /**
+     * POST /api/push/click
+     *
+     * Beacon endpoint hit by the Service Worker's notificationclick
+     * handler. Records the interaction without blocking the SW thread —
+     * the SW uses fetch(..., { keepalive: true }) so the request
+     * survives the tab transition.
+     *
+     * Public (no auth middleware) because the SW may run without a
+     * fresh CSRF token in scope. Identity is reconciled via the
+     * supplied endpoint (every push_subscriptions row is owned).
+     */
+    public function click(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'notification_id' => ['nullable', 'integer'],
+            'code'            => ['nullable', 'string', 'max:64'],
+            'action'          => ['nullable', 'string', 'max:80'],
+            'endpoint'        => ['nullable', 'string', 'max:500'],
+            'dismissed'       => ['nullable', 'boolean'],
+        ]);
+
+        // Reconcile identity from the endpoint when present; fall back
+        // to the currently authenticated user if any.
+        $userId = $request->user()?->id;
+        $subscriptionId = null;
+        if (!empty($data['endpoint'])) {
+            $sub = PushSubscription::query()->where('endpoint', $data['endpoint'])->first();
+            if ($sub) {
+                $userId         = $userId ?: $sub->user_id;
+                $subscriptionId = $sub->id;
+                $sub->markDelivered();   // proves the device is alive
+            }
+        }
+
+        NotificationClick::query()->create([
+            'notification_id' => $data['notification_id'] ?? null,
+            'user_id'         => $userId,
+            'subscription_id' => $subscriptionId,
+            'code'            => $data['code'] ?? null,
+            'action'          => $data['action'] ?? null,
+            'dismissed'       => (bool) ($data['dismissed'] ?? false),
+            'clicked_at'      => now(),
+        ]);
+
+        // Auto-mark the underlying notification as read on click.
+        if (!empty($data['notification_id'])) {
+            SmartNotification::query()
+                ->whereKey($data['notification_id'])
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+        }
+
+        return response()->json(['data' => ['ok' => true]]);
     }
 
     private function shape(PushSubscription $sub): array
