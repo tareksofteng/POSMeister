@@ -59,6 +59,14 @@
                 <Button
                     variant="secondary"
                     size="sm"
+                    :to="{ name: 'notification-devices' }"
+                    :leading-icon="DevicePhoneMobileIcon"
+                >
+                    {{ t('push.devices.title', 'Devices') }}
+                </Button>
+                <Button
+                    variant="secondary"
+                    size="sm"
                     :to="{ name: 'notification-preferences' }"
                     :leading-icon="CogIcon"
                 >
@@ -190,7 +198,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { ArrowPathIcon, CogIcon, ChartBarIcon, AdjustmentsHorizontalIcon, DocumentTextIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
+import { ArrowPathIcon, CogIcon, ChartBarIcon, AdjustmentsHorizontalIcon, DocumentTextIcon, DevicePhoneMobileIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
 import { useNotificationsStore } from '@/stores/notifications';
 import Skeleton   from '@/components/ui/Skeleton.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';

@@ -187,7 +187,8 @@
     "next": "Next",
     "clearFilters": "Clear filters",
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "rename": "Rename"
   },
   "paymentMethod": {
     "cash": "Cash",
@@ -3163,6 +3164,23 @@
       "mediumHint": "Slow movers, sales targets, warranty expiring.",
       "low": "Low",
       "lowHint": "New customer, daily and weekly summaries."
+    },
+    "devices": {
+      "title": "Connected devices",
+      "subtitle": "Every browser or PWA you have enabled push notifications on. Rename for clarity, revoke when you no longer trust a device.",
+      "emptyTitle": "No devices subscribed",
+      "emptyDesc": "Enable browser notifications from the dashboard prompt or Settings to register this device.",
+      "thisDevice": "This device",
+      "lastSeen": "last seen",
+      "notSeen": "not seen yet",
+      "failures": "failures",
+      "labelPlaceholder": "e.g. Office PC",
+      "revoke": "Revoke",
+      "revokeTitle": "Revoke this device?",
+      "revokeText": "This device will stop receiving push notifications.",
+      "revokeCurrentText": "You are signed in from this device. Revoking will stop push notifications here. You can re-enable from the dashboard anytime.",
+      "revoked": "Device revoked.",
+      "activeDevices": "active device(s)"
     }
   }
 }

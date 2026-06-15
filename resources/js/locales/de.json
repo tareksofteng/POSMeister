@@ -187,7 +187,8 @@
     "next": "Weiter",
     "online": "Online",
     "offline": "Offline",
-    "clearFilters": "Filter zurücksetzen"
+    "clearFilters": "Filter zurücksetzen",
+    "rename": "Umbenennen"
   },
   "paymentMethod": {
     "cash": "Bar",
@@ -3234,6 +3235,23 @@
       "mediumHint": "Langsame Verkäufer, Verkaufsziele, Garantieablauf.",
       "low": "Niedrig",
       "lowHint": "Neuer Kunde, tägliche und wöchentliche Zusammenfassungen."
+    },
+    "devices": {
+      "title": "Verbundene Geräte",
+      "subtitle": "Jeder Browser oder PWA, in dem Sie Push-Benachrichtigungen aktiviert haben. Zur Übersicht umbenennen, bei Misstrauen widerrufen.",
+      "emptyTitle": "Keine Geräte abonniert",
+      "emptyDesc": "Aktivieren Sie Browser-Benachrichtigungen über die Dashboard-Aufforderung oder die Einstellungen, um dieses Gerät zu registrieren.",
+      "thisDevice": "Dieses Gerät",
+      "lastSeen": "zuletzt gesehen",
+      "notSeen": "noch nicht gesehen",
+      "failures": "Fehler",
+      "labelPlaceholder": "z. B. Büro-PC",
+      "revoke": "Widerrufen",
+      "revokeTitle": "Dieses Gerät widerrufen?",
+      "revokeText": "Dieses Gerät erhält keine Push-Benachrichtigungen mehr.",
+      "revokeCurrentText": "Sie sind von diesem Gerät angemeldet. Beim Widerrufen werden Push-Benachrichtigungen hier gestoppt. Sie können sie jederzeit über das Dashboard reaktivieren.",
+      "revoked": "Gerät widerrufen.",
+      "activeDevices": "aktive Gerät(e)"
     }
   }
 }

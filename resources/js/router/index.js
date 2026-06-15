@@ -91,6 +91,12 @@ const routes = [
                 component: () => import('@/views/notifications/NotificationDigestView.vue'),
                 meta: { titleKey: 'notifications.digest.title' },
             },
+            {
+                path: 'notifications/devices',
+                name: 'notification-devices',
+                component: () => import('@/views/notifications/DeviceManagerView.vue'),
+                meta: { titleKey: 'push.devices.title' },
+            },
 
             // ── Phase Z: SystemOps (admin-only) ───────────────────────────
             {
