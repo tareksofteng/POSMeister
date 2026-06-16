@@ -73,6 +73,9 @@
              loads. Pure read; auto-refreshes every 2 minutes. -->
         <BusinessAlertsWidget />
 
+        <!-- Push platform health (admin-only — self-hides for cashiers). -->
+        <PushAnalyticsWidget />
+
         <!-- Phase AC — multi-branch leaderboard. Self-hides when the
              user is in a single-branch workspace (backend returns []). -->
         <BranchLeaderboard v-if="d?.branch_leaderboard?.length >= 2" :branches="d.branch_leaderboard" />
@@ -243,10 +246,9 @@ import { dashboardService } from '@/services/dashboardService';
 import {
     BanknotesIcon, ChartBarIcon, ArrowTrendingUpIcon, BuildingLibraryIcon,
     DocumentTextIcon, UsersIcon, ArchiveBoxIcon, ShoppingBagIcon, GiftIcon,
-    UserGroupIcon, ShoppingCartIcon, ChevronRightIcon, ArrowPathIcon,
+    UserGroupIcon, ShoppingCartIcon, ArrowPathIcon,
     ExclamationTriangleIcon, InformationCircleIcon,
-    TagIcon, TruckIcon, BookOpenIcon, ClipboardDocumentListIcon,
-    CubeIcon, ReceiptPercentIcon, CurrencyDollarIcon, FireIcon,
+    TruckIcon, CubeIcon, CurrencyDollarIcon, FireIcon,
 } from '@heroicons/vue/24/outline';
 
 // Executive dashboard upgrade
@@ -270,6 +272,8 @@ import QuickActionsPanel    from '@/components/dashboard/QuickActionsPanel.vue';
 import SystemHealthFooter   from '@/components/dashboard/SystemHealthFooter.vue';
 // Phase AD — Web Push opt-in surface (self-hides once granted/denied)
 import PushPermissionCard   from '@/components/dashboard/PushPermissionCard.vue';
+// Phase AD R2 — push platform analytics widget (admin-only, self-hides for non-admins)
+import PushAnalyticsWidget  from '@/components/dashboard/PushAnalyticsWidget.vue';
 
 // Phase AA design-system primitives
 import Button     from '@/components/ui/Button.vue';
@@ -303,19 +307,6 @@ const dateString = computed(() =>
         { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
     ).format(now)
 );
-function formatDay(d) {
-    return new Intl.DateTimeFormat(intlLocale.value || 'en-US', { day: '2-digit', month: '2-digit' }).format(new Date(d));
-}
-function relativeTime(input) {
-    if (!input) return '';
-    const time = new Date(input);
-    const diff = Math.floor((Date.now() - time.getTime()) / 1000);
-    if (diff < 60)    return diff + 's';
-    if (diff < 3600)  return Math.floor(diff / 60) + 'm';
-    if (diff < 86400) return Math.floor(diff / 3600) + 'h';
-    return Math.floor(diff / 86400) + 'd';
-}
-
 const ROLE_CLASSES = {
     admin:   'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm',
     manager: 'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700',
@@ -340,23 +331,6 @@ function cardAlertToneClass(severity) {
     }[severity] ?? 'card-alert-info';
 }
 
-const trendAvg = computed(() => {
-    const arr = d.value?.sales_trend ?? [];
-    if (!arr.length) return 0;
-    return Math.round(arr.reduce((s, x) => s + (x.revenue || 0), 0) / arr.length);
-});
-function trendBar(value) {
-    const arr = d.value?.sales_trend ?? [];
-    if (!arr.length) return 0;
-    const max = Math.max(...arr.map(x => x.revenue || 0), 1);
-    return Math.max(4, (value / max) * 100);
-}
-function kindDot(kind) {
-    return {
-        sale:    'bg-emerald-500',
-        journal: 'bg-indigo-500',
-    }[kind] ?? 'bg-slate-400';
-}
 
 // ── Executive marquee KPIs ────────────────────────────────────────────────
 // Compact, glance-friendly metrics that scroll across the top of the dash.
@@ -455,34 +429,6 @@ const InsightTile = (props) => {
     ]);
 };
 InsightTile.props = ['label', 'value', 'icon', 'tone'];
-
-const quickLinks = computed(() => [
-    { label: t('dashboard.quickAccess.openPOS'),       desc: t('dashboard.quickAccess.openPOSDesc'),       to: { name: 'pos' },               icon: ShoppingCartIcon,         iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
-    { label: t('dashboard.quickAccess.newSale'),       desc: t('dashboard.quickAccess.newSaleDesc'),       to: { name: 'sales-new' },         icon: TagIcon,                  iconBg: 'bg-indigo-50',  iconColor: 'text-indigo-600' },
-    { label: t('dashboard.quickAccess.newPurchase'),   desc: t('dashboard.quickAccess.newPurchaseDesc'),   to: { name: 'purchase-create' },   icon: TruckIcon,                iconBg: 'bg-violet-50',  iconColor: 'text-violet-600' },
-    { label: t('dashboard.quickAccess.accounting'),    desc: t('dashboard.quickAccess.accountingDesc'),    to: { name: 'accounting-dashboard' }, icon: BookOpenIcon,         iconBg: 'bg-amber-50',   iconColor: 'text-amber-600' },
-    { label: t('dashboard.quickAccess.reorder'),       desc: t('dashboard.quickAccess.reorderDesc'),       to: { name: 'inventory-reorder' }, icon: ClipboardDocumentListIcon, iconBg: 'bg-rose-50',   iconColor: 'text-rose-600' },
-]);
-
-const systemInfo = computed(() => [
-    { label: t('dashboard.systemInfo.version'),     value: 'v2.0.0 — Phase X' },
-    { label: t('dashboard.systemInfo.framework'),   value: 'Laravel 13 + Vue 3' },
-    { label: t('dashboard.systemInfo.auth'),        value: 'Sanctum (Token)' },
-    { label: t('dashboard.systemInfo.environment'), value: import.meta.env.MODE === 'production' ? 'Production' : 'Development' },
-]);
-
-const moduleStatusList = computed(() => [
-    { key: 'pos',         label: t('dashboard.moduleStatus.modules.pos'),         phase: 'A' },
-    { key: 'sales',       label: t('dashboard.moduleStatus.modules.sales'),       phase: 'A' },
-    { key: 'inventory',   label: t('dashboard.moduleStatus.modules.inventory'),   phase: 'D' },
-    { key: 'hrm',         label: t('dashboard.moduleStatus.modules.hrm'),         phase: 'G' },
-    { key: 'finance',     label: t('dashboard.moduleStatus.modules.finance'),     phase: 'B' },
-    { key: 'accounting',  label: t('dashboard.moduleStatus.modules.accounting'),  phase: 'C' },
-    { key: 'crm',         label: t('dashboard.moduleStatus.modules.crm'),         phase: 'E' },
-    { key: 'oms',         label: t('dashboard.moduleStatus.modules.oms'),         phase: 'F' },
-    { key: 'expenses',    label: t('dashboard.moduleStatus.modules.expenses'),    phase: 'A' },
-    { key: 'platform',    label: t('dashboard.moduleStatus.modules.platform'),    phase: 'X' },
-]);
 
 async function load() {
     loading.value = true;

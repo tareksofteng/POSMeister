@@ -410,6 +410,21 @@
       "clear": "Clear",
       "workspace": "Workspace",
       "locale": "Locale"
+    },
+    "push": {
+      "title": "Push platform",
+      "subtitle": "Reach, engagement and delivery health for browser alerts.",
+      "manageDevices": "Manage devices",
+      "connectedDevices": "Connected devices",
+      "usersOptedIn": "Users opted in",
+      "sentToday": "Sent today",
+      "clickRate": "Click rate",
+      "inactive": "inactive",
+      "seenToday": "seen today",
+      "last7d": "last 7d",
+      "topClicked": "Top clicked alerts · last 7 days",
+      "clicks": "clicks",
+      "unknownPlatform": "Unknown"
     }
   },
   "branches": {

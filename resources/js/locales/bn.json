@@ -480,6 +480,21 @@
     "marquee": {
       "prev": "পূর্ববর্তী",
       "next": "পরবর্তী"
+    },
+    "push": {
+      "title": "পুশ প্ল্যাটফর্ম",
+      "subtitle": "ব্রাউজার সতর্কতার রিচ, এনগেজমেন্ট এবং ডেলিভারি স্বাস্থ্য।",
+      "manageDevices": "ডিভাইস পরিচালনা",
+      "connectedDevices": "সংযুক্ত ডিভাইস",
+      "usersOptedIn": "অপ্ট-ইন ব্যবহারকারী",
+      "sentToday": "আজ পাঠানো",
+      "clickRate": "ক্লিক হার",
+      "inactive": "নিষ্ক্রিয়",
+      "seenToday": "আজ দেখা",
+      "last7d": "গত ৭ দিন",
+      "topClicked": "সর্বাধিক ক্লিকড সতর্কতা · গত ৭ দিন",
+      "clicks": "ক্লিক",
+      "unknownPlatform": "অজানা"
     }
   },
   "branches": {

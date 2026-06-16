@@ -481,6 +481,21 @@
     "marquee": {
       "prev": "Zurück",
       "next": "Weiter"
+    },
+    "push": {
+      "title": "Push-Plattform",
+      "subtitle": "Reichweite, Engagement und Zustellqualität für Browser-Warnungen.",
+      "manageDevices": "Geräte verwalten",
+      "connectedDevices": "Verbundene Geräte",
+      "usersOptedIn": "Aktivierte Nutzer",
+      "sentToday": "Heute gesendet",
+      "clickRate": "Klickrate",
+      "inactive": "inaktiv",
+      "seenToday": "heute gesehen",
+      "last7d": "letzte 7 T",
+      "topClicked": "Meistgeklickte Warnungen · letzte 7 Tage",
+      "clicks": "Klicks",
+      "unknownPlatform": "Unbekannt"
     }
   },
   "branches": {

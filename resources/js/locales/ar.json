@@ -480,6 +480,21 @@
     "marquee": {
       "prev": "السابق",
       "next": "التالي"
+    },
+    "push": {
+      "title": "منصة الدفع",
+      "subtitle": "الوصول والتفاعل وصحة التسليم لتنبيهات المتصفح.",
+      "manageDevices": "إدارة الأجهزة",
+      "connectedDevices": "الأجهزة المتصلة",
+      "usersOptedIn": "المستخدمون المشتركون",
+      "sentToday": "مُرسَل اليوم",
+      "clickRate": "معدل النقر",
+      "inactive": "غير نشط",
+      "seenToday": "شوهد اليوم",
+      "last7d": "آخر 7 أيام",
+      "topClicked": "أكثر التنبيهات نقرًا · آخر 7 أيام",
+      "clicks": "نقرة",
+      "unknownPlatform": "غير معروف"
     }
   },
   "branches": {
