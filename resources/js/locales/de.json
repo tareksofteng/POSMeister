@@ -110,7 +110,13 @@
       "financeHr": "Finanzen & Personal",
       "reports": "Berichte",
       "system": "System"
-    }
+    },
+    "insightsTimeline": "Business Insights",
+    "businessInsights": "Business Insights",
+    "insightsCustomers": "Kundensegmente",
+    "insightsInventory": "Inventory Intelligence",
+    "insightsSuppliers": "Lieferanten-Intelligence",
+    "insightsOpportunities": "Produktchancen"
   },
   "common": {
     "save": "Speichern",
@@ -3267,6 +3273,211 @@
       "revokeCurrentText": "Sie sind von diesem Gerät angemeldet. Beim Widerrufen werden Push-Benachrichtigungen hier gestoppt. Sie können sie jederzeit über das Dashboard reaktivieren.",
       "revoked": "Gerät widerrufen.",
       "activeDevices": "aktive Gerät(e)"
+    }
+  },
+  "insights": {
+    "module": "Business Insights",
+    "timeline": {
+      "title": "Insight-Zeitleiste",
+      "subtitle": "Mustererkennungen, die die Analyse-Engine in Ihren Abläufen festgestellt hat. Wichtiges anheften, den Rest abarbeiten.",
+      "refresh": "Jetzt aktualisieren",
+      "refreshed": "Insights aktualisiert.",
+      "active": "Aktiv",
+      "pinned": "Angeheftet",
+      "resolved": "Erledigt",
+      "ignored": "Ignoriert",
+      "resolvedWeek": "Erledigt · 7 T",
+      "confidence": "Konfidenz",
+      "pin": "Anheften",
+      "markResolved": "Als erledigt",
+      "ignore": "Ignorieren",
+      "restore": "Wiederherstellen",
+      "emptyTitle": "Ruhige Phase",
+      "emptyDesc": "In diesem Fenster wurden keine Insights erkannt. Die Engine taktet alle zehn Minuten neu — kommen Sie später wieder.",
+      "buckets": {
+        "today": "Heute",
+        "yesterday": "Gestern",
+        "week": "Letzte 7 Tage",
+        "month": "Letzte 30 Tage"
+      }
+    },
+    "forecast": {
+      "title": "Prognose · nächste 7 Tage",
+      "subtitle": "Gleitender Durchschnitt aus den letzten 90 Tagen. Deterministisch, erklärbar, alle 30 Minuten aktualisiert.",
+      "viewAll": "Insights ansehen",
+      "revenue": "Umsatz",
+      "profit": "Gewinn",
+      "cashFlow": "Netto-Cash",
+      "confidence": "Konfidenz"
+    },
+    "segments": {
+      "title": "Kundensegmente",
+      "subtitle": "Kunden geordnet nach Recency, Frequency und Monetary value über die letzten 365 Tage. Nutzen Sie die Stufen für Anrufe, Kampagnen und Bindung.",
+      "totalCustomers": "Kunden",
+      "totalRevenue": "Lifetime-Umsatz · 365 T",
+      "avgBasket": "Ø Warenkorb",
+      "customers": "Kunden",
+      "drilldown": "Kunden in Stufe",
+      "emptyTier": "Noch keine Kunden in dieser Stufe",
+      "tier": {
+        "platinum": "Platin",
+        "gold": "Gold",
+        "silver": "Silber",
+        "bronze": "Bronze",
+        "dormant": "Inaktiv"
+      },
+      "tierHint": {
+        "platinum": "Aktuell, häufig, Top-Ausgaben. Diese Beziehung schützen — sie finanziert das Geschäft.",
+        "gold": "Über alle drei Achsen gesund. Einen Schritt vor Platin.",
+        "silver": "Engagiert, aber nicht konstant. Gezielte Aktionen heben sie an.",
+        "bronze": "Einmal- oder selten-Käufer. Chance für Reaktivierung.",
+        "dormant": "Kein Kauf seit 180+ Tagen. Kandidaten für Win-back."
+      },
+      "cols": {
+        "lastSale": "Letzter Kauf",
+        "frequency": "Besuche",
+        "monetary": "Ausgaben · 365 T",
+        "rfm": "RFM"
+      }
+    },
+    "inventory": {
+      "title": "Inventory Intelligence",
+      "subtitle": "Wie schnell bewegt sich der Bestand, was altert im Regal, was läuft bald aus. Alles aus den vorhandenen Bestands- und Verkaufsdaten — keine Annahmen, keine KI.",
+      "turnover": {
+        "title": "Lagerumschlag · letzte 90 Tage",
+        "subtitle": "COGS geteilt durch aktuellen Lagerwert. Höher = Ware bewegt sich; niedriger = gebundenes Kapital.",
+        "ratio": "Verhältnis",
+        "cogs": "COGS · 90 T",
+        "invValue": "Lagerwert jetzt",
+        "daysOnHand": "Reichweite (Tage)",
+        "verdict": {
+          "fast": "Schnell",
+          "healthy": "Gesund",
+          "slow": "Langsam",
+          "stagnant": "Stagnierend",
+          "noData": "Keine Daten"
+        }
+      },
+      "aging": {
+        "title": "Bestandsalter",
+        "subtitle": "Bestandswert gruppiert nach Tagen seit letztem Verkauf des Produkts. Ältere Buckets = nicht-rotierendes Kapital.",
+        "total": "Gesamt",
+        "days": "Tage",
+        "skus": "SKUs"
+      },
+      "stockout": {
+        "title": "Erwartete Ausverkäufe",
+        "subtitle": "Tage = Bestand / mittlere Tagesverkaufsrate (30 T).",
+        "empty": "Keine drohenden Ausverkäufe",
+        "onHand": "auf Lager"
+      },
+      "velocity": {
+        "title": "Velocity-Spitzenreiter · 30 Tage",
+        "subtitle": "Einheiten pro Tag. Mit Ausverkaufsliste querlesen — hohe Velocity + wenige Tage = heute handeln.",
+        "empty": "Keine Verkäufe in den letzten 30 Tagen"
+      }
+    },
+    "suppliers": {
+      "title": "Lieferanten-Intelligence",
+      "subtitle": "Von wem Sie abhängen, wie zuverlässig sie liefern, wie pünktlich Sie zahlen. Reines SQL — keine undurchsichtigen Scores.",
+      "totals": {
+        "active": "Aktiv · 365 T",
+        "outOf": "von",
+        "registered": "registriert",
+        "spend": "Ausgaben · 365 T"
+      },
+      "concentration": {
+        "title": "Konzentrationsrisiko",
+        "fromTop": "von",
+        "top3": "Top 3",
+        "verdict": {
+          "critical": "Kritisch",
+          "high": "Hoch",
+          "medium": "Mittel",
+          "low": "Niedrig",
+          "noData": "Keine Daten"
+        }
+      },
+      "top": {
+        "title": "Ausgabenführer · 365 Tage",
+        "subtitle": "Wohin Ihr Beschaffungsbudget tatsächlich geflossen ist.",
+        "empty": "Noch keine Lieferantenaktivität",
+        "purchases": "Bestellungen",
+        "lastBuy": "zuletzt"
+      },
+      "lead": {
+        "title": "Schnellste Lieferzeiten",
+        "subtitle": "Durchschnittliche Tage von Bestellung bis Wareneingang, letzte 365 Tage.",
+        "empty": "Noch nicht genug erfasste Wareneingänge",
+        "receipts": "Eingänge",
+        "verdict": {
+          "fast": "Schnell",
+          "onTime": "Pünktlich",
+          "slow": "Langsam",
+          "late": "Verspätet"
+        }
+      },
+      "payment": {
+        "title": "Zahlungsrückstände",
+        "subtitle": "Lieferanten mit den meisten offenen Rechnungen — diese Woche handeln.",
+        "empty": "Alle Lieferanten pünktlich bezahlt",
+        "paid": "voll bezahlt",
+        "outstanding": "offen",
+        "verdict": {
+          "excellent": "Ausgezeichnet",
+          "good": "Gut",
+          "mixed": "Gemischt",
+          "poor": "Schwach"
+        }
+      },
+      "inactive": {
+        "title": "Stille Lieferanten",
+        "subtitle": "Stammlieferanten (5+ historische Bestellungen) ohne Auftrag in den letzten 90 Tagen.",
+        "historicalPurchases": "historische Bestellungen"
+      }
+    },
+    "opportunities": {
+      "title": "Produktchancen",
+      "subtitle": "Was zusammen verkauft wird, welche Kategorien wachsen, und woher die Marge wirklich kommt. Alles aus sale_items — kein externer Tracker, keine KI.",
+      "margin": {
+        "title": "Margen-Mix · letzte 30 Tage",
+        "subtitle": "Umsatzanteil je Bruttomargen-Band — Hoch-Band schützen, Verlust-Band beheben.",
+        "products": "Produkte",
+        "bands": {
+          "high": "Hohe Marge (≥35%)",
+          "medium": "Mittlere Marge (15–35%)",
+          "low": "Niedrige Marge (0–15%)",
+          "loss": "Verlust (<0%)"
+        }
+      },
+      "fbt": {
+        "title": "Häufig zusammen gekauft",
+        "subtitle": "Produktpaare im selben Warenkorb. Lift > 1 = das Paar erscheint häufiger als Zufall erwarten ließe.",
+        "empty": "Noch nicht genug Mehr-Artikel-Warenkörbe",
+        "emptyDesc": "Paare erscheinen, sobald mindestens drei Warenkörbe in den letzten 180 Tagen dieselben zwei Produkte enthalten.",
+        "baskets": "Warenkörbe",
+        "lift": "Lift",
+        "verdict": {
+          "strong": "Stark",
+          "meaningful": "Aussagekräftig",
+          "mild": "Schwach",
+          "weak": "Sehr schwach"
+        }
+      },
+      "growth": {
+        "title": "Kategoriewachstum · 30 T vs. vorherige 30 T",
+        "subtitle": "Wo SKUs ergänzen, wo das Regal lichten.",
+        "empty": "Noch nicht genug kategorisierte Verkäufe",
+        "now": "jetzt",
+        "prior": "vorher",
+        "verdict": {
+          "growing": "Wachsend",
+          "steady": "Stabil",
+          "softening": "Schwächer",
+          "declining": "Rückläufig",
+          "new": "Neu"
+        }
+      }
     }
   }
 }

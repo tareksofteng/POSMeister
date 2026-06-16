@@ -110,7 +110,13 @@
       "financeHr": "Finance & HR",
       "reports": "Reports",
       "system": "System"
-    }
+    },
+    "insightsTimeline": "Business insights",
+    "businessInsights": "Business insights",
+    "insightsCustomers": "Customer segments",
+    "insightsInventory": "Inventory intelligence",
+    "insightsSuppliers": "Supplier intelligence",
+    "insightsOpportunities": "Product opportunities"
   },
   "common": {
     "save": "Save",
@@ -3196,6 +3202,211 @@
       "revokeCurrentText": "You are signed in from this device. Revoking will stop push notifications here. You can re-enable from the dashboard anytime.",
       "revoked": "Device revoked.",
       "activeDevices": "active device(s)"
+    }
+  },
+  "insights": {
+    "module": "Business Insights",
+    "timeline": {
+      "title": "Insight timeline",
+      "subtitle": "Pattern signals the analytics engine noticed about your operations. Pin the important ones, resolve the rest as you go.",
+      "refresh": "Refresh now",
+      "refreshed": "Insights refreshed.",
+      "active": "Active",
+      "pinned": "Pinned",
+      "resolved": "Resolved",
+      "ignored": "Ignored",
+      "resolvedWeek": "Resolved · 7d",
+      "confidence": "Confidence",
+      "pin": "Pin",
+      "markResolved": "Mark resolved",
+      "ignore": "Ignore",
+      "restore": "Restore",
+      "emptyTitle": "A quiet stretch",
+      "emptyDesc": "No insights surfaced in this window. The engine resamples every ten minutes — check back later.",
+      "buckets": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "week": "Last 7 days",
+        "month": "Last 30 days"
+      }
+    },
+    "forecast": {
+      "title": "Forecast · next 7 days",
+      "subtitle": "Moving-average projection from the past 90 days. Deterministic, explainable, refreshed every 30 minutes.",
+      "viewAll": "View insights",
+      "revenue": "Revenue",
+      "profit": "Profit",
+      "cashFlow": "Net cash",
+      "confidence": "confidence"
+    },
+    "segments": {
+      "title": "Customer segments",
+      "subtitle": "Customers ranked by Recency, Frequency and Monetary value over the past 365 days. Use the tiers to focus calls, campaigns and retention.",
+      "totalCustomers": "Customers",
+      "totalRevenue": "Lifetime revenue · 365d",
+      "avgBasket": "Avg basket",
+      "customers": "customers",
+      "drilldown": "Customers in tier",
+      "emptyTier": "No customers in this tier yet",
+      "tier": {
+        "platinum": "Platinum",
+        "gold": "Gold",
+        "silver": "Silver",
+        "bronze": "Bronze",
+        "dormant": "Dormant"
+      },
+      "tierHint": {
+        "platinum": "Recent, frequent, top spenders. Protect this relationship — they fund the business.",
+        "gold": "Broadly healthy across all three axes. One nudge away from Platinum.",
+        "silver": "Engaged but not consistent. Targeted promotions move them up.",
+        "bronze": "Single-purchase or low-frequency. Re-engagement opportunity.",
+        "dormant": "No purchase in 180+ days. Win-back campaign candidate."
+      },
+      "cols": {
+        "lastSale": "Last sale",
+        "frequency": "Visits",
+        "monetary": "Spend · 365d",
+        "rfm": "RFM"
+      }
+    },
+    "inventory": {
+      "title": "Inventory intelligence",
+      "subtitle": "How fast is stock moving, what is aging on the shelves, and which products are about to run out. All sourced from your existing inventory and sales data — no assumptions, no AI.",
+      "turnover": {
+        "title": "Inventory turnover · last 90 days",
+        "subtitle": "COGS over the period divided by current inventory value. Higher means stock is moving; lower means capital trapped on shelves.",
+        "ratio": "Ratio",
+        "cogs": "COGS · 90d",
+        "invValue": "Stock value now",
+        "daysOnHand": "Days on hand",
+        "verdict": {
+          "fast": "Fast",
+          "healthy": "Healthy",
+          "slow": "Slow",
+          "stagnant": "Stagnant",
+          "noData": "No data"
+        }
+      },
+      "aging": {
+        "title": "Stock aging",
+        "subtitle": "Inventory value grouped by days since the product last sold. Older buckets = capital not turning.",
+        "total": "Total",
+        "days": "days",
+        "skus": "SKUs"
+      },
+      "stockout": {
+        "title": "Expected stockouts",
+        "subtitle": "Days = on-hand / mean daily sale rate over 30 days.",
+        "empty": "No imminent stockouts",
+        "onHand": "on hand"
+      },
+      "velocity": {
+        "title": "Velocity leaders · 30 days",
+        "subtitle": "Units per day. Cross-reference with the stockout list — high velocity + few days left = act today.",
+        "empty": "No sales in the past 30 days"
+      }
+    },
+    "suppliers": {
+      "title": "Supplier intelligence",
+      "subtitle": "Who you depend on, how reliably they ship, how well you pay them. Pure SQL — no opaque scores.",
+      "totals": {
+        "active": "Active · 365d",
+        "outOf": "of",
+        "registered": "registered",
+        "spend": "Spend · 365d"
+      },
+      "concentration": {
+        "title": "Concentration risk",
+        "fromTop": "from",
+        "top3": "top 3",
+        "verdict": {
+          "critical": "Critical",
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low",
+          "noData": "No data"
+        }
+      },
+      "top": {
+        "title": "Spend leaders · 365 days",
+        "subtitle": "Where your procurement budget actually went.",
+        "empty": "No supplier activity yet",
+        "purchases": "purchases",
+        "lastBuy": "last"
+      },
+      "lead": {
+        "title": "Fastest lead times",
+        "subtitle": "Average days from order to received status, last 365 days.",
+        "empty": "Not enough received orders yet",
+        "receipts": "receipts",
+        "verdict": {
+          "fast": "Fast",
+          "onTime": "On time",
+          "slow": "Slow",
+          "late": "Late"
+        }
+      },
+      "payment": {
+        "title": "Payment laggards",
+        "subtitle": "Suppliers where the most invoices remain unpaid — act here this week.",
+        "empty": "All suppliers paid on track",
+        "paid": "paid in full",
+        "outstanding": "outstanding",
+        "verdict": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "mixed": "Mixed",
+          "poor": "Poor"
+        }
+      },
+      "inactive": {
+        "title": "Quiet suppliers",
+        "subtitle": "Regulars (5+ historical purchases) with no order in the last 90 days.",
+        "historicalPurchases": "historical purchases"
+      }
+    },
+    "opportunities": {
+      "title": "Product opportunities",
+      "subtitle": "What sells together, which categories are growing, and where your margin actually comes from. All sourced from sale_items — no third-party tracker, no AI.",
+      "margin": {
+        "title": "Margin mix · last 30 days",
+        "subtitle": "Share of revenue by gross margin band — protect the high band, fix the loss band.",
+        "products": "products",
+        "bands": {
+          "high": "High margin (≥35%)",
+          "medium": "Medium margin (15–35%)",
+          "low": "Low margin (0–15%)",
+          "loss": "Loss (<0%)"
+        }
+      },
+      "fbt": {
+        "title": "Frequently bought together",
+        "subtitle": "Product pairs that show up in the same basket. Lift > 1 means the pair occurs more often than chance.",
+        "empty": "Not enough multi-item baskets yet",
+        "emptyDesc": "Pairs appear after at least three baskets contain the same two products in the last 180 days.",
+        "baskets": "baskets",
+        "lift": "lift",
+        "verdict": {
+          "strong": "Strong",
+          "meaningful": "Meaningful",
+          "mild": "Mild",
+          "weak": "Weak"
+        }
+      },
+      "growth": {
+        "title": "Category growth · 30d vs prior 30d",
+        "subtitle": "Where to add SKUs, where to thin the shelf.",
+        "empty": "Not enough category-tagged sales yet",
+        "now": "now",
+        "prior": "prior",
+        "verdict": {
+          "growing": "Growing",
+          "steady": "Steady",
+          "softening": "Softening",
+          "declining": "Declining",
+          "new": "New"
+        }
+      }
     }
   }
 }

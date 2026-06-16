@@ -133,6 +133,18 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
     Route::post('notifications/{notification}/read',    [NotificationCenterController::class, 'markRead']);
     Route::post('notifications/{notification}/ack',     [NotificationCenterController::class, 'ack']);
     Route::post('notifications/{notification}/archive', [NotificationCenterController::class, 'archive']);
+    // ── Phase AE — Business Insights ────────────────────────────────────
+    Route::get ('insights/timeline',                 [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'timeline']);
+    Route::get ('insights/forecast',                 [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'forecast']);
+    Route::get ('insights/forecast-summary',         [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'forecastSummary']);
+    Route::post('insights/{insight}/status',         [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'markStatus']);
+    // Phase AE R2
+    Route::get ('insights/customer-segments',        [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'customerSegments']);
+    Route::get ('insights/inventory',                [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'inventoryIntelligence']);
+    // Phase AE R3
+    Route::get ('insights/suppliers',                [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'supplierIntelligence']);
+    Route::get ('insights/opportunities',            [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'productOpportunities']);
+
     // ── Phase AD — Web Push (auth user). vapid-key lives outside this
     // group because the Service Worker needs it before login. ─────────
     Route::post  ('push/subscribe',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'subscribe']);
@@ -144,6 +156,7 @@ Route::middleware(['auth:sanctum', 'branch.current', 'branch'])->group(function 
     Route::middleware('role:admin')->group(function () {
         Route::get ('notifications/analytics',         [NotificationCenterController::class, 'analytics']);
         Route::post('notifications/detect',            [NotificationCenterController::class, 'runDetectors']);
+        Route::post('insights/capture',                [\App\Modules\BusinessInsights\Controllers\BusinessInsightsController::class, 'capture']);
         Route::post('notifications/build-digest',      [NotificationCenterController::class, 'buildDigest']);
         Route::get ('push/analytics',                  [\App\Modules\NotificationCenter\Controllers\PushController::class, 'analytics']);
 

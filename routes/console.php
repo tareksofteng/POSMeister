@@ -37,6 +37,12 @@ Schedule::call(function () {
     app(BusinessEventDetector::class)->detectAll();
 })->everyTenMinutes()->name('notif:detect')->withoutOverlapping();
 
+// Phase AE — refresh the persistent insight timeline alongside the
+// detector sweep. Cheaper to share the cadence than to keep its own.
+Schedule::call(function () {
+    app(\App\Modules\BusinessInsights\Services\InsightCaptureService::class)->capture();
+})->everyTenMinutes()->name('insights:capture')->withoutOverlapping();
+
 Schedule::call(function () {
     app(AlertEscalationService::class)->run();
 })->hourly()->name('notif:escalate')->withoutOverlapping();

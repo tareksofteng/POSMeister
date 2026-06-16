@@ -123,7 +123,7 @@ import {
     ClipboardDocumentListIcon, TagIcon, ArchiveBoxIcon, UsersIcon,
     BuildingStorefrontIcon, BanknotesIcon, UserGroupIcon, ChartBarIcon, ReceiptPercentIcon,
     CogIcon, ArrowRightStartOnRectangleIcon, BuildingOffice2Icon,
-    UserCircleIcon, ShieldCheckIcon, BookOpenIcon,
+    UserCircleIcon, ShieldCheckIcon, BookOpenIcon, SparklesIcon,
 } from '@heroicons/vue/24/outline';
 
 import NavItem             from './NavItem.vue';
@@ -387,6 +387,23 @@ const NAV_GROUPS = [
                     { labelKey: 'menu.customerLedger', to: { name: 'report-customer-ledger' }, implemented: true },
                     { labelKey: 'menu.supplierLedger', to: { name: 'report-supplier-ledger' }, implemented: true },
                     { labelKey: 'menu.productLedger',  to: { name: 'report-product-ledger' },  implemented: true },
+                ],
+            },
+            // Phase AE — Business Insights hub
+            {
+                isGroup:     true,
+                labelKey:    'menu.businessInsights',
+                icon:        SparklesIcon,
+                childRoutes: [
+                    'insight-timeline', 'insight-customer-segments', 'insight-inventory',
+                    'insight-suppliers', 'insight-opportunities',
+                ],
+                children: [
+                    { labelKey: 'menu.insightsTimeline',      to: { name: 'insight-timeline' },           implemented: true },
+                    { labelKey: 'menu.insightsCustomers',     to: { name: 'insight-customer-segments' }, implemented: true },
+                    { labelKey: 'menu.insightsInventory',     to: { name: 'insight-inventory' },         implemented: true },
+                    { labelKey: 'menu.insightsSuppliers',     to: { name: 'insight-suppliers' },         implemented: true },
+                    { labelKey: 'menu.insightsOpportunities', to: { name: 'insight-opportunities' },     implemented: true },
                 ],
             },
         ],

@@ -97,6 +97,36 @@ const routes = [
                 component: () => import('@/views/notifications/DeviceManagerView.vue'),
                 meta: { titleKey: 'push.devices.title' },
             },
+            {
+                path: 'insights/timeline',
+                name: 'insight-timeline',
+                component: () => import('@/views/insights/InsightTimelineView.vue'),
+                meta: { titleKey: 'insights.timeline.title' },
+            },
+            {
+                path: 'insights/customer-segments',
+                name: 'insight-customer-segments',
+                component: () => import('@/views/insights/CustomerSegmentsView.vue'),
+                meta: { titleKey: 'insights.segments.title' },
+            },
+            {
+                path: 'insights/inventory',
+                name: 'insight-inventory',
+                component: () => import('@/views/insights/InventoryIntelligenceView.vue'),
+                meta: { titleKey: 'insights.inventory.title' },
+            },
+            {
+                path: 'insights/suppliers',
+                name: 'insight-suppliers',
+                component: () => import('@/views/insights/SupplierIntelligenceView.vue'),
+                meta: { titleKey: 'insights.suppliers.title' },
+            },
+            {
+                path: 'insights/opportunities',
+                name: 'insight-opportunities',
+                component: () => import('@/views/insights/ProductOpportunityView.vue'),
+                meta: { titleKey: 'insights.opportunities.title' },
+            },
 
             // ── Phase Z: SystemOps (admin-only) ───────────────────────────
             {

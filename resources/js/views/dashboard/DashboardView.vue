@@ -76,6 +76,9 @@
         <!-- Push platform health (admin-only — self-hides for cashiers). -->
         <PushAnalyticsWidget />
 
+        <!-- 7-day forecast tiles — revenue, profit, net cash. -->
+        <ForecastWidget />
+
         <!-- Phase AC — multi-branch leaderboard. Self-hides when the
              user is in a single-branch workspace (backend returns []). -->
         <BranchLeaderboard v-if="d?.branch_leaderboard?.length >= 2" :branches="d.branch_leaderboard" />
@@ -274,6 +277,8 @@ import SystemHealthFooter   from '@/components/dashboard/SystemHealthFooter.vue'
 import PushPermissionCard   from '@/components/dashboard/PushPermissionCard.vue';
 // Phase AD R2 — push platform analytics widget (admin-only, self-hides for non-admins)
 import PushAnalyticsWidget  from '@/components/dashboard/PushAnalyticsWidget.vue';
+// Phase AE — 7-day forecast tiles surfaced from BusinessInsights
+import ForecastWidget       from '@/components/dashboard/ForecastWidget.vue';
 
 // Phase AA design-system primitives
 import Button     from '@/components/ui/Button.vue';
