@@ -21,6 +21,7 @@ class SettingsResource extends JsonResource
             'invoice_prefix'  => $this->invoice_prefix,
             'invoice_footer'  => $this->invoice_footer,
             'date_format'     => $this->date_format,
+            'invoice_print_format' => $this->invoice_print_format ?: 'a4',
         ];
     }
 }

@@ -17,6 +17,7 @@ class Setting extends Model
         'currency_code', 'currency_symbol',
         'vat_default',
         'invoice_prefix', 'invoice_footer', 'date_format',
+        'invoice_print_format',
     ];
 
     protected $casts = [

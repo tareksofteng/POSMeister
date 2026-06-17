@@ -33,6 +33,15 @@
             </div>
 
             <!-- Invoice paper -->
+            <!-- POS thermal receipt — kicked in when Settings.invoice_print_format is pos80 / pos58. -->
+            <div
+                v-else-if="purchase && isPosFormat"
+                id="invoice-paper"
+                class="bg-white mx-auto shadow-2xl print:shadow-none rounded-xl print:rounded-none"
+            >
+                <PosReceiptTemplate :doc="posDoc" :format="printFormat" />
+            </div>
+
             <div v-else-if="purchase" id="invoice-paper" class="bg-white shadow-2xl rounded-xl overflow-hidden print:shadow-none print:rounded-none">
 
                 <!-- ══ LETTERHEAD ════════════════════════════════════════ -->
@@ -339,6 +348,8 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, RouterLink } from 'vue-router';
 import { purchaseService } from '@/services/purchaseService';
 import { useSettingsStore } from '@/stores/settings';
+import { useInvoicePrint } from '@/composables/useInvoicePrint';
+import PosReceiptTemplate from '@/components/invoice/PosReceiptTemplate.vue';
 
 import {
     ArrowLeftIcon, PrinterIcon,
@@ -407,11 +418,38 @@ function toWordsDE(amount) {
     return `${euroWord} ${currencyCode.value} und ${centStr} Cent`;
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────
+// ── Print format ──────────────────────────────────────────────────────────
+const { printFormat, isPosFormat, printInvoice } = useInvoicePrint();
 
-function printInvoice() {
-    window.print();
-}
+const posDoc = computed(() => {
+    if (!purchase.value) return null;
+    const p = purchase.value;
+    return {
+        kind: 'purchase',
+        number: p.purchase_number ?? p.reference ?? p.invoice_number,
+        date: formatDate(p.purchase_date),
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        counterparty_label: t('invoice.supplier', 'Supplier'),
+        counterparty_name: p.supplier?.name ?? '—',
+        cashier_name: p.user?.name ?? '',
+        branch_name: p.branch?.name ?? '',
+        items: (p.items ?? []).map(it => ({
+            name: it.name ?? it.product?.name ?? it.product_name ?? '—',
+            quantity: it.quantity,
+            unit: it.unit_name ?? it.product?.unit ?? '',
+            unit_price: it.unit_price ?? it.cost_price,
+            vat_rate: it.vat_rate,
+            line_total: it.line_total ?? (it.quantity * (it.unit_price ?? it.cost_price)),
+        })),
+        subtotal: p.subtotal,
+        discount: p.discount_amount,
+        vat: p.vat_amount,
+        grand_total: p.total_amount ?? p.grand_total,
+        cash_paid: p.total_paid,
+        due_amount: Math.max(0, (p.total_amount ?? p.grand_total ?? 0) - (p.total_paid ?? 0)),
+        printed_at: nowFormatted.value,
+    };
+});
 
 // ── Load ──────────────────────────────────────────────────────────────────
 
@@ -429,9 +467,11 @@ onMounted(async () => {
 </script>
 
 <style>
-/* Print rules are global so they affect the whole page */
+/*
+ * @page is injected by useInvoicePrint() to match the operator's chosen
+ * paper size; these rules cover everything that's the same regardless.
+ */
 @media print {
-    @page { margin: 12mm; size: A4 portrait; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .no-print { display: none !important; }
     body { background: white !important; margin: 0 !important; padding: 0 !important; }

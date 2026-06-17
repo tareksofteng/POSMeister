@@ -1101,7 +1101,15 @@
     "invoicePrefix": "Invoice Number Prefix",
     "invoiceFooter": "Invoice Footer Text",
     "invoiceFooterPlaceholder": "e.g. Bank: IBAN DE89 3704 0044 0532 0130 00 · Steuer-Nr: 12/345/67890",
-    "dateFormat": "Date Format"
+    "dateFormat": "Date Format",
+    "printFormat": "Print format",
+    "printFormatHint": "Pick the paper you actually print on. A4 stays the full-page layout; POS formats switch to a thermal-printer-friendly receipt.",
+    "printFormatA4": "A4 page",
+    "printFormatA4Hint": "Office printers, full invoice layout",
+    "printFormatPos80": "POS 80 mm",
+    "printFormatPos80Hint": "Standard thermal receipt printer",
+    "printFormatPos58": "POS 58 mm",
+    "printFormatPos58Hint": "Compact handheld / mini printer"
   },
   "customers": {
     "title": "Customers",
@@ -3407,6 +3415,42 @@
           "new": "New"
         }
       }
+    }
+  },
+  "invoice": {
+    "mobile": "Mobile",
+    "number": "No.",
+    "date": "Date",
+    "time": "Time",
+    "cashier": "Cashier",
+    "branch": "Branch",
+    "customer": "Customer",
+    "supplier": "Supplier",
+    "walkIn": "Walk-in Customer",
+    "item": "Item",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "vat": "VAT",
+    "grandTotal": "Grand Total",
+    "cashPaid": "Cash Paid",
+    "cardPaid": "Card Paid",
+    "changeDue": "Change",
+    "dueAmount": "Due",
+    "billTo": "Bill To",
+    "billBy": "Bill By",
+    "receiptNo": "Order No.",
+    "paymentStatus": "Payment Status",
+    "paid": "Paid",
+    "unpaid": "Due",
+    "visitAgain": "Visit Again",
+    "softwareBy": "Software by",
+    "thanks": "Thank you for your business",
+    "kind": {
+      "sale": "SALES RECEIPT",
+      "purchase": "PURCHASE INVOICE",
+      "saleReturn": "SALE RETURN",
+      "purchaseReturn": "PURCHASE RETURN"
     }
   }
 }

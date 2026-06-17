@@ -1170,7 +1170,15 @@
     "invoicePrefix": "চালান নম্বর উপসর্গ",
     "invoiceFooter": "চালান পাদলেখ",
     "invoiceFooterPlaceholder": "যেমন: ব্যাংক তথ্য, কর নম্বর",
-    "dateFormat": "তারিখ ফরম্যাট"
+    "dateFormat": "তারিখ ফরম্যাট",
+    "printFormat": "প্রিন্ট ফরম্যাট",
+    "printFormatHint": "আপনি যে কাগজে প্রিন্ট করেন তা বেছে নিন। A4 পূর্ণ-পৃষ্ঠার লেআউট রাখে; POS ফরম্যাট থার্মাল প্রিন্টার-উপযোগী রসিদে পরিবর্তন হয়।",
+    "printFormatA4": "A4 পেজ",
+    "printFormatA4Hint": "অফিস প্রিন্টার, পূর্ণ চালান লেআউট",
+    "printFormatPos80": "POS 80 মিমি",
+    "printFormatPos80Hint": "স্ট্যান্ডার্ড থার্মাল রসিদ প্রিন্টার",
+    "printFormatPos58": "POS 58 মিমি",
+    "printFormatPos58Hint": "কম্প্যাক্ট হ্যান্ডহেল্ড / মিনি প্রিন্টার"
   },
   "customers": {
     "title": "গ্রাহক",
@@ -3591,6 +3599,42 @@
           "new": "নতুন"
         }
       }
+    }
+  },
+  "invoice": {
+    "mobile": "মোবাইল",
+    "number": "নং",
+    "date": "তারিখ",
+    "time": "সময়",
+    "cashier": "ক্যাশিয়ার",
+    "branch": "শাখা",
+    "customer": "গ্রাহক",
+    "supplier": "সরবরাহকারী",
+    "walkIn": "ওয়াক-ইন গ্রাহক",
+    "item": "পণ্য",
+    "total": "মোট",
+    "subtotal": "উপ-মোট",
+    "discount": "ছাড়",
+    "vat": "ভ্যাট",
+    "grandTotal": "সর্বমোট",
+    "cashPaid": "নগদ পরিশোধ",
+    "cardPaid": "কার্ড পরিশোধ",
+    "changeDue": "ফেরত",
+    "dueAmount": "বাকি",
+    "billTo": "বিল প্রাপক",
+    "billBy": "বিল প্রস্তুতকারী",
+    "receiptNo": "অর্ডার নং",
+    "paymentStatus": "পেমেন্ট অবস্থা",
+    "paid": "পরিশোধিত",
+    "unpaid": "বাকি",
+    "visitAgain": "আবার আসবেন",
+    "softwareBy": "সফটওয়্যার দ্বারা",
+    "thanks": "আপনার ক্রয়ের জন্য ধন্যবাদ",
+    "kind": {
+      "sale": "বিক্রয় রসিদ",
+      "purchase": "ক্রয় চালান",
+      "saleReturn": "বিক্রয় ফেরত",
+      "purchaseReturn": "ক্রয় ফেরত"
     }
   }
 }

@@ -1172,7 +1172,15 @@
     "invoicePrefix": "Rechnungsnummernpräfix",
     "invoiceFooter": "Rechnungsfußtext",
     "invoiceFooterPlaceholder": "z. B. Bank: IBAN DE89 3704 0044 0532 0130 00 · Steuer-Nr: 12/345/67890",
-    "dateFormat": "Datumsformat"
+    "dateFormat": "Datumsformat",
+    "printFormat": "Druckformat",
+    "printFormatHint": "Wählen Sie das Papier, auf dem Sie tatsächlich drucken. A4 behält das ganzseitige Layout; POS-Formate wechseln auf einen für Thermodrucker geeigneten Beleg.",
+    "printFormatA4": "A4-Seite",
+    "printFormatA4Hint": "Bürodrucker, vollständiges Rechnungslayout",
+    "printFormatPos80": "POS 80 mm",
+    "printFormatPos80Hint": "Standard-Thermodrucker für Belege",
+    "printFormatPos58": "POS 58 mm",
+    "printFormatPos58Hint": "Kompakter Hand- / Minidrucker"
   },
   "customers": {
     "title": "Kunden",
@@ -3478,6 +3486,42 @@
           "new": "Neu"
         }
       }
+    }
+  },
+  "invoice": {
+    "mobile": "Mobil",
+    "number": "Nr.",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "cashier": "Kassierer",
+    "branch": "Filiale",
+    "customer": "Kunde",
+    "supplier": "Lieferant",
+    "walkIn": "Laufkunde",
+    "item": "Artikel",
+    "total": "Summe",
+    "subtotal": "Zwischensumme",
+    "discount": "Rabatt",
+    "vat": "MwSt.",
+    "grandTotal": "Gesamtsumme",
+    "cashPaid": "Bar bezahlt",
+    "cardPaid": "Karte",
+    "changeDue": "Rückgeld",
+    "dueAmount": "Offen",
+    "billTo": "Rechnung an",
+    "billBy": "Erstellt von",
+    "receiptNo": "Belegnummer",
+    "paymentStatus": "Zahlungsstatus",
+    "paid": "Bezahlt",
+    "unpaid": "Offen",
+    "visitAgain": "Wir freuen uns auf Ihren nächsten Besuch",
+    "softwareBy": "Software von",
+    "thanks": "Vielen Dank für Ihren Einkauf",
+    "kind": {
+      "sale": "VERKAUFSBELEG",
+      "purchase": "EINKAUFSRECHNUNG",
+      "saleReturn": "VERKAUFSRETOURE",
+      "purchaseReturn": "EINKAUFSRETOURE"
     }
   }
 }

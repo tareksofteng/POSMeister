@@ -37,7 +37,19 @@
                 <p class="text-sm">{{ t('common.loading') }}</p>
             </div>
 
-            <!-- Invoice paper -->
+            <!-- POS thermal receipt — renders when the operator picked a
+                 pos80 / pos58 print format in Settings. The same component
+                 is used for the on-screen preview AND the printout (the
+                 dynamic @page rule below picks the right paper size). -->
+            <div
+                v-else-if="sale && isPosFormat"
+                id="invoice-paper"
+                class="bg-white mx-auto shadow-2xl print:shadow-none rounded-xl print:rounded-none"
+            >
+                <PosReceiptTemplate :doc="posDoc" :format="printFormat" />
+            </div>
+
+            <!-- A4 paper — existing executive template -->
             <div v-else-if="sale" id="invoice-paper" class="bg-white shadow-2xl rounded-xl overflow-hidden print:shadow-none print:rounded-none">
 
                 <!-- CANCELLED watermark -->
@@ -399,6 +411,8 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, RouterLink } from 'vue-router';
 import { saleService } from '@/services/saleService';
 import { useSettingsStore } from '@/stores/settings';
+import { useInvoicePrint } from '@/composables/useInvoicePrint';
+import PosReceiptTemplate from '@/components/invoice/PosReceiptTemplate.vue';
 
 import {
     ArrowLeftIcon, PrinterIcon, XCircleIcon,
@@ -476,11 +490,44 @@ function toWordsDE(amount) {
     return `${euroWord} ${currencyCode.value} und ${centStr} Cent`;
 }
 
-// ── Actions ────────────────────────────────────────────────────────────────
+// ── Print format ───────────────────────────────────────────────────────────
+const { printFormat, isPosFormat, printInvoice } = useInvoicePrint();
 
-function printInvoice() {
-    window.print();
-}
+// Flattened payload for the thermal template — the A4 template still
+// reads the raw sale object directly, so we keep both shapes around.
+const posDoc = computed(() => {
+    if (!sale.value) return null;
+    const s = sale.value;
+    return {
+        kind: 'sale',
+        number: s.sale_number,
+        date: formatDate(s.sale_date),
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        counterparty_label: t('invoice.customer', 'Customer'),
+        counterparty_name: s.customer?.name ?? t('invoice.walkIn', 'Walk-in Customer'),
+        cashier_name: s.cashier?.name ?? s.user?.name ?? '',
+        branch_name: s.branch?.name ?? '',
+        items: (s.items ?? []).map(it => ({
+            name: it.name ?? it.product?.name ?? it.product_name ?? '—',
+            quantity: it.quantity,
+            unit: it.unit_name ?? it.product?.unit ?? '',
+            unit_price: it.unit_price,
+            vat_rate: it.vat_rate,
+            line_total: it.line_total,
+        })),
+        subtotal: s.subtotal,
+        discount: s.discount_amount,
+        vat: s.vat_amount,
+        grand_total: s.grand_total,
+        cash_paid: s.total_paid,
+        change_due: change.value,
+        due_amount: due.value,
+        printed_at: nowFormatted.value,
+    };
+});
+
+// printInvoice() comes from useInvoicePrint() above — it picks the right
+// @page rule (A4 / 80mm / 58mm) before opening the browser print dialog.
 
 // ── Load ───────────────────────────────────────────────────────────────────
 
@@ -498,8 +545,13 @@ onMounted(async () => {
 </script>
 
 <style>
+/*
+ * The @page rule itself is injected by printInvoice() so it matches the
+ * format the operator picked. These rules cover the bits that are the
+ * same regardless of paper size: hiding the chrome and forcing colour
+ * fidelity for the brand swatches.
+ */
 @media print {
-    @page { margin: 12mm; size: A4 portrait; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .no-print { display: none !important; }
     body { background: white !important; margin: 0 !important; padding: 0 !important; }

@@ -13,7 +13,7 @@
                         {{ ret.return_number }}
                     </span>
                     <button
-                        @click="window.print()"
+                        @click="printInvoice"
                         class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
                     >
                         <PrinterIcon class="w-4 h-4" />
@@ -32,6 +32,15 @@
             </div>
 
             <!-- Return invoice paper -->
+            <!-- POS thermal layout — paired with Settings.invoice_print_format. -->
+            <div
+                v-else-if="ret && isPosFormat"
+                id="invoice-paper"
+                class="bg-white mx-auto shadow-2xl print:shadow-none rounded-xl print:rounded-none"
+            >
+                <PosReceiptTemplate :doc="posDoc" :format="printFormat" />
+            </div>
+
             <div v-else-if="ret" id="invoice-paper" class="bg-white shadow-2xl rounded-xl overflow-hidden print:shadow-none print:rounded-none">
 
                 <!-- ══ LETTERHEAD ═══════════════════════════════════════ -->
@@ -223,6 +232,8 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, RouterLink } from 'vue-router';
 import { purchaseService } from '@/services/purchaseService';
 import { useSettingsStore } from '@/stores/settings';
+import { useInvoicePrint } from '@/composables/useInvoicePrint';
+import PosReceiptTemplate from '@/components/invoice/PosReceiptTemplate.vue';
 import {
     ArrowLeftIcon, PrinterIcon, PhoneIcon, EnvelopeIcon,
     ArrowUturnLeftIcon, ExclamationTriangleIcon,
@@ -255,6 +266,35 @@ const nowFormatted = computed(() =>
 );
 
 const amountInWords = computed(() => ret.value ? toWordsDE(ret.value.total_amount) : '');
+
+const { printFormat, isPosFormat, printInvoice } = useInvoicePrint();
+
+const posDoc = computed(() => {
+    if (!ret.value) return null;
+    const r = ret.value;
+    return {
+        kind: 'purchase_return',
+        number: r.return_number ?? r.reference,
+        date: formatDate(r.return_date),
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        counterparty_label: t('invoice.supplier', 'Supplier'),
+        counterparty_name: r.purchase?.supplier?.name ?? r.supplier?.name ?? '—',
+        cashier_name: r.user?.name ?? '',
+        branch_name: r.branch?.name ?? '',
+        items: (r.items ?? []).map(it => ({
+            name: it.name ?? it.product?.name ?? it.product_name ?? '—',
+            quantity: it.quantity,
+            unit: it.unit_name ?? it.product?.unit ?? '',
+            unit_price: it.unit_price ?? it.cost_price,
+            vat_rate: it.vat_rate,
+            line_total: it.line_total ?? (it.quantity * (it.unit_price ?? it.cost_price)),
+        })),
+        subtotal: r.subtotal,
+        vat: r.vat_amount,
+        grand_total: r.total_amount ?? r.grand_total,
+        printed_at: nowFormatted.value,
+    };
+});
 
 function toWordsDE(amount) {
     const n     = Math.round(parseFloat(amount ?? 0) * 100);
@@ -292,8 +332,8 @@ onMounted(async () => {
 </script>
 
 <style>
+/* @page rule is injected by useInvoicePrint() based on the chosen format. */
 @media print {
-    @page { margin: 12mm; size: A4 portrait; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .no-print { display: none !important; }
     body { background: white !important; margin: 0 !important; padding: 0 !important; }

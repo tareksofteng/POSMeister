@@ -353,6 +353,7 @@ import { quotationService } from '@/services/quotationService';
 import { useSettingsStore } from '@/stores/settings';
 import { useAlert } from '@/composables/useAlert';
 import { useCurrency } from '@/composables/useCurrency';
+import { useInvoicePrint } from '@/composables/useInvoicePrint';
 
 import {
     ArrowLeftIcon, PrinterIcon, PencilSquareIcon,
@@ -427,9 +428,10 @@ function toWordsDE(amount) {
 }
 
 // ── Actions ────────────────────────────────────────────────────────────────
-function printDoc() {
-    window.print();
-}
+// Quotations stay on the full A4 layout (a thermal quote isn't a thing in
+// practice) but we still route through the shared composable so the
+// @page rule and any future operator-level overrides land here too.
+const { printInvoice: printDoc } = useInvoicePrint();
 
 async function updateStatus(newStatus) {
     try {
@@ -456,8 +458,8 @@ onMounted(async () => {
 </script>
 
 <style>
+/* @page rule is injected by useInvoicePrint() based on the chosen format. */
 @media print {
-    @page { margin: 12mm; size: A4 portrait; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .no-print { display: none !important; }
     body { background: white !important; margin: 0 !important; padding: 0 !important; }

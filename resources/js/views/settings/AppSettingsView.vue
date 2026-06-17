@@ -104,6 +104,36 @@
                         :placeholder="t('appSettings.invoiceFooterPlaceholder')"
                     />
                 </FormField>
+
+                <!-- Printer / paper-size picker. The same value drives sales,
+                     purchases, returns and quotations — so the cashier sets
+                     it once and every printable view obeys. -->
+                <FormField :label="t('appSettings.printFormat', 'Print format')">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label
+                            v-for="opt in printFormatOptions"
+                            :key="opt.value"
+                            class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors"
+                            :class="form.invoice_print_format === opt.value
+                                ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                                : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'"
+                        >
+                            <input
+                                v-model="form.invoice_print_format"
+                                type="radio"
+                                :value="opt.value"
+                                class="mt-1 accent-indigo-600"
+                            />
+                            <div class="min-w-0">
+                                <p class="font-semibold text-sm text-gray-800 dark:text-gray-200">{{ opt.label }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ opt.detail }}</p>
+                            </div>
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        {{ t('appSettings.printFormatHint', 'Pick the paper you actually print on. A4 stays the full-page layout; POS formats switch to a thermal-printer-friendly receipt.') }}
+                    </p>
+                </FormField>
             </SectionCard>
 
             <!-- Save button -->
@@ -148,7 +178,26 @@ const form = reactive({
     invoice_prefix:  'INV-',
     invoice_footer:  '',
     date_format:     'd.m.Y',
+    invoice_print_format: 'a4',
 });
+
+const printFormatOptions = [
+    {
+        value: 'a4',
+        label: t('appSettings.printFormatA4',       'A4 page'),
+        detail: t('appSettings.printFormatA4Hint',   'Office printers, full invoice layout'),
+    },
+    {
+        value: 'pos80',
+        label: t('appSettings.printFormatPos80',     'POS 80 mm'),
+        detail: t('appSettings.printFormatPos80Hint','Standard thermal receipt printer'),
+    },
+    {
+        value: 'pos58',
+        label: t('appSettings.printFormatPos58',     'POS 58 mm'),
+        detail: t('appSettings.printFormatPos58Hint','Compact handheld / mini printer'),
+    },
+];
 
 // ── Logo handling ──────────────────────────────────────────────────────────
 const logoPreview   = ref(null);
@@ -185,6 +234,7 @@ onMounted(async () => {
             invoice_prefix:  s.invoice_prefix  ?? 'INV-',
             invoice_footer:  s.invoice_footer  ?? '',
             date_format:     s.date_format     ?? 'd.m.Y',
+            invoice_print_format: s.invoice_print_format ?? 'a4',
         });
         logoPreview.value = s.logo_url ?? null;
     } finally {

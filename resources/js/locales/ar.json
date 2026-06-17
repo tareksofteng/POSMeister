@@ -1170,7 +1170,15 @@
     "invoicePrefix": "بادئة رقم الفاتورة",
     "invoiceFooter": "نص تذييل الفاتورة",
     "invoiceFooterPlaceholder": "مثال: معلومات البنك، الرقم الضريبي",
-    "dateFormat": "تنسيق التاريخ"
+    "dateFormat": "تنسيق التاريخ",
+    "printFormat": "تنسيق الطباعة",
+    "printFormatHint": "اختر الورق الذي تطبع عليه فعلاً. يبقى A4 بتخطيط الصفحة الكاملة؛ بينما تتحول تنسيقات POS إلى إيصال متوافق مع طابعة حرارية.",
+    "printFormatA4": "صفحة A4",
+    "printFormatA4Hint": "طابعات المكتب، تخطيط فاتورة كامل",
+    "printFormatPos80": "POS 80 ملم",
+    "printFormatPos80Hint": "طابعة إيصالات حرارية قياسية",
+    "printFormatPos58": "POS 58 ملم",
+    "printFormatPos58Hint": "طابعة محمولة مدمجة / صغيرة"
   },
   "customers": {
     "title": "العملاء",
@@ -3476,6 +3484,42 @@
           "new": "جديد"
         }
       }
+    }
+  },
+  "invoice": {
+    "mobile": "الجوال",
+    "number": "رقم",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "cashier": "الكاشير",
+    "branch": "الفرع",
+    "customer": "العميل",
+    "supplier": "المورّد",
+    "walkIn": "عميل عابر",
+    "item": "الصنف",
+    "total": "الإجمالي",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "vat": "ضريبة القيمة المضافة",
+    "grandTotal": "الإجمالي الكلي",
+    "cashPaid": "المدفوع نقداً",
+    "cardPaid": "المدفوع بالبطاقة",
+    "changeDue": "الباقي",
+    "dueAmount": "المستحق",
+    "billTo": "إلى",
+    "billBy": "بواسطة",
+    "receiptNo": "رقم الطلب",
+    "paymentStatus": "حالة الدفع",
+    "paid": "مدفوع",
+    "unpaid": "مستحق",
+    "visitAgain": "نتشرّف بزيارتكم مرة أخرى",
+    "softwareBy": "البرنامج من",
+    "thanks": "شكراً لتعاملكم معنا",
+    "kind": {
+      "sale": "إيصال بيع",
+      "purchase": "فاتورة شراء",
+      "saleReturn": "مرتجع بيع",
+      "purchaseReturn": "مرتجع شراء"
     }
   }
 }

@@ -24,6 +24,7 @@ class UpdateSettingsRequest extends FormRequest
             'invoice_prefix'  => ['required', 'string', 'max:20'],
             'invoice_footer'  => ['nullable', 'string', 'max:1000'],
             'date_format'     => ['required', 'string', 'in:d.m.Y,m/d/Y,Y-m-d'],
+            'invoice_print_format' => ['nullable', 'string', 'in:a4,pos80,pos58'],
         ];
     }
 }
